@@ -1,0 +1,2 @@
+log was created at 26-08-2018_21-53-06
+Boundary condition <zeroGradient> of file U is not valid for type <wall>

@@ -1,0 +1,38 @@
++------------------------------ CFD LOVES C++ ---------------------------+
+|--------------------DISCONTINUOS GALERKIN METHOD SOLVER-----------------|
+|                                  Author                                |
+|   Nam Ha Tran.                                                         |
+|   Ver 1.00                                                             |
++------------------------------------------------------------------------+
+|   This program uses Discontinous Galerkin method to solve 2D problems  |
+|   on structural and unstructural mesh.                                 |
++------------------------------------------------------------------------+
+	Program ran at (d-m-y_h-m-s) time
+Velocity conditions (m/s)
+initialValue			0 0 0
+inlet
+{
+	Group 1
+	Type				inOutFlow
+	value				400 0 0
+}
+ 
+wall
+{
+	Group 2
+	Type				noSlip
+}
+ 
+outlet1
+{
+	Type				fixedValue
+	value				400 0 0
+}
+ 
+outlet2
+{
+	Group 4
+	Type				inOutFlow
+	value				400 0 0
+}
+ 
