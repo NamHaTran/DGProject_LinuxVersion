@@ -1,2 +1,0 @@
-log was created at 15-09-2018_09-01-57
-orderElem should be less or equal to nGauss^2

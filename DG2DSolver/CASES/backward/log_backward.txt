@@ -1,0 +1,2 @@
+log was created at 07-01-2019_21-50-30
+Cannot open file <LimiterSettings.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\DG2DSolver\CASES\backward\System\LimiterSettings.txt
