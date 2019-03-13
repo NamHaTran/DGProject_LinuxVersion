@@ -3,13 +3,11 @@
 
 namespace postProcessKey
 {
-	std::string exitKey1("Exit"), exitKey2("exit"), exitKey3("EXIT"), exitKey4("End"), exitKey5("end"), exitKey6("END");
-	
 	/*Function return true if Exit is available*/
 	bool checkExit(std::string cmd)
 	{
 		bool trigger(false);
-		if ((cmd.compare(exitKey1) == 0) || (cmd.compare(exitKey2) == 0) || (cmd.compare(exitKey3) == 0) || (cmd.compare(exitKey4) == 0) || (cmd.compare(exitKey5) == 0) || (cmd.compare(exitKey6) == 0))
+        if ((cmd.compare("Exit") == 0) || (cmd.compare("exit") == 0) || (cmd.compare("EXIT") == 0) || (cmd.compare("End") == 0) || (cmd.compare("end") == 0) || (cmd.compare("END") == 0))
 		{
 			trigger = true;
 		}
@@ -61,6 +59,16 @@ namespace preProcessKey
 		return trigger;
 	}
 
+	bool mappResults(std::string cmd)
+	{
+		bool trigger(false);
+		if ((cmd.compare("mappresults") == 0) || (cmd.compare("mappResults") == 0))
+		{
+			trigger = true;
+		}
+		return trigger;
+	}
+
 	namespace debug
 	{
 		bool checkElement(std::string cmd)
@@ -77,13 +85,11 @@ namespace preProcessKey
 
 namespace processKey
 {
-	std::string runningKey1("DG2D"), runningKey2("dg2d");
-
 	/*Function return true if DG2D is available*/
 	bool checkDGRun(std::string cmd)
 	{
 		bool trigger(false);
-		if ((cmd.compare(runningKey1) == 0) || (cmd.compare(runningKey2) == 0))
+        if ((cmd.compare("DG2D") == 0) || (cmd.compare("dg2d") == 0))
 		{
 			trigger = true;
 		}

@@ -224,6 +224,8 @@ namespace math
 	//Function finds norm of vector
 	double vectorNorm(std::vector<double> vector);
 
+	double calcResidualFromResidualOfOrder(int element, double a, double b, int valType);
+
 	namespace numericalFluxes
 	{
 		/*Function calculates auxilary flux at Gauss point*/
@@ -292,19 +294,25 @@ namespace math
 		std::tuple<double, double> calcQuadCentroid(int element, double xCG, double yCG, double area);
 
 		//Function calculates edge metrics
-		std::tuple<double, double> calEdgeMetric(int edge);
+		std::tuple<double, double> calEdgeMetric(int edgeId, int elementId);
 
 		//
 		std::tuple<double, double> calDifferenceOfElementsCellCenters(int elem1, int elem2);
 
 		//Function computes local cell size
-		double calLocalCellSize(int element);
+		double calLocalCellSize(int element, double elementArea);
+
+		double calDistBetween2Points(double xPt1, double yPt1, double xPt2, double yPt2);
+
+		double calPolygonPerimeter(std::vector<double> &xCoor, std::vector<double> &yCoor, int numOfEdge);
+
+		std::tuple<double, double> calROfInscribedCircleOfTriElement(int element);
 	}
 
 	namespace residualManipulation
 	{
 		//Function calculates normalized coefficients for residuals
-		void calcNormResidual(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
+		//void calcNormResidual(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 	}
 
 	double calcMaxT(int element);

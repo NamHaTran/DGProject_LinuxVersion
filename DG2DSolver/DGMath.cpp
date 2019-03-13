@@ -82,7 +82,7 @@ namespace math
 				}
 				else if (i == 2)
 				{
-					mathVar::B[i] = a * (1 - b) / 2.0;
+					mathVar::B[i] = a * (1 - b);
 				}
 				else if (i == 3)
 				{
@@ -139,12 +139,14 @@ namespace math
 				}
 				else if (i == 2)
 				{
-					mathVar::dBa[i] = (1 - b)*0.5;
-					mathVar::dBb[i] = -0.5*a;
+					mathVar::dBa[i] = 1 - b;
+					mathVar::dBb[i] = -a;
 				}
 				else if (i == 3)
 				{
-
+					//correct it
+					mathVar::dBa[i] = 1;
+					mathVar::dBb[i] = 1;
 				}
 			}
 		}
@@ -170,7 +172,8 @@ namespace math
 				}
 				else if (i == 3)
 				{
-
+					mathVar::dBa[i] = b;
+					mathVar::dBb[i] = a;
 				}
 			}
 		}
@@ -221,9 +224,7 @@ namespace math
 		}
 
 		masterIndex = auxUlti::findEdgeOrder(master, edge);
-		servantIndex = auxUlti::findEdgeOrder(servant, edge);
 		masterType = auxUlti::checkType(master);
-		servantType = auxUlti::checkType(servant);
 
 		if (masterType==4)
 		{
@@ -243,22 +244,31 @@ namespace math
 			JMaster = math::jacobian1DTri(masterIndex, xA, xB, xC, yA, yB, yC);
 		}
 
-		if (servantType == 4)
+		if (servant >= 0)
 		{
-			std::tie(xA, yA) = auxUlti::getElemCornerCoord(servant, 0);
-			std::tie(xB, yB) = auxUlti::getElemCornerCoord(servant, 1);
-			std::tie(xC, yC) = auxUlti::getElemCornerCoord(servant, 2);
-			std::tie(xD, yD) = auxUlti::getElemCornerCoord(servant, 3);
+			servantIndex = auxUlti::findEdgeOrder(servant, edge);
+			servantType = auxUlti::checkType(servant);
+			if (servantType == 4)
+			{
+				std::tie(xA, yA) = auxUlti::getElemCornerCoord(servant, 0);
+				std::tie(xB, yB) = auxUlti::getElemCornerCoord(servant, 1);
+				std::tie(xC, yC) = auxUlti::getElemCornerCoord(servant, 2);
+				std::tie(xD, yD) = auxUlti::getElemCornerCoord(servant, 3);
 
-			JServant = math::jacobian1DQuad(servantIndex, xA, xB, xC, xD, yA, yB, yC, yD);
+				JServant = math::jacobian1DQuad(servantIndex, xA, xB, xC, xD, yA, yB, yC, yD);
+			}
+			else if (servantType == 3)
+			{
+				std::tie(xA, yA) = auxUlti::getElemCornerCoord(servant, 0);
+				std::tie(xB, yB) = auxUlti::getElemCornerCoord(servant, 1);
+				std::tie(xC, yC) = auxUlti::getElemCornerCoord(servant, 2);
+
+				JServant = math::jacobian1DTri(servantIndex, xA, xB, xC, yA, yB, yC);
+			}
 		}
-		else if (servantType == 3)
+		else
 		{
-			std::tie(xA, yA) = auxUlti::getElemCornerCoord(servant, 0);
-			std::tie(xB, yB) = auxUlti::getElemCornerCoord(servant, 1);
-			std::tie(xC, yC) = auxUlti::getElemCornerCoord(servant, 2);
-
-			JServant = math::jacobian1DTri(servantIndex, xA, xB, xC, yA, yB, yC);
+			JServant = 0.0;
 		}
 
 		return std::make_tuple(JMaster, JServant);
@@ -395,7 +405,7 @@ namespace math
 			dx = C * (xA - xB) / 4.0 + (-xA - xB + 2 * xC) / 4.0;
 			dy = C * (yA - yB) / 4.0 + (-yA - yB + 2 * yC) / 4.0;
 		}
-		else if ((edgeIndex == 0))  //AB
+        else if (edgeIndex == 0)  //AB
 		{
 			C = -1.0;
 			dx = (1 - C)*(xB - xA) / 4.0;
@@ -439,7 +449,7 @@ namespace math
 	{
 		/* Calculate a*No-b */
 		int n = static_cast<int>(b.size());
-		double rVal(0.0), error(1.0);
+        double error(1.0);
 		std::vector<double> R(n, 0.0);
 
 		for (int i = 0; i < n; i++)
@@ -806,17 +816,17 @@ namespace math
 
 	std::tuple<bool, double, double> solvQuadraticEq(double A, double B, double C)
 	{
-		double delta(B*B - 4 * A*C), out(0.0), root1(0.0), root2(0.0);
+        double delta(B*B - 4 * A*C), root1(0.0), root2(0.0);
 		bool realRoot(true);
 
-		if (A != 0)
+        if (A != 0.0)
 		{
 			if (delta>0)
 			{
 				root1 = ((-B + sqrt(delta)) / (2 * A));
 				root2 = ((-B - sqrt(delta)) / (2 * A));
 			}
-			else if (delta == 0)
+            else if (delta == 0.0)
 			{
 				root1 = (-B / (2 * A));
 				root2 = root1;
@@ -826,7 +836,7 @@ namespace math
 				realRoot = false;
 			}
 		}
-		else if (A == 0.0 && B !=0)
+        else if (A == 0.0 && B !=0.0)
 		{
 			root1 = -C / B;
 			root2 = root1;
@@ -892,9 +902,7 @@ namespace math
 
 	std::tuple<double, double> mappingRealToStd(int edge, int element, double xCoor, double yCoor)
 	{
-		double A1(0.0), B1(0.0), C1(0.0), D1(0.0),
-			A2(0.0), B2(0.0), C2(0.0), D2(0.0),
-			xA(0.0), xB(0.0), xC(0.0),
+        double xA(0.0), xB(0.0), xC(0.0),
 			yA(0.0), yB(0.0), yC(0.0),
 			aCoor(0.0), bCoor(0.0),
 			xCal(0.0), yCal(0.0), eX(100.0), eY(100.0);
@@ -1127,7 +1135,7 @@ namespace math
 		{
 			/*use central numerical flux*/
 			Beta = 0.0;
-			double flux(0.5*((FPlus + FMinus)*vectorComp + 0.5 * Beta * (UMinus - UPlus)));
+			double flux(0.5*((FPlus + FMinus)*vectorComp + Beta * (UMinus - UPlus)));
 			return flux;
 		}
 
@@ -1528,6 +1536,24 @@ namespace math
 		return out;
 	}
 
+	double calcResidualFromResidualOfOrder(int element, double a, double b, int valType)
+	{
+		double out(0.0);
+		std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+		Value = auxUlti::getResidualValuesOfOrder(element, valType);
+
+		//Compute value at point (a, b) without limiter
+		math::basisFc(a, b, auxUlti::checkType(element));
+
+		for (int order = 1; order <= mathVar::orderElem; order++)
+		{
+			out += Value[order] * mathVar::B[order];
+		}
+		out += Value[0];
+
+		return fabs(out);
+	}
+
 	namespace geometricOp
 	{
 		std::tuple<double, double> calcGeoCenter(std::vector<double> &xCoor, std::vector<double> &yCoor, int type)
@@ -1610,16 +1636,16 @@ namespace math
 			return std::make_tuple(xC, yC);
 		}
 
-		double calLocalCellSize(int element)
+		double calLocalCellSize(int element, double elementArea)
 		{
 			int elemType(auxUlti::checkType(element)), edgeId(0), neighborElemId(0);
-			double S(meshVar::cellSize[element]), deltaXe(0.0), deltaYe(0.0), Lx(0.0), Ly(0.0), Lxy(0.0), deltaXc(0.0), deltaYc(0.0);
+			double deltaXe(0.0), deltaYe(0.0), Lx(0.0), Ly(0.0), Lxy(0.0), deltaXc(0.0), deltaYc(0.0);
 
 			for (int e = 0; e < elemType; e++)
 			{
 				edgeId = meshVar::inedel[e][element];
 				neighborElemId = auxUlti::getNeighborElement(element, edgeId);
-				std::tie(deltaXe, deltaYe) = math::geometricOp::calEdgeMetric(edgeId);
+				std::tie(deltaXe, deltaYe) = math::geometricOp::calEdgeMetric(edgeId, element);
 				if (neighborElemId >= 0)
 				{
 					std::tie(deltaXc, deltaYc) = math::geometricOp::calDifferenceOfElementsCellCenters(element, neighborElemId);
@@ -1630,35 +1656,75 @@ namespace math
 					deltaYc = 0.0;
 				}
 
-				Lx += deltaXc * deltaXc*deltaYe;
-				Ly += deltaYc * deltaYc*deltaXe;
+				Lx += deltaXc * fabs(deltaXc)*deltaYe;
+				Ly += deltaYc * fabs(deltaYc)*deltaXe;
 			}
-			Lx *= (1.0 / S);
-			Ly *= (-1.0 / S);
-			Lxy = Lx * Ly;
+			Lx *= (1.0 / elementArea);
+			Ly *= (-1.0 / elementArea);
+			Lxy = sqrt(Lx*Lx + Ly*Ly);
 			return Lxy;
 		}
 
-		std::tuple<double, double> calEdgeMetric(int edge)
+		std::tuple<double, double> calEdgeMetric(int edgeId, int elementId)
 		{
-			int point1(meshVar::inpoed[0][edge]), point2(meshVar::inpoed[1][edge]);
+			int point1(meshVar::inpoed[0][edgeId]), point2(meshVar::inpoed[1][edgeId]);
 			double deltaX(0.0), deltaY(0.0);
-			deltaX = fabs(meshVar::Points[point1][0] - meshVar::Points[point2][0]);
-			deltaY = fabs(meshVar::Points[point1][1] - meshVar::Points[point2][1]);
+			if (auxUlti::findVertexOrder(point1, elementId) > auxUlti::findVertexOrder(point2, elementId))
+			{
+				deltaX = meshVar::Points[point1][0] - meshVar::Points[point2][0];
+				deltaY = meshVar::Points[point1][1] - meshVar::Points[point2][1];
+			}
+			else
+			{
+				deltaX = meshVar::Points[point2][0] - meshVar::Points[point1][0];
+				deltaY = meshVar::Points[point2][1] - meshVar::Points[point1][1];
+			}
 			return std::make_tuple(deltaX, deltaY);
 		}
 
 		std::tuple<double, double> calDifferenceOfElementsCellCenters(int elem1, int elem2)
 		{
 			double deltaXc(0.0), deltaYc(0.0);
-			deltaXc = fabs(meshVar::geoCenter[elem1][0] - meshVar::geoCenter[elem2][0]);
-			deltaYc = fabs(meshVar::geoCenter[elem1][1] - meshVar::geoCenter[elem2][1]);
+			//elem2 is neighbor
+			deltaXc = (meshVar::geoCenter[elem2][0] - meshVar::geoCenter[elem1][0]);
+			deltaYc = (meshVar::geoCenter[elem2][1] - meshVar::geoCenter[elem1][1]);
 			return std::make_tuple(deltaXc, deltaYc);
+		}
+
+		double calDistBetween2Points(double xPt1, double yPt1, double xPt2, double yPt2) {
+			double length(sqrt(pow(xPt1 - xPt2, 2) + pow(yPt1 - yPt2, 2)));
+			return length;
+		}
+
+		double calPolygonPerimeter(std::vector<double> &xCoor, std::vector<double> &yCoor, int numOfEdge) {
+			double perimeter(0.0), dx(0.0), dy(0.0);
+			for (int iedge = 0; iedge < numOfEdge - 1; iedge++)
+			{
+				perimeter += math::geometricOp::calDistBetween2Points(xCoor[iedge], yCoor[iedge], xCoor[iedge + 1], yCoor[iedge + 1]);
+			}
+			perimeter += math::geometricOp::calDistBetween2Points(xCoor[numOfEdge -1], yCoor[numOfEdge - 1], xCoor[0], yCoor[0]);
+			return perimeter;
+		}
+
+		std::tuple<double, double> calROfInscribedCircleOfTriElement(int element) {
+			int elemType(auxUlti::checkType(element)), ptId(0.0);
+			double rIn(0.0), cellArea(0.0);
+			std::vector<std::vector<double>> vertexCoors(elemType, std::vector<double>(2, 0.0));
+			std::vector<double> xCoor(elemType, 0.0),
+				yCoor(elemType, 0.0);
+			for (int i = 0; i < elemType; i++)
+			{
+				std::tie(xCoor[i], yCoor[i]) = auxUlti::getElemCornerCoord(element, i);
+			}
+			cellArea = math::geometricOp::calcPolygonArea(xCoor, yCoor, elemType);
+			rIn = 2 * cellArea / math::geometricOp::calPolygonPerimeter(xCoor, yCoor, elemType);
+			return std::make_tuple(rIn, cellArea);
 		}
 	}
 
 	namespace residualManipulation
 	{
+		/*
 		void calcNormResidual(double rhoRes, double rhouRes, double rhovRes, double rhoERes)
 		{
 			systemVar::rhoResNormVector[systemVar::iterCount - 1] = rhoRes;
@@ -1671,6 +1737,7 @@ namespace math
 			systemVar::rhovResNorm = *std::max_element(systemVar::rhovResNormVector.begin(), systemVar::rhovResNormVector.end());
 			systemVar::rhoEResNorm = *std::max_element(systemVar::rhoEResNormVector.begin(), systemVar::rhoEResNormVector.end());
 		}
+		*/
 	}
 
 	double calcMaxT(int element)

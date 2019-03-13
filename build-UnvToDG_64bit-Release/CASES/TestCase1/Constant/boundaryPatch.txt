@@ -24,14 +24,14 @@ Outlet
 	Method				weakRiemann
 }
  
-Wall
+ZeroGrad
 {
 	Group				3
 	Type				wall
 	Method				weakRiemann
 }
  
-zeroGrad
+FlatePlate
 {
 	Group				4
 	Type				wall

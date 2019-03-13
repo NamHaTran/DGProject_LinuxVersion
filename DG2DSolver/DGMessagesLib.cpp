@@ -57,7 +57,6 @@ namespace message
 			logFlux << "log was created at " << crash_time << std::endl << str << std::endl;
 		}
 		std::cout << "DGSolver will exit after you hit return.\n";
-		system("pause");
 		exit(EXIT_FAILURE);
 	}
 

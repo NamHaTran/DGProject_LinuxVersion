@@ -54,12 +54,12 @@ SOURCES       = ../UnvToDG/DGAuxUltilitiesLib.cpp \
 		../UnvToDG/DGMessagesLib.cpp \
 		../UnvToDG/Unv2DReaderLib.cpp \
 		../UnvToDG/Unv2DReader.cpp \
-		../UnvToDG/vardeclaration.cpp 
+		../UnvToDG/Vardeclaration.cpp 
 OBJECTS       = DGAuxUltilitiesLib.o \
 		DGMessagesLib.o \
 		Unv2DReaderLib.o \
 		Unv2DReader.o \
-		vardeclaration.o
+		Vardeclaration.o
 DIST          = ../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/common/unix.conf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/common/linux.conf \
@@ -212,6 +212,7 @@ DIST          = ../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_post.prf \
+		../UnvToDG/.qmake.stash \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/toolchain.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/default_pre.prf \
@@ -232,11 +233,11 @@ DIST          = ../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../UnvToDG/UnvToDG.pro ../UnvToDG/DGAuxUltilitiesLib.h \
 		../UnvToDG/DGMessagesLib.h \
 		../UnvToDG/Unv2DReaderLib.h \
-		../UnvToDG/varDeclaration.h ../UnvToDG/DGAuxUltilitiesLib.cpp \
+		../UnvToDG/VarDeclaration.h ../UnvToDG/DGAuxUltilitiesLib.cpp \
 		../UnvToDG/DGMessagesLib.cpp \
 		../UnvToDG/Unv2DReaderLib.cpp \
 		../UnvToDG/Unv2DReader.cpp \
-		../UnvToDG/vardeclaration.cpp
+		../UnvToDG/Vardeclaration.cpp
 QMAKE_TARGET  = UnvToDG
 DESTDIR       = 
 TARGET        = UnvToDG
@@ -400,6 +401,7 @@ Makefile: ../UnvToDG/UnvToDG.pro ../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/toolchain.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/default_pre.prf \
@@ -572,6 +574,7 @@ Makefile: ../UnvToDG/UnvToDG.pro ../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/qt_config.prf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.conf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/toolchain.prf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/default_pre.prf:
@@ -606,8 +609,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../UnvToDG/DGAuxUltilitiesLib.h ../UnvToDG/DGMessagesLib.h ../UnvToDG/Unv2DReaderLib.h ../UnvToDG/varDeclaration.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../UnvToDG/DGAuxUltilitiesLib.cpp ../UnvToDG/DGMessagesLib.cpp ../UnvToDG/Unv2DReaderLib.cpp ../UnvToDG/Unv2DReader.cpp ../UnvToDG/vardeclaration.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../UnvToDG/DGAuxUltilitiesLib.h ../UnvToDG/DGMessagesLib.h ../UnvToDG/Unv2DReaderLib.h ../UnvToDG/VarDeclaration.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../UnvToDG/DGAuxUltilitiesLib.cpp ../UnvToDG/DGMessagesLib.cpp ../UnvToDG/Unv2DReaderLib.cpp ../UnvToDG/Unv2DReader.cpp ../UnvToDG/Vardeclaration.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -827,7 +830,7 @@ Unv2DReaderLib.o: ../UnvToDG/Unv2DReaderLib.cpp ../UnvToDG/Unv2DReaderLib.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
 		../UnvToDG/DGMessagesLib.h \
 		../UnvToDG/DGAuxUltilitiesLib.h \
-		../UnvToDG/varDeclaration.h \
+		../UnvToDG/VarDeclaration.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/QTextStream \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qtextstream.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qiodevice.h \
@@ -932,10 +935,10 @@ Unv2DReader.o: ../UnvToDG/Unv2DReader.cpp ../../../../Qt/5.11.1/gcc_64/include/Q
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qshareddata.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
 		../UnvToDG/Unv2DReaderLib.h \
-		../UnvToDG/varDeclaration.h
+		../UnvToDG/VarDeclaration.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Unv2DReader.o ../UnvToDG/Unv2DReader.cpp
 
-vardeclaration.o: ../UnvToDG/vardeclaration.cpp ../../../../Qt/5.11.1/gcc_64/include/QtCore/QString \
+Vardeclaration.o: ../UnvToDG/Vardeclaration.cpp ../../../../Qt/5.11.1/gcc_64/include/QtCore/QString \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qstring.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qchar.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qglobal.h \
@@ -967,8 +970,8 @@ vardeclaration.o: ../UnvToDG/vardeclaration.cpp ../../../../Qt/5.11.1/gcc_64/inc
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qstringview.h \
 		../../../../Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
-		../UnvToDG/varDeclaration.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o vardeclaration.o ../UnvToDG/vardeclaration.cpp
+		../UnvToDG/VarDeclaration.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Vardeclaration.o ../UnvToDG/Vardeclaration.cpp
 
 ####### Install
 

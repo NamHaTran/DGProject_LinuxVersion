@@ -1,0 +1,2 @@
+log was created at 05-03-2019_19-19-27
+Cannot open file <D:\Working\Code C++ for fun\DGProject\DG2DSolver\DG2DSolver\CASES\cylinderCoarse0\39500\rho.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\DG2DSolver\CASES\cylinderCoarse0\39500\rho.txt

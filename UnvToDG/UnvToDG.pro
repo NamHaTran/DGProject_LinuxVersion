@@ -19,7 +19,7 @@ SOURCES += \
     DGMessagesLib.cpp \
     Unv2DReaderLib.cpp \
     Unv2DReader.cpp \
-    vardeclaration.cpp
+    Vardeclaration.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -30,4 +30,4 @@ HEADERS += \
     DGAuxUltilitiesLib.h \
     DGMessagesLib.h \
     Unv2DReaderLib.h \
-    varDeclaration.h
+    VarDeclaration.h

@@ -108,6 +108,19 @@ namespace auxUlti
 	//Function gets edge of input element which has input order
 	int getEdgeHasInputOrderOfElement(int element, int inputEdgeOrder);
 
+	//Function gets value of all order of accuracy of residuals at inputted element and returns output as a vector
+	std::vector<double> getResidualValuesOfOrder(int element, int type);
+
+	//Function finds order of input point respect to input element
+	int findVertexOrder(int point, int element);
+
+	//Function add row with numCol to input array
+	void addRowTo2DIntArray(std::vector<std::vector<int>> &Array, int numCol);
+	void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol);
+
+    //Function create folder at input location
+    void createFolder(std::string location);
+
 	//Auxilary functions support for postProcessing
 	namespace postProcess
 	{

@@ -4,6 +4,8 @@
 #include "VarDeclaration.h"
 #include "dynamicVarDeclaration.h"
 #include "DGAuxUltilitiesLib.h"
+#include "DGMath.h"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -32,7 +34,7 @@ namespace MshReader
 		GetNormalVector();
 
 		/*Get points at boundary (for postProcessing)*/
-		//getBoundaryPoints();
+		getBoundaryPoints();
 
 		/*Save mesh data*/
 		IO::SaveMeshInfor();
@@ -303,10 +305,11 @@ namespace MshReader
 
 	void EdgesInfor()
 	{
-		int helpArrIndexI(0), helpArrIndexJ(0), jpoin(0), ipoinIndex(0), jpoinIndex(0);
-		int helpArray[20][pointsArrSize] = {};
+        int helpArrIndexI(0), helpArrIndexJ(0), jpoin(0), ipoinIndex(0), jpoinIndex(0);
+        //int helpArray[20][pointsArrSize] = {};
+        std::vector<std::vector<int>> helpArray(20,std::vector<int>(pointsArrSize,0));
 		int iHelpArray[20];
-		int flag(0), flag2(0);
+        int flag(0), flag2(0);
 
 		//Set initial values for helpArray array
 		for (int row = 0; row < 20; row++)
@@ -350,12 +353,12 @@ namespace MshReader
 							meshVar::inpoed[0][ninpoed] = jpoin;
 							meshVar::inpoed[1][ninpoed] = ipoin;
 
-							ipoinIndex = edgesOfPoint[20][ipoin] + 1;
-							jpoinIndex = edgesOfPoint[20][jpoin] + 1;
+                            ipoinIndex = edgesOfPoint[19][ipoin] + 1;
+                            jpoinIndex = edgesOfPoint[19][jpoin] + 1;
 							edgesOfPoint[ipoinIndex][ipoin] = ninpoed;
 							edgesOfPoint[jpoinIndex][ipoin] = ninpoed;
-							edgesOfPoint[20][ipoin] = ipoinIndex;
-							edgesOfPoint[20][jpoin] = jpoinIndex;
+                            edgesOfPoint[19][ipoin] = ipoinIndex;
+                            edgesOfPoint[19][jpoin] = jpoinIndex;
 
 							getBcGrpTp(ipoin, jpoin, ninpoed);
 						}
@@ -474,6 +477,8 @@ namespace MshReader
 		double normX(0.0), normY(0.0);
 		for (int iedge = 0; iedge <= ninpoed; iedge++)
 		{
+			auxUlti::addRowTo2DDoubleArray(meshVar::normalVector, 2);
+
 			elem1 = meshVar::ineled[0][iedge];
 			elem2 = meshVar::ineled[1][iedge];
 
@@ -486,7 +491,7 @@ namespace MshReader
 			{
 				masterElem = elem2;
 			}
-			meshVar::MasterElemOfEdge[iedge] = masterElem;
+			meshVar::MasterElemOfEdge.push_back(masterElem);
 
 			point1 = meshVar::inpoed[0][iedge];
 			point2 = meshVar::inpoed[1][iedge];
@@ -511,8 +516,8 @@ namespace MshReader
 				point2Indice = findIndex(point2, inforArr, 4);
 				std::tie(normX, normY) = calcNormVector(point1, point1Indice, point2, point2Indice, 3);  //Use this synstax to get result from tuble function
 			}
-			meshVar::normalVector[0][iedge] = normX;
-			meshVar::normalVector[1][iedge] = normY;
+			meshVar::normalVector[iedge][0] = normX;
+			meshVar::normalVector[iedge][1] = normY;
 		}
 	}
 
@@ -661,11 +666,12 @@ namespace MshReader
 		return std::make_tuple(normX, normY);
 	}
 
-	//Note: run this function AFTER mesh processing is DONE
+	//Note: run this function AFTER mesh processing has been DONE
 	void getBoundaryPoints()
 	{
+		meshVar::markPointsAtBC.resize(meshVar::npoin);
 		std::vector<int> helpArr(meshVar::npoin, 0);
-		int edgeId(-1), pt1(-1), pt2(-1);
+		int edgeId(-1), pt1(-1), pt2(-1), BCPtsId(0);
 		for (int i = 0; i < meshVar::numBCEdges; i++)
 		{
 			edgeId = meshVar::adressOfBCVals[i];
@@ -673,17 +679,121 @@ namespace MshReader
 			pt2 = meshVar::inpoed[1][edgeId];
 			if (helpArr[pt1] == 0)
 			{
-				SurfaceBCFields::BCPoints.push_back(pt1);
+				auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);
+				//SurfaceBCFields::BCPoints[numBCPts][0] = pt1;
+				meshVar::markPointsAtBC[pt1] = BCPtsId + 1;
+				SurfaceBCFields::BCPointsInfor[BCPtsId][0] = edgeId;
 				helpArr[pt1] = 1;
+				BCPtsId++;
+			}
+			else
+			{
+				SurfaceBCFields::BCPointsInfor[meshVar::markPointsAtBC[pt1] - 1][1] = edgeId;
 			}
 
 			if (helpArr[pt2] == 0)
 			{
-				SurfaceBCFields::BCPoints.push_back(pt2);
+				auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);
+				//SurfaceBCFields::BCPoints[numBCPts][0] = pt2;
+				meshVar::markPointsAtBC[pt2] = BCPtsId + 1;
+				SurfaceBCFields::BCPointsInfor[BCPtsId][0] = edgeId;
 				helpArr[pt2] = 1;
+				BCPtsId++;
+			}
+			else
+			{
+				SurfaceBCFields::BCPointsInfor[meshVar::markPointsAtBC[pt2] - 1][1] = edgeId;
+			}
+		}
+		auxUlti::clear1DIntVector(helpArr);
+	}
+
+	void sortPointsOfElements()
+	{
+		std::vector<int> sortedElement; 
+		double xCG(0.0), yCG(0.0), xTranslate(0.0), yTranslate(0.0);
+		int elemType(0), pointAId(-1);
+		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+		{
+			std::vector<double> filterdPointsCoor;
+			std::vector<int> vectorPts, filterdPoints;
+			elemType = auxUlti::checkType(ielem);
+			std::vector<double> xCoor(elemType, 0.0),
+				yCoor(elemType, 0.0);
+			for (int i = 0; i < elemType; i++)
+			{
+				std::tie(xCoor[i], yCoor[i]) = auxUlti::getElemCornerCoord(ielem, i);
+			}
+			std::tie(xCG, yCG) = math::geometricOp::calcGeoCenter(xCoor, yCoor, elemType);
+
+			//Filter 1:
+			for (int i = 0; i < elemType; i++)
+			{
+				xTranslate = xCoor[i] - xCG;
+				yTranslate = yCoor[i] - yCG;
+				if (yTranslate <= 0.0)
+				{
+					filterdPoints.push_back(i);
+					filterdPointsCoor.push_back(xTranslate);
+				}
+			}
+
+			//Filter 2:
+			if (filterdPoints.size() > 1)
+			{
+				double minXCoor(*std::min_element(filterdPointsCoor.begin(), filterdPointsCoor.end()));
+                for (int id = 0; id < static_cast<int>(filterdPoints.size()); id++)
+				{
+                    if (fabs(minXCoor - filterdPointsCoor[id]) < 1e-10)
+					{
+						pointAId = filterdPoints[id];
+						goto jumpHere;
+					}
+				}
+			}
+			else
+			{
+				pointAId = filterdPoints[0];
+			}
+
+		jumpHere:
+
+			if (pointAId != 0)
+			{
+				sortedElement.push_back(ielem);
+				for (int i = pointAId; i < elemType; i++)
+				{
+					vectorPts.push_back(meshVar::Elements2D[ielem][i]);
+				}
+				for (int i = 0; i < pointAId; i++)
+				{
+					vectorPts.push_back(meshVar::Elements2D[ielem][i]);
+				}
+
+				//Put point ids back to Elements2D array
+				//std::cout << "Element " << ielem + meshVar::nelem1D + 1 << ". new order: \n";
+				for (int i = 0; i < elemType; i++)
+				{
+					meshVar::Elements2D[ielem][i] = vectorPts[i];
+					//std::cout << vectorPts[i] << " ";
+				}
+				//std::cout << std::endl;
 			}
 		}
 
-		auxUlti::clear1DIntVector(helpArr);
+		//Write information for debugging
+		std::string  sortedElemLoc = systemVar::pwd + "\\Constant\\Mesh\\sortedElements.txt";
+		std::ofstream Flux(sortedElemLoc.c_str());
+		if (Flux)
+		{
+            for (int i = 0; i < static_cast<int>(sortedElement.size()); i++)
+			{
+				Flux << sortedElement[i] << std::endl;
+			}
+		}
+		else
+		{
+			std::cout << "Error of writting files\n";
+		}
 	}
 }

@@ -17,7 +17,7 @@ namespace meshParam
 	{
 		math::Gauss(mathVar::nGauss);
 		math::GaussLobatto(mathVar::nGauss);  //run GaussLobatto for applying limiter
-        for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is strted from 0
+		for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
 		{
 			for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
@@ -117,7 +117,7 @@ namespace meshParam
 	void calcCellMetrics()
 	{
 		int elemType(0);
-		double xCG(0.0), yCG(0.0);
+		double xCG(0.0), yCG(0.0), cellArea(0.0);
 		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
 		{
 			elemType = auxUlti::checkType(nelem);
@@ -130,7 +130,8 @@ namespace meshParam
 				std::tie(xCoor[i], yCoor[i]) = auxUlti::getElemCornerCoord(nelem, i);
 			}
 			//1. Calculate cell area (cell size)
-			meshVar::cellSize[nelem] = math::geometricOp::calcPolygonArea(xCoor, yCoor, elemType);
+			//24/2/2019: this part is only for triangular mesh
+			std::tie(meshVar::cellSize[nelem], cellArea) = math::geometricOp::calROfInscribedCircleOfTriElement(nelem);
 
 			//2. Compute geometric center of cell
 			std::tie(xCG, yCG) = math::geometricOp::calcGeoCenter(xCoor, yCoor, elemType);
@@ -144,11 +145,11 @@ namespace meshParam
 			else  //quad element
 			{
 				//3. Compute geometric center of sub-triangles which creates polygon
-				std::tie(meshVar::geoCenter[nelem][0], meshVar::geoCenter[nelem][1]) = math::geometricOp::calcQuadCentroid(nelem, xCG, yCG, meshVar::cellSize[nelem]);
+				std::tie(meshVar::geoCenter[nelem][0], meshVar::geoCenter[nelem][1]) = math::geometricOp::calcQuadCentroid(nelem, xCG, yCG, cellArea);
 			}
 
 			//4. Calculate local cell size
-			meshVar::localCellSize[nelem] = math::geometricOp::calLocalCellSize(nelem);
+			meshVar::localCellSize[nelem] = math::geometricOp::calLocalCellSize(nelem, cellArea);
 		}
 	}
 
@@ -594,7 +595,6 @@ namespace process
 
 			int elemType(auxUlti::checkType(element)), edgeName(0);
 			int faceBcType(0);
-			double nVectorComp(0.0);
 			std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0));
 
 			for (int nface = 0; nface < elemType; nface++)
@@ -646,11 +646,7 @@ namespace process
 			int masterCell(-1), slaveCell(-1), bcGrp(0);
 			double uMaster(0.0), vMaster(0.0), totalEMaster(0.0), TMaster(0.0), pMaster(0.0),
 				uSlave(0.0), vSlave(0.0), totalESlave(0.0), TSlave(0.0), pSlave(0.0), eMaster(0.0), eSlave(0.0),
-				uMagM(0.0), uMagP(0.0), aM(0.0), aP(0.0),
-				dRhoXMaster(0.0), dRhouXMaster(0.0), dRhovXMaster(0.0), dRhoEXMaster(0.0),
-				dRhoYMaster(0.0), dRhouYMaster(0.0), dRhovYMaster(0.0), dRhoEYMaster(0.0),
-				dRhoXSlave(0.0), dRhouXSlave(0.0), dRhovXSlave(0.0), dRhoEXSlave(0.0),
-				dRhoYSlave(0.0), dRhouYSlave(0.0), dRhovYSlave(0.0), dRhoEYSlave(0.0);
+                uMagM(0.0), uMagP(0.0), aM(0.0), aP(0.0);
 			std::vector<double> UMaster(4, 0.0), dUXMaster(4, 0.0), dUYMaster(4, 0.0),
 				USlave(4, 0.0), dUXSlave(4, 0.0), dUYSlave(4, 0.0),
 				CArray(mathVar::nGauss + 1, 0.0), vectorn(2, 0.0); // BetaArray(mathVar::nGauss + 1, 0.0),
@@ -1518,126 +1514,16 @@ namespace process
 
 		double localTimeStep(int element)
 		{
-			std::vector<double> vectorDeltaT;
-			double deltaT(0.0), uVal(0.0), vVal(0.0), velocity(0.0), TVal(0.0), aSound(0.0), LocalMach(0.0), muVal(0.0),
-				aG(0.0), bG(0.0), rhoVal(0.0), rhouVal(0.0), rhovVal(0.0), rhoEVal(0.0), size(meshVar::cellSize[element]);
-
-			/*
-			if (TVal<=0 || TVal != TVal) //
-			{
-				std::cout << "Unphysical T is detected at element " << element + meshVar::nelem1D + 1 << std::endl;
-				//TVal = iniValues::TIni;
-				//system("pause");
-				double rhoVal(math::pointValue(element, aC, bC, 1, 2)),
-					rhouVal(math::pointValue(element, aC, bC, 2, 2)),
-					rhovVal(math::pointValue(element, aC, bC, 3, 2)),
-					rhoEVal(math::pointValue(element, aC, bC, 4, 2));
-				//std::cout << "value rho, rhou, rhov, rhoe = " << rhoVal << ", " << rhouVal << ", " << rhovVal << ", " << rhoEVal << std::endl;
-			}
-			*/
-			for (int na = 0; na <= mathVar::nGauss; na++)
-			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
-				{
-					aG = mathVar::GaussPts[na][nb][0];
-					bG = mathVar::GaussPts[na][nb][1];
-					rhoVal = math::pointValue(element, aG, bG, 1, 2);
-					rhouVal = math::pointValue(element, aG, bG, 2, 2);
-					rhovVal = math::pointValue(element, aG, bG, 3, 2);
-					rhoEVal = math::pointValue(element, aG, bG, 4, 2);
-
-					//uVal = rhouVal / rhoVal;
-					//vVal = rhovVal / rhoVal;
-					//velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
-					TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-					aSound = math::CalcSpeedOfSound(TVal);
-					//LocalMach = velocity / aSound;
-					muVal = math::CalcVisCoef(TVal);
-					vectorDeltaT.push_back((1.0 / pow((mathVar::orderElem + 1), 2))*(size*systemVar::CFL) / (fabs(velocity) + (aSound) + (muVal / size)));
-				}
-			}
-
-			int na = 1;
-			for (int nb = 0; nb <= mathVar::nGauss; nb++)
-			{
-				aG = mathVar::GaussPts[na][nb][0];
-				bG = mathVar::GaussPts[na][nb][1];
-				rhoVal = math::pointValue(element, aG, bG, 1, 2);
-				rhouVal = math::pointValue(element, aG, bG, 2, 2);
-				rhovVal = math::pointValue(element, aG, bG, 3, 2);
-				rhoEVal = math::pointValue(element, aG, bG, 4, 2);
-
-				//uVal = rhouVal / rhoVal;
-				//vVal = rhovVal / rhoVal;
-				//velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
-				TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-				aSound = math::CalcSpeedOfSound(TVal);
-				//LocalMach = velocity / aSound;
-				muVal = math::CalcVisCoef(TVal);
-				vectorDeltaT.push_back((1.0 / pow((mathVar::orderElem + 1), 2))*(size*systemVar::CFL) / (fabs(velocity) + (aSound) + (muVal / size)));
-			}
-
-			na = -1;
-			for (int nb = 0; nb <= mathVar::nGauss; nb++)
-			{
-				aG = mathVar::GaussPts[na][nb][0];
-				bG = mathVar::GaussPts[na][nb][1];
-				rhoVal = math::pointValue(element, aG, bG, 1, 2);
-				rhouVal = math::pointValue(element, aG, bG, 2, 2);
-				rhovVal = math::pointValue(element, aG, bG, 3, 2);
-				rhoEVal = math::pointValue(element, aG, bG, 4, 2);
-
-				//uVal = rhouVal / rhoVal;
-				//vVal = rhovVal / rhoVal;
-				//velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
-				TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-				aSound = math::CalcSpeedOfSound(TVal);
-				//LocalMach = velocity / aSound;
-				muVal = math::CalcVisCoef(TVal);
-				vectorDeltaT.push_back((1.0 / pow((mathVar::orderElem + 1), 2))*(size*systemVar::CFL) / (fabs(velocity) + (aSound) + (muVal / size)));
-			}
-
-			int nb = 1;
-			for (int na = 0; na <= mathVar::nGauss; na++)
-			{
-				aG = mathVar::GaussPts[na][nb][0];
-				bG = mathVar::GaussPts[na][nb][1];
-				rhoVal = math::pointValue(element, aG, bG, 1, 2);
-				rhouVal = math::pointValue(element, aG, bG, 2, 2);
-				rhovVal = math::pointValue(element, aG, bG, 3, 2);
-				rhoEVal = math::pointValue(element, aG, bG, 4, 2);
-
-				//uVal = rhouVal / rhoVal;
-				//vVal = rhovVal / rhoVal;
-				//velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
-				TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-				aSound = math::CalcSpeedOfSound(TVal);
-				//LocalMach = velocity / aSound;
-				muVal = math::CalcVisCoef(TVal);
-				vectorDeltaT.push_back((1.0 / pow((mathVar::orderElem + 1), 2))*(size*systemVar::CFL) / (fabs(velocity) + (aSound) + (muVal / size)));
-			}
-
-			nb = -1;
-			for (int na = 0; na <= mathVar::nGauss; na++)
-			{
-				aG = mathVar::GaussPts[na][nb][0];
-				bG = mathVar::GaussPts[na][nb][1];
-				rhoVal = math::pointValue(element, aG, bG, 1, 2);
-				rhouVal = math::pointValue(element, aG, bG, 2, 2);
-				rhovVal = math::pointValue(element, aG, bG, 3, 2);
-				rhoEVal = math::pointValue(element, aG, bG, 4, 2);
-
-				//uVal = rhouVal / rhoVal;
-				//vVal = rhovVal / rhoVal;
-				//velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
-				TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-				aSound = math::CalcSpeedOfSound(TVal);
-				//LocalMach = velocity / aSound;
-				muVal = math::CalcVisCoef(TVal);
-				vectorDeltaT.push_back((1.0 / pow((mathVar::orderElem + 1), 2))*(size*systemVar::CFL) / (fabs(velocity) + (aSound) + (muVal / size)));
-			}
-			//deltaT = (1.0 / pow((mathVar::orderElem + 1 + 1), 2))*(size*systemVar::CFL) / (fabs(velocity) + (aSound / LocalMach) + (muVal / size));
-			deltaT = *std::min_element(vectorDeltaT.begin(), vectorDeltaT.end());
+			double deltaT(0.0), uVal(0.0), vVal(0.0), velocity(0.0), TVal(0.0), aSound(0.0), muVal(0.0), size(meshVar::cellSize[element]);
+			uVal = rhou[element][0] / rho[element][0];
+			vVal = rhov[element][0] / rho[element][0];
+			velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
+			TVal = math::CalcTFromConsvVar(rho[element][0], rhou[element][0], rhov[element][0], rhoE[element][0]);
+			aSound = math::CalcSpeedOfSound(TVal);
+			muVal = math::CalcVisCoef(TVal);
+			
+			//deltaT = fabs((1.0 / (2 * mathVar::orderElem + 1))*(size*systemVar::CFL) / (aSound + velocity));
+			deltaT = fabs((1.0 / pow(mathVar::orderElem + 1, 2))*(size*systemVar::CFL) / (aSound + velocity + muVal/size));
 			return deltaT;
 		}
 
@@ -1663,32 +1549,28 @@ namespace process
 
 		void globalErrorEstimate()
 		{
-			std::vector<double> rhoRes(mathVar::orderElem + 1, 0.0),
-				rhouRes(mathVar::orderElem + 1, 0.0),
-				rhovRes(mathVar::orderElem + 1, 0.0),
-				rhoERes(mathVar::orderElem + 1, 0.0),
+			double xC(0.0), yC(0.0), aC(0.0), bC(0.0);
+			std::vector<double> rhoRes(meshVar::nelem2D, 0.0),
+				rhouRes(meshVar::nelem2D, 0.0),
+				rhovRes(meshVar::nelem2D, 0.0),
+				rhoERes(meshVar::nelem2D, 0.0);
+			double rhoResGlobal(1.0), rhouResGlobal(1.0), rhovResGlobal(1.0), rhoEResGlobal(1.0);
 
-				rhoResOrder(meshVar::nelem2D, 0.0),
-				rhouResOrder(meshVar::nelem2D, 0.0),
-				rhovResOrder(meshVar::nelem2D, 0.0),
-				rhoEResOrder(meshVar::nelem2D, 0.0);
-
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
-				for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
-				{
-					rhoResOrder[nelement] = fabs(rhoResArr[nelement][iorder]);
-					rhouResOrder[nelement] = fabs(rhouResArr[nelement][iorder]);
-					rhovResOrder[nelement] = fabs(rhovResArr[nelement][iorder]);
-					rhoEResOrder[nelement] = fabs(rhoEResArr[nelement][iorder]);
-				}
-				rhoRes[iorder]= *std::max_element(rhoResOrder.begin(), rhoResOrder.end());
-				rhouRes[iorder] = *std::max_element(rhouResOrder.begin(), rhouResOrder.end());
-				rhovRes[iorder] = *std::max_element(rhovResOrder.begin(), rhovResOrder.end());
-				rhoERes[iorder] = *std::max_element(rhoEResOrder.begin(), rhoEResOrder.end());
+				std::tie(xC, yC) = auxUlti::getCellCentroid(nelement);
+				std::tie(aC, bC) = math::inverseMapping(nelement, xC, yC);
+				rhoRes[nelement] = math::calcResidualFromResidualOfOrder(nelement, aC, bC, 1);
+				rhouRes[nelement] = math::calcResidualFromResidualOfOrder(nelement, aC, bC, 2);
+				rhovRes[nelement] = math::calcResidualFromResidualOfOrder(nelement, aC, bC, 3);
+				rhoERes[nelement] = math::calcResidualFromResidualOfOrder(nelement, aC, bC, 4);
 			}
+			rhoResGlobal = *std::max_element(rhoRes.begin(), rhoRes.end());
+			rhouResGlobal = *std::max_element(rhouRes.begin(), rhouRes.end());
+			rhovResGlobal = *std::max_element(rhovRes.begin(), rhovRes.end());
+			rhoEResGlobal = *std::max_element(rhoERes.begin(), rhoERes.end());
 			
-			IO::residualOutput(rhoRes, rhouRes, rhovRes, rhoERes);
+			IO::residualOutput(rhoResGlobal, rhouResGlobal, rhovResGlobal, rhoEResGlobal);
 		}
 
 		void TVDRK_1step(int RKOrder)

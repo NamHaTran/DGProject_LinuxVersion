@@ -6,6 +6,7 @@
 #include "DGAuxUltilitiesLib.h"
 #include <tuple>
 #include "DGMessagesLib.h"
+#include <math.h>
 
 /*NOTES:
 - All boundary functions must return numerical fluxes (rho, rhou, rhov, rhoE fluxes) at surface Gauss points!
@@ -39,7 +40,21 @@ std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG
 		switch (method)
 		{
 		case 1:  //weak Riemann method
-			Fluxes = NSFEqBCs::weakRiemann::patch::inOutFlow(element, edge, edgeGrp, nG);
+			Fluxes = NSFEqBCs::weakRiemann::patch::inFlow(element, edge, edgeGrp, nG);
+			break;
+		case 2:  //weak Prescribed
+			Fluxes = NSFEqBCs::weakPrescribed::patch::inOutFlow(element, edge, nG);
+			break;
+		default:
+			break;
+		}
+	}
+	else if (UType == 4 && TType == 4 && pType == 4)
+	{
+		switch (method)
+		{
+		case 1:  //weak Riemann method
+			Fluxes = NSFEqBCs::weakRiemann::patch::outFlow(element, edge, edgeGrp, nG);
 			break;
 		case 2:  //weak Prescribed
 			Fluxes = NSFEqBCs::weakPrescribed::patch::inOutFlow(element, edge, nG);
@@ -94,43 +109,30 @@ std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG
 	int edgeGrp(auxUlti::getGrpOfEdge(edge));
 	int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]), method(meshVar::BoundaryType[edgeGrp - 1][2]);
 
-	/*
-	if ((UType == 1 && TType == 1 && pType == 1) || (UType == 2 && TType == 2 && pType == 2)|| (UType == 2 && TType == 3 && pType == 2))
-	{
-		//Calculate BC values
-		if (UType == 1 && TType == 1 && pType == 1)
-		{
-			BCSupportFncs::weakPrescribedFluxes::calcInOutFlowBCVals(element, edge, edgeGrp, nG);
-		}
-		else if (UType == 2 && TType == 2 && pType == 2)
-		{
-			BCSupportFncs::weakPrescribedFluxes::calcWallIsothermalBCVals(element, edge, edgeGrp, nG);
-		}
-		else if (UType == 2 && TType == 3 && pType == 2)
-		{
-			BCSupportFncs::weakPrescribedFluxes::calcWallAdiabaticBCVals(element, edge, edgeGrp, nG);
-		}
-		Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG, nx, ny);
-	}
-	else if (UType == 7 && TType == 7 && pType == 7)
-	{
-		Fluxes = auxilaryBCs::Symmetry(element, edge, nG, nx, ny);
-	}
-	else
-	{
-		std::string errorStr = message::BcCompatibleError(edgeGrp);
-		message::writeLog(systemVar::pwd, systemVar::caseName, errorStr);
-	}
-	*/
 	if (UType == 1 && TType == 1 && pType == 1)
 	{
 		switch (method)
 		{
 		case 1:  //weak Riemann method
-			Fluxes = auxilaryBCs::weakRiemann::patch::inOutFlow(element, edge, edgeGrp, nG);
+			Fluxes = auxilaryBCs::weakRiemann::patch::inFlow(element, edge, edgeGrp, nG);
 			break;
 		case 2:  //weak Prescribed
-			BCSupportFncs::weakPrescribedFluxes::calcInOutFlowBCVals(element, edge, edgeGrp, nG);
+			BCSupportFncs::weakPrescribedFluxes::calcInFlowBCVals(element, edge, edgeGrp, nG);
+			Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG);
+			break;
+		default:
+			break;
+		}
+	}
+	else if (UType == 4 && TType == 4 && pType == 4)
+	{
+		switch (method)
+		{
+		case 1:  //weak Riemann method
+			Fluxes = auxilaryBCs::weakRiemann::patch::outFlow(element, edge, edgeGrp, nG);
+			break;
+		case 2:  //weak Prescribed
+			BCSupportFncs::weakPrescribedFluxes::calcOutFlowBCVals(element, edge, edgeGrp, nG);
 			Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG);
 			break;
 		default:
@@ -200,6 +202,7 @@ namespace BCSupportFncs
 		{
 			inflow = false;
 		}
+
 		return inflow;
 	}
 
@@ -265,13 +268,13 @@ namespace BCSupportFncs
 			return Fluxes;
 		}
 
-		void calcInOutFlowBCVals(int element, int edge, int edgeGrp, int nG)
+		void calcInFlowBCVals(int element, int edge, int edgeGrp, int nG)
 		{
 			std::vector<double>	UPlus(4, 0.0),
 				norm(2, 0.0),
 				vInternalVector(2, 0.0);
-			double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0),
-				RPlus(0.0), RMinus(0.0), rhoBc(0.0), rhouBc(0.0), rhovBc(0.0), rhoEBc(0.0), pBc(0.0), TBc(0.0), uBc(0.0), vBc(0.0);;
+            double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)),
+                RPlus(0.0), RMinus(0.0), rhoBc(0.0), pBc(0.0), TBc(0.0), uBc(0.0), vBc(0.0);;
 			std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 			norm[0] = nx;
 			norm[1] = ny;
@@ -293,7 +296,65 @@ namespace BCSupportFncs
 			}
 
 			double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
-			bool inflow(BCSupportFncs::checkInflow(uPlus, vPlus, nx, ny));
+			double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
+
+			vInternalVector[0] = uPlus;
+			vInternalVector[1] = vPlus;
+			vInternalNormMag = math::vectorDotProduct(vInternalVector, norm);
+			cInternal = math::CalcSpeedOfSound(TInternal);
+			if (refValues::subsonic == true)
+			{
+				RPlus = vInternalNormMag + (2 * cInternal) / (material::gamma - 1);
+			}
+			else if (refValues::subsonic == false)
+			{
+				RPlus = vExternalNormMag + (2 * cExternal) / (material::gamma - 1);
+			}
+			RMinus = vExternalNormMag - (2 * cExternal) / (material::gamma - 1);
+
+			VBc = 0.5*(RPlus + RMinus);
+			cBc = 0.25*(material::gamma - 1)*(RPlus - RMinus);
+			SBc = pow(cExternal, 2) / (material::gamma*pow(rhoExternal, material::gamma - 1));
+			rhoBc = pow((pow(cBc, 2)) / (material::gamma*SBc), 1 / (material::gamma - 1));
+			pBc = rhoBc * pow(cBc, 2) / material::gamma;
+			TBc = pBc / (rhoBc*material::R);
+			std::tie(uBc, vBc) = BCSupportFncs::calcInOutFlowVelocity(uExternal, vExternal, nx, ny, VBc);
+
+			int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+			SurfaceBCFields::rhoBc[nG][loc] = rhoBc;
+			SurfaceBCFields::rhouBc[nG][loc] = rhoBc * uBc;
+			SurfaceBCFields::rhovBc[nG][loc] = rhoBc * vBc;
+			SurfaceBCFields::rhoEBc[nG][loc] = rhoBc * (material::Cv*TBc + 0.5*(pow(uBc, 2) + pow(vBc, 2)));
+		}
+
+		void calcOutFlowBCVals(int element, int edge, int edgeGrp, int nG)
+		{
+			std::vector<double>	UPlus(4, 0.0),
+				norm(2, 0.0),
+				vInternalVector(2, 0.0);
+            double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)),
+                RPlus(0.0), RMinus(0.0), rhoBc(0.0), pBc(0.0), TBc(0.0), uBc(0.0), vBc(0.0);;
+			std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+			norm[0] = nx;
+			norm[1] = ny;
+
+			double vInternalNormMag(0.0), vExternalNormMag(0.0), cInternal(0.0), SBc(0.0);
+			double uExternal(bcValues::uBC[edgeGrp - 1]), vExternal(bcValues::vBC[edgeGrp - 1]), cExternal(0.0);
+			std::vector<double> vExternalVector(2, 0.0);
+			double VBc(0.0), cBc(0.0), rhoExternal(0.0);
+
+			rhoExternal = bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]);
+			vExternalVector[0] = uExternal;
+			vExternalVector[1] = vExternal;
+			vExternalNormMag = math::vectorDotProduct(vExternalVector, norm);
+			cExternal = math::CalcSpeedOfSound(bcValues::TBC[edgeGrp - 1]);
+
+			for (int i = 0; i < 4; i++)
+			{
+				UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
+			}
+
+			double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
 			double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
 
 			vInternalVector[0] = uPlus;
@@ -301,45 +362,23 @@ namespace BCSupportFncs
 			vInternalNormMag = math::vectorDotProduct(vInternalVector, norm);
 			cInternal = math::CalcSpeedOfSound(TInternal);
 
-			if (inflow == true)  //inflow boundary condtion
+			RPlus = vInternalNormMag + (2 * cInternal) / (material::gamma - 1);
+			if (refValues::subsonic == true)
 			{
-				if (refValues::subsonic == true)
-				{
-					RPlus = vInternalNormMag + (2 * cInternal) / (material::gamma - 1);
-				}
-				else if (refValues::subsonic == false)
-				{
-					RPlus = vExternalNormMag + (2 * cExternal) / (material::gamma - 1);
-				}
 				RMinus = vExternalNormMag - (2 * cExternal) / (material::gamma - 1);
-
-				VBc = 0.5*(RPlus + RMinus);
-				cBc = 0.25*(material::gamma - 1)*(RPlus - RMinus);
-				SBc = pow(cExternal, 2) / (material::gamma*pow(rhoExternal, material::gamma - 1));
-				rhoBc = pow((pow(cBc, 2)) / (material::gamma*SBc),1/(material::gamma - 1));
-				pBc = rhoBc * pow(cBc, 2) / material::gamma;
-				TBc = pBc / (rhoBc*material::R);
-				std::tie(uBc, vBc) = BCSupportFncs::calcInOutFlowVelocity(uExternal, vExternal, nx, ny, VBc);
 			}
-			else if (inflow == false)  //outflow boundary condition
+			else if (refValues::subsonic == false)
 			{
-				RPlus = vInternalNormMag + (2 * cInternal) / (material::gamma - 1);
-				if (refValues::subsonic == true)
-				{
-					RMinus = vExternalNormMag - (2 * cExternal) / (material::gamma - 1);
-				}
-				else if (refValues::subsonic == false)
-				{
-					RMinus = vInternalNormMag - (2 * cInternal) / (material::gamma - 1);
-				}
-				VBc = 0.5*(RPlus + RMinus);
-				cBc = 0.25*(material::gamma - 1)*(RPlus - RMinus);
-				SBc = pow(cInternal, 2) / (material::gamma*pow(UPlus[0], material::gamma - 1));
-				rhoBc = pow((pow(cBc, 2)) / (material::gamma*SBc),1/(material::gamma - 1));
-				pBc = rhoBc * pow(cBc, 2) / material::gamma;
-				TBc = pBc / (rhoBc*material::R);
-				std::tie(uBc, vBc) = BCSupportFncs::calcInOutFlowVelocity(uPlus, vPlus, nx, ny, VBc);
+				RMinus = vInternalNormMag - (2 * cInternal) / (material::gamma - 1);
 			}
+			VBc = 0.5*(RPlus + RMinus);
+			cBc = 0.25*(material::gamma - 1)*(RPlus - RMinus);
+			SBc = pow(cInternal, 2) / (material::gamma*pow(UPlus[0], material::gamma - 1));
+			rhoBc = pow((pow(cBc, 2)) / (material::gamma*SBc), 1 / (material::gamma - 1));
+			pBc = rhoBc * pow(cBc, 2) / material::gamma;
+			TBc = pBc / (rhoBc*material::R);
+			std::tie(uBc, vBc) = BCSupportFncs::calcInOutFlowVelocity(uPlus, vPlus, nx, ny, VBc);
+
 			int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
 			SurfaceBCFields::rhoBc[nG][loc] = rhoBc;
 			SurfaceBCFields::rhouBc[nG][loc] = rhoBc * uBc;
@@ -405,7 +444,7 @@ namespace NSFEqBCs
 					dUXPlus(4, 0.0),
 					dUYPlus(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;
@@ -465,7 +504,7 @@ namespace NSFEqBCs
 
 		namespace patch
 		{
-			std::vector <std::vector<double>> inOutFlow(int element, int edge, int edgeGrp, int nG)
+			std::vector <std::vector<double>> inFlow(int element, int edge, int edgeGrp, int nG)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double>
@@ -474,7 +513,38 @@ namespace NSFEqBCs
 					dUXPlus(4, 0.0),
 					dUYPlus(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+				norm[0] = nx;
+				norm[1] = ny;
+
+				for (int i = 0; i < 4; i++)
+				{
+					UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
+					dUXPlus[i] = math::pointAuxValue(element, a, b, i + 1, 1);
+					dUYPlus[i] = math::pointAuxValue(element, a, b, i + 1, 2);
+				}
+
+				//Apply weak Riemann infinite value
+				UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
+				UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
+				UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
+				UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+
+				Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXPlus, dUYPlus, dUYPlus, norm);
+				return Fluxes;
+			}
+
+			std::vector <std::vector<double>> outFlow(int element, int edge, int edgeGrp, int nG)
+			{
+				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+				std::vector<double>
+					UPlus(4, 0.0),
+					UMinus(4, 0.0),
+					dUXPlus(4, 0.0),
+					dUYPlus(4, 0.0),
+					norm(2, 0.0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;
@@ -487,75 +557,52 @@ namespace NSFEqBCs
 				}
 
 				double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
-				bool inflow(BCSupportFncs::checkInflow(uPlus, vPlus, nx, ny));
 
-				if (inflow == true)
+				//Apply PNR (2), R (1)
+				int implementation(1);
+				switch (implementation)
 				{
-					//Apply weak Riemann infinite value
-					UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
-					UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
-					UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
-					UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+				case 1: //R
+				{
+					if (refValues::subsonic)
+					{
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+					}
+					else
+					{
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = UPlus[3];
+					}
 				}
-				else if (inflow == false)
+				break;
+				case 2: //PNR
 				{
-					//Apply PNR (2), R (1)
-					int implementation(1);
-					switch (implementation)
+					double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
+					double pInternal(0);
+					pInternal = UPlus[0] * material::R*TInternal;
+					if (refValues::subsonic)
 					{
-					case 1: //R
-					{
-						switch (refValues::subsonic)
-						{
-						case true:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
-						}
-						break;
-						case false:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = UPlus[3];
-						
-						}
-						break;
-						}
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
 					}
+					else
+					{
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = UPlus[3];
+					}
+				}
+				break;
+				default:
 					break;
-					case 2: //PNR
-					{
-						double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
-						double pInternal(0);
-						pInternal = UPlus[0] * material::R*TInternal;
-						switch (refValues::subsonic)
-						{
-						case true:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
-						}
-						break;
-						case false:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = UPlus[3];
-						}
-						break;
-						}
-					}
-					break;
-					default:
-						break;
-					}
 				}
 
 				Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXPlus, dUYPlus, dUYPlus, norm);
@@ -582,15 +629,18 @@ namespace NSFEqBCs
 			for (int i = 0; i < 4; i++)
 			{
 				UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
+				//UMinus[i] = UPlus[i];
 				dUXPlus[i] = math::pointAuxValue(element, a, b, i + 1, 1);
 				dUYPlus[i] = math::pointAuxValue(element, a, b, i + 1, 2);
 				dUXMinus[i] = dUXPlus[i] - 2 * (dUXPlus[i] * nx + dUYPlus[i] * ny)*nx;
 				dUYMinus[i] = dUYPlus[i] - 2 * (dUXPlus[i] * nx + dUYPlus[i] * ny)*ny;
+				//dUXMinus[i] = dUXPlus[i];
+				//dUYMinus[i] = dUYPlus[i];
 			}
-			UMinus[0] = math::pointValue(element, a, b, 1, 2);
+			UMinus[0] = UPlus[0];
 			UMinus[1] = UPlus[1] - 2 * (UPlus[1] * nx + UPlus[2] * ny)*nx;
 			UMinus[2] = UPlus[2] - 2 * (UPlus[1] * nx + UPlus[2] * ny)*ny;
-			UMinus[3] = math::pointValue(element, a, b, 4, 2);
+			UMinus[3] = UPlus[3];
 			
 			Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
 			return Fluxes;
@@ -608,7 +658,7 @@ namespace NSFEqBCs
 					dUXBc(4, 0.0),
 					dUYBc(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;
@@ -633,7 +683,7 @@ namespace NSFEqBCs
 					dUXBc(4, 0.0),
 					dUYBc(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;
@@ -769,7 +819,41 @@ namespace auxilaryBCs
 
 		namespace patch
 		{
-			std::vector <std::vector<double>> inOutFlow(int element, int edge, int edgeGrp, int nG)
+			std::vector <std::vector<double>> inFlow(int element, int edge, int edgeGrp, int nG)
+			{
+				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+				std::vector<double>
+					UPlus(4, 0.0),
+					UMinus(4, 0.0),
+					norm(2, 0.0);
+				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0), muP(0.0), muM(0.0);
+				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+				norm[0] = nx;
+				norm[1] = ny;
+
+				for (int i = 0; i < 4; i++)
+				{
+					UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
+				}
+
+				//Apply weak Riemann infinite value
+				UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
+				UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
+				UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
+				UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+
+				muP = (math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
+				muM = (math::CalcVisCoef(math::CalcTFromConsvVar(UMinus[0], UMinus[1], UMinus[2], UMinus[3])));
+
+				for (int i = 0; i < 4; i++)
+				{
+					Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i] * muM, UPlus[i] * muP, nx);
+					Fluxes[i][1] = math::numericalFluxes::auxFlux(UMinus[i] * muM, UPlus[i] * muP, ny);
+				}
+				return Fluxes;
+			}
+
+			std::vector <std::vector<double>> outFlow(int element, int edge, int edgeGrp, int nG)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double>
@@ -787,75 +871,53 @@ namespace auxilaryBCs
 				}
 
 				double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
-				bool inflow(BCSupportFncs::checkInflow(uPlus, vPlus, nx, ny));
 
-				if (inflow == true)
+				//Apply PNR (2), R (1)
+				int implementation(1);
+				switch (implementation)
 				{
-					//Apply weak Riemann infinite value
-					UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
-					UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
-					UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
-					UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+				case 1: //R
+				{
+					if (refValues::subsonic)
+					{
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+					}
+					else
+					{
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = UPlus[3];
+
+					}
 				}
-				else if (inflow == false)
+				break;
+				case 2: //PNR
 				{
-					//Apply PNR (2), R (1)
-					int implementation(1);
-					switch (implementation)
+					double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
+					double pInternal(0);
+					pInternal = UPlus[0] * material::R*TInternal;
+					if (refValues::subsonic)
 					{
-					case 1: //R
-					{
-						switch (refValues::subsonic)
-						{
-						case true:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
-						}
-						break;
-						case false:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = UPlus[3];
-
-						}
-						break;
-						}
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
 					}
+					else
+					{
+						UMinus[0] = UPlus[0];
+						UMinus[1] = UPlus[1];
+						UMinus[2] = UPlus[2];
+						UMinus[3] = UPlus[3];
+					}
+				}
+				break;
+				default:
 					break;
-					case 2: //PNR
-					{
-						double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
-						double pInternal(0);
-						pInternal = UPlus[0] * material::R*TInternal;
-						switch (refValues::subsonic)
-						{
-						case true:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
-						}
-						break;
-						case false:
-						{
-							UMinus[0] = UPlus[0];
-							UMinus[1] = UPlus[1];
-							UMinus[2] = UPlus[2];
-							UMinus[3] = UPlus[3];
-						}
-						break;
-						}
-					}
-					break;
-					default:
-						break;
-					}
 				}
 				muP = (math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
 				muM = (math::CalcVisCoef(math::CalcTFromConsvVar(UMinus[0], UMinus[1], UMinus[2], UMinus[3])));
@@ -885,13 +947,16 @@ namespace auxilaryBCs
 		for (int i = 0; i < 4; i++)
 		{
 			UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
+			UMinus[i] = UPlus[i];
 		}
 		double muP(math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
-		UMinus[0] = math::pointValue(element, a, b, 1, 2);
+
+		UMinus[0] = UPlus[0];
 		UMinus[1] = UPlus[1] - 2 * (UPlus[1] * nx + UPlus[2] * ny)*nx;
 		UMinus[2] = UPlus[2] - 2 * (UPlus[1] * nx + UPlus[2] * ny)*ny;
-		UMinus[3] = math::pointValue(element, a, b, 4, 2);
+		UMinus[3] = UPlus[3];
 
+		UMinus[0] = UPlus[0];
 		for (int i = 0; i < 4; i++)
 		{
 			Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i] * muP, UPlus[i] * muP, nx);

@@ -1,7 +1,7 @@
 #include "Unv2DReaderLib.h"
 #include "DGMessagesLib.h"
 #include "DGAuxUltilitiesLib.h"
-#include "varDeclaration.h"
+#include "VarDeclaration.h"
 #include <QTextStream>
 #include <iostream>
 #include <QString>

@@ -2,7 +2,7 @@
 #include <QString>
 #include <QTextStream>
 #include "Unv2DReaderLib.h"
-#include "varDeclaration.h"
+#include "VarDeclaration.h"
 using namespace std;
 
 int main()

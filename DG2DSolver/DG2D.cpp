@@ -18,5 +18,6 @@ int main()
 		Executer(systemVar::cmd);
 	}
 
+	system("pause");
 	return 0;
 }

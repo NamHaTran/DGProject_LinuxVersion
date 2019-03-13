@@ -29,11 +29,12 @@ namespace MshReader
 	void getBoundaryPoints();
 
 	/*Child functions*/
-
 	int CheckConnection(int point, int helpArray[], int length);
 	int checkIndividualEdge(int rootPt, int tipPt);
 	int findIndex(int number, int iarray[], int size);
 	void getBcGrpTp(int ipoin, int jpoin, int ninpoed);
 	std::tuple<double, double> calcNormVector(int point1, int point1Indice, int point2, int point2Indice, int type);
+
+	void sortPointsOfElements();
 }
 #endif // DGMESHREADERLIB_H_INCLUDED

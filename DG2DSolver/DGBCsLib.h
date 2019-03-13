@@ -42,7 +42,10 @@ namespace NSFEqBCs
 		namespace patch
 		{
 			/*Function computes numerical flux at inflow/outflow by using weakRiemann approach*/
-			std::vector <std::vector<double>> inOutFlow(int element, int edge, int edgeGrp, int nG);
+			std::vector <std::vector<double>> inFlow(int element, int edge, int edgeGrp, int nG);
+
+			/*Function computes numerical flux at inflow/outflow by using weakRiemann approach*/
+			std::vector <std::vector<double>> outFlow(int element, int edge, int edgeGrp, int nG);
 		}
 
 		/*Function computes numerical flux at symmetry BC by using weakRiemann approach*/
@@ -86,7 +89,9 @@ namespace auxilaryBCs
 		}
 
 		namespace patch {
-			std::vector <std::vector<double>> inOutFlow(int element, int edge, int edgeGrp, int nG);
+			std::vector <std::vector<double>> inFlow(int element, int edge, int edgeGrp, int nG);
+
+			std::vector <std::vector<double>> outFlow(int element, int edge, int edgeGrp, int nG);
 		}
 	}
 
@@ -108,8 +113,11 @@ namespace BCSupportFncs
 		/*Function computes numerical fluxes at wall by using weakPrescribed approach*/
 		std::vector<std::vector<double>> NSFEqFluxes_Wall(std::vector<double> &UBc, std::vector<double> &dUXBc, std::vector<double> &dUYBc, std::vector<double> &norm);
 
-		/*Function computes BC values at inflow/outflow*/
-		void calcInOutFlowBCVals(int element, int edge, int edgeGrp, int nG);
+		/*Function computes BC values at inflow*/
+		void calcInFlowBCVals(int element, int edge, int edgeGrp, int nG);
+
+		/*Function computes BC values at outflow*/
+		void calcOutFlowBCVals(int element, int edge, int edgeGrp, int nG);
 
 		/*Function computes BC values at isothermal wall*/
 		void calcWallIsothermalBCVals(int element, int edge, int edgeGrp, int nG);

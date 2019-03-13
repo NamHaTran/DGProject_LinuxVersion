@@ -15,7 +15,7 @@ namespace systemVar
 	extern double CFL; //Courant number
 	extern double Ttime; //Total time
 	extern int wrtI; //write interval
-	extern bool wrtLog, loadSavedCase;
+	extern bool wrtLog, loadSavedCase, initializedOrNot, runPreProcess;
 
 	/*
 	time discretization scheme	|keyWord	|index		|
@@ -34,22 +34,12 @@ namespace systemVar
 	extern double epsilon;
 
 	extern int iterCount, savingCout;
-	extern std::vector<double> rhoResNormVector,
-		rhouResNormVector,
-		rhovResNormVector,
-		rhoEResNormVector;
 	extern double rhoResNorm, rhouResNorm, rhovResNorm, rhoEResNorm;
 }
 
 namespace meshVar
 {
-	extern double Points[pointsArrSize][3];
-	extern int Elements1D[pointsArrSize][3],
-		Elements2D[elements2DArrSize][4],
-		BoundaryType[bcSize][3];  //BoundaryType: column 0 is boundary group (from 0), column 1 is boundary type (1, 2, 3, 4), column 3 is boundary method
 	extern int nelem1D, nelem2D, npoin, nBc;
-	extern double normalVector[2][2 * elements2DArrSize];  //row 1 contents nx, row 2 contents ny, row 3 contents master element of edge
-	extern int MasterElemOfEdge[2 * elements2DArrSize];  //array content master element of iedge, use it with normalVector to get information of normal vector of edge
 
 	/*Default values*/
 	//number of nodes per element

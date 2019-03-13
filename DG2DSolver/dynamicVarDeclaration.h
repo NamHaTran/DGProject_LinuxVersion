@@ -5,6 +5,12 @@
 
 namespace meshVar
 {
+	extern std::vector<std::vector<double>> Points, normalVector;
+	extern std::vector<std::vector<int>> Elements1D,
+		Elements2D,
+		BoundaryType; //BoundaryType: column 0 is boundary group (from 0), column 1 is boundary type (1, 2, 3, 4), column 3 is boundary method
+	extern std::vector<int>  markPointsAtBC, MasterElemOfEdge; //NOTE: boundary point Id (BCPtsId) saved in this vector is (real BCPtsId + 1)
+	
 	/*Gauss points on edges*/
 	extern std::vector<std::vector<double>> edgeGaussPoints_a, edgeGaussPoints_b;
 	
@@ -62,7 +68,7 @@ extern std::vector<std::vector<std::vector<double>>> rhoVolGauss, rhouVolGauss, 
 namespace SurfaceBCFields
 {
 	extern std::vector<std::vector<double>> rhoBc, rhouBc, rhovBc, rhoEBc;
-	extern std::vector<int>BCPoints;
+	extern std::vector<std::vector<int>>BCPointsInfor;
 }
 
 //for debuging

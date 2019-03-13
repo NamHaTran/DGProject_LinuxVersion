@@ -43,10 +43,17 @@ namespace IO
 	void readDataFile(std::string fileName, std::string direction, std::string keyWordsDbl[], std::string keyWordsInt[], std::string keyWordsBool[], std::string keyWordsStr[], double *outDbl, int *outInt, bool *outBool, std::string *Str, int numParamDbl, int numParamInt, int numParamBool, int numParamStr);
 
 	/*Function writes residuals on console*/
-	void residualOutput(std::vector<double> &rhoRes, std::vector<double> &rhouRes, std::vector<double> &rhovRes, std::vector<double> &rhoERes);
+	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
 	void saveCase();
 
 	void loadCase();
+
+	namespace importCase {
+
+		void importResultsFromAnotherCase();
+
+		void mappSourceToCurrent(std::string fileLoc, std::vector<std::vector<double>> &currentResult);
+	}
 }
 #endif // DGIOLIB_H_INCLUDED

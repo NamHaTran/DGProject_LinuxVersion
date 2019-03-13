@@ -14,26 +14,20 @@ namespace systemVar
 	double CFL(0.5); //Courant number
 	double Ttime(0.0); //Total time
 	int wrtI(0); //write interval
-    bool wrtLog(true), loadSavedCase(false);
+	bool wrtLog("true"), loadSavedCase("false");
 
 	int ddtScheme(1);
 	double epsilon(1e-13);
 
 	int iterCount(0), savingCout(0);
-	std::vector<double> rhoResNormVector(5, 0.0),
-		rhouResNormVector(5, 0.0),
-		rhovResNormVector(5, 0.0),
-		rhoEResNormVector(5, 0.0);
 	double rhoResNorm(1.0), rhouResNorm(1.0), rhovResNorm(1.0), rhoEResNorm(1.0);
+
+	bool initializedOrNot(false), runPreProcess(false);
 }
 
 namespace meshVar
 {
-	double Points[pointsArrSize][3] = {};
-	int Elements1D[pointsArrSize][3] = {}, Elements2D[elements2DArrSize][4] = {}, BoundaryType[bcSize][3] = {};
 	int nelem1D(0), nelem2D(0), npoin(0), nBc(0);
-	double normalVector[2][2 * elements2DArrSize] = {};  //row 1 contents nx, row 2 contents ny
-	int MasterElemOfEdge[2 * elements2DArrSize] = {};  //array content master element of iedge, use it with normalVector to get information of normal vector of edge
 
 	/*Default value*/
 	//number of nodes per element
@@ -120,7 +114,7 @@ namespace bcValues
 
 namespace refValues
 {
-	bool subsonic(false);
+	bool subsonic(true);
 }
 
 //time step
