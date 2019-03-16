@@ -17,9 +17,9 @@ namespace meshParam
 	{
 		math::Gauss(mathVar::nGauss);
 		math::GaussLobatto(mathVar::nGauss);  //run GaussLobatto for applying limiter
-		for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
+        for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
 		{
-			for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
 				mathVar::GaussPts[na][nb][0] = mathVar::xGauss[na];
 				mathVar::GaussPts[na][nb][1] = mathVar::xGauss[nb];
@@ -38,11 +38,11 @@ namespace meshParam
 	{
 		/*2D Jacobi*/
 		double a(0.0), b(0.0);
-		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+        for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-			for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
+            for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					a = mathVar::GaussPts[na][nb][0];
 					b = mathVar::GaussPts[na][nb][1];
@@ -52,7 +52,7 @@ namespace meshParam
 		}
 
 		/*1D Jacobi*/
-		for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+        for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 		{
 			std::tie(meshVar::J1D[iedge][0], meshVar::J1D[iedge][1]) = math::J1DCal(iedge);
 		}
@@ -61,16 +61,16 @@ namespace meshParam
 	void basisFcParam()
 	{
 		double a(0.0), b(0.0);
-		for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss; na++)
 		{
-			for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
 				//Triangle
 				a = mathVar::GaussPts[na][nb][0];
 				b = mathVar::GaussPts[na][nb][1];
 				math::basisFc(a, b, 3);
 				math::dBasisFc(a, b, 3);
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					mathVar::BPts_Tri[order][na][nb] = mathVar::B[order];
 
@@ -81,7 +81,7 @@ namespace meshParam
 				//Quadrilateral
 				math::basisFc(a, b, 4);
 				math::dBasisFc(a, b, 4);
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					mathVar::BPts_Quad[order][na][nb] = mathVar::B[order];
 
@@ -96,11 +96,11 @@ namespace meshParam
 	{
 		double dxa(0.0), dxb(0.0), dya(0.0), dyb(0.0);
 		double a(0.0), b(0.0);
-		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+        for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					a = mathVar::GaussPts[na][nb][0];
 					b = mathVar::GaussPts[na][nb][1];
@@ -118,14 +118,14 @@ namespace meshParam
 	{
 		int elemType(0);
 		double xCG(0.0), yCG(0.0), cellArea(0.0);
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+        for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
 		{
 			elemType = auxUlti::checkType(nelem);
 			std::vector<double> xCoor(elemType, 0.0),
 				yCoor(elemType, 0.0),
 				xSubTriCoor(elemType, 0.0),
 				ySubTriCoor(elemType, 0.0);
-			for (int i = 0; i < elemType; i++)
+            for (int i = 0; i < elemType; i++)
 			{
 				std::tie(xCoor[i], yCoor[i]) = auxUlti::getElemCornerCoord(nelem, i);
 			}
@@ -155,11 +155,15 @@ namespace meshParam
 
 	void calcStiffMatrixCoeffs()
 	{
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+        std::vector<std::vector<double>>StiffMatrix(mathVar::orderElem + 1,std::vector<double>(mathVar::orderElem + 1, 0.0));
+        for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				stiffMatrixCoeffs[nelem][iorder] = process::calculateStiffMatrixElement(nelem, iorder, iorder);
+                for (int iorder2 = 0; iorder2 <= mathVar::orderElem; ++iorder2) {
+                    StiffMatrix[iorder][iorder2] = process::calculateStiffMatrixElement(nelem, iorder, iorder2);
+                }
 			}
 		}
 	}
@@ -177,13 +181,13 @@ namespace process
 			iniRhov(mathVar::orderElem + 1),
 			iniRhoE(mathVar::orderElem + 1);
 
-		for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+        for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 		{
 			iniRho = process::calcIniValues(iniValues::rhoIni, nelement);
 			iniRhou = process::calcIniValues(iniValues::rhoIni*iniValues::uIni, nelement);
 			iniRhov = process::calcIniValues(iniValues::rhoIni*iniValues::vIni, nelement);
 			iniRhoE = process::calcIniValues(iniValues::rhoIni*(iniValues::eIni + 0.5*(pow(iniValues::uIni, 2) + pow(iniValues::vIni, 2))), nelement);
-			for (int i = 0; i <= mathVar::orderElem; i++)
+            for (int i = 0; i <= mathVar::orderElem; i++)
 			{
 				rho[nelement][i] = iniRho[i];
 				rhou[nelement][i] = iniRhou[i];
@@ -203,7 +207,7 @@ namespace process
 		std::vector<double> iniVector(mathVar::orderElem + 1, 0.0);
 
 		RHS = process::calcIniValuesRHS(element, iniVal);
-		for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+        for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 		{
 			iniVector[iorder] = RHS[iorder] / stiffMatrixCoeffs[element][iorder];
 		}
@@ -215,11 +219,11 @@ namespace process
 		std::vector<double> Out(mathVar::orderElem + 1, 0.0);
 		std::vector<std::vector<double>> matrix(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
 		double a(0.0), b(0.0);
-		for (int order = 0; order <= mathVar::orderElem; order++)
+        for (int order = 0; order <= mathVar::orderElem; order++)
 		{
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 					math::basisFc(a, b, auxUlti::checkType(element));
@@ -234,11 +238,11 @@ namespace process
 	void calcVolumeGaussValues()
 	{
 		double a(0.0), b(0.0);
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+        for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
 		{
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 					rhoVolGauss[nelem][na][nb] = math::pointValue(nelem, a, b, 1, 2);
@@ -257,13 +261,13 @@ namespace process
 			//mu included
 			int masterCell(-1), slaveCell(-1), bcGrp(0);
 			double muMaster(0.0), muSlave(0.0), tempMaster(0.0), tempSlave(0.0);
-			for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+            for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 			{
 				bcGrp = auxUlti::getBCType(iedge);
 				if (bcGrp == 0)
 				{
 					std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-					for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
 					{
 						std::tie(muMaster, muSlave) = math::internalSurfaceValue(iedge, masterCell, nG, 7, 1);
 
@@ -369,7 +373,7 @@ namespace process
 				rhoExVector(mathVar::orderElem + 1, 0.0),
 				rhoEyVector(mathVar::orderElem + 1, 0.0);
 
-			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
 				//1) Calculate Stiff matrix
 				//StiffMatrix = process::calculateStiffMatrix(nelement);
@@ -378,7 +382,7 @@ namespace process
 				process::auxEq::CalcRHSTerm(nelement, rhoRHSTermOxDir, rhoRHSTermOyDir, rhouRHSTermOxDir, rhouRHSTermOyDir, rhovRHSTermOxDir, rhovRHSTermOyDir, rhoERHSTermOxDir, rhoERHSTermOyDir);
 
 				//3) Solve for auxilary variables
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					//Ox direction
 					rhoX[nelement][iorder] = rhoRHSTermOxDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
@@ -425,7 +429,7 @@ namespace process
 			/*2. Calculate surface integral term*/
 			process::auxEq::calcSurfaceIntegralTerms(element, rhoSurfIntOx, rhouSurfIntOx, rhovSurfIntOx, rhoESurfIntOx, rhoSurfIntOy, rhouSurfIntOy, rhovSurfIntOy, rhoESurfIntOy);
 
-			for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 0; order <= mathVar::orderElem; order++)
 			{
 				rhoRHSOx[order] = -rhoVolIntOx[order] + rhoSurfIntOx[order];
 				rhoRHSOy[order] = -rhoVolIntOy[order] + rhoSurfIntOy[order];
@@ -458,7 +462,7 @@ namespace process
 			//rhou ------------------------------------------------------------------------------------------
 			rhoEGsVol = process::auxEq::getGaussMatrixOfConserVar(element, 4);
 
-			for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 0; order <= mathVar::orderElem; order++)
 			{
 				rhoVolIntX[order] = process::volumeInte(element, rhoGsVol, order, 1);
 				rhouVolIntX[order] = process::volumeInte(element, rhouGsVol, order, 1);
@@ -501,10 +505,10 @@ namespace process
 
 			/*2. Calculates surface integrals of all conservative variables at all order*/
 			
-			for (int nface = 0; nface < elemType; nface++)
+            for (int nface = 0; nface < elemType; nface++)
 			{
 				edgeName = meshVar::inedel[nface][element];
-				for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					rhoFluxXTemp[nG] = rhoFluxX[nG][nface];
 					rhouFluxXTemp[nG] = rhouFluxX[nG][nface];
@@ -517,7 +521,7 @@ namespace process
 					rhoEFluxYTemp[nG] = rhoEFluxY[nG][nface];
 				}
 
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					rhoSurfIntX[order] += process::surfaceInte(element, edgeName, rhoFluxXTemp, order);
 					rhouSurfIntX[order] += process::surfaceInte(element, edgeName, rhouFluxXTemp, order);
@@ -536,9 +540,9 @@ namespace process
 		{
 			std::vector<std::vector<double>> GaussMatrix(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
 			double muGs(0.0), a(0.0), b(0.0), val(0.0);
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 					muGs = math::pointValue(element, a, b, 7, 1);
@@ -577,7 +581,7 @@ namespace process
 		{
 			std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0)); //columns 0, 1 are Ox, Oy values
 			double tempP(0.0), tempM(0.0);
-			for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
 			{
 				std::tie(tempP, tempM) = process::auxEq::getInternalValuesFromCalculatedArrays(edge, element, nG, i+1);
 				gaussVector[i][0] = math::numericalFluxes::auxFlux(tempM, tempP, nx);
@@ -597,14 +601,14 @@ namespace process
 			int faceBcType(0);
 			std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0));
 
-			for (int nface = 0; nface < elemType; nface++)
+            for (int nface = 0; nface < elemType; nface++)
 			{
 				edgeName = meshVar::inedel[nface][element];
 				faceBcType = auxUlti::getBCType(edgeName);
 				double nx(auxUlti::getNormVectorComp(element, edgeName, 1)), ny(auxUlti::getNormVectorComp(element, edgeName, 2));
 				if (faceBcType == 0)  //internal edge
 				{
-					for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
 					{
 						gaussVector = process::auxEq::getVectorOfConserVarFluxesAtInternal(edgeName, element, nGauss, nx, ny);
 						rhoFluxX[nGauss][nface] = gaussVector[0][0];
@@ -620,7 +624,7 @@ namespace process
 				}
 				else  //boundary edge
 				{
-					for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
 					{
 						gaussVector = auxEqBCsImplement(element, edgeName, nGauss);
 						rhoFluxX[nGauss][nface] = gaussVector[0][0];
@@ -656,7 +660,7 @@ namespace process
 			*/
 			std::vector<std::vector<double>> StressHeatP(2, std::vector<double>(3, 0.0));
 			std::vector<std::vector<double>> StressHeatM(2, std::vector<double>(3, 0.0));
-			for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+            for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 			{
 				bcGrp = auxUlti::getBCType(iedge);
 				if (bcGrp == 0)
@@ -664,9 +668,9 @@ namespace process
 					std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
 					vectorn[0] = auxUlti::getNormVectorComp(masterCell, iedge, 1);
 					vectorn[1] = auxUlti::getNormVectorComp(masterCell, iedge, 2);
-					for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
 					{
-						for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 4; i++)
 						{
 							/*INVISCID TERMS*/
 							std::tie(UMaster[i], USlave[i]) = math::internalSurfaceValue(iedge, masterCell, nG, i + 1, 2);
@@ -934,13 +938,13 @@ namespace process
 
 				UnVector(mathVar::orderElem + 1, 0.0);
 
-			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
 				//2) Calculate Right hand side terms
 				process::NSFEq::CalcRHSTerm(nelement, RHSTerm1, RHSTerm2, RHSTerm3, RHSTerm4);
 
-				//3) Solve for derivartives of conservative variables
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                //3) Solve for time derivartives of conservative variables
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					ddtRhoVector[iorder] = RHSTerm1[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					ddtRhouVector[iorder] = RHSTerm2[iorder] / stiffMatrixCoeffs[nelement][iorder];
@@ -980,32 +984,32 @@ namespace process
 
 				//4) Solve time marching
 				//rho
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					UnVector[order] = rho[nelement][order];
 				}
 				rhoVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhoVector, UnVector, RKOrder, 1);
 				//rhou
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					UnVector[order] = rhou[nelement][order];
 				}
 				rhouVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhouVector, UnVector, RKOrder, 2);
 				//rhov
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					UnVector[order] = rhov[nelement][order];
 				}
 				rhovVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhovVector, UnVector, RKOrder, 3);
 				//rhoE
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					UnVector[order] = rhoE[nelement][order];
 				}
 				rhoEVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhoEVector, UnVector, RKOrder, 4);
 
 				//5) Save results to conservative variables array
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					rhoN[nelement][order] = rhoVectorN[order];
 					rhouN[nelement][order] = rhouVectorN[order];
@@ -1017,9 +1021,9 @@ namespace process
 
 		void updateVariables()
 		{
-			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					rho[nelement][order] = rhoN[nelement][order];
 					rhou[nelement][order] = rhouN[nelement][order];
@@ -1049,7 +1053,7 @@ namespace process
 			/*Surface integral term===========================================================================*/
 			process::NSFEq::calcSurfaceIntegralTerms(element, SurfIntTerm1, SurfIntTerm2, SurfIntTerm3, SurfIntTerm4);
 			
-			for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 0; order <= mathVar::orderElem; order++)
 			{
 				term1RHS[order] = VolIntTerm1[order] - SurfIntTerm1[order];
 				term2RHS[order] = VolIntTerm2[order] - SurfIntTerm2[order];
@@ -1108,7 +1112,7 @@ namespace process
 			vectorU[1] = rhouVolGauss[element][na][nb];
 			vectorU[2] = rhovVolGauss[element][na][nb];
 			vectorU[3] = rhoEVolGauss[element][na][nb];
-			for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
 			{
 				vectordUx[i] = math::pointAuxValue(element, a, b, i + 1, 1);
 				vectordUy[i] = math::pointAuxValue(element, a, b, i + 1, 2);
@@ -1154,9 +1158,9 @@ namespace process
 				ViscGsVolX4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
 				ViscGsVolY4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
 
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					//std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 					/*A INVISCID TERMS*/
@@ -1187,7 +1191,7 @@ namespace process
 				}
 			}
 
-			for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 0; order <= mathVar::orderElem; order++)
 			{
 				/*CALCULATE INTEGRALS*/
 				/*A INVISCID TERMS*/
@@ -1270,14 +1274,14 @@ namespace process
 
 			//std::vector<double> SurInt(4, 0.0);
 
-			for (int nface = 0; nface < elemType; nface++)
+            for (int nface = 0; nface < elemType; nface++)
 			{
 				edgeName = meshVar::inedel[nface][element];
 				faceBcType = auxUlti::getBCType(edgeName);
 
 				if (faceBcType == 0)  //internal edge
 				{
-					for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
 					{
 						Fluxes = process::NSFEq::getGaussVectorOfConserVarFluxesAtInternal(edgeName, element, nGauss);
 						inviscFlux1[nGauss][nface] = Fluxes[0][0];
@@ -1293,7 +1297,7 @@ namespace process
 				}
 				else  //boundary edge
 				{
-					for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
 					{
 						Fluxes = NSFEqBCsImplement(element, edgeName, nGauss);
 						inviscFlux1[nGauss][nface] = Fluxes[0][0];
@@ -1309,11 +1313,11 @@ namespace process
 				}
 			}
 
-			for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 0; order <= mathVar::orderElem; order++)
 			{
-				for (int nface = 0; nface < elemType; nface++)
+                for (int nface = 0; nface < elemType; nface++)
 				{
-					for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
 					{
 						inviscFlux1Temp[nG] = inviscFlux1[nG][nface];
 						inviscFlux2Temp[nG] = inviscFlux2[nG][nface];
@@ -1402,7 +1406,7 @@ namespace process
 			{
 			case 1:
 			{
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					OutArr[order] = dt * ddtArr[order] + UnArr[order];
 				}
@@ -1414,7 +1418,7 @@ namespace process
 				{
 				case 1://rho
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = 0.25*(dt * ddtArr[order] + UnArr[order]) + (3.0 / 4.0)*rho0[element][order];
 					}
@@ -1422,7 +1426,7 @@ namespace process
 				break;
 				case 2://rhou
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = 0.25*(dt * ddtArr[order] + UnArr[order]) + (3.0 / 4.0)*rhou0[element][order];
 					}
@@ -1430,7 +1434,7 @@ namespace process
 				break;
 				case 3://rhov
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = 0.25*(dt * ddtArr[order] + UnArr[order]) + (3.0 / 4.0)*rhov0[element][order];
 					}
@@ -1438,7 +1442,7 @@ namespace process
 				break;
 				case 4://rhoE
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = 0.25*(dt * ddtArr[order] + UnArr[order]) + (3.0 / 4.0)*rhoE0[element][order];
 					}
@@ -1455,7 +1459,7 @@ namespace process
 				{
 				case 1://rho
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = (2.0 / 3.0)*(dt * ddtArr[order] + UnArr[order]) + (1.0 / 3.0)*rho0[element][order];
 					}
@@ -1463,7 +1467,7 @@ namespace process
 				break;
 				case 2://rhou
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = (2.0 / 3.0)*(dt * ddtArr[order] + UnArr[order]) + (1.0 / 3.0)*rhou0[element][order];
 					}
@@ -1471,7 +1475,7 @@ namespace process
 				break;
 				case 3://rhov
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = (2.0 / 3.0)*(dt * ddtArr[order] + UnArr[order]) + (1.0 / 3.0)*rhov0[element][order];
 					}
@@ -1479,7 +1483,7 @@ namespace process
 				break;
 				case 4://rhoE
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						OutArr[order] = (2.0 / 3.0)*(dt * ddtArr[order] + UnArr[order]) + (1.0 / 3.0)*rhoE0[element][order];
 					}
@@ -1503,7 +1507,7 @@ namespace process
 		void calcGlobalTimeStep()
 		{
 			std::vector<double>timeStepArr(meshVar::nelem2D, 1.0);
-			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
 				timeStepArr[nelement] = process::timeDiscretization::localTimeStep(nelement);
 				
@@ -1539,7 +1543,7 @@ namespace process
 
 			//Compute basis function
 			math::basisFc(xC, yC, auxUlti::checkType(element));
-			for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 0; order <= mathVar::orderElem; order++)
 			{
 				errorVal += ddtArr[order] * mathVar::B[order];
 			}
@@ -1556,7 +1560,7 @@ namespace process
 				rhoERes(meshVar::nelem2D, 0.0);
 			double rhoResGlobal(1.0), rhouResGlobal(1.0), rhovResGlobal(1.0), rhoEResGlobal(1.0);
 
-			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
 				std::tie(xC, yC) = auxUlti::getCellCentroid(nelement);
 				std::tie(aC, bC) = math::inverseMapping(nelement, xC, yC);
@@ -1589,9 +1593,9 @@ namespace process
 
 		void TVDRK3()
 		{
-			for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
-				for (int order = 0; order <= mathVar::orderElem; order++)
+                for (int order = 0; order <= mathVar::orderElem; order++)
 				{
 					rho0[nelement][order] = rho[nelement][order];
 					rhou0[nelement][order] = rhou[nelement][order];
@@ -1600,12 +1604,12 @@ namespace process
 				}
 			}
 
-			for (int iRKOrder = 1; iRKOrder <= 3; iRKOrder++)
+            for (int iRKOrder = 1; iRKOrder <= 3; iRKOrder++)
 			{
 				process::timeDiscretization::TVDRK_1step(iRKOrder);
-				for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+                for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 				{
-					for (int order = 0; order <= mathVar::orderElem; order++)
+                    for (int order = 0; order <= mathVar::orderElem; order++)
 					{
 						rho[nelement][order] = rhoN[nelement][order];
 						rhou[nelement][order] = rhouN[nelement][order];
@@ -1673,9 +1677,9 @@ namespace process
 		std::vector<std::vector<double>> A(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
 		double dBi(0.0);
 
-		for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss; na++)
 		{
-			for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
 				dBi = math::Calc_dBxdBy(elem, order, na, nb, direction);
 				A[na][nb] = dBi * Ui[na][nb];
@@ -1692,7 +1696,7 @@ namespace process
 		std::vector<double> F(mathVar::nGauss + 1, 0.0);
 
 		//inte = 0.0;  //value of integral is reset for each order
-		for (int nG = 0; nG <= mathVar::nGauss; nG++)
+        for (int nG = 0; nG <= mathVar::nGauss; nG++)
 		{
 			std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, elem, nG);
 			math::basisFc(a, b, auxUlti::checkType(elem));  //mathVar::B is changed after this command line is excuted
@@ -1708,9 +1712,9 @@ namespace process
 	{
 		std::vector<std::vector<double>> StiffMatrix(mathVar::orderElem + 1, std::vector<double>(mathVar::orderElem + 1, 0.0));
 
-		for (int order1 = 0; order1 <= mathVar::orderElem; order1++)
+        for (int order1 = 0; order1 <= mathVar::orderElem; order1++)
 		{
-			for (int order2 = 0; order2 <= mathVar::orderElem; order2++)
+            for (int order2 = 0; order2 <= mathVar::orderElem; order2++)
 			{
 				StiffMatrix[order1][order2] = process::calculateStiffMatrixElement(element, order1, order2);
 			}
@@ -1728,9 +1732,9 @@ namespace process
 		{
 		case 3:
 		{
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					B1 = mathVar::BPts_Tri[order1][na][nb];
 					B2 = mathVar::BPts_Tri[order2][na][nb];
@@ -1741,9 +1745,9 @@ namespace process
 		break;
 		case 4:
 		{
-			for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss; na++)
 			{
-				for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
 					B1 = mathVar::BPts_Quad[order1][na][nb];
 					B2 = mathVar::BPts_Quad[order2][na][nb];

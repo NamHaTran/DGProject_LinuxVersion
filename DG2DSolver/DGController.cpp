@@ -15,7 +15,7 @@ void Executer(std::string cmd)
 {
 	if (preProcessKey::checkUnvReader(cmd))
 	{
-        std::string UnvReaderLoc(systemVar::wD + "/Ultilities/MeshReader/UnvReader");
+        std::string UnvReaderLoc(systemVar::wD + "/Ultilities/MeshReader/UnvToDG");
 		auxUlti::openFileEXE(UnvReaderLoc);
 	}
 	else if (processKey::checkDGRun(cmd))

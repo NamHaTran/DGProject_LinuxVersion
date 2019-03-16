@@ -14,9 +14,9 @@ namespace systemVar
 	double CFL(0.5); //Courant number
 	double Ttime(0.0); //Total time
 	int wrtI(0); //write interval
-	bool wrtLog("true"), loadSavedCase("false");
+    bool wrtLog(true), loadSavedCase(false);
 
-	int ddtScheme(1);
+    int ddtScheme(1);
 	double epsilon(1e-13);
 
 	int iterCount(0), savingCout(0);
@@ -27,7 +27,7 @@ namespace systemVar
 
 namespace meshVar
 {
-	int nelem1D(0), nelem2D(0), npoin(0), nBc(0);
+    int nelem1D(0), nelem2D(0), npoin(0), nBc(0);
 
 	/*Default value*/
 	//number of nodes per element

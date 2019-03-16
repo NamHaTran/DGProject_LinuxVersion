@@ -382,6 +382,7 @@ namespace MshReader
 			}
 		}
 		meshVar::inpoedCount = ninpoed + 1;
+        auxUlti::clear2DIntVector(helpArray);
 	}
 
 	void EdgesOfElem()

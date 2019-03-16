@@ -250,7 +250,7 @@ void GetBoundaries()
                 linePropertiesNum.push_back(lineProperties[i].toInt());
             }
 
-            if (nline<lastBoundLine && (static_cast<int>(linePropertiesNum.size())== 0))
+            if (nline<lastBoundLine && (static_cast<int>(linePropertiesNum.size())== 1))
 			{
                 QStringList linePropertiesStrNext(Mesh[nline + 1].split(" ", QString::SkipEmptyParts));
 				std::vector<int> linePropertiesNextNum;
@@ -259,7 +259,7 @@ void GetBoundaries()
                     linePropertiesNextNum.push_back(linePropertiesStrNext[i].toInt());
                 }
 
-				if (static_cast<int>(linePropertiesNextNum.size()) != 0 && linePropertiesNextNum[0] == 8)
+                if (linePropertiesNextNum[0] == 8) //static_cast<int>(linePropertiesNextNum.size()) != 0 &&
 				{
 					group += 1;
 				}
@@ -301,6 +301,7 @@ void MarkBoundary()
 {
 	for (int i = 0; i < numOfBoundEdge; i++)
 	{
+        jumHere:
 		for (int j = 0; j < n1D; j++)
 		{
 			if (Elements1D[j][3] == 0)
@@ -308,6 +309,7 @@ void MarkBoundary()
 				if (Elements1D[j][0] == boundaries[i][0])
 				{
 					Elements1D[j][3] = boundaries[i][1];
+                    goto jumHere;
 				}
 			}
 		}

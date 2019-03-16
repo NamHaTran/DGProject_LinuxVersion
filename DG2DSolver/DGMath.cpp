@@ -313,15 +313,15 @@ namespace math
 
 	double volumeInte(std::vector< std::vector<double> > &Fvalue, int elem)
 	{
-		double J2D(0.0), w1(0.0), w2(0.0), integral(0.0);
+        double J2D(0.0), w1(0.0), w2(0.0), integral(0.0);
 		for (int na = 0; na <= mathVar::nGauss; na++)
 		{
 			for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
 				w1 = mathVar::wGaussPts[na][nb][0];
 				w2 = mathVar::wGaussPts[na][nb][1];
-				J2D = meshVar::J2D[elem][na][nb];
-				integral += w1 * w2*(J2D)*Fvalue[na][nb];
+                J2D = meshVar::J2D[elem][na][nb];
+                integral += w1 * w2*(J2D)*Fvalue[na][nb];
 			}
 		}
 		return integral;

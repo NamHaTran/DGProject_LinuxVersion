@@ -8,7 +8,7 @@ namespace auxUlti
 	int findEdgeOrder(int element, int edge);
 
 	/*Function checks element's type, return 3 if element is tri, 4 if element is quad*/
-	int checkType(int element);
+    int checkType(int element);
 
 	/*Function gets coordinates of index'th vertex of element*/
 	std::tuple<double, double> getElemCornerCoord(int elem, int index);
@@ -76,16 +76,16 @@ namespace auxUlti
 	std::tuple<double, double, double> getCellMetrics(int element);
 
 	/*Function resize 2D array type double*/
-	void resize2DArray(std::vector<std::vector<double>> &Array, int row, int column);
+    void resize2DArray(std::vector<std::vector<double>> &Array, int row, int column);
 
 	/*Function resize 3D array*/
-	void resize3DArray(std::vector<std::vector<std::vector<double>>> &Array, int direct1, int direct2, int direct3);
+    void resize3DArray(std::vector<std::vector<std::vector<double>>> &Array, int direct1, int direct2, int direct3);
 
 	/*Function resizes all dynamic arrays, it helps to reduce amount of consumed RAM*/
 	void resizeDGArrays();
 
 	/*Function resize 2D array type int*/
-	void resize2DIntArray(std::vector<std::vector<int>> &Array, int row, int column);
+    void resize2DIntArray(std::vector<std::vector<int>> &Array, int row, int column);
 
 	/*Function computes coordinates of Gauss point on all edges*/
 	void mappingEdges();
@@ -102,6 +102,9 @@ namespace auxUlti
 	//Function deletes 1D vector and frees its memory
 	void clear1DIntVector(std::vector<int>&vector);
 
+    //Function deletes 2D vector and frees its memory
+    void clear2DIntVector(std::vector<std::vector<int>>&vector);
+
 	//Function returns neighbor element of input element which shares input edge with
 	int getNeighborElement(int element, int edge);
 
@@ -115,8 +118,8 @@ namespace auxUlti
 	int findVertexOrder(int point, int element);
 
 	//Function add row with numCol to input array
-	void addRowTo2DIntArray(std::vector<std::vector<int>> &Array, int numCol);
-	void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol);
+    void addRowTo2DIntArray(std::vector<std::vector<int>> &Array, int numCol);
+    void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol);
 
     //Function create folder at input location
     void createFolder(std::string location);

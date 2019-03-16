@@ -11,7 +11,7 @@
 
 namespace auxUlti
 {
-	int findEdgeOrder(int element, int edge)
+    int findEdgeOrder(int element, int edge)
 	{
 		int order(0);
 		int pt1(meshVar::inpoed[0][edge]), pt2(meshVar::inpoed[1][edge]);
@@ -23,7 +23,7 @@ namespace auxUlti
 			ABpt1 = meshVar::Elements2D[element][0];
 			ABpt2 = meshVar::Elements2D[element][1];
 
-			BCpt1 = ABpt2;
+            BCpt1 = ABpt2;
 			BCpt2 = meshVar::Elements2D[element][2];
 
 			CDpt1 = BCpt2;
@@ -91,7 +91,7 @@ namespace auxUlti
 		return typeElem;
 	}
 
-	std::tuple<double, double> getElemCornerCoord(int elem, int index)
+    std::tuple<double, double> getElemCornerCoord(int elem, int index)
 	{
 		/*Note: index starts from 0*/
 		int pt(meshVar::Elements2D[elem][index]);
@@ -209,7 +209,7 @@ namespace auxUlti
 	std::vector<std::vector<double>> getVectorGaussSurfCoor(int edge, int elem)
 	{
 		std::vector<std::vector<double>> vectorGaussPoints(mathVar::nGauss + 1, std::vector<double>(2, 0.0));
-		for (int nG = 0; nG <= mathVar::nGauss; nG++)
+        for (int nG = 0; nG <= mathVar::nGauss; nG++)
 		{
 			std::tie(vectorGaussPoints[nG][0], vectorGaussPoints[nG][1]) = auxUlti::getGaussSurfCoorMaster(edge, elem, nG);
 		}
@@ -238,10 +238,8 @@ namespace auxUlti
 
 	void openFileEXE(std::string location)
 	{
-        //QProcess *process = new QProcess();
-        //process->start(QString::fromUtf8(location.c_str()));
-        QProcess exec;
-        exec.start(QString::fromUtf8(location.c_str()));
+        QProcess *myProcess = new QProcess();
+        myProcess->start(QString::fromUtf8(location.c_str()));
 	}
 
 	std::vector<double> getElementConserValuesOfOrder(int element, int type)
@@ -249,28 +247,28 @@ namespace auxUlti
 		std::vector<double> Out(mathVar::orderElem + 1, 0.0);
 		if (type == 1)  //rho
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rho[element][iorder];
 			}
 		}
 		else if (type == 2)  //rhou
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhou[element][iorder];
 			}
 		}
 		else if (type == 3)  //rhov
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhov[element][iorder];
 			}
 		}
 		else if (type == 4)  //rhoE
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhoE[element][iorder];
 			}
@@ -284,28 +282,28 @@ namespace auxUlti
 		std::vector<double> Out(mathVar::orderElem + 1, 0.0);
 		if (type == 1)  //rho
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhoResArr[element][iorder];
 			}
 		}
 		else if (type == 2)  //rhou
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhouResArr[element][iorder];
 			}
 		}
 		else if (type == 3)  //rhov
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhovResArr[element][iorder];
 			}
 		}
 		else if (type == 4)  //rhoE
 		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				Out[iorder] = rhoEResArr[element][iorder];
 			}
@@ -321,28 +319,28 @@ namespace auxUlti
 		{
 			if (type == 1)  //d(rho)x
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhoX[element][iorder];
 				}
 			}
 			else if (type == 2)  //d(rhou)x
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhouX[element][iorder];
 				}
 			}
 			else if (type == 3)  //d(rhov)x
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhovX[element][iorder];
 				}
 			}
 			else if (type == 4)  //d(rhoE)x
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhoEX[element][iorder];
 				}
@@ -352,28 +350,28 @@ namespace auxUlti
 		{
 			if (type == 1)  //d(rho)y
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhoY[element][iorder];
 				}
 			}
 			else if (type == 2)  //d(rhou)y
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhouY[element][iorder];
 				}
 			}
 			else if (type == 3)  //d(rhov)y
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhovY[element][iorder];
 				}
 			}
 			else if (type == 4)  //d(rhoE)y
 			{
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					Out[iorder] = rhoEY[element][iorder];
 				}
@@ -407,7 +405,7 @@ namespace auxUlti
 	{
 		double uInf(0.0), vInf(0.0), TInf(0.0), SpeedOfSound(0.0), Mach(0.0), Velocity(0.0);
 		bool Out(true);
-		for (int i = 0; i < meshVar::nBc; i++)
+        for (int i = 0; i < meshVar::nBc; i++)
 		{
 			if (bcValues::UBcType[i]==1 || bcValues::UBcType[i] == 4)
 			{
@@ -455,52 +453,52 @@ namespace auxUlti
 		return std::make_tuple(master, servant);
 	}
 
-	void resize2DArray(std::vector<std::vector<double>> &Array, int row, int column)
+    void resize2DArray(std::vector<std::vector<double>> &Array, int row, int column)
 	{
 		Array.resize(row);
-		for (int i = 0; i < row; ++i)
+        for (int i = 0; i < row; ++i)
 		{
 			Array[i].resize(column);
 		}
 	}
 
-	void resize2DIntArray(std::vector<std::vector<int>> &Array, int row, int column)
+    void resize2DIntArray(std::vector<std::vector<int>> &Array, int row, int column)
 	{
 		Array.resize(row);
-		for (int i = 0; i < row; ++i)
+        for (int i = 0; i < row; ++i)
 		{
 			Array[i].resize(column);
 		}
 	}
 
-	void resize3DArray(std::vector<std::vector<std::vector<double>>> &Array, int direct1, int direct2, int direct3)
+    void resize3DArray(std::vector<std::vector<std::vector<double>>> &Array, int direct1, int direct2, int direct3)
 	{
 		Array.resize(direct1);
-		for (int i = 0; i < direct1; ++i)
+        for (int i = 0; i < direct1; ++i)
 		{
 			Array[i].resize(direct2);
-			for (int j = 0; j < direct2; j++)
+            for (int j = 0; j < direct2; j++)
 			{
 				Array[i][j].resize(direct3);
 			}
 		}
 	}
 
-	void addRowTo2DIntArray(std::vector<std::vector<int>> &Array, int numCol)
+    void addRowTo2DIntArray(std::vector<std::vector<int>> &Array, int numCol)
 	{
-		int length(Array.size());
+        int length(Array.size());
 		Array.push_back(std::vector<int>());
-		for (int icol = 0; icol < numCol; icol++)
+        for (int icol = 0; icol < numCol; icol++)
 		{
 			Array[length].push_back(-1);
 		}
 	}
 
-	void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol)
+    void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol)
 	{
 		int length(Array.size());
 		Array.push_back(std::vector<double>());
-		for (int icol = 0; icol < numCol; icol++)
+        for (int icol = 0; icol < numCol; icol++)
 		{
 			Array[length].push_back(0.0);
 		}
@@ -519,11 +517,11 @@ namespace auxUlti
 		double aMaster(0.0), bMaster(0.0), aServant(0.0), bServant(0.0),
 			xMaster(0.0), yMaster(0.0);
 
-		for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+        for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 		{
  			std::tie(masterElem, servantElem) = auxUlti::getMasterServantOfEdge(iedge);
 			bcType = auxUlti::getBCType(iedge);
-			for (int nG = 0; nG <= mathVar::nGauss; nG++)
+            for (int nG = 0; nG <= mathVar::nGauss; nG++)
 			{
 				std::tie(aMaster, bMaster) = auxUlti::getGaussSurfCoorMaster(iedge, masterElem, nG);
 				std::tie(xMaster, yMaster) = math::directMapping(masterElem, aMaster, bMaster);
@@ -636,7 +634,7 @@ namespace auxUlti
 	int getAdressOfBCEdgesOnBCValsArray(int edge)
 	{
 		int locate(0);
-		for (int i = 0; i < meshVar::numBCEdges; i++)
+        for (int i = 0; i < meshVar::numBCEdges; i++)
 		{
 			if (edge == meshVar::adressOfBCVals[i])
 			{
@@ -662,10 +660,24 @@ namespace auxUlti
 		vector.shrink_to_fit();
 	}
 
+    void clear2DIntVector(std::vector<std::vector<int>>&vector)
+    {
+        int numRow(static_cast<int>(vector.size()));
+        /*Use erase function to clear vector*/
+        for (int row = 0; row < numRow; ++row) {
+            int length(static_cast<int>(vector[row].size()));
+            vector[row].erase(vector[row].begin(), vector[row].begin() + length);
+            vector[row].shrink_to_fit();
+        }
+
+        /*Shrink to fit*/
+        vector.shrink_to_fit();
+    }
+
 	int findVertexOrder(int point, int element)
 	{
 		int elemType(auxUlti::checkType(element)), order(-1);
-		for (int i = 0; i < elemType; i++)
+        for (int i = 0; i < elemType; i++)
 		{
 			if (point == meshVar::Elements2D[element][i])
 			{
@@ -681,7 +693,7 @@ namespace auxUlti
 		std::vector<int> getElementsSurroundingPoint(int point)
 		{
 			std::vector<int>ElSurPt;
-			for (int iesup = meshVar::esup2[point] + 1; iesup <= meshVar::esup2[point + 1]; iesup++)
+            for (int iesup = meshVar::esup2[point] + 1; iesup <= meshVar::esup2[point + 1]; iesup++)
 			{
 				ElSurPt.push_back(meshVar::esup1[iesup]);
 			}
@@ -693,12 +705,12 @@ namespace auxUlti
 			std::vector<int> iarray;
 			int index(0), elemType(auxUlti::checkType(element));
 			double a(0.0), b(0.0);
-			for (int ipoin = 0; ipoin < elemType; ipoin++)
+            for (int ipoin = 0; ipoin < elemType; ipoin++)
 			{
 				iarray.push_back(meshVar::Elements2D[element][ipoin]);
 			}
 
-			for (int i = 0; i < elemType; i++)
+            for (int i = 0; i < elemType; i++)
 			{
 				if (point == iarray[i])
 				{
@@ -776,7 +788,7 @@ namespace auxUlti
 	int getEdgeHasInputOrderOfElement(int element, int inputEdgeOrder)
 	{
 		int elemType(auxUlti::checkType(element)), edgeId(0), edgeOrder(0), outputEdgeId(0);
-		for (int i = 0; i < elemType; i++)
+        for (int i = 0; i < elemType; i++)
 		{
 			edgeId = meshVar::inedel[i][element];
 			edgeOrder = auxUlti::findEdgeOrder(element, edgeId);
