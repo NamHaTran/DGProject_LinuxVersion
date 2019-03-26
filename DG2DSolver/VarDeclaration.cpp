@@ -56,25 +56,12 @@ namespace meshVar
 	/*Variables help to save mesh data*/
 	int inpoedCount(0);  //can be used for normalVector, MasterElemOfEdge, ineled
 
-	/*Jacobian*/
-	double J2D[elements2DArrSize][maxGauss][maxGauss] = {}, J1D[pointsArrSize][2] = {};
-
-	/*derivatives dx/da, dx/db, dy/da, dy/db*/
-	double dxa[elements2DArrSize][maxGauss][maxGauss] = {},
-		dxb[elements2DArrSize][maxGauss][maxGauss] = {},
-		dya[elements2DArrSize][maxGauss][maxGauss] = {},
-		dyb[elements2DArrSize][maxGauss][maxGauss] = {};
-
-	std::vector<std::vector<double>> geoCenter(elements2DArrSize, std::vector<double>(2, 0.0));
-	std::vector<double> cellSize(elements2DArrSize, 0.0);
-	std::vector<double> localCellSize(elements2DArrSize, 0.0);
-
 	int numBCEdges(0);
 }
 
 namespace mathVar
 {
-	int nGauss(2), orderElem(0);
+    int nGauss(2), orderElem(0), orderOfAccuracy(0);
 	double wGauss[maxGauss] = {}, xGauss[maxGauss] = {}, wGaussLobatto[maxGauss] = {}, xGaussLobatto[maxGauss] = {};
 	double B[maxOrder] = {}, dBa[maxOrder] = {}, dBb[maxOrder] = {};
 	double BPts_Quad[maxOrder][maxGauss][maxGauss] = {}, dBaPts_Quad[maxOrder][maxGauss][maxGauss] = {}, dBbPts_Quad[maxOrder][maxGauss][maxGauss] = {},
@@ -115,6 +102,11 @@ namespace bcValues
 namespace refValues
 {
 	bool subsonic(true);
+}
+
+namespace flowProperties
+{
+    bool viscous(false);
 }
 
 //time step

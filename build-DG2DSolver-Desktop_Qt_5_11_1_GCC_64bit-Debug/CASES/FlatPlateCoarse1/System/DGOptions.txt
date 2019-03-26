@@ -11,9 +11,9 @@
 	Note: all parameter are in SI unit.
 DGoptions
 {
-	numberOfGaussPoints			2
+	numberOfGaussPoints			5
 	orderOfAccuracy				2
-	CourantNumber				0.7
+	CourantNumber				0.5
 	totalTime(s)				10
 	writeInterval				100
 	writeLog				true

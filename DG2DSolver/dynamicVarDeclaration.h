@@ -17,6 +17,16 @@ namespace meshVar
 	/*Vector contents BC edges name and location of them on BC values arrays*/
 	extern std::vector<int>adressOfBCVals;
 	extern std::vector<std::vector<int>>neighboringElements;
+
+    extern std::vector<std::vector<double>> geoCenter;
+    extern std::vector<double> cellSize, localCellSize, cellArea;
+
+    /*derivatives dx/da, dx/db, dy/da, dy/db*/
+    extern std::vector<std::vector<std::vector<double>>>dxa, dxb, dya, dyb;
+
+    /*Jacobian*/
+    extern std::vector<std::vector<std::vector<double>>> J2D;
+    extern std::vector<std::vector<double>> J1D;
 }
 
 /*Conservative variables declaration*/
@@ -49,6 +59,8 @@ Vis_interface_rhoY, Vis_interface_rhouY, Vis_interface_rhovY, Vis_interface_rhoE
 
 //Lax-Friedrich constant
 extern std::vector<double> LxFConst;
+
+//Diffusion flux constant
 extern std::vector<double> DiffusiveFluxConst;
 
 //time step

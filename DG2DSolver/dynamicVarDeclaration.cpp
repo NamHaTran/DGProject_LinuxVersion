@@ -1,4 +1,4 @@
-#include "VarDeclaration.h"
+﻿#include "VarDeclaration.h"
 #include "dynamicVarDeclaration.h"
 #include <vector>
 
@@ -16,6 +16,16 @@ namespace meshVar
 	/*Vector contents BC edges name and location of them on BC values arrays*/
 	std::vector<int>adressOfBCVals(0, 0);
 	std::vector<std::vector<int>>neighboringElements(1, std::vector<int>(1, 0));
+
+    std::vector<std::vector<double>> geoCenter(0, std::vector<double>(2, 0.0));
+    std::vector<double> cellSize(0, 0.0), cellArea(0, 0.0), localCellSize(0, 0.0);
+
+    /*derivatives dx/da, dx/db, dy/da, dy/db*/
+    std::vector<std::vector<std::vector<double>>>dxa, dxb, dya, dyb;
+
+    /*Jacobian*/
+    std::vector<std::vector<std::vector<double>>> J2D;
+    std::vector<std::vector<double>> J1D;
 }
 
 /*Conservative variables declaration*/

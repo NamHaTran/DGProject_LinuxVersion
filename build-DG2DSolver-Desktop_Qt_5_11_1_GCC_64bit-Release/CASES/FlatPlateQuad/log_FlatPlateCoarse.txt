@@ -1,0 +1,4 @@
+log was created at 06-03-2019_20-58-25
+Boundary condition <inOutFlow> of file U is not valid for type <patch>
+log was created at 07-03-2019_23-36-24
+Boundary condition <outFlow> of file U is not valid for type <wall>

@@ -544,91 +544,103 @@ namespace auxUlti
 
 	void resizeDGArrays()
 	{
-		auxUlti::resize2DArray(meshVar::edgeGaussPoints_a, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(meshVar::edgeGaussPoints_b, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        //Resize mesh arrays
+        auxUlti::resize2DArray(meshVar::geoCenter,meshVar::nelem2D,2);
+        meshVar::cellArea.resize(meshVar::nelem2D);
+        meshVar::cellSize.resize(meshVar::nelem2D);
+        meshVar::localCellSize.resize(meshVar::nelem2D);
+        auxUlti::resize3DArray(meshVar::dxa, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(meshVar::dya, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(meshVar::dxb, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(meshVar::dyb, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(meshVar::J2D, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize2DArray(meshVar::J1D, meshVar::inpoedCount, 2);
 
-		auxUlti::resize2DArray(rho, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhou, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhov, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhoE, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(meshVar::edgeGaussPoints_a, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(meshVar::edgeGaussPoints_b, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		auxUlti::resize2DArray(rho0, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhou0, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhov0, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhoE0, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rho, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhou, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhov, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoE, meshVar::nelem2D, mathVar::orderElem + 1);
 
-		auxUlti::resize2DArray(rhoResArr, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhouResArr, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhovResArr, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhoEResArr, meshVar::nelem2D, mathVar::orderElem + 1);
-		
-		auxUlti::resize2DArray(SurfaceBCFields::rhoBc, mathVar::nGauss + 1, meshVar::numBCEdges);
-		auxUlti::resize2DArray(SurfaceBCFields::rhouBc, mathVar::nGauss + 1, meshVar::numBCEdges);
-		auxUlti::resize2DArray(SurfaceBCFields::rhovBc, mathVar::nGauss + 1, meshVar::numBCEdges);
-		auxUlti::resize2DArray(SurfaceBCFields::rhoEBc, mathVar::nGauss + 1, meshVar::numBCEdges);
+        auxUlti::resize2DArray(rho0, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhou0, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhov0, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoE0, meshVar::nelem2D, mathVar::orderElem + 1);
 
-		auxUlti::resize2DArray(rhoN, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhouN, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhovN, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhoEN, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoResArr, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhouResArr, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhovResArr, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoEResArr, meshVar::nelem2D, mathVar::orderElem + 1);
 
-		auxUlti::resize2DArray(aux_interface_rho, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(aux_interface_rhou, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(aux_interface_rhov, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(aux_interface_rhoE, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(SurfaceBCFields::rhoBc, mathVar::nGauss + 1, meshVar::numBCEdges);
+        auxUlti::resize2DArray(SurfaceBCFields::rhouBc, mathVar::nGauss + 1, meshVar::numBCEdges);
+        auxUlti::resize2DArray(SurfaceBCFields::rhovBc, mathVar::nGauss + 1, meshVar::numBCEdges);
+        auxUlti::resize2DArray(SurfaceBCFields::rhoEBc, mathVar::nGauss + 1, meshVar::numBCEdges);
 
-		auxUlti::resize2DArray(interface_rho, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(interface_rhou, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(interface_rhov, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(interface_rhoE, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(rhoN, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhouN, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhovN, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoEN, meshVar::nelem2D, mathVar::orderElem + 1);
 
-		auxUlti::resize2DArray(rhoX, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhouX, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhovX, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhoEX, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(aux_interface_rho, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(aux_interface_rhou, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(aux_interface_rhov, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(aux_interface_rhoE, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		auxUlti::resize2DArray(rhoY, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhouY, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhovY, meshVar::nelem2D, mathVar::orderElem + 1);
-		auxUlti::resize2DArray(rhoEY, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(interface_rho, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(interface_rhou, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(interface_rhov, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(interface_rhoE, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		auxUlti::resize2DArray(invis_interface_rhoX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(invis_interface_rhouX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(invis_interface_rhovX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(invis_interface_rhoEX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(rhoX, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhouX, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhovX, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoEX, meshVar::nelem2D, mathVar::orderElem + 1);
 
-		auxUlti::resize2DArray(invis_interface_rhoY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(invis_interface_rhouY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(invis_interface_rhovY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(invis_interface_rhoEY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(rhoY, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhouY, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhovY, meshVar::nelem2D, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(rhoEY, meshVar::nelem2D, mathVar::orderElem + 1);
 
-		auxUlti::resize2DArray(Vis_interface_rhoX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(Vis_interface_rhouX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(Vis_interface_rhovX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(Vis_interface_rhoEX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhoX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhouX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhovX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhoEX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		auxUlti::resize2DArray(Vis_interface_rhoY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(Vis_interface_rhouY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(Vis_interface_rhovY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
-		auxUlti::resize2DArray(Vis_interface_rhoEY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhoY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhouY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhovY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(invis_interface_rhoEY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		theta1Arr.resize(meshVar::nelem2D);
-		theta2Arr.resize(meshVar::nelem2D);
-		//debug::minRhoArr.resize(meshVar::nelem2D);
-		//debug::minRhoeArr.resize(meshVar::nelem2D);
+        auxUlti::resize2DArray(Vis_interface_rhoX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(Vis_interface_rhouX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(Vis_interface_rhovX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(Vis_interface_rhoEX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		LxFConst.resize(meshVar::inpoedCount);
-		DiffusiveFluxConst.resize(meshVar::inpoedCount);
+        auxUlti::resize2DArray(Vis_interface_rhoY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(Vis_interface_rhouY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(Vis_interface_rhovY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
+        auxUlti::resize2DArray(Vis_interface_rhoEY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-		auxUlti::resize2DArray(stiffMatrixCoeffs, meshVar::nelem2D, mathVar::orderElem + 1);
+        theta1Arr.resize(meshVar::nelem2D);
+        theta2Arr.resize(meshVar::nelem2D);
+        //debug::minRhoArr.resize(meshVar::nelem2D);
+        //debug::minRhoeArr.resize(meshVar::nelem2D);
 
-		auxUlti::resize3DArray(rhoVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
-		auxUlti::resize3DArray(rhouVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
-		auxUlti::resize3DArray(rhovVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
-		auxUlti::resize3DArray(rhoEVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        LxFConst.resize(meshVar::inpoedCount);
+        DiffusiveFluxConst.resize(meshVar::inpoedCount);
 
-		//meshVar::adressOfBCVals.resize(meshVar::numBCEdges);
-		auxUlti::resize2DIntArray(meshVar::neighboringElements, meshVar::nelem2D, 4);
+        auxUlti::resize2DArray(stiffMatrixCoeffs, meshVar::nelem2D, mathVar::orderElem + 1);
+
+        auxUlti::resize3DArray(rhoVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(rhouVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(rhovVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(rhoEVolGauss, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
+
+        //meshVar::adressOfBCVals.resize(meshVar::numBCEdges);
+        auxUlti::resize2DIntArray(meshVar::neighboringElements, meshVar::nelem2D, 4);
 	}
 
 	int getAdressOfBCEdgesOnBCValsArray(int edge)

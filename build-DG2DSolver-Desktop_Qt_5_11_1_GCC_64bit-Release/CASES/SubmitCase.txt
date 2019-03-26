@@ -11,5 +11,6 @@
 
 SubmitCase
 {
-caseName FlatPlateRefine
+caseName FlatPlateCoarse0
+//caseName fullCylinder
 }

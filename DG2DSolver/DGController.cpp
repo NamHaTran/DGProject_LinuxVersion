@@ -145,11 +145,12 @@ void PreProcessing()
 	{
 		std::cout << "Flow is supersonic.\n";
 	}
-	/*SORT POINTS ID OF ELEMENTS*/
-	MshReader::sortPointsOfElements();
 
 	/*PROCESS MESH*/
 	MshReader::meshProcess();
+
+    /*RESIZE ARRAYS*/
+    auxUlti::resizeDGArrays();
 
 	/*CALCULATE JACOBIAN, BASIS FUNCTION AND GAUSSIAN*/
 	meshParam::GaussParam();
@@ -161,9 +162,6 @@ void PreProcessing()
 
 	/*CALCULATE COORDINATES DERIVATIVES*/
 	meshParam::derivCoordinates();
-
-	/*RESIZE ARRAYS*/
-	auxUlti::resizeDGArrays();
 
 	auxUlti::mappingEdges();
 

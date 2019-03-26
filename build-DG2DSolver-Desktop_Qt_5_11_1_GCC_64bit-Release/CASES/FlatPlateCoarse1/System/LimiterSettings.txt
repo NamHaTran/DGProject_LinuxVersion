@@ -10,7 +10,7 @@
 	Program ran at (d-m-y_h-m-s) time
 Limiter Settings
  
-limiter		PositivityPreserving	pAdaptive
+limiter		PositivityPreserving
 PositivityPreserving
 {
 		version	simplified

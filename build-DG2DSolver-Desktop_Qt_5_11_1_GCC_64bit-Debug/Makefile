@@ -232,6 +232,7 @@ DIST          = ../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_post.prf \
+		../DG2DSolver/.qmake.stash \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/toolchain.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/default_pre.prf \
@@ -440,6 +441,7 @@ Makefile: ../DG2DSolver/DG2DSolver.pro ../../../../Qt/5.11.1/gcc_64/mkspecs/linu
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/toolchain.prf \
 		../../../../Qt/5.11.1/gcc_64/mkspecs/features/default_pre.prf \
@@ -612,6 +614,7 @@ Makefile: ../DG2DSolver/DG2DSolver.pro ../../../../Qt/5.11.1/gcc_64/mkspecs/linu
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/qt_config.prf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.conf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/toolchain.prf:
 ../../../../Qt/5.11.1/gcc_64/mkspecs/features/default_pre.prf:

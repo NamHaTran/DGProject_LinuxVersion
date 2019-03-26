@@ -1,0 +1,4 @@
+log was created at 28-02-2019_22-04-05
+Boundary condition <inFlow> of file U is not valid for type <patch>
+log was created at 02-03-2019_08-36-46
+Cannot open file <rho.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\x64\Release\CASES\fullCylinder\22900

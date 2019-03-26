@@ -462,7 +462,7 @@ namespace process
 			//rhou ------------------------------------------------------------------------------------------
 			rhoEGsVol = process::auxEq::getGaussMatrixOfConserVar(element, 4);
 
-            for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 1; order <= mathVar::orderElem; order++)
 			{
 				rhoVolIntX[order] = process::volumeInte(element, rhoGsVol, order, 1);
 				rhouVolIntX[order] = process::volumeInte(element, rhouGsVol, order, 1);
@@ -474,6 +474,15 @@ namespace process
 				rhovVolIntY[order] = process::volumeInte(element, rhovGsVol, order, 2);
 				rhoEVolIntY[order] = process::volumeInte(element, rhoEGsVol, order, 2);
 			}
+            rhoVolIntX[0] = 0;
+            rhouVolIntX[0] = 0;
+            rhovVolIntX[0] = 0;
+            rhoEVolIntX[0] = 0;
+
+            rhoVolIntY[0] = 0;
+            rhouVolIntY[0] = 0;
+            rhovVolIntY[0] = 0;
+            rhoEVolIntY[0] = 0;
 		}
 
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhouSurfIntX, std::vector<double> &rhovSurfIntX, std::vector<double> &rhoESurfIntX, std::vector<double> &rhoSurfIntY, std::vector<double> &rhouSurfIntY, std::vector<double> &rhovSurfIntY, std::vector<double> &rhoESurfIntY)
@@ -1136,27 +1145,17 @@ namespace process
 			//std::vector<double> VolInt(4, 0.0);
 
 			std::vector<std::vector<double>>
-				InvisGsVolX1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				InvisGsVolY1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolX1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolY1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
 
-				InvisGsVolX2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				InvisGsVolY2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolX2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolY2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
 
-				InvisGsVolX3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				InvisGsVolY3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolX3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolY3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
 
-				InvisGsVolX4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				InvisGsVolY4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
-
-			std::vector<std::vector<double>>
-				ViscGsVolX2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				ViscGsVolY2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-
-				ViscGsVolX3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				ViscGsVolY3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-
-				ViscGsVolX4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-				ViscGsVolY4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+                GsVolX4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolY4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
 
             for (int na = 0; na <= mathVar::nGauss; na++)
 			{
@@ -1166,78 +1165,50 @@ namespace process
 					/*A INVISCID TERMS*/
 					InviscidTerms = NSFEq::calcGaussInviscidTerm(element, na, nb);
 					/*A1. Inviscid term on Ox direction*/
-					InvisGsVolX1[na][nb] = InviscidTerms[0][0];
-					InvisGsVolX2[na][nb] = InviscidTerms[1][0];
-					InvisGsVolX3[na][nb] = InviscidTerms[2][0];
-					InvisGsVolX4[na][nb] = InviscidTerms[3][0];
+                    GsVolX1[na][nb] = InviscidTerms[0][0];
+                    GsVolX2[na][nb] = InviscidTerms[1][0];
+                    GsVolX3[na][nb] = InviscidTerms[2][0];
+                    GsVolX4[na][nb] = InviscidTerms[3][0];
 					/*A2. Inviscid term on Oy direction*/
-					InvisGsVolY1[na][nb] = InviscidTerms[0][1];
-					InvisGsVolY2[na][nb] = InviscidTerms[1][1];
-					InvisGsVolY3[na][nb] = InviscidTerms[2][1];
-					InvisGsVolY4[na][nb] = InviscidTerms[3][1];
+                    GsVolY1[na][nb] = InviscidTerms[0][1];
+                    GsVolY2[na][nb] = InviscidTerms[1][1];
+                    GsVolY3[na][nb] = InviscidTerms[2][1];
+                    GsVolY4[na][nb] = InviscidTerms[3][1];
 
 					/*B VISCOUS TERMS*/
 					ViscousTerms = NSFEq::calcGaussViscousTerm(element, na, nb);
 					/*B1. Viscous term on Ox direction*/
 					//ViscGsVolX1[na][nb] = ViscousTerms[0][0];
-					ViscGsVolX2[na][nb] = ViscousTerms[1][0];
-					ViscGsVolX3[na][nb] = ViscousTerms[2][0];
-					ViscGsVolX4[na][nb] = ViscousTerms[3][0];
+                    GsVolX2[na][nb] += ViscousTerms[1][0];
+                    GsVolX3[na][nb] += ViscousTerms[2][0];
+                    GsVolX4[na][nb] += ViscousTerms[3][0];
 					/*B2. Viscous term on Oy direction*/
 					//ViscGsVolY1[na][nb] = ViscousTerms[0][1];
-					ViscGsVolY2[na][nb] = ViscousTerms[1][1];
-					ViscGsVolY3[na][nb] = ViscousTerms[2][1];
-					ViscGsVolY4[na][nb] = ViscousTerms[3][1];
+                    GsVolY2[na][nb] += ViscousTerms[1][1];
+                    GsVolY3[na][nb] += ViscousTerms[2][1];
+                    GsVolY4[na][nb] += ViscousTerms[3][1];
 				}
 			}
 
-            for (int order = 0; order <= mathVar::orderElem; order++)
+            for (int order = 1; order <= mathVar::orderElem; order++)
 			{
 				/*CALCULATE INTEGRALS*/
-				/*A INVISCID TERMS*/
-				/*- integral term of (dB/dx)*(rho*u)*/
-				VolIntTerm1[order] += process::volumeInte(element, InvisGsVolX1, order, 1);
-				/*- integral term of (dB/dy)*(rho*v)*/
-				VolIntTerm1[order] += process::volumeInte(element, InvisGsVolY1, order, 2);
+                VolIntTerm1[order] = process::volumeInte(element, GsVolX1, order, 1);
+                VolIntTerm1[order] += process::volumeInte(element, GsVolY1, order, 2);
 
-				/*- integral term of (dB/dx)*(rho*u^2 + p)*/
-				VolIntTerm2[order] += process::volumeInte(element, InvisGsVolX2, order, 1);
-				/*- integral term of (dB/dy)*(rho*u*v)*/
-				VolIntTerm2[order] += process::volumeInte(element, InvisGsVolY2, order, 2);
+                VolIntTerm2[order] = process::volumeInte(element, GsVolX2, order, 1);
+                VolIntTerm2[order] += process::volumeInte(element, GsVolY2, order, 2);
 
-				/*- integral term of (dB/dx)*(rho*u*v)*/
-				VolIntTerm3[order] += process::volumeInte(element, InvisGsVolX3, order, 1);
-				/*- integral term of (dB/dy)*(rho*v^2 + p)*/
-				VolIntTerm3[order] += process::volumeInte(element, InvisGsVolY3, order, 2);
+                VolIntTerm3[order] = process::volumeInte(element, GsVolX3, order, 1);
+                VolIntTerm3[order] += process::volumeInte(element, GsVolY3, order, 2);
 
-				/*- integral term of (dB/dx)*(rho*totalE + p)*u*/
-				VolIntTerm4[order] += process::volumeInte(element, InvisGsVolX4, order, 1);
-				/*- integral term of (dB/dy)*(rho*totalE + p)*v*/
-				VolIntTerm4[order] += process::volumeInte(element, InvisGsVolY4, order, 2);
-
-				/*B VISCOUS TERMS*/
-				/*- integral term of (dB/dx)*(0.0)*/
-				VolIntTerm1[order] += 0.0;
-				/*- integral term of (dB/dy)*(0.0)*/
-				VolIntTerm1[order] += 0.0;
-
-				/*- integral term of (dB/dx)*(tau_xx)*/
-				VolIntTerm2[order] += process::volumeInte(element, ViscGsVolX2, order, 1);
-				/*- integral term of (dB/dy)*(tau_xy)*/
-				VolIntTerm2[order] += process::volumeInte(element, ViscGsVolY2, order, 2);
-
-				/*- integral term of (dB/dx)*(tau_xy)*/
-				VolIntTerm3[order] += process::volumeInte(element, ViscGsVolX3, order, 1);
-				/*- integral term of (dB/dy)*(tau_yy)*/
-				VolIntTerm3[order] += process::volumeInte(element, ViscGsVolY3, order, 2);
-
-				/*- integral term of (dB/dx)*(u*tau_xx + v*tau_xy + Qx)*/
-				VolIntTerm4[order] += process::volumeInte(element, ViscGsVolX4, order, 1);
-				/*- integral term of (dB/dy)*(u*tau_xy + v*tau_yy + Qy)*/
-				VolIntTerm4[order] += process::volumeInte(element, ViscGsVolY4, order, 2);
-				/*End volume terms===========================================================================*/
+                VolIntTerm4[order] = process::volumeInte(element, GsVolX4, order, 1);
+                VolIntTerm4[order] += process::volumeInte(element, GsVolY4, order, 2);
 			}
-			//return VolInt;
+            VolIntTerm1[0] = 0;
+            VolIntTerm2[0] = 0;
+            VolIntTerm3[0] = 0;
+            VolIntTerm4[0] = 0;
 		}
 
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4)
