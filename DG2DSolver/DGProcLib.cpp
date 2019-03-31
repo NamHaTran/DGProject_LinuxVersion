@@ -50,12 +50,6 @@ namespace meshParam
 				}
 			}
 		}
-
-		/*1D Jacobi*/
-        for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
-		{
-			std::tie(meshVar::J1D[iedge][0], meshVar::J1D[iedge][1]) = math::J1DCal(iedge);
-		}
 	}
 
 	void basisFcParam()
@@ -129,9 +123,15 @@ namespace meshParam
 			{
 				std::tie(xCoor[i], yCoor[i]) = auxUlti::getElemCornerCoord(nelem, i);
 			}
-			//1. Calculate cell area (cell size)
-			//24/2/2019: this part is only for triangular mesh
-			std::tie(meshVar::cellSize[nelem], cellArea) = math::geometricOp::calROfInscribedCircleOfTriElement(nelem);
+            //1. Calculate cell size
+            if (elemType==3)
+            {
+                std::tie(meshVar::cellSize[nelem], cellArea) = math::geometricOp::calROfInscribedCircleOfTriElement(xCoor, yCoor);
+            }
+            else if (elemType==4)
+            {
+                std::tie(meshVar::cellSize[nelem], cellArea) = math::geometricOp::calSizeOfQuadElement(xCoor, yCoor);
+            }
 
 			//2. Compute geometric center of cell
 			std::tie(xCG, yCG) = math::geometricOp::calcGeoCenter(xCoor, yCoor, elemType);
@@ -153,6 +153,18 @@ namespace meshParam
 		}
 	}
 
+    void calcEdgeLength()
+    {
+        //Jacobi 1D = edgeLength/2
+        int pt1(-1), pt2(-1);
+        for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+        {
+            pt1=meshVar::inpoed[0][iedge];
+            pt2=meshVar::inpoed[1][iedge];
+            meshVar::J1D[iedge]=0.5*math::geometricOp::calDistBetween2Points(meshVar::Points[pt1][0], meshVar::Points[pt1][1], meshVar::Points[pt2][0], meshVar::Points[pt2][1]);
+        }
+    }
+
 	void calcStiffMatrixCoeffs()
 	{
         std::vector<std::vector<double>>StiffMatrix(mathVar::orderElem + 1,std::vector<double>(mathVar::orderElem + 1, 0.0));
@@ -161,9 +173,9 @@ namespace meshParam
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 			{
 				stiffMatrixCoeffs[nelem][iorder] = process::calculateStiffMatrixElement(nelem, iorder, iorder);
-                for (int iorder2 = 0; iorder2 <= mathVar::orderElem; ++iorder2) {
-                    StiffMatrix[iorder][iorder2] = process::calculateStiffMatrixElement(nelem, iorder, iorder2);
-                }
+                //for (int iorder2 = 0; iorder2 <= mathVar::orderElem; ++iorder2) {
+                    //StiffMatrix[iorder][iorder2] = process::calculateStiffMatrixElement(nelem, iorder, iorder2);
+                //}
 			}
 		}
 	}
@@ -1220,28 +1232,18 @@ namespace process
 			int elemType(auxUlti::checkType(element)), edgeName(0);
 			int faceBcType(0);
 
-			std::vector<double> inviscFlux1Temp(mathVar::nGauss + 1, 0.0),
-				inviscFlux2Temp(mathVar::nGauss + 1, 0.0),
-				inviscFlux3Temp(mathVar::nGauss + 1, 0.0),
-				inviscFlux4Temp(mathVar::nGauss + 1, 0.0),
-				
-				ViscFlux1Temp(mathVar::nGauss + 1, 0.0),
-				ViscFlux2Temp(mathVar::nGauss + 1, 0.0),
-				ViscFlux3Temp(mathVar::nGauss + 1, 0.0),
-				ViscFlux4Temp(mathVar::nGauss + 1, 0.0);
+            std::vector<double> Flux1Temp(mathVar::nGauss + 1, 0.0),
+                Flux2Temp(mathVar::nGauss + 1, 0.0),
+                Flux3Temp(mathVar::nGauss + 1, 0.0),
+                Flux4Temp(mathVar::nGauss + 1, 0.0);
 
 			std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 
 			std::vector<std::vector<double>>
-				inviscFlux1(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-				inviscFlux2(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-				inviscFlux3(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-				inviscFlux4(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-
-				ViscFlux1(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-				ViscFlux2(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-				ViscFlux3(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-				ViscFlux4(mathVar::nGauss + 1, std::vector<double>(4, 0.0));
+                Flux1(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
+                Flux2(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
+                Flux3(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
+                Flux4(mathVar::nGauss + 1, std::vector<double>(4, 0.0));
 
 			//std::vector<double> SurInt(4, 0.0);
 
@@ -1255,15 +1257,10 @@ namespace process
                     for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
 					{
 						Fluxes = process::NSFEq::getGaussVectorOfConserVarFluxesAtInternal(edgeName, element, nGauss);
-						inviscFlux1[nGauss][nface] = Fluxes[0][0];
-						inviscFlux2[nGauss][nface] = Fluxes[1][0];
-						inviscFlux3[nGauss][nface] = Fluxes[2][0];
-						inviscFlux4[nGauss][nface] = Fluxes[3][0];
-
-						ViscFlux1[nGauss][nface] = Fluxes[0][1];
-						ViscFlux2[nGauss][nface] = Fluxes[1][1];
-						ViscFlux3[nGauss][nface] = Fluxes[2][1];
-						ViscFlux4[nGauss][nface] = Fluxes[3][1];
+                        Flux1[nGauss][nface] = Fluxes[0][0] + Fluxes[0][1];
+                        Flux2[nGauss][nface] = Fluxes[1][0] + Fluxes[1][1];
+                        Flux3[nGauss][nface] = Fluxes[2][0] + Fluxes[2][1];
+                        Flux4[nGauss][nface] = Fluxes[3][0] + Fluxes[3][1];
 					}
 				}
 				else  //boundary edge
@@ -1271,15 +1268,10 @@ namespace process
                     for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
 					{
 						Fluxes = NSFEqBCsImplement(element, edgeName, nGauss);
-						inviscFlux1[nGauss][nface] = Fluxes[0][0];
-						inviscFlux2[nGauss][nface] = Fluxes[1][0];
-						inviscFlux3[nGauss][nface] = Fluxes[2][0];
-						inviscFlux4[nGauss][nface] = Fluxes[3][0];
-
-						ViscFlux1[nGauss][nface] = Fluxes[0][1];
-						ViscFlux2[nGauss][nface] = Fluxes[1][1];
-						ViscFlux3[nGauss][nface] = Fluxes[2][1];
-						ViscFlux4[nGauss][nface] = Fluxes[3][1];
+                        Flux1[nGauss][nface] = Fluxes[0][0] + Fluxes[0][1];
+                        Flux2[nGauss][nface] = Fluxes[1][0] + Fluxes[1][1];
+                        Flux3[nGauss][nface] = Fluxes[2][0] + Fluxes[2][1];
+                        Flux4[nGauss][nface] = Fluxes[3][0] + Fluxes[3][1];
 					}
 				}
 			}
@@ -1288,22 +1280,18 @@ namespace process
 			{
                 for (int nface = 0; nface < elemType; nface++)
 				{
+                    edgeName = meshVar::inedel[nface][element];  //A BIG BUG!!!!!!
                     for (int nG = 0; nG <= mathVar::nGauss; nG++)
 					{
-						inviscFlux1Temp[nG] = inviscFlux1[nG][nface];
-						inviscFlux2Temp[nG] = inviscFlux2[nG][nface];
-						inviscFlux3Temp[nG] = inviscFlux3[nG][nface];
-						inviscFlux4Temp[nG] = inviscFlux4[nG][nface];
-
-						ViscFlux1Temp[nG] = ViscFlux1[nG][nface];
-						ViscFlux2Temp[nG] = ViscFlux1[nG][nface];
-						ViscFlux3Temp[nG] = ViscFlux1[nG][nface];
-						ViscFlux4Temp[nG] = ViscFlux1[nG][nface];
+                        Flux1Temp[nG] = Flux1[nG][nface];
+                        Flux2Temp[nG] = Flux2[nG][nface];
+                        Flux3Temp[nG] = Flux3[nG][nface];
+                        Flux4Temp[nG] = Flux4[nG][nface];
 					}
-					SurfIntTerm1[order] += process::surfaceInte(element, edgeName, inviscFlux1Temp, order) + process::surfaceInte(element, edgeName, ViscFlux1Temp, order);
-					SurfIntTerm2[order] += process::surfaceInte(element, edgeName, inviscFlux2Temp, order) + process::surfaceInte(element, edgeName, ViscFlux2Temp, order);
-					SurfIntTerm3[order] += process::surfaceInte(element, edgeName, inviscFlux3Temp, order) + process::surfaceInte(element, edgeName, ViscFlux3Temp, order);
-					SurfIntTerm4[order] += process::surfaceInte(element, edgeName, inviscFlux4Temp, order) + process::surfaceInte(element, edgeName, ViscFlux4Temp, order);
+                    SurfIntTerm1[order] += process::surfaceInte(element, edgeName, Flux1Temp, order);
+                    SurfIntTerm2[order] += process::surfaceInte(element, edgeName, Flux2Temp, order);
+                    SurfIntTerm3[order] += process::surfaceInte(element, edgeName, Flux3Temp, order);
+                    SurfIntTerm4[order] += process::surfaceInte(element, edgeName, Flux4Temp, order);
 				}
 			}
 			//return SurInt;
@@ -1653,7 +1641,7 @@ namespace process
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
 				dBi = math::Calc_dBxdBy(elem, order, na, nb, direction);
-				A[na][nb] = dBi * Ui[na][nb];
+                A[na][nb] = dBi * Ui[na][nb];
 			}
 		}
 		Int = math::volumeInte(A, elem);

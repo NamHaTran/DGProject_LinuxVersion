@@ -12,10 +12,10 @@ int const elements2DArrSize(300000);
 int const bcSize(10);
 
 //Maximum Gauss Points
-int const maxGauss(6);
+int const maxGauss(10);
 
 //Maximum Order of accuracy
-int const maxOrder(6);
+int const maxOrder(10);
 
 //Maximum size for Gauss-Seidel function
 int const maxGS(5);

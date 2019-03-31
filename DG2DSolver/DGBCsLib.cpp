@@ -824,12 +824,9 @@ namespace auxilaryBCs
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double>
 					UPlus(4, 0.0),
-					UMinus(4, 0.0),
-					norm(2, 0.0);
+                    UMinus(4, 0.0);
 				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0), muP(0.0), muM(0.0);
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
-				norm[0] = nx;
-				norm[1] = ny;
 
 				for (int i = 0; i < 4; i++)
 				{

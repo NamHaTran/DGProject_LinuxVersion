@@ -62,14 +62,6 @@ namespace meshVar
 namespace mathVar
 {
     int nGauss(2), orderElem(0), orderOfAccuracy(0);
-	double wGauss[maxGauss] = {}, xGauss[maxGauss] = {}, wGaussLobatto[maxGauss] = {}, xGaussLobatto[maxGauss] = {};
-	double B[maxOrder] = {}, dBa[maxOrder] = {}, dBb[maxOrder] = {};
-	double BPts_Quad[maxOrder][maxGauss][maxGauss] = {}, dBaPts_Quad[maxOrder][maxGauss][maxGauss] = {}, dBbPts_Quad[maxOrder][maxGauss][maxGauss] = {},
-		BPts_Tri[maxOrder][maxGauss][maxGauss] = {}, dBaPts_Tri[maxOrder][maxGauss][maxGauss] = {}, dBbPts_Tri[maxOrder][maxGauss][maxGauss] = {};
-	double GaussPts[maxGauss][maxGauss][2] = {}, //coordinate a is array (..,..,0), coordinate b is array (..,..,1)
-		wGaussPts[maxGauss][maxGauss][2] = {}, //weights on a direction (w1) is array (..,..,1), weights on b direction (w2) is array (..,..,2)
-		GaussLobattoPts[maxGauss][maxGauss][2] = {},
-		wGaussLobattoPts[maxGauss][maxGauss][2] = {};
 }
 
 namespace material

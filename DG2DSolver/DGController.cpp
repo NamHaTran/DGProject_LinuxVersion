@@ -159,6 +159,7 @@ void PreProcessing()
 
 	/*CALCULATE CELL METRICS*/
 	meshParam::calcCellMetrics();
+    meshParam::calcEdgeLength();
 
 	/*CALCULATE COORDINATES DERIVATIVES*/
 	meshParam::derivCoordinates();

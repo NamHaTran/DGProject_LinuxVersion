@@ -306,7 +306,9 @@ namespace math
 
 		double calPolygonPerimeter(std::vector<double> &xCoor, std::vector<double> &yCoor, int numOfEdge);
 
-		std::tuple<double, double> calROfInscribedCircleOfTriElement(int element);
+        std::tuple<double, double> calROfInscribedCircleOfTriElement(std::vector<double> &xCoor, std::vector<double> &yCoor);
+
+        std::tuple<double, double> calSizeOfQuadElement(std::vector<double> &xCoor, std::vector<double> &yCoor);
 	}
 
 	namespace residualManipulation

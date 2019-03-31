@@ -19,6 +19,8 @@ namespace meshParam
 	/*Function calculates centroid and cell size of elements*/
 	void calcCellMetrics();
 
+    void calcEdgeLength();
+
 	void calcStiffMatrixCoeffs();
 }
 

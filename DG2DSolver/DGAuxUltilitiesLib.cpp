@@ -110,7 +110,7 @@ namespace auxUlti
 	bool checkMaster(int elem, int edge)
 	{
 		bool master(true);
-		if (meshVar::MasterElemOfEdge[edge]==elem)
+        if (meshVar::MasterElemOfEdge[edge]==elem)
 		{
 			master = true;
 		}
@@ -119,21 +119,6 @@ namespace auxUlti
 			master = false;
 		}
 		return master;
-	}
-
-	double getJ1D(int elem, int edge)
-	{
-		double J(0.0);
-		bool master(auxUlti::checkMaster(elem,edge));
-		if (master==true)
-		{
-			J = meshVar::J1D[edge][0];
-		}
-		else
-		{
-			J = meshVar::J1D[edge][1];
-		}
-		return J;
 	}
 
 	std::tuple<double, double> getGaussSurfCoor(int edge, int elem, int nG)
@@ -554,7 +539,8 @@ namespace auxUlti
         auxUlti::resize3DArray(meshVar::dxb, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
         auxUlti::resize3DArray(meshVar::dyb, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
         auxUlti::resize3DArray(meshVar::J2D, meshVar::nelem2D, mathVar::nGauss + 1, mathVar::nGauss + 1);
-        auxUlti::resize2DArray(meshVar::J1D, meshVar::inpoedCount, 2);
+        meshVar::J1D.resize(meshVar::inpoedCount);
+        //auxUlti::resize2DArray(meshVar::J1D, meshVar::inpoedCount, 2);
 
         auxUlti::resize2DArray(meshVar::edgeGaussPoints_a, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
         auxUlti::resize2DArray(meshVar::edgeGaussPoints_b, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
@@ -641,6 +627,25 @@ namespace auxUlti
 
         //meshVar::adressOfBCVals.resize(meshVar::numBCEdges);
         auxUlti::resize2DIntArray(meshVar::neighboringElements, meshVar::nelem2D, 4);
+
+        //Resize mathVar array
+        mathVar::wGauss.resize(mathVar::nGauss+1);
+        mathVar::xGauss.resize(mathVar::nGauss+1);
+        mathVar::wGaussLobatto.resize(mathVar::nGauss+1);
+        mathVar::xGaussLobatto.resize(mathVar::nGauss+1);
+        mathVar::B.resize(mathVar::nGauss+1);
+        mathVar::dBa.resize(mathVar::nGauss+1);
+        mathVar::dBb.resize(mathVar::nGauss+1);
+        auxUlti::resize3DArray(mathVar::BPts_Quad, mathVar::orderElem+1, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(mathVar::dBaPts_Quad, mathVar::orderElem+1, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(mathVar::dBbPts_Quad, mathVar::orderElem+1, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(mathVar::BPts_Tri, mathVar::orderElem+1, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(mathVar::dBaPts_Tri, mathVar::orderElem+1, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(mathVar::dBbPts_Tri, mathVar::orderElem+1, mathVar::nGauss + 1, mathVar::nGauss + 1);
+        auxUlti::resize3DArray(mathVar::GaussPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
+        auxUlti::resize3DArray(mathVar::wGaussPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
+        auxUlti::resize3DArray(mathVar::GaussLobattoPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
+        auxUlti::resize3DArray(mathVar::wGaussLobattoPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
 	}
 
 	int getAdressOfBCEdgesOnBCValsArray(int edge)

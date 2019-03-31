@@ -22,9 +22,6 @@ namespace auxUlti
 	/*Function return true if considering element is master of considering edge, otherwise it return false*/
 	bool checkMaster(int elem, int edge);
 
-	/*Function gets Jacobi 1D value from J1D array*/
-	double getJ1D(int elem, int edge);
-
 	/*Function gets normal vector component (nx or ny) from normalVector array*/
 	double getNormVectorComp(int elem, int edge, int dir);
 

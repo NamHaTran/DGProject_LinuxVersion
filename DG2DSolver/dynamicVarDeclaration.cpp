@@ -25,7 +25,13 @@ namespace meshVar
 
     /*Jacobian*/
     std::vector<std::vector<std::vector<double>>> J2D;
-    std::vector<std::vector<double>> J1D;
+    std::vector<double> J1D;
+}
+
+namespace mathVar {
+    std::vector<double> wGauss, xGauss, wGaussLobatto, xGaussLobatto, B, dBa, dBb;
+    std::vector<std::vector<std::vector<double>>> GaussPts, wGaussPts, GaussLobattoPts, wGaussLobattoPts,
+        BPts_Quad, dBaPts_Quad, dBbPts_Quad, BPts_Tri, dBaPts_Tri, dBbPts_Tri;
 }
 
 /*Conservative variables declaration*/

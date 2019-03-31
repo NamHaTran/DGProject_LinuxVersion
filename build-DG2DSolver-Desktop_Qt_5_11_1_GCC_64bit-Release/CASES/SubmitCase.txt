@@ -11,6 +11,6 @@
 
 SubmitCase
 {
-caseName FlatPlateCoarse0
+caseName FlatPlateQuad
 //caseName fullCylinder
 }
