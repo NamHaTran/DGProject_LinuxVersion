@@ -359,18 +359,19 @@ namespace IO
 		/*Read DGOptions*/
 		std::string DGOptfileName("DGOptions.txt");
         std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-		std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[2] = {"orderOfAccuracy", "writeInterval" }, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[1] = {"ddtScheme"};
+        std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[3] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval" }, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[1] = {"ddtScheme"};
 		double DGOptoutDB[3] = {};
 		int DGOptoutInt[3] = {};
 		bool DGOptoutBool[2] = {};
 		std::string DGOptoutStr[2] = {};
 
-		readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 2, 2, 1);
+        readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 3, 2, 1);
 		
 		systemVar::CFL = DGOptoutDB[0];
 		systemVar::Ttime = DGOptoutDB[1];
-		mathVar::orderElem = DGOptoutInt[0];
-		systemVar::wrtI = DGOptoutInt[1]; 
+        mathVar::nGauss = DGOptoutInt[0];
+        mathVar::orderElem = DGOptoutInt[1];
+        systemVar::wrtI = DGOptoutInt[2];
 		systemVar::wrtLog = DGOptoutBool[0];
 		systemVar::loadSavedCase = DGOptoutBool[1];
 
@@ -385,11 +386,6 @@ namespace IO
 		else if (DGOptoutStr[0].compare("TVDRK3") == 0)
 		{
 			systemVar::ddtScheme = 3;
-		}
-
-		if (mathVar::orderElem>pow(mathVar::nGauss,2))
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::nGaussOrderElemError());
 		}
 		
 		/*Read Material*/
@@ -637,6 +633,10 @@ namespace IO
 		|4. outFlow			|4. outFlow			|4. outFlow			|
 		|	Value u v w		|	Value T			|	Value p			|
 		+-------------------+-------------------+-------------------+
+        U:
+        + 3:
+        movingWall
+        velocity        u v w
 		*/
 
 		std::string fileName("U.txt"), tempStr("");
@@ -697,7 +697,7 @@ namespace IO
 								std::istringstream fixedUStream(line);
 								fixedUStream >> tempStr >> bcValues::uWall[bcGrp - 1] >> bcValues::vWall[bcGrp - 1] >> bcValues::wWall[bcGrp - 1];
 							}
-							else if ((str0.compare("fixedValue") == 0))  //Type fixedValue
+                            else if ((str0.compare("movingWall") == 0))  //Type movingWall
 							{
 								bcValues::UBcType[bcGrp - 1] = 3;
 								std::getline(FileFlux, line);

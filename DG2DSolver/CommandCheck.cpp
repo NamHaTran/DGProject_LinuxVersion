@@ -62,7 +62,7 @@ namespace preProcessKey
 	bool mappResults(std::string cmd)
 	{
 		bool trigger(false);
-		if ((cmd.compare("mappresults") == 0) || (cmd.compare("mappResults") == 0))
+        if ((cmd.compare("mapresults") == 0) || (cmd.compare("mapResults") == 0))
 		{
 			trigger = true;
 		}

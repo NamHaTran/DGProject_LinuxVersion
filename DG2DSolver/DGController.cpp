@@ -110,7 +110,6 @@ void Processing()
 			std::cout << "Saving case...\n" << std::endl;
 			IO::saveCase();
 			std::cout << "Exporting data to Tecplot...\n" << std::endl;
-			//DG2Tecplot::exportNodeData(systemVar::iterCount);
 			DG2Tecplot::exportCellCenteredData(systemVar::iterCount);
 			systemVar::savingCout = 0;
 		}
@@ -136,15 +135,15 @@ void PreProcessing()
 	/*LOAD p T U*/
 	IO::loadpTU();
 	//Check subsonic
-	refValues::subsonic = auxUlti::checkSubSonic();
-	if (refValues::subsonic)
-	{
-		std::cout << "Flow is subsonic.\n";
-	}
-	else
-	{
-		std::cout << "Flow is supersonic.\n";
-	}
+    refValues::subsonic = auxUlti::checkSubSonic();
+    if (refValues::subsonic)
+    {
+        std::cout << "Flow is subsonic.\n";
+    }
+    else
+    {
+        std::cout << "Flow is supersonic.\n";
+    }
 
 	/*PROCESS MESH*/
 	MshReader::meshProcess();

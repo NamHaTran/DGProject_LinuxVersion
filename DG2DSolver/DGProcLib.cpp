@@ -1485,7 +1485,6 @@ namespace process
 			aSound = math::CalcSpeedOfSound(TVal);
 			muVal = math::CalcVisCoef(TVal);
 			
-			//deltaT = fabs((1.0 / (2 * mathVar::orderElem + 1))*(size*systemVar::CFL) / (aSound + velocity));
 			deltaT = fabs((1.0 / pow(mathVar::orderElem + 1, 2))*(size*systemVar::CFL) / (aSound + velocity + muVal/size));
 			return deltaT;
 		}

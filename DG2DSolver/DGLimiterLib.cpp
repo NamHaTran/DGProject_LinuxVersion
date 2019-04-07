@@ -74,9 +74,8 @@ namespace limiter
 				if (limitVal::numOfLimitCell > 0)
 				{
 					std::cout << "Posivity preserving limiter is applied at " << limitVal::numOfLimitCell << " cell(s)\n";
-					//std::cout << "Max theta1: " << *std::max_element(theta1Arr.begin(), theta1Arr.end()) << ". Min theta1: " << *std::min_element(theta1Arr.begin(), theta1Arr.end()) << std::endl
-						//<< "Max theta2: " << *std::max_element(theta2Arr.begin(), theta2Arr.end()) << ". Min theta2: " << *std::min_element(theta2Arr.begin(), theta2Arr.end()) << std::endl;
-					double averageTheta1(0.0), averageTheta2(0.0);
+                    /*
+                    double averageTheta1(0.0), averageTheta2(0.0);
 					for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
 					{
 						averageTheta1 += theta1Arr[nelem];
@@ -85,6 +84,7 @@ namespace limiter
 					averageTheta1 = averageTheta1 / meshVar::nelem2D;
 					averageTheta2 = averageTheta2 / meshVar::nelem2D;
 					std::cout << "Average theta1: " << averageTheta1 << ". Average theta2: " << averageTheta2 << std::endl;
+                    */
 					limitVal::numOfLimitCell = 0;
 				}
 			}

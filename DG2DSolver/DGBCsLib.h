@@ -33,10 +33,10 @@ namespace NSFEqBCs
 		namespace wall
 		{
 			/*Function computes numerical flux at isothermal wall by using weakRiemann approach*/
-			std::vector <std::vector<double>> noSlipIsoThermal(int element, int edge, int edgeGrp, int nG);
+            std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG);
 
 			/*Function computes numerical flux at adiabatic wall by using weakRiemann approach*/
-			std::vector <std::vector<double>> noSlipAdiabatic(int element, int edge, int nG);
+            std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
 		}
 
 		namespace patch
@@ -57,10 +57,10 @@ namespace NSFEqBCs
 		namespace wall
 		{
 			//Function computes numerical flux at isothermal wall by using weakPrescribed approach
-			std::vector <std::vector<double>> noSlipIsoThermal(int element, int edge, int nG);
+            std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int nG);
 
 			//Function computes numerical flux at adiabatic wall by using weakPrescribed approach
-			std::vector <std::vector<double>> noSlipAdiabatic(int element, int edge, int nG);
+            std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int nG);
 		}
 
 		namespace patch
@@ -76,16 +76,16 @@ namespace auxilaryBCs
 	namespace weakPrescribed
 	{
 		/*Function computes numerical flux of auxilary variables at in/out flow using weakPrescribed approach*/
-		std::vector <std::vector<double>> auxFluxesAtBC(int element, int edge, int nG);
+        std::vector <std::vector<double>> auxFluxesAtBC(int element, int edge,  int edgeGrp, int nG);
 	}
 	
 	namespace weakRiemann
 	{
 		namespace wall
 		{
-			std::vector <std::vector<double>> noslipIsoThermal(int element, int edge, int edgeGrp, int nG);
+            std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG);
 
-			std::vector <std::vector<double>> noslipAdiabatic(int element, int edge, int nG);
+            std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
 		}
 
 		namespace patch {
@@ -123,7 +123,7 @@ namespace BCSupportFncs
 		void calcWallIsothermalBCVals(int element, int edge, int edgeGrp, int nG);
 
 		/*Function computes BC values at adiabatic wall*/
-		void calcWallAdiabaticBCVals(int element, int edge, int nG);
+        void calcWallAdiabaticBCVals(int element, int edge, int edgeGrp, int nG);
 
 		/*Function distributes BC values to output Array*/
 		std::vector<double> distributeBCValsToArray(int nG, int edge);

@@ -14,14 +14,14 @@ inlet
 {
 	Group				1
 	Type				patch
-	Method				weakPrescribed
+	Method				weakRiemann
 }
  
 outlet
 {
 	Group				2
 	Type				patch
-	Method				weakPrescribed
+	Method				weakRiemann
 }
  
 wall

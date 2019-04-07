@@ -13,18 +13,26 @@
 - Method index: 1: weak weak Riemann, 2: weak Prescribed
 
 Boundary conditions compatibility
-		|U					|T					|p					|
-		+-------------------+-------------------+-------------------+
-		|1. inOutFlow		|1. inOutFlow		|1. inOutFlow		|
-		|	Value u v w		|	Value T			|	Value p			|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-		|					|	Value T			|					|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-		+-------------------+-------------------+-------------------+
-		|7.	symmetry		|7. symmetry		|7. symmetry		|
-		+-------------------+-------------------+-------------------+
+        Boundary conditions compatibility
+        |U					|T					|p					|
+        +-------------------+-------------------+-------------------+
+        |1. inFlow			|1. inFlow			|1. inFlow			|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+        |					|	Value T			|					|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+        +-------------------+-------------------+-------------------+
+        |7.	symmetry		|7. symmetry		|7. symmetry		|
+        +-------------------+-------------------+-------------------+
+        |4. outFlow			|4. outFlow			|4. outFlow			|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        U:
+        + 3:
+        movingWall
+        velocity        u v w
 */
 
 std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG)
@@ -63,29 +71,29 @@ std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG
 			break;
 		}
 	}
-	else if (UType == 2 && TType == 2 && pType == 2)
+    else if ((UType == 2 || UType == 3) && TType == 2 && pType == 2)
 	{
 		switch (method)
 		{
 		case 1:  //weak Riemann method
-			Fluxes = NSFEqBCs::weakRiemann::wall::noSlipIsoThermal(element, edge, edgeGrp, nG);
+            Fluxes = NSFEqBCs::weakRiemann::wall::wallIsoThermal(element, edge, edgeGrp, nG);
 			break;
 		case 2:  //weak Prescribed
-			Fluxes = NSFEqBCs::weakPrescribed::wall::noSlipIsoThermal(element, edge, nG);
+            Fluxes = NSFEqBCs::weakPrescribed::wall::wallIsoThermal(element, edge, nG);
 			break;
 		default:
 			break;
 		}
 	}
-	else if (UType == 2 && TType == 3 && pType == 2)
+    else if ((UType == 2 || UType == 3) && TType == 3 && pType == 2)
 	{
 		switch (method)
 		{
 		case 1:  //weak Riemann method
-			Fluxes = NSFEqBCs::weakRiemann::wall::noSlipAdiabatic(element, edge, nG);
+            Fluxes = NSFEqBCs::weakRiemann::wall::wallAdiabatic(element, edge, edgeGrp, nG);
 			break;
 		case 2:  //weak Prescribed
-			Fluxes = NSFEqBCs::weakPrescribed::wall::noSlipAdiabatic(element, edge, nG);
+            Fluxes = NSFEqBCs::weakPrescribed::wall::wallAdiabatic(element, edge, nG);
 			break;
 		default:
 			break;
@@ -118,7 +126,7 @@ std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG
 			break;
 		case 2:  //weak Prescribed
 			BCSupportFncs::weakPrescribedFluxes::calcInFlowBCVals(element, edge, edgeGrp, nG);
-			Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG);
+            Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, edgeGrp, nG);
 			break;
 		default:
 			break;
@@ -133,37 +141,37 @@ std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG
 			break;
 		case 2:  //weak Prescribed
 			BCSupportFncs::weakPrescribedFluxes::calcOutFlowBCVals(element, edge, edgeGrp, nG);
-			Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG);
+            Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, edgeGrp, nG);
 			break;
 		default:
 			break;
 		}
 	}
-	else if (UType == 2 && TType == 2 && pType == 2)
+    else if ((UType == 2 || UType == 3) && TType == 2 && pType == 2)
 	{
 		switch (method)
 		{
 		case 1:  //weak Riemann method
-			Fluxes = auxilaryBCs::weakRiemann::wall::noslipIsoThermal(element, edge, edgeGrp, nG);
+            Fluxes = auxilaryBCs::weakRiemann::wall::wallIsoThermal(element, edge, edgeGrp, nG);
 			break;
 		case 2:  //weak Prescribed
 			BCSupportFncs::weakPrescribedFluxes::calcWallIsothermalBCVals(element, edge, edgeGrp, nG);
-			Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG);
+            Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, edgeGrp, nG);
 			break;
 		default:
 			break;
 		}
 	}
-	else if (UType == 2 && TType == 3 && pType == 2)
+    else if ((UType == 2 || UType == 3) && TType == 3 && pType == 2)
 	{
 		switch (method)
 		{
 		case 1:  //weak Riemann method
-			Fluxes = auxilaryBCs::weakRiemann::wall::noslipAdiabatic(element, edge, nG);
+            Fluxes = auxilaryBCs::weakRiemann::wall::wallAdiabatic(element, edge, edgeGrp, nG);
 			break;
 		case 2:  //weak Prescribed
-			BCSupportFncs::weakPrescribedFluxes::calcWallAdiabaticBCVals(element, edge, nG);
-			Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, nG);
+            BCSupportFncs::weakPrescribedFluxes::calcWallAdiabaticBCVals(element, edge, edgeGrp, nG);
+            Fluxes = auxilaryBCs::weakPrescribed::auxFluxesAtBC(element, edge, edgeGrp, nG);
 			break;
 		default:
 			break;
@@ -392,12 +400,20 @@ namespace BCSupportFncs
 			std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 			int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
 			SurfaceBCFields::rhoBc[nG][loc] = math::pointValue(element, a, b, 1, 2);
-			SurfaceBCFields::rhouBc[nG][loc] = 0;
-			SurfaceBCFields::rhovBc[nG][loc] = 0;
+            if (bcValues::UBcType[edgeGrp - 1] == 2)
+            {
+                SurfaceBCFields::rhouBc[nG][loc] = 0;
+                SurfaceBCFields::rhovBc[nG][loc] = 0;
+            }
+            else if (bcValues::UBcType[edgeGrp - 1] == 3)
+            {
+                SurfaceBCFields::rhouBc[nG][loc] = bcValues::uBC[edgeGrp - 1]*SurfaceBCFields::rhoBc[nG][loc];
+                SurfaceBCFields::rhovBc[nG][loc] = bcValues::vBC[edgeGrp - 1]*SurfaceBCFields::rhoBc[nG][loc];
+            }
 			SurfaceBCFields::rhoEBc[nG][loc] = SurfaceBCFields::rhoBc[nG][loc] * (material::R*bcValues::TBC[edgeGrp - 1]) / (material::gamma - 1);
 		}
 
-		void calcWallAdiabaticBCVals(int element, int edge, int nG)
+        void calcWallAdiabaticBCVals(int element, int edge, int edgeGrp, int nG)
 		{
 			std::vector<double> UBc(4, 0.0),
 				UPlus(4, 0.0);
@@ -412,8 +428,16 @@ namespace BCSupportFncs
 			double TP(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
 			int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
 			SurfaceBCFields::rhoBc[nG][loc] = math::pointValue(element, a, b, 1, 2);
-			SurfaceBCFields::rhouBc[nG][loc] = 0;
-			SurfaceBCFields::rhovBc[nG][loc] = 0;
+            if (bcValues::UBcType[edgeGrp - 1] == 2)
+            {
+                SurfaceBCFields::rhouBc[nG][loc] = 0;
+                SurfaceBCFields::rhovBc[nG][loc] = 0;
+            }
+            else if (bcValues::UBcType[edgeGrp - 1] == 3)
+            {
+                SurfaceBCFields::rhouBc[nG][loc] = bcValues::uBC[edgeGrp - 1]*SurfaceBCFields::rhoBc[nG][loc];
+                SurfaceBCFields::rhovBc[nG][loc] = bcValues::vBC[edgeGrp - 1]*SurfaceBCFields::rhoBc[nG][loc];
+            }
 			SurfaceBCFields::rhoEBc[nG][loc] = SurfaceBCFields::rhoBc[nG][loc] * material::R*TP / (material::gamma - 1);
 		}
 
@@ -436,7 +460,7 @@ namespace NSFEqBCs
 	{
 		namespace wall
 		{
-			std::vector <std::vector<double>> noSlipIsoThermal(int element, int edge, int edgeGrp, int nG)
+            std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> UMinus(4, 0.0),
@@ -458,15 +482,22 @@ namespace NSFEqBCs
 				}
 
 				UMinus[0] = UPlus[0];
-				UMinus[1] = 0.0;
-				UMinus[2] = 0.0;
+                if (bcValues::UBcType[edgeGrp - 1] == 2)
+                {
+                    UMinus[1] = 0.0;
+                    UMinus[2] = 0.0;
+                }
+                else if (bcValues::UBcType[edgeGrp - 1] == 3) {
+                    UMinus[1] = UMinus[0]*bcValues::uBC[edgeGrp - 1]*UMinus[0];
+                    UMinus[2] = UMinus[0]*bcValues::vBC[edgeGrp - 1]*UMinus[0];
+                }
 				UMinus[3] = UPlus[0]*material::Cv*bcValues::TBC[edgeGrp - 1];
 				//with isothermal BC, dUXMinus = dUXPlus, dUYMinus = dUYPlus
 				Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXPlus, dUYPlus, dUYPlus, norm);
 				return Fluxes;
 			}
 
-			std::vector <std::vector<double>> noSlipAdiabatic(int element, int edge, int nG)
+            std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> UMinus(4, 0.0),
@@ -474,7 +505,7 @@ namespace NSFEqBCs
 					dUXPlus(4, 0.0), dUXMinus(4, 0.0),
 					dUYPlus(4, 0.0), dUYMinus(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;
@@ -493,8 +524,15 @@ namespace NSFEqBCs
 				dUYMinus[3] = 0;
 
 				UMinus[0] = UPlus[0];
-				UMinus[1] = 0.0;
-				UMinus[2] = 0.0;
+                if (bcValues::UBcType[edgeGrp - 1] == 2)
+                {
+                    UMinus[1] = 0.0;
+                    UMinus[2] = 0.0;
+                }
+                else if (bcValues::UBcType[edgeGrp - 1] == 3) {
+                    UMinus[1] = UMinus[0]*bcValues::uBC[edgeGrp - 1]*UMinus[0];
+                    UMinus[2] = UMinus[0]*bcValues::vBC[edgeGrp - 1]*UMinus[0];
+                }
 				UMinus[3] = UPlus[0]*material::Cv*math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]);
 
 				Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
@@ -651,7 +689,7 @@ namespace NSFEqBCs
 	{
 		namespace wall
 		{
-			std::vector <std::vector<double>> noSlipIsoThermal(int element, int edge, int nG)
+            std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int nG)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> UBc(4, 0.0),
@@ -675,7 +713,7 @@ namespace NSFEqBCs
 				return Fluxes;
 			}
 
-			std::vector <std::vector<double>> noSlipAdiabatic(int element, int edge, int nG)
+            std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int nG)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> UBc(4, 0.0),
@@ -738,14 +776,20 @@ namespace auxilaryBCs
 {
 	namespace weakPrescribed
 	{
-		std::vector <std::vector<double>> auxFluxesAtBC(int element, int edge, int nG)
+        std::vector <std::vector<double>> auxFluxesAtBC(int element, int edge,  int edgeGrp, int nG)
 		{
 			//General formulae: hS_BC = UBc*n
 			std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 			std::vector<double> UBc(4, 0.0);
 			double TBc(0.0), muBc(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
-			UBc = BCSupportFncs::weakPrescribedFluxes::distributeBCValsToArray(nG, edge);
-			TBc = math::CalcTFromConsvVar(UBc[0], UBc[1], UBc[2], UBc[3]);
+            UBc = BCSupportFncs::weakPrescribedFluxes::distributeBCValsToArray(nG, edge);
+            if (bcValues::TBcType[edgeGrp - 1] == 2)
+            {
+                TBc = bcValues::TBC[edgeGrp - 1];
+            }
+            else {
+                TBc = math::CalcTFromConsvVar(UBc[0], UBc[1], UBc[2], UBc[3]);
+            }
 			muBc = math::CalcVisCoef(TBc);
 			for (int i = 0; i < 4; i++)
 			{
@@ -760,7 +804,7 @@ namespace auxilaryBCs
 	{
 		namespace wall
 		{
-			std::vector <std::vector<double>> noslipIsoThermal(int element, int edge, int edgeGrp, int nG)
+            std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG)
 			{
 				//columns 0, 1 are plus, minus values
 				std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0)), Fluxes(4, std::vector<double>(2, 0.0));
@@ -774,8 +818,16 @@ namespace auxilaryBCs
 				muP = math::CalcVisCoef(math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]));
 
 				gaussVector[0][1] = gaussVector[0][0];
-				gaussVector[1][1] = 0;
-				gaussVector[2][1] = 0;
+                if (bcValues::UBcType[edgeGrp - 1] == 2)
+                {
+                    gaussVector[1][1] = 0;
+                    gaussVector[2][1] = 0;
+                }
+                else if (bcValues::UBcType[edgeGrp - 1] == 3)
+                {
+                    gaussVector[1][1] = bcValues::uBC[edgeGrp - 1]*gaussVector[0][1];
+                    gaussVector[2][1] = bcValues::vBC[edgeGrp - 1]*gaussVector[0][1];
+                }
 				gaussVector[3][1] = gaussVector[0][1]*material::Cv*bcValues::TBC[edgeGrp - 1];
 
 				for (int i = 0; i < 4; i++)
@@ -788,7 +840,7 @@ namespace auxilaryBCs
 				return Fluxes;
 			}
 
-			std::vector <std::vector<double>> noslipAdiabatic(int element, int edge, int nG)
+            std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG)
 			{
 				//columns 0, 1 are plus, minus values
 				std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0)), Fluxes(4, std::vector<double>(2, 0.0));
@@ -802,8 +854,16 @@ namespace auxilaryBCs
 				muP = math::CalcVisCoef(math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]));
 				muM = muP;
 				gaussVector[0][1] = gaussVector[0][0];
-				gaussVector[1][1] = 0;
-				gaussVector[2][1] = 0;
+                if (bcValues::UBcType[edgeGrp - 1] == 2)
+                {
+                    gaussVector[1][1] = 0;
+                    gaussVector[2][1] = 0;
+                }
+                else if (bcValues::UBcType[edgeGrp - 1] == 3)
+                {
+                    gaussVector[1][1] = bcValues::uBC[edgeGrp - 1]*gaussVector[0][1];
+                    gaussVector[2][1] = bcValues::vBC[edgeGrp - 1]*gaussVector[0][1];
+                }
 				gaussVector[3][1] = gaussVector[0][1] * material::Cv*math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]);
 
 				for (int i = 0; i < 4; i++)
