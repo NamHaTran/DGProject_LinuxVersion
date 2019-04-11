@@ -71,7 +71,9 @@ namespace process
 	{
 		void calcValuesAtInterface();
 
-		std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int mod, int direction, int valType);
+        std::tuple<double, double> getFinvFvisAtInterfaces(int edge, int element, int nG, int mod, int direction, int valType);
+
+        std::tuple<double, double> getUAtInterfaces(int edge, int element, int nG, int valType);
 
 		/*Function solves NSEF equation at all elements for conservative variables*/
 		void solveNSFEquation(int RKOrder);

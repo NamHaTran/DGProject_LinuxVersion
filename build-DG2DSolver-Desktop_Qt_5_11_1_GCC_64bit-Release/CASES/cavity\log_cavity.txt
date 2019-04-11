@@ -1,2 +1,0 @@
-log was created at 07-04-2019_10-45-51
-Boundary incompatibility error is detected, please check condition of boundary group 1 in folder /0/. This is considered as a fatal error.

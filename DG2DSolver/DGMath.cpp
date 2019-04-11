@@ -723,11 +723,7 @@ namespace math
 				if ((out < 0) && (fabs(out) < 0.001))
 				{
 					std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
-					//system("pause");
-					std::cout << theta1Arr[element] << std::endl;
-					std::cout << theta2Arr[element] << std::endl;
-					std::cout << a << ", " << b << std::endl;
-					out = fabs(out);
+                    int c = getchar();
 				}
 			}
 			else if (valType == 7)  //mu
@@ -745,15 +741,7 @@ namespace math
 				if (out < 0 || out != out)
 				{
 					std::cout << "unphysical mu at cell " << element + meshVar::nelem1D + 1 << std::endl;
-					std::cout << "TVal " << TVal << std::endl;
-					std::cout << "rhoVal " << rhoVal << std::endl;
-					std::cout << "rhouVal " << rhouVal << std::endl;
-					std::cout << "rhovVal " << rhovVal << std::endl;
-					std::cout << "rhoEVal " << rhoEVal << std::endl;
-					std::cout << theta1Arr[element] << std::endl;
-					std::cout << theta2Arr[element] << std::endl;
-					std::cout << a << ", " << b << std::endl;
-					system("pause");
+                    int c = getchar();
 				}
 			}
 		}

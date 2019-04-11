@@ -694,7 +694,8 @@ namespace process
                         for (int i = 0; i < 4; i++)
 						{
 							/*INVISCID TERMS*/
-							std::tie(UMaster[i], USlave[i]) = math::internalSurfaceValue(iedge, masterCell, nG, i + 1, 2);
+                            //std::tie(UMaster[i], USlave[i]) = math::internalSurfaceValue(iedge, masterCell, nG, i + 1, 2);
+                            std::tie(UMaster[i], USlave[i]) = process::NSFEq::getUAtInterfaces(iedge, masterCell, nG, i + 1);
 							/*VISCOUS TERMS*/
 							std::tie(dUXMaster[i], dUXSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i + 1, 1);  //dUx
 							std::tie(dUYMaster[i], dUYSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i + 1, 2);  //dUy
@@ -755,7 +756,7 @@ namespace process
 			}
 		}
 
-		std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int mod, int direction, int valType)
+        std::tuple<double, double> getFinvFvisAtInterfaces(int edge, int element, int nG, int mod, int direction, int valType)
 		{
 			/*
 			-mod: 1 for inviscid, 2 for viscous
@@ -932,6 +933,58 @@ namespace process
 			}
 			return std::make_tuple(valPlus, valMinus);
 		}
+
+        std::tuple<double, double> getUAtInterfaces(int edge, int element, int nG, int valType)
+        {
+            /*
+            -mod: 1 for inviscid, 2 for viscous
+            -direction: 1 for Ox, 2 for Oy
+            */
+            bool isMaster(auxUlti::checkMaster(element, edge));
+            int locationPlus(-1), locationMinus(-1);
+            double valPlus(0.0), valMinus(0.0);
+            if (isMaster)
+            {
+                locationPlus = nG;
+                locationMinus = nG + mathVar::nGauss + 1;
+            }
+            else
+            {
+                locationPlus = nG + mathVar::nGauss + 1;
+                locationMinus = nG;
+            }
+
+            switch (valType)
+            {
+            case 1: //rho
+            {
+                valPlus = interface_rho[edge][locationPlus];
+                valMinus = interface_rho[edge][locationMinus];
+            }
+            break;
+            case 2: //rhou
+            {
+                valPlus = interface_rhou[edge][locationPlus];
+                valMinus = interface_rhou[edge][locationMinus];
+            }
+            break;
+            case 3: //rhov
+            {
+                valPlus = interface_rhov[edge][locationPlus];
+                valMinus = interface_rhov[edge][locationMinus];
+            }
+            break;
+            case 4: //rhoE
+            {
+                valPlus = interface_rhoE[edge][locationPlus];
+                valMinus = interface_rhoE[edge][locationMinus];
+            }
+            break;
+            default:
+                break;
+            }
+            return std::make_tuple(valPlus, valMinus);
+        }
 
 		void solveNSFEquation(int RKOrder)
 		{
@@ -1315,15 +1368,15 @@ namespace process
 
 			/*INVISCID TERM*/
 			//Get value
-			std::tie(termX1P, termX1M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 1, 1);
-			std::tie(termX2P, termX2M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 1, 2);
-			std::tie(termX3P, termX3M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 1, 3);
-			std::tie(termX4P, termX4M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 1, 4);
+            std::tie(termX1P, termX1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 1, 1);
+            std::tie(termX2P, termX2M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 1, 2);
+            std::tie(termX3P, termX3M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 1, 3);
+            std::tie(termX4P, termX4M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 1, 4);
 
-			std::tie(termY1P, termY1M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 2, 1);
-			std::tie(termY2P, termY2M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 2, 2);
-			std::tie(termY3P, termY3M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 2, 3);
-			std::tie(termY4P, termY4M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1, 2, 4);
+            std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 2, 1);
+            std::tie(termY2P, termY2M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 2, 2);
+            std::tie(termY3P, termY3M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 2, 3);
+            std::tie(termY4P, termY4M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 2, 4);
 
 			std::tie(rhoPlus, rhoMinus) = process::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1);
 			std::tie(rhouPlus, rhouMinus) = process::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2);
@@ -1338,15 +1391,15 @@ namespace process
 			
 			/*VISCOUS TERM*/
 			//Get value
-			std::tie(termX1P, termX1M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 1, 1);
-			std::tie(termX2P, termX2M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 1, 2);
-			std::tie(termX3P, termX3M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 1, 3);
-			std::tie(termX4P, termX4M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 1, 4);
+            std::tie(termX1P, termX1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 1, 1);
+            std::tie(termX2P, termX2M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 1, 2);
+            std::tie(termX3P, termX3M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 1, 3);
+            std::tie(termX4P, termX4M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 1, 4);
 
-			std::tie(termY1P, termY1M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 2, 1);
-			std::tie(termY2P, termY2M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 2, 2);
-			std::tie(termY3P, termY3M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 2, 3);
-			std::tie(termY4P, termY4M) = process::NSFEq::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 2, 2, 4);
+            std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 1);
+            std::tie(termY2P, termY2M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 2);
+            std::tie(termY3P, termY3M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 3);
+            std::tie(termY4P, termY4M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 4);
 
 			/*Calculate fluxes*/
 			Fluxes[0][1] = math::numericalFluxes::diffusiveFlux(termX1M, termX1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], nx) + math::numericalFluxes::diffusiveFlux(termY1M, termY1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], ny);
