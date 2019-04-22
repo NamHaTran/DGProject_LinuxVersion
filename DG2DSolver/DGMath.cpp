@@ -307,15 +307,15 @@ namespace math
 		int master(0), servant(0), masterIndex(0), servantIndex(0), masterType(0), servantType(0);
 		double JMaster(0.0), JServant(0.0), xA(0.0), xB(0.0), xC(0.0), xD(0.0), yA(0.0), yB(0.0), yC(0.0), yD(0.0);
 
-		if (meshVar::ineled[0][edge]>meshVar::ineled[1][edge])
+        if (meshVar::ineled[edge][0]>meshVar::ineled[edge][1])
 		{
-			master = meshVar::ineled[0][edge];
-			servant = meshVar::ineled[1][edge];
+            master = meshVar::ineled[edge][0];
+            servant = meshVar::ineled[edge][1];
 		}
-		else if (meshVar::ineled[0][edge]<meshVar::ineled[1][edge])
+        else if (meshVar::ineled[edge][0]<meshVar::ineled[edge][1])
 		{
-			master = meshVar::ineled[1][edge];
-			servant = meshVar::ineled[0][edge];
+            master = meshVar::ineled[edge][1];
+            servant = meshVar::ineled[edge][0];
 		}
 
 		masterIndex = auxUlti::findEdgeOrder(master, edge);
@@ -578,18 +578,35 @@ namespace math
 	}
 
 	double CalcTFromConsvVar(double rho, double rhou, double rhov, double rhoE)
-	{
-		double T((material::gamma - 1)*(rhoE - 0.5*(pow(rhou, 2) + pow(rhov, 2)) / rho) / (material::R*rho));
-		if ((T <= 0) && (fabs(T) < 0.001))
-		{
-			//std::cout << "Warning!!! limiting T " << T <<std::endl;
-			//T = limitVal::TDwn;
-			//limitVal::limitTOrNot = true;
-			//system("pause");
-			T = fabs(T);
-		}
+    {
+        double T((material::gamma - 1)*(rhoE - 0.5*(pow(rhou, 2) + pow(rhov, 2)) / rho) / (material::R*rho));
 		return T;
 	}
+
+    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
+    {
+        //Em is total energy with total velocity (um), not advective velocity (u)
+        double T(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
+                u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
+        std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
+        Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
+        Ay=material::massDiffusion::DmCoeff*rhoy/(rho*rho);
+        B1=Ax*Ax+Ay*Ay;
+        B2=2*(u*Ax+v*Ay);
+        B3=u*u+v*v-2*Em;
+        std::vector<double> polynomialCoeffs{
+            B1*pow(material::As,2),
+                    -material::As*B2,
+                    4*material::Cv*material::Ts+B3,
+                    -material::As*B2*material::Ts,
+                    pow(material::Ts,2)+2*B3*material::Ts,
+                    B3*pow(material::Ts,2)
+        };
+        //compute initial T
+        T=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+        T=math::solvePolynomialsEq_NewtonRaphson(polynomialPower,polynomialCoeffs,T);
+        return T;
+    }
 
 	double CalcP(double T, double rho)
 	{
@@ -702,15 +719,29 @@ namespace math
 					rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
 					rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
 					rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-				out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+                if (flowProperties::massDiffusion)
+                {
+                    double rhoX(math::pointDerivRho(element,a,b,1)), rhoY(math::pointDerivRho(element,a,b,2));
+                    out = material::Cv*math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, rhoX, rhoY);
+                }
+                else {
+                    out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+                }
 			}
 			else if (valType == 5)  //p
 			{
 				double rhoVal(math::calcConsvVarWthLimiter(element, a, b, 1)),
 					rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
 					rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
-					rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-				double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4)), TVal(0.0);
+                if (flowProperties::massDiffusion)
+                {
+                    double rhoX(math::pointDerivRho(element,a,b,1)), rhoY(math::pointDerivRho(element,a,b,2));
+                    TVal=math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, rhoX, rhoY);
+                }
+                else {
+                    TVal=math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+                }
 				out = math::CalcP(TVal, rhoVal);
 			}
 			else if (valType == 6)  //T
@@ -719,7 +750,14 @@ namespace math
 					rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
 					rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
 					rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-				out = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+                if (flowProperties::massDiffusion)
+                {
+                    double rhoX(math::pointDerivRho(element,a,b,1)), rhoY(math::pointDerivRho(element,a,b,2));
+                    out=math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, rhoX, rhoY);
+                }
+                else {
+                    out=math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+                }
 				if ((out < 0) && (fabs(out) < 0.001))
 				{
 					std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
@@ -732,7 +770,15 @@ namespace math
 					rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
 					rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
 					rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-				double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+                double TVal(0.0);
+                if (flowProperties::massDiffusion)
+                {
+                    double rhoX(math::pointDerivRho(element,a,b,1)), rhoY(math::pointDerivRho(element,a,b,2));
+                    TVal=math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, rhoX, rhoY);
+                }
+                else {
+                    TVal=math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+                }
 				if ((TVal<0) && fabs(TVal) < 0.001)
 				{
 					TVal = fabs(TVal);
@@ -875,20 +921,66 @@ namespace math
 	}
 
 	double pointAuxValue(int element, double a, double b, int valType, int dir)
-	{
-		double out(0.0);
-		std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+    {
+        double out(0.0);
+        //if Mass diffusion is on, d(rho) must be multiplied by mu before returning
+        if (flowProperties::massDiffusion && valType==1)
+        {
+            double rhoX(math::pointDerivRho(element,a,b,1)),
+                    rhoY(math::pointDerivRho(element,a,b,2)),
+                    rho(pointValue(element,a,b,1,2)),
+                    rhou(pointValue(element,a,b,2,2)),
+                    rhov(pointValue(element,a,b,3,2)),
+                    rhoE(pointValue(element,a,b,4,2));
+            double T(math::CalcTFromConsvVar_massDiff(rho, rhou, rhov, rhoE, rhoX, rhoY));
+            double mu(math::CalcVisCoef(T));
+            switch (dir) {
+                case 1 : out=rhoX*mu;
+                         break;
+                case 2 : out=rhoY*mu;
+                         break;
+            }
+        }
+        else {
+            std::vector<double> Value(mathVar::orderElem + 1, 0.0);
 
-		Value = auxUlti::getElementAuxValuesOfOrder(element, valType, dir);
+            Value = auxUlti::getElementAuxValuesOfOrder(element, valType, dir);
 
-		math::basisFc(a, b, auxUlti::checkType(element));
-		for (int order = 0; order <= mathVar::orderElem; order++)
-		{
-			out += Value[order] * mathVar::B[order];
-		}
-		//out = out / muVal;
-		return out;
+            math::basisFc(a, b, auxUlti::checkType(element));
+            for (int order = 0; order <= mathVar::orderElem; order++)
+            {
+                out += Value[order] * mathVar::B[order];
+            }
+        }
+        return out;
 	}
+
+    double pointDerivRho(int element, double a, double b, int dir)
+    {
+        double out(0.0);
+        std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+        if (dir==1)  //Ox direction
+        {
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            {
+                Value[iorder] = rhoX[element][iorder];
+            }
+        }
+        else if (dir==2)  //Ox direction
+        {
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            {
+                Value[iorder] = rhoY[element][iorder];
+            }
+        }
+
+        math::basisFc(a, b, auxUlti::checkType(element));
+        for (int order = 0; order <= mathVar::orderElem; order++)
+        {
+            out += Value[order] * mathVar::B[order];
+        }
+        return out;
+    }
 
 	double calcThermalConductivity(double muVal)
 	{
@@ -1726,7 +1818,7 @@ namespace math
 
 			for (int e = 0; e < elemType; e++)
 			{
-				edgeId = meshVar::inedel[e][element];
+                edgeId = meshVar::inedel[element][e];
 				neighborElemId = auxUlti::getNeighborElement(element, edgeId);
 				std::tie(deltaXe, deltaYe) = math::geometricOp::calEdgeMetric(edgeId, element);
 				if (neighborElemId >= 0)
@@ -1750,7 +1842,7 @@ namespace math
 
 		std::tuple<double, double> calEdgeMetric(int edgeId, int elementId)
 		{
-			int point1(meshVar::inpoed[0][edgeId]), point2(meshVar::inpoed[1][edgeId]);
+            int point1(meshVar::inpoed[edgeId][0]), point2(meshVar::inpoed[edgeId][1]);
 			double deltaX(0.0), deltaY(0.0);
 			if (auxUlti::findVertexOrder(point1, elementId) > auxUlti::findVertexOrder(point2, elementId))
 			{
@@ -1874,4 +1966,32 @@ namespace math
 		}
 		return index;
 	}
+
+    double solvePolynomialsEq_NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue)
+    {
+        int polySize(static_cast<int>(power.size()));
+        std::vector<double> power_deriv(polySize, 0.0),
+                coefs_deriv(polySize, 0.0);
+        double error(1), convergence_cri(1e-6), output(0.0), fValue(0.0), derivfValue(0.0);
+
+        //find 1st derivative of input polynomial
+        for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {
+            power_deriv[polyOrder]=power[polyOrder] - 1.0;
+            coefs_deriv[polyOrder]=power[polyOrder]*coefs[polyOrder];
+        }
+
+        //solve equation
+        while (error > convergence_cri) {
+            fValue = 0.0;
+            derivfValue = 0.0;
+            for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {
+                fValue+=pow(initialValue,power[polyOrder])*coefs[polyOrder];
+                derivfValue+=pow(initialValue,power_deriv[polyOrder])*coefs_deriv[polyOrder];
+            }
+            output = initialValue - fValue/derivfValue;
+            error = fabs(output - initialValue)/initialValue;
+            initialValue = output;
+        }
+        return output;
+    }
 }//end of namespace math

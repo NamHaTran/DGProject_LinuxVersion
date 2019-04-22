@@ -190,6 +190,34 @@ std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG
 	return Fluxes;
 }
 
+//Implement bondary condition of Rho (use when massDiffusion is on)
+//Method weakRiemann is used
+std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
+{
+    int edgeGrp(auxUlti::getGrpOfEdge(edge));
+    int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
+    double rhoP(0.0), rhoM(0.0), rhoFluxX(0.0), rhoFluxY(0.0), a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+    std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+    rhoP = math::pointValue(element, a, b, 1, 2);
+
+    if (UType == 1 && TType == 1 && pType == 1)
+    {
+        rhoM = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
+    }
+    else if ((UType == 4 && TType == 4 && pType == 4) || ((UType == 2 || UType == 3) && (TType == 2 || TType == 3) && pType == 2) || (UType == 7 && TType == 7 && pType == 7))
+    {
+        rhoM = rhoP;
+    }
+    else
+    {
+        std::string errorStr = message::BcCompatibleError(edgeGrp);
+        message::writeLog(systemVar::pwd, systemVar::caseName, errorStr);
+    }
+    rhoFluxX = math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
+    rhoFluxY = math::numericalFluxes::auxFlux(rhoP, rhoM, ny);
+    return std::make_tuple(rhoFluxX,rhoFluxY);
+}
+
 namespace BCSupportFncs
 {
 	bool checkInflow(double u, double v, double nx, double ny)

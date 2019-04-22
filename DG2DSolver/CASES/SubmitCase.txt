@@ -11,5 +11,5 @@
 
 SubmitCase
 {
-caseName FlatPlateCoarse1
+caseName testCase
 }

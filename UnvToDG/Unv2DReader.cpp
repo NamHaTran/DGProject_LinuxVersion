@@ -43,7 +43,7 @@ int main()
     cout << "Do you want to create template setting files? <y/n>: ";
     qtin >> cmd;
     cout << "\n";
-        if (cmd.compare("y") == true)
+        if (cmd.compare("y") == 0)
         {
             //CREATE FOLDER 0-----------------------------------------------------------------------
             createFolder0();

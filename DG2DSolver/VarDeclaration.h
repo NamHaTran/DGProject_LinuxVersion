@@ -48,20 +48,20 @@ namespace meshVar
 	extern const int nedel;
 
 	/*Elements surrounding points*/
-	extern int esup1[4 * pointsArrSize], esup2[pointsArrSize + 1], inpoel[5][elements2DArrSize];
+    extern int esup1[4 * pointsArrSize], esup2[pointsArrSize + 1], inpoel[elements2DArrSize][5];
 
 	/*Points surrounding points*/
 	extern int psup1[5 * pointsArrSize], psup2[pointsArrSize + 1];
 
 	/*Elements surrounding element*/
-	extern int esuel[4][elements2DArrSize];
+    extern int esuel[elements2DArrSize][4];
 
 	/*Edges informations*/
-	extern int inpoed[4][2 * elements2DArrSize];
+    extern int inpoed[2 * elements2DArrSize][4];
 
 	/*Edges of element*/
-	extern int inedel[4][elements2DArrSize], //number of row is 4 because of default quad element
-		ineled[3][2 * elements2DArrSize];
+    extern int inedel[elements2DArrSize][4], //number of row is 4 because of default quad element
+        ineled[2 * elements2DArrSize][3];
 
 	/*Variables help to save mesh data*/
 	extern int inpoedCount;  //can be used for normalVector, MasterElemOfEdge, ineled
@@ -77,6 +77,11 @@ namespace mathVar
 namespace material
 {
 	extern double gamma, R, Pr, As, Ts, Cp, Cv;
+    namespace massDiffusion {
+    extern
+    //coefficient of self-diffusion
+    double DmCoeff;
+    }
 }
 
 namespace iniValues
@@ -108,7 +113,7 @@ namespace refValues
 
 namespace flowProperties
 {
-    extern bool viscous;
+    extern bool viscous, massDiffusion;
 }
 
 //time step

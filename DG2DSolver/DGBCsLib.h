@@ -26,6 +26,10 @@ std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG
 /*Function applies auxilary boundary conditions to edges in auxilary equation, it returns values of auxiraly flux at Gauss point*/
 std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG);
 
+//Implement bondary condition of Rho (use when massDiffusion is on)
+//Method weakRiemann is used
+std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG);
+
 namespace NSFEqBCs
 {
 	namespace weakRiemann

@@ -47,17 +47,17 @@ namespace MshReader
 		//Default element type is quadrature
 		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-			meshVar::inpoel[0][ielem] = meshVar::Elements2D[ielem][0];
-			meshVar::inpoel[1][ielem] = meshVar::Elements2D[ielem][1];
-			meshVar::inpoel[2][ielem] = meshVar::Elements2D[ielem][2];
-			meshVar::inpoel[3][ielem] = meshVar::Elements2D[ielem][3];
+            meshVar::inpoel[ielem][0] = meshVar::Elements2D[ielem][0];
+            meshVar::inpoel[ielem][1] = meshVar::Elements2D[ielem][1];
+            meshVar::inpoel[ielem][2] = meshVar::Elements2D[ielem][2];
+            meshVar::inpoel[ielem][3] = meshVar::Elements2D[ielem][3];
 			if (meshVar::Elements2D[ielem][3] < 0)
 			{
-				meshVar::inpoel[4][ielem] = 3; //Type triangle
+                meshVar::inpoel[ielem][4] = 3; //Type triangle
 			}
 			else
 			{
-				meshVar::inpoel[4][ielem] = 4; //Type quadrature
+                meshVar::inpoel[ielem][4] = 4; //Type quadrature
 			}
 		}
 
@@ -68,7 +68,7 @@ namespace MshReader
 		{
 			for (int inode = 0; inode < meshVar::nnode; inode++)
 			{
-				ipoi1 = meshVar::inpoel[inode][ielem] + 1;
+                ipoi1 = meshVar::inpoel[ielem][inode] + 1;
 				if (ipoi1 >= 0)
 				{
 					meshVar::esup2[ipoi1] = meshVar::esup2[ipoi1] + 1;
@@ -86,7 +86,7 @@ namespace MshReader
 		{
 			for (int inode = 0; inode < meshVar::nnode; inode++)
 			{
-				ipoin = meshVar::inpoel[inode][ielem];
+                ipoin = meshVar::inpoel[ielem][inode];
 				if (ipoin >= 0)
 				{
 					istor = meshVar::esup2[ipoin] + 1;
@@ -120,7 +120,7 @@ namespace MshReader
 				ielem = meshVar::esup1[iesup];
 				for (int inode = 0; inode < meshVar::nnode; inode++)
 				{
-					jpoin = meshVar::inpoel[inode][ielem];
+                    jpoin = meshVar::inpoel[ielem][inode];
 					if (jpoin >= 0)
 					{
 						if ((jpoin != ipoin)&(lpoin[jpoin] != ipoin))
@@ -184,9 +184,9 @@ namespace MshReader
 		//----------------------------
 
 		//Set initial value of meshVar::esuel
-		for (int row = 0; row < 4; row++)
+        for (int row = 0; row < elements2DArrSize; row++)
 		{
-			for (int column = 0; column < elements2DArrSize; column++)
+            for (int column = 0; column < 4; column++)
 			{
 				meshVar::esuel[row][column] = -22;
 			}
@@ -194,7 +194,7 @@ namespace MshReader
 
 		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-			if (meshVar::inpoel[4][ielem] == 4)  //Type Quad
+            if (meshVar::inpoel[ielem][4] == 4)  //Type Quad
 			{
 				nfael = 4;
 				for (int row = 0; row < 4; row++)
@@ -212,7 +212,7 @@ namespace MshReader
 				lpofa[1][2] = 2;
 				lpofa[1][3] = 3;
 			}
-			else if (meshVar::inpoel[4][ielem] == 3)  //Type Tri
+            else if (meshVar::inpoel[ielem][4] == 3)  //Type Tri
 			{
 				nfael = 3;
 				for (int row = 0; row < 3; row++)
@@ -234,14 +234,14 @@ namespace MshReader
 				nnofa = lnofa[ifael];
 				for (int inofa = 0; inofa < nnofa; inofa++)
 				{
-					lhelp[inofa] = meshVar::inpoel[lpofa[inofa][ifael]][ielem];
+                    lhelp[inofa] = meshVar::inpoel[ielem][lpofa[inofa][ifael]];
 					lpoin[lhelp[inofa]] = 1;
 				}
 				ipoin = lhelp[0];
 				for (int istor = meshVar::esup2[ipoin]+1; istor <= meshVar::esup2[ipoin+1]; istor++)
 				{
 					jelem = meshVar::esup1[istor];
-					if (meshVar::inpoel[4][jelem]==4)  //checked element is quad
+                    if (meshVar::inpoel[jelem][4]==4)  //checked element is quad
 					{
 						if (jelem!=ielem)
 						{
@@ -253,21 +253,21 @@ namespace MshReader
 									int icoun(0);
 									for (int jnofa = 0; jnofa < nnofa; jnofa++)
 									{
-										jpoin = meshVar::inpoel[lpofaQuad[jnofa][jfael]][jelem];
+                                        jpoin = meshVar::inpoel[jelem][lpofaQuad[jnofa][jfael]];
 										if (jpoin>=0)
 										{
 											icoun = icoun + lpoin[jpoin];
 										}
 										if (icoun==nnofa)
 										{
-											meshVar::esuel[ifael][ielem] = jelem;
+                                            meshVar::esuel[ielem][ifael] = jelem;
 										}
 									}
 								}
 							}
 						}
 					}
-					else if (meshVar::inpoel[4][jelem] == 3)  //checked element is quad
+                    else if (meshVar::inpoel[jelem][4] == 3)  //checked element is quad
 					{
 						if (jelem!=ielem)
 						{
@@ -279,14 +279,14 @@ namespace MshReader
 									int icoun(0);
 									for (int jnofa = 0; jnofa < nnofa; jnofa++)
 									{
-										jpoin= meshVar::inpoel[lpofaTri[jnofa][jfael]][jelem];
+                                        jpoin= meshVar::inpoel[jelem][lpofaTri[jnofa][jfael]];
 										if (jpoin>=0)
 										{
 											icoun = icoun + lpoin[jpoin];
 										}
 										if (icoun==nnofa)
 										{
-											meshVar::esuel[ifael][ielem] = jelem;
+                                            meshVar::esuel[ielem][ifael] = jelem;
 										}
 									}
 								}
@@ -296,7 +296,7 @@ namespace MshReader
 				}
 				for (int inofa = 0; inofa < nnofa; inofa++)
 				{
-					lhelp[inofa] = meshVar::inpoel[lpofa[inofa][ifael]][ielem];
+                    lhelp[inofa] = meshVar::inpoel[ielem][lpofa[inofa][ifael]];
 					lpoin[lhelp[inofa]] = 0;
 				}
 			}
@@ -350,8 +350,8 @@ namespace MshReader
 						if (jpoin<ipoin)
 						{
 							ninpoed++;
-							meshVar::inpoed[0][ninpoed] = jpoin;
-							meshVar::inpoed[1][ninpoed] = ipoin;
+                            meshVar::inpoed[ninpoed][0] = jpoin;
+                            meshVar::inpoed[ninpoed][1] = ipoin;
 
                             ipoinIndex = edgesOfPoint[19][ipoin] + 1;
                             jpoinIndex = edgesOfPoint[19][jpoin] + 1;
@@ -365,8 +365,8 @@ namespace MshReader
 						else
 						{
 							ninpoed++;
-							meshVar::inpoed[0][ninpoed] = ipoin;
-							meshVar::inpoed[1][ninpoed] = jpoin;
+                            meshVar::inpoed[ninpoed][0] = ipoin;
+                            meshVar::inpoed[ninpoed][1] = jpoin;
 
 							ipoinIndex = edgesOfPoint[19][ipoin] + 1;
 							jpoinIndex = edgesOfPoint[19][jpoin] + 1;
@@ -401,9 +401,9 @@ namespace MshReader
 		{
 			for (int r = 0; r < 2; r++)
 			{
-				meshVar::ineled[r][c] = -meshVar::nelem1D;
+                meshVar::ineled[c][r] = -meshVar::nelem1D;
 			}
-			meshVar::ineled[2][c] = -1;
+            meshVar::ineled[c][2] = -1;
 		}
 		int helpArray[4 * elements2DArrSize] = {}, index(-1), pointBase(0);
 
@@ -439,7 +439,7 @@ namespace MshReader
 						edgeName = edgesOfPoint[iedge1][pointBase];
 						for (int ipoin2 = 0; ipoin2 < 2; ipoin2++)  //scan 2 points of edge
 						{
-							pointTip = meshVar::inpoed[ipoin2][edgeName];
+                            pointTip = meshVar::inpoed[edgeName][ipoin2];
 							if (pointTip!=pointBase)
 							{
 								for (int jpoin1 = 0; jpoin1 < 4; jpoin1++)
@@ -449,11 +449,11 @@ namespace MshReader
 										if (helpArray[edgeName]!=1)
 										{
 											index++;
-											meshVar::inedel[index][ielem] = edgeName;
-											edgePointer = meshVar::ineled[2][edgeName];
+                                            meshVar::inedel[ielem][index] = edgeName;
+                                            edgePointer = meshVar::ineled[edgeName][2];
 											edgePointer++;
-											meshVar::ineled[edgePointer][edgeName] = ielem;
-											meshVar::ineled[2][edgeName] = edgePointer;
+                                            meshVar::ineled[edgeName][edgePointer] = ielem;
+                                            meshVar::ineled[edgeName][2] = edgePointer;
 											helpArray[edgeName] = 1;
 
 											//Use helpArrayMarker to know where in helpArray needs to be reset value
@@ -480,8 +480,8 @@ namespace MshReader
 		{
 			auxUlti::addRowTo2DDoubleArray(meshVar::normalVector, 2);
 
-			elem1 = meshVar::ineled[0][iedge];
-			elem2 = meshVar::ineled[1][iedge];
+            elem1 = meshVar::ineled[iedge][0];
+            elem2 = meshVar::ineled[iedge][1];
 
 			//Find master element of iedge
 			if (elem1>elem2)
@@ -494,8 +494,8 @@ namespace MshReader
 			}
 			meshVar::MasterElemOfEdge.push_back(masterElem);
 
-			point1 = meshVar::inpoed[0][iedge];
-			point2 = meshVar::inpoed[1][iedge];
+            point1 = meshVar::inpoed[iedge][0];
+            point2 = meshVar::inpoed[iedge][1];
 			//Determine type of element
 			if (meshVar::Elements2D[masterElem][3]>=0)  //Element type quad
 			{
@@ -620,10 +620,10 @@ namespace MshReader
 			if (((ipoin == meshVar::Elements1D[iedge][0])&(jpoin == meshVar::Elements1D[iedge][1])) || ((ipoin == meshVar::Elements1D[iedge][1])&(jpoin == meshVar::Elements1D[iedge][0])))
 			{
 				int BcGroup(meshVar::Elements1D[iedge][2]);  //Get group which edge belongs to
-				meshVar::inpoed[2][ninpoed] = BcGroup;
+                meshVar::inpoed[ninpoed][2] = BcGroup;
 				if (BcGroup != 0)  //Edge is not belong to internal group
 				{
-					meshVar::inpoed[3][ninpoed] = meshVar::BoundaryType[BcGroup - 1][1];  //Get boundary type
+                    meshVar::inpoed[ninpoed][3] = meshVar::BoundaryType[BcGroup - 1][1];  //Get boundary type
 					meshVar::adressOfBCVals.push_back(ninpoed);
 					meshVar::numBCEdges++;
 					break;
@@ -676,8 +676,8 @@ namespace MshReader
 		for (int i = 0; i < meshVar::numBCEdges; i++)
 		{
 			edgeId = meshVar::adressOfBCVals[i];
-			pt1 = meshVar::inpoed[0][edgeId];
-			pt2 = meshVar::inpoed[1][edgeId];
+            pt1 = meshVar::inpoed[edgeId][0];
+            pt2 = meshVar::inpoed[edgeId][1];
 			if (helpArr[pt1] == 0)
 			{
 				auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);

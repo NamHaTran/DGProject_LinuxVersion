@@ -40,9 +40,9 @@ namespace debugTool
 		ielem = ielem - 1 - meshVar::nelem1D;
 		for (int i = 0; i < 4; i++)
 		{
-			if (meshVar::esuel[i][ielem]>=0)
+            if (meshVar::esuel[ielem][i]>=0)
 			{
-				std::cout << meshVar::esuel[i][ielem] + 1 + meshVar::nelem1D << std::endl;
+                std::cout << meshVar::esuel[ielem][i] + 1 + meshVar::nelem1D << std::endl;
 			}
 		}
 	}
@@ -61,9 +61,9 @@ namespace debugTool
 		{
 			for (int iedge = 0; iedge < elemType; iedge++)
 			{
-				edgeName = meshVar::inedel[iedge][elem];
-				point1 = meshVar::inpoed[0][edgeName] + 1;
-				point2 = meshVar::inpoed[1][edgeName] + 1;
+                edgeName = meshVar::inedel[elem][iedge];
+                point1 = meshVar::inpoed[edgeName][0] + 1;
+                point2 = meshVar::inpoed[edgeName][1] + 1;
 				grp = auxUlti::getGrpOfEdge(edgeName);
 				bcType = auxUlti::getBCType(edgeName);
 				nx = (auxUlti::getNormVectorComp(elem, edgeName, 1));
@@ -74,7 +74,7 @@ namespace debugTool
 					<< "	Coordinates of normal vector are: " << nx << ", " << ny << std::endl
 					<< "	Edge belongs to group " << grp << " and has bc type is " << bcType << std::endl
 					<< "	Order of edge is " << edgeOrder << std::endl
-					<< "	Edge is shared by two elements that are " << meshVar::ineled[0][edgeName] + 1 + meshVar::nelem1D << " and " << meshVar::ineled[1][edgeName] + 1 + meshVar::nelem1D << std::endl;
+                    << "	Edge is shared by two elements that are " << meshVar::ineled[edgeName][0] + 1 + meshVar::nelem1D << " and " << meshVar::ineled[edgeName][1] + 1 + meshVar::nelem1D << std::endl;
 				if (master)
 				{
 					std::cout << "	Considering element is a master of edge\n";

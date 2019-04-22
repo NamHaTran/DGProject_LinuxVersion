@@ -100,6 +100,8 @@ namespace math
 		4: rhoE*/
 	double pointValueNoLimiter(int element, double a, double b, int valType);
 
+    double pointDerivRho(int element, double a, double b, int dir);
+
 	/*Function calculates dot product of 2 vectors*/
 	double vectorDotProduct(std::vector<double> &a, std::vector<double> &b);
 
@@ -225,6 +227,9 @@ namespace math
 	double vectorNorm(std::vector<double> vector);
 
 	double calcResidualFromResidualOfOrder(int element, double a, double b, int valType);
+
+    //Function solves polynomial equation by using Newton-Raphson methd
+    double solvePolynomialsEq_NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue);
 
 	namespace numericalFluxes
 	{

@@ -35,6 +35,9 @@ namespace process
 	/*Function computes RHS of initial condition equation*/
 	std::vector<double> calcIniValuesRHS(int element, double iniVal);
 
+    /*Function computes values of conservative varables at interfaces*/
+    void calcValuesAtInterface();
+
 	void calcVolumeGaussValues();
 
 	namespace auxEq
@@ -65,6 +68,19 @@ namespace process
 		/*Function returns vector content Gauss values of all conservative variable at all Gauss points on the edge,
 		use only for auxilary equation*/
 		std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny);
+
+        namespace massDiffusion
+        {
+            void solveDivRho();
+
+            void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy);
+
+            void calcVolumeIntegralTerms(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhoVolIntY);
+
+            void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhoSurfIntY);
+
+            void getGaussVectorOfRho(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhoFluxY);
+        }
 	}
 
 	namespace NSFEq

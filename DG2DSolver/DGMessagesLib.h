@@ -40,6 +40,9 @@ namespace message
 
 	/*Function display help for boundary conditions*/
 	void BCsHelp();
+
+    /*Function prints out case's informations and asks user whether to continue or not*/
+    void checkCaseInformations();
 }
 
 /*Function displays error message and exit program*/

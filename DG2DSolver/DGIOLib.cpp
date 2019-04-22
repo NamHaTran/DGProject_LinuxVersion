@@ -266,9 +266,9 @@ namespace IO
 		if (Fluxinedel)
 		{
 			Fluxinedel << headerFile << std::endl << "	inedel array\n" << "\n";
-			for (int i = 0; i < 4; i++)
+            for (int i = 0; i < meshVar::nelem2D; i++)
 			{
-				for (int j = 0; j < meshVar::nelem2D; j++)
+                for (int j = 0; j < 4; j++)
 				{
 					Fluxinedel << meshVar::inedel[i][j] << " ";
 				}
@@ -285,9 +285,9 @@ namespace IO
 		if (Fluxineled)
 		{
 			Fluxineled << headerFile << std::endl << "	ineled array\n" << "\n";
-			for (int i = 0; i < 2; i++)
+            for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
-				for (int j = 0; j < meshVar::inpoedCount; j++)
+                for (int j = 0; j < 2; j++)
 				{
 					Fluxineled << meshVar::ineled[i][j] << " ";
 				}
@@ -304,9 +304,9 @@ namespace IO
 		if (Fluxinpoed)
 		{
 			Fluxinpoed << headerFile << std::endl << "	inpoed array\n" << "\n";
-			for (int i = 0; i < 4; i++)
+            for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
-				for (int j = 0; j < meshVar::inpoedCount; j++)
+                for (int j = 0; j < 4; j++)
 				{
 					Fluxinpoed << meshVar::inpoed[i][j] << " ";
 				}
@@ -391,21 +391,35 @@ namespace IO
 		/*Read Material*/
 		std::string MatfileName("Material.txt");
         std::string MatLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant");
-		std::string MatkeyWordsDouble[5] = { "gammaRatio", "gasConstant", "PrandtlNumber", "SutherlandAs", "SutherlandTs" }, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {};
-		double MatoutDB[5] = {};
+        std::string MatkeyWordsDouble[6] = { "gammaRatio", "gasConstant", "PrandtlNumber", "SutherlandAs", "SutherlandTs" , "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {};
+        double MatoutDB[6] = {};
 		int MatoutInt[1] = {};
 		bool MatoutBool[1] = {};
 		std::string MatoutStr[1] = {};
 
-		readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 5, 0, 0, 0);
+        readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 6, 0, 0, 0);
 		material::gamma = MatoutDB[0];
 		material::R = MatoutDB[1];
 		material::Pr = MatoutDB[2];
 		material::As = MatoutDB[3];
 		material::Ts = MatoutDB[4];
+        material::massDiffusion::DmCoeff = MatoutDB[5];
 
 		material::Cp = material::R*material::gamma / (material::gamma - 1);
 		material::Cv = material::Cp - material::R;
+
+        /*Read FlowProperties*/
+        std::string fileName("FlowProperties.txt");
+        std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+        std::string keyWordsDouble[1] = {}, keyWordsInt[1] = {}, keyWordsBool[2] = {"Viscosity", "MassDiffusion"}, keyWordsStr[1] = {};
+        double outDB[1] = {};
+        int outInt[1] = {};
+        bool outBool[2] = {};
+        std::string outStr[1] = {};
+
+        readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, 0, 0, 2, 0);
+        flowProperties::viscous=outBool[0];
+        flowProperties::massDiffusion=outBool[1];
 	}
 
 	void loadLimiterSettings()
@@ -530,7 +544,7 @@ namespace IO
 		- numParamDbl, numParamInt, numParamBool, numParamStr: number of double, int, bool, string parameters*/
 
 		double dataDbl(0.0);
-		int dataInt(0);
+        int dataInt(0);
 		std::string dataStr("abc");
 		std::cout << "	Reading " << fileName <<"\n";
         std::string FileLoc(direction + "/" + fileName);

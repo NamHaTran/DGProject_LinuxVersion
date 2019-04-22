@@ -14,7 +14,7 @@ namespace auxUlti
     int findEdgeOrder(int element, int edge)
 	{
 		int order(0);
-		int pt1(meshVar::inpoed[0][edge]), pt2(meshVar::inpoed[1][edge]);
+        int pt1(meshVar::inpoed[edge][0]), pt2(meshVar::inpoed[edge][1]);
 		int typeElem(checkType(element));
 		int ABpt1(0), ABpt2(0), BCpt1(0), BCpt2(0), CDpt1(0), CDpt2(0), DApt1(0), DApt2(0), CApt1(0), CApt2(0);
 
@@ -376,13 +376,13 @@ namespace auxUlti
 
 	int getGrpOfEdge(int edge)
 	{
-		int grp(meshVar::inpoed[2][edge]);
+        int grp(meshVar::inpoed[edge][2]);
 		return grp;
 	}
 
 	int getBCType(int edge)
 	{
-		int bcType(meshVar::inpoed[3][edge]);
+        int bcType(meshVar::inpoed[edge][3]);
 		return bcType;
 	}
 
@@ -426,7 +426,7 @@ namespace auxUlti
 
 	std::tuple<int, int> getMasterServantOfEdge(int edge)
 	{
-		int master(meshVar::MasterElemOfEdge[edge]), servant(0), elem1(meshVar::ineled[0][edge]), elem2(meshVar::ineled[1][edge]);
+        int master(meshVar::MasterElemOfEdge[edge]), servant(0), elem1(meshVar::ineled[edge][0]), elem2(meshVar::ineled[edge][1]);
 		if (master==elem1)
 		{
 			servant = elem2;
@@ -786,13 +786,13 @@ namespace auxUlti
 		int neighbor(0);
 		if (auxUlti::getBCType(edge) == 0)
 		{
-			if (meshVar::ineled[0][edge] == element)
+            if (meshVar::ineled[edge][0] == element)
 			{
-				neighbor = meshVar::ineled[1][edge];
+                neighbor = meshVar::ineled[edge][1];
 			}
 			else
 			{
-				neighbor = meshVar::ineled[0][edge];
+                neighbor = meshVar::ineled[edge][0];
 			}
 		}
 		else
@@ -807,7 +807,7 @@ namespace auxUlti
 		int elemType(auxUlti::checkType(element)), edgeId(0), edgeOrder(0), outputEdgeId(0);
         for (int i = 0; i < elemType; i++)
 		{
-			edgeId = meshVar::inedel[i][element];
+            edgeId = meshVar::inedel[element][i];
 			edgeOrder = auxUlti::findEdgeOrder(element, edgeId);
 			if (edgeOrder == inputEdgeOrder)
 			{

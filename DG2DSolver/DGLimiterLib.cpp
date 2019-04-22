@@ -1011,7 +1011,7 @@ namespace limiter
 			double M(0.0);
 			for (int i = 0; i < auxUlti::checkType(element); i++)
 			{
-				neighborElemId = meshVar::esuel[i][element];
+                neighborElemId = meshVar::esuel[element][i];
 				if (neighborElemId<0)
 				{
 					neighborElemId = element;

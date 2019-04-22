@@ -144,6 +144,8 @@ void PreProcessing()
     {
         std::cout << "Flow is supersonic.\n";
     }
+    //Check case's information
+    message::checkCaseInformations();
 
 	/*PROCESS MESH*/
 	MshReader::meshProcess();

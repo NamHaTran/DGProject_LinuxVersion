@@ -35,14 +35,23 @@ namespace mathVar {
         BPts_Quad, dBaPts_Quad, dBbPts_Quad, BPts_Tri, dBaPts_Tri, dBbPts_Tri;
 }
 
-/*Conservative variables declaration*/
+/*Conservative variables declaration
+NOTE: in case of mass diffusion:
+- rho, rhou, rhov are computed using advective velocity (u, v)
+- rhoE is conputed using mass velocity which is defined as um=u+Jd/rho (Jd is mass diffusive flux Jd = -Dm*grad(rho))
+At initial condition i assume that grad(rho) = 0 so (rhoE)initial is conputed using advective velocity.
+*/
 extern std::vector<std::vector<double>> rho, rhou, rhov, rhoE, rhoN, rhouN, rhovN, rhoEN, rho0, rhou0, rhov0, rhoE0, rhoResArr, rhouResArr, rhovResArr, rhoEResArr;
 
 /*Primary variables declaration
 extern std::vector<std::vector<double>>u, v, e, p, T, mu;*/
 
 /*Auxilary variables
-//X direction*/
+NOTE: in case of mass diffusion:
+- S=mu*grad(U) with all components of vector U being computed by using advective velocity
+(now i define rhoE_adv is total energy with advective kinetic energy)
+*/
+//X direction
 extern std::vector<std::vector<double>> rhoX, rhouX, rhovX, rhoEX;
 
 /*Y direction*/
