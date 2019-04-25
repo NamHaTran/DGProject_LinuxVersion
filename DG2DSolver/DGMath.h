@@ -56,6 +56,9 @@ namespace math
 	/*Function calculates T from rho, rhou, rhov, rhoE (ver 2)*/
 	double CalcTFromConsvVar(double rho, double rhou, double rhov, double rhoE);
 
+    /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion*/
+    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy);
+
 	/*Function calculates p from T and rho*/
 	double CalcP(double T, double rho);
 

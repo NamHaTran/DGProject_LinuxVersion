@@ -134,16 +134,9 @@ void PreProcessing()
 
 	/*LOAD p T U*/
 	IO::loadpTU();
+
 	//Check subsonic
     refValues::subsonic = auxUlti::checkSubSonic();
-    if (refValues::subsonic)
-    {
-        std::cout << "Flow is subsonic.\n";
-    }
-    else
-    {
-        std::cout << "Flow is supersonic.\n";
-    }
     //Check case's information
     message::checkCaseInformations();
 

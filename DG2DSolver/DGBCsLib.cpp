@@ -804,9 +804,10 @@ namespace auxilaryBCs
 {
 	namespace weakPrescribed
 	{
+    //This type of method should NOT be used when mass diffusion is on
         std::vector <std::vector<double>> auxFluxesAtBC(int element, int edge,  int edgeGrp, int nG)
 		{
-			//General formulae: hS_BC = UBc*n
+            //General formula: hS_BC = UBc*n
 			std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 			std::vector<double> UBc(4, 0.0);
 			double TBc(0.0), muBc(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
@@ -816,7 +817,16 @@ namespace auxilaryBCs
                 TBc = bcValues::TBC[edgeGrp - 1];
             }
             else {
-                TBc = math::CalcTFromConsvVar(UBc[0], UBc[1], UBc[2], UBc[3]);
+                if (flowProperties::massDiffusion)
+                {
+                    double a(0.0), b(0.0);
+                    std::tie(a,b)=auxUlti::getGaussSurfCoor(edge,element,nG);
+                    double rhoX(math::pointDerivRho(element,a,b,1)), rhoY(math::pointDerivRho(element,a,b,2));
+                    TBc=math::CalcTFromConsvVar_massDiff(UBc[0], UBc[1], UBc[2], UBc[3], rhoX, rhoY);
+                }
+                else {
+                    TBc = math::CalcTFromConsvVar(UBc[0], UBc[1], UBc[2], UBc[3]);
+                }
             }
 			muBc = math::CalcVisCoef(TBc);
 			for (int i = 0; i < 4; i++)
@@ -839,24 +849,41 @@ namespace auxilaryBCs
 				double a(0.0), b(0.0);
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				double muM(math::CalcVisCoef(bcValues::TBC[edgeGrp - 1])), muP(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
-				for (int i = 0; i < 4; i++)
+
+                //Compute plus values--------------------------------------------------------
+                for (int i = 0; i < 3; i++)
 				{
 					gaussVector[i][0] = math::pointValue(element, a, b, i + 1, 2);
 				}
-				muP = math::CalcVisCoef(math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]));
 
+                if(flowProperties::massDiffusion)
+                {
+                    double rhoXP(math::pointDerivRho(element,a,b,1)), rhoYP(math::pointDerivRho(element,a,b,2)), TP(0.0);
+                    TP=math::CalcTFromConsvVar_massDiff(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0], rhoXP, rhoYP);
+                    muP=math::CalcVisCoef(TP);
+                    gaussVector[3][0]=gaussVector[0][0]*material::Cv*TP+0.5*(pow(gaussVector[1][0],2)+pow(gaussVector[2][0],2))/gaussVector[0][0];
+                }
+                else {
+                    muP = (math::CalcVisCoef(math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0])));
+                    gaussVector[3][0] = math::pointValue(element, a, b, 4, 2);
+                }
+                //-----------------------------------------------------------------------------
+
+                //Compute minus values--------------------------------------------------------
 				gaussVector[0][1] = gaussVector[0][0];
                 if (bcValues::UBcType[edgeGrp - 1] == 2)
                 {
                     gaussVector[1][1] = 0;
                     gaussVector[2][1] = 0;
+                    gaussVector[3][1] = gaussVector[0][1]*material::Cv*bcValues::TBC[edgeGrp - 1];
                 }
                 else if (bcValues::UBcType[edgeGrp - 1] == 3)
                 {
                     gaussVector[1][1] = bcValues::uBC[edgeGrp - 1]*gaussVector[0][1];
                     gaussVector[2][1] = bcValues::vBC[edgeGrp - 1]*gaussVector[0][1];
+                    gaussVector[3][1] = gaussVector[0][1]*(material::Cv*bcValues::TBC[edgeGrp - 1] + 0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1]*gaussVector[0][1],2)));
                 }
-				gaussVector[3][1] = gaussVector[0][1]*material::Cv*bcValues::TBC[edgeGrp - 1];
+                //-----------------------------------------------------------------------------
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -872,27 +899,45 @@ namespace auxilaryBCs
 			{
 				//columns 0, 1 are plus, minus values
 				std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0)), Fluxes(4, std::vector<double>(2, 0.0));
-				double a(0.0), b(0.0), muP(0.0), muM(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+                double a(0.0), b(0.0), muP(0.0), muM(0.0), TP(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
-				for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 3; i++)
 				{
 					gaussVector[i][0] = math::pointValue(element, a, b, i + 1, 2);
 				}
-				muP = math::CalcVisCoef(math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]));
+
+                //Compute plus values--------------------------------------------------------
+                if(flowProperties::massDiffusion)
+                {
+                    double rhoXP(math::pointDerivRho(element,a,b,1)), rhoYP(math::pointDerivRho(element,a,b,2));
+                    TP=math::CalcTFromConsvVar_massDiff(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0], rhoXP, rhoYP);
+                    muP=math::CalcVisCoef(TP);
+                    gaussVector[3][0]=gaussVector[0][0]*material::Cv*TP+0.5*(pow(gaussVector[1][0],2)+pow(gaussVector[2][0],2))/gaussVector[0][0];
+                }
+                else {
+                    TP=math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]);
+                    muP = (math::CalcVisCoef(math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0])));
+                    gaussVector[3][0] = math::pointValue(element, a, b, 4, 2);
+                }
+                //-----------------------------------------------------------------------------
+
+                //Compute minus values--------------------------------------------------------
 				muM = muP;
 				gaussVector[0][1] = gaussVector[0][0];
                 if (bcValues::UBcType[edgeGrp - 1] == 2)
                 {
                     gaussVector[1][1] = 0;
                     gaussVector[2][1] = 0;
+                    gaussVector[3][1] = gaussVector[0][1] * material::Cv*TP;
                 }
                 else if (bcValues::UBcType[edgeGrp - 1] == 3)
                 {
                     gaussVector[1][1] = bcValues::uBC[edgeGrp - 1]*gaussVector[0][1];
                     gaussVector[2][1] = bcValues::vBC[edgeGrp - 1]*gaussVector[0][1];
+                    gaussVector[3][1] = gaussVector[0][1]*(material::Cv*TP + 0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1]*gaussVector[0][1],2)));
                 }
-				gaussVector[3][1] = gaussVector[0][1] * material::Cv*math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]);
+                //-----------------------------------------------------------------------------
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -916,19 +961,34 @@ namespace auxilaryBCs
 				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0), muP(0.0), muM(0.0);
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
-				for (int i = 0; i < 4; i++)
+                //Compute plus values--------------------------------------------------------
+                for (int i = 0; i < 3; i++)
 				{
 					UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
 				}
 
-				//Apply weak Riemann infinite value
-				UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
-				UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
-				UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
-				UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+                if(flowProperties::massDiffusion)
+                {
+                    double rhoXP(math::pointDerivRho(element,a,b,1)), rhoYP(math::pointDerivRho(element,a,b,2)), TP(0.0);
+                    TP=math::CalcTFromConsvVar_massDiff(UPlus[0], UPlus[1], UPlus[2], UPlus[3], rhoXP, rhoYP);
+                    muP=math::CalcVisCoef(TP);
+                    UPlus[3]=UPlus[0]*material::Cv*TP+0.5*(pow(UPlus[1],2)+pow(UPlus[2],2))/UPlus[0];
+                }
+                else {
+                    muP = (math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
+                    UPlus[3] = math::pointValue(element, a, b, 4, 2);
+                }
+                //-----------------------------------------------------------------------------
 
-				muP = (math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
-				muM = (math::CalcVisCoef(math::CalcTFromConsvVar(UMinus[0], UMinus[1], UMinus[2], UMinus[3])));
+                //Compute minus values--------------------------------------------------------
+                //Apply weak Riemann infinite value
+                UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
+                UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
+                UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
+                UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+                //muM is caclulated from TBC
+                muM = (math::CalcVisCoef(bcValues::TBC[edgeGrp - 1]));
+                //-----------------------------------------------------------------------------
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -945,18 +1005,33 @@ namespace auxilaryBCs
 					UPlus(4, 0.0),
 					UMinus(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0), muP(0.0), muM(0.0);
+                double a(0.0), b(0.0), TP(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), muP(0.0), muM(0.0);
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;
 
-				for (int i = 0; i < 4; i++)
+                //Compute plus values--------------------------------------------------------
+                for (int i = 0; i < 3; i++)
 				{
 					UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
 				}
 
-				double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
+                if(flowProperties::massDiffusion)
+                {
+                    double rhoXP(math::pointDerivRho(element,a,b,1)), rhoYP(math::pointDerivRho(element,a,b,2));
+                    TP=math::CalcTFromConsvVar_massDiff(UPlus[0], UPlus[1], UPlus[2], UPlus[3], rhoXP, rhoYP);
+                    muP=math::CalcVisCoef(TP);
+                    UPlus[3]=UPlus[0]*material::Cv*TP+0.5*(pow(UPlus[1],2)+pow(UPlus[2],2))/UPlus[0];
+                }
+                else {
+                    TP=math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]);
+                    muP = math::CalcVisCoef(TP);
+                    UPlus[3] = math::pointValue(element, a, b, 4, 2);
+                }
+                //---------------------------------------------------------------------------
 
+                //Compute minus values--------------------------------------------------------
+				double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
 				//Apply PNR (2), R (1)
 				int implementation(1);
 				switch (implementation)
@@ -969,6 +1044,7 @@ namespace auxilaryBCs
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
 						UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+                        muM=math::CalcVisCoef(bcValues::TBC[edgeGrp - 1]);
 					}
 					else
 					{
@@ -976,21 +1052,21 @@ namespace auxilaryBCs
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
 						UMinus[3] = UPlus[3];
-
+                        muM=muP;
 					}
 				}
 				break;
 				case 2: //PNR
 				{
-					double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
 					double pInternal(0);
-					pInternal = UPlus[0] * material::R*TInternal;
+                    pInternal = UPlus[0] * material::R*TP;
 					if (refValues::subsonic)
 					{
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
 						UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+                        muM=math::CalcVisCoef(bcValues::TBC[edgeGrp - 1]);
 					}
 					else
 					{
@@ -998,14 +1074,14 @@ namespace auxilaryBCs
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
 						UMinus[3] = UPlus[3];
+                        muM=muP;
 					}
 				}
 				break;
 				default:
 					break;
 				}
-				muP = (math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
-				muM = (math::CalcVisCoef(math::CalcTFromConsvVar(UMinus[0], UMinus[1], UMinus[2], UMinus[3])));
+                //---------------------------------------------------------------------------
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -1024,24 +1100,37 @@ namespace auxilaryBCs
 			UPlus(4, 0.0),
 			UMinus(4, 0.0),
 			norm(2, 0.0);
-		double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+        double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), muP(0.0);
 		std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 		norm[0] = nx;
 		norm[1] = ny;
 
-		for (int i = 0; i < 4; i++)
+        //Compute plus values--------------------------------------------------------
+        for (int i = 0; i < 3; i++)
 		{
 			UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
-			UMinus[i] = UPlus[i];
 		}
-		double muP(math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
 
+        if(flowProperties::massDiffusion)
+        {
+            double rhoXP(math::pointDerivRho(element,a,b,1)), rhoYP(math::pointDerivRho(element,a,b,2)), TP(0.0);
+            TP=math::CalcTFromConsvVar_massDiff(UPlus[0], UPlus[1], UPlus[2], UPlus[3], rhoXP, rhoYP);
+            muP=math::CalcVisCoef(TP);
+            UPlus[3]=UPlus[0]*material::Cv*TP+0.5*(pow(UPlus[1],2)+pow(UPlus[2],2))/UPlus[0];
+        }
+        else {
+            muP = (math::CalcVisCoef(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])));
+            UPlus[3] = math::pointValue(element, a, b, 4, 2);
+        }
+        //----------------------------------------------------------------------------
+
+        //Compute minus values--------------------------------------------------------
 		UMinus[0] = UPlus[0];
 		UMinus[1] = UPlus[1] - 2 * (UPlus[1] * nx + UPlus[2] * ny)*nx;
 		UMinus[2] = UPlus[2] - 2 * (UPlus[1] * nx + UPlus[2] * ny)*ny;
 		UMinus[3] = UPlus[3];
+        //----------------------------------------------------------------------------
 
-		UMinus[0] = UPlus[0];
 		for (int i = 0; i < 4; i++)
 		{
 			Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i] * muP, UPlus[i] * muP, nx);

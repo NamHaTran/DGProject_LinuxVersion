@@ -604,6 +604,7 @@ namespace math
         };
         //compute initial T
         T=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+        //Solve T
         T=math::solvePolynomialsEq_NewtonRaphson(polynomialPower,polynomialCoeffs,T);
         return T;
     }

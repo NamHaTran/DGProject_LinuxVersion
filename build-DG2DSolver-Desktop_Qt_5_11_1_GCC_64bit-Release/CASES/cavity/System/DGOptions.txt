@@ -17,6 +17,6 @@ DGoptions
 	totalTime(s)				10
 	writeInterval				100
 	writeLog				true
-	loadSavedCase				true
+	loadSavedCase				false
 	ddtScheme				Euler
 }

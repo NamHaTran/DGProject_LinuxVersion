@@ -504,16 +504,6 @@ namespace IO
 		{
             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
 		}
-
-		if (limitVal::limiterName.size() > 0)
-		{
-			std::cout << "Selected limiter(s): ";
-            for (int i = 0; i < static_cast<int>(limitVal::limiterName.size()); i++)
-			{
-				std::cout << limitVal::limiterName[i] << " ";
-			}
-			std::cout << "\n";
-		}
 	}
 
 	void loadpTU()
