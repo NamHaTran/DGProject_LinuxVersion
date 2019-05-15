@@ -11,9 +11,12 @@
 	Note: all parameter are in SI unit.
 Material Properties
 {
-	gammaRatio					1.4
-	gasConstant					287
+	gammaRatio				1.4
+	gasConstant				287
 	PrandtlNumber				0.72
 	SutherlandAs				1.46e-6
 	SutherlandTs				110.4
+	
+	//Mass diffusion on
+	DmCoef					1.32
 }

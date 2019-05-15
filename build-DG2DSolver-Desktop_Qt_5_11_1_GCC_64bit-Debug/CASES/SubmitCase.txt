@@ -12,5 +12,8 @@
 SubmitCase
 {
 //caseName FlatPlateRefine
-caseName cavity
+//caseName fullCylinder
+caseName cylinder_quater_tri
+//caseName cavity
+//caseName forward4
 }

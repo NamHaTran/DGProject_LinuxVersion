@@ -486,12 +486,13 @@ namespace NSFEqBCs
                 {
                     UMinus[1] = 0.0;
                     UMinus[2] = 0.0;
+                    UMinus[3] = UPlus[0]*material::Cv*bcValues::TBC[edgeGrp - 1];
                 }
                 else if (bcValues::UBcType[edgeGrp - 1] == 3) {
-                    UMinus[1] = UMinus[0]*bcValues::uBC[edgeGrp - 1]*UMinus[0];
-                    UMinus[2] = UMinus[0]*bcValues::vBC[edgeGrp - 1]*UMinus[0];
+                    UMinus[1] = UMinus[0]*bcValues::uBC[edgeGrp - 1];
+                    UMinus[2] = UMinus[0]*bcValues::vBC[edgeGrp - 1];
+                    UMinus[3] = UPlus[0]*(material::Cv*bcValues::TBC[edgeGrp - 1]+0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1],2)));
                 }
-				UMinus[3] = UPlus[0]*material::Cv*bcValues::TBC[edgeGrp - 1];
 				//with isothermal BC, dUXMinus = dUXPlus, dUYMinus = dUYPlus
 				Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXPlus, dUYPlus, dUYPlus, norm);
 				return Fluxes;
@@ -528,13 +529,13 @@ namespace NSFEqBCs
                 {
                     UMinus[1] = 0.0;
                     UMinus[2] = 0.0;
+                    UMinus[3] = UPlus[0]*material::Cv*math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]);
                 }
                 else if (bcValues::UBcType[edgeGrp - 1] == 3) {
-                    UMinus[1] = UMinus[0]*bcValues::uBC[edgeGrp - 1]*UMinus[0];
-                    UMinus[2] = UMinus[0]*bcValues::vBC[edgeGrp - 1]*UMinus[0];
+                    UMinus[1] = UMinus[0]*bcValues::uBC[edgeGrp - 1];
+                    UMinus[2] = UMinus[0]*bcValues::vBC[edgeGrp - 1];
+                    UMinus[3] = UPlus[0]*(material::Cv*math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3])+0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1],2)));
                 }
-				UMinus[3] = UPlus[0]*material::Cv*math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]);
-
 				Fluxes = math::numericalFluxes::NSFEqAdvDiffFluxFromConserVars(edge, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
 				return Fluxes;
 			}
@@ -822,13 +823,14 @@ namespace auxilaryBCs
                 {
                     gaussVector[1][1] = 0;
                     gaussVector[2][1] = 0;
+                    gaussVector[3][1] = gaussVector[0][1]*material::Cv*bcValues::TBC[edgeGrp - 1];
                 }
                 else if (bcValues::UBcType[edgeGrp - 1] == 3)
                 {
                     gaussVector[1][1] = bcValues::uBC[edgeGrp - 1]*gaussVector[0][1];
                     gaussVector[2][1] = bcValues::vBC[edgeGrp - 1]*gaussVector[0][1];
+                    gaussVector[3][1] = gaussVector[0][1]*(material::Cv*bcValues::TBC[edgeGrp - 1]+0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1],2)));
                 }
-				gaussVector[3][1] = gaussVector[0][1]*material::Cv*bcValues::TBC[edgeGrp - 1];
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -858,13 +860,14 @@ namespace auxilaryBCs
                 {
                     gaussVector[1][1] = 0;
                     gaussVector[2][1] = 0;
+                    gaussVector[3][1] = gaussVector[0][1] * material::Cv*math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]);
                 }
                 else if (bcValues::UBcType[edgeGrp - 1] == 3)
                 {
                     gaussVector[1][1] = bcValues::uBC[edgeGrp - 1]*gaussVector[0][1];
                     gaussVector[2][1] = bcValues::vBC[edgeGrp - 1]*gaussVector[0][1];
+                    gaussVector[3][1] = gaussVector[0][1]*(material::Cv*math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0])+0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1],2)));
                 }
-				gaussVector[3][1] = gaussVector[0][1] * material::Cv*math::CalcTFromConsvVar(gaussVector[0][0], gaussVector[1][0], gaussVector[2][0], gaussVector[3][0]);
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -917,7 +920,7 @@ namespace auxilaryBCs
 					UPlus(4, 0.0),
 					UMinus(4, 0.0),
 					norm(2, 0.0);
-				double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), rhoEBC(0), muP(0.0), muM(0.0);
+                double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2)), muP(0.0), muM(0.0);
 				std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 				norm[0] = nx;
 				norm[1] = ny;

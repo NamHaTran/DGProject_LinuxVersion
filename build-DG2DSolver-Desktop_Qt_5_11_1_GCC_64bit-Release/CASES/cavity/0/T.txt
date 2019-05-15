@@ -20,7 +20,6 @@ movingWall
 fixedWall
 {
 	Group 2
-	Type				WallIsothermal
-	value				120
+	Type				WallAdiabatic
 }
  

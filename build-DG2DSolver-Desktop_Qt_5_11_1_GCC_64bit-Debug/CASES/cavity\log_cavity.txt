@@ -1,0 +1,4 @@
+log was created at 03-05-2019_14-21-00
+Cannot open file <Points.txt> located at /home/nam/NamTHFolders/CPPCodes/DGProject_LinuxVersion/build-DG2DSolver-Desktop_Qt_5_11_1_GCC_64bit-Debug/CASES/cavity/Constant/Mesh/Points.txt
+log was created at 03-05-2019_14-21-55
+Cannot open file <Points.txt> located at /home/nam/NamTHFolders/CPPCodes/DGProject_LinuxVersion/build-DG2DSolver-Desktop_Qt_5_11_1_GCC_64bit-Debug/CASES/cavity/Constant/Mesh/Points.txt

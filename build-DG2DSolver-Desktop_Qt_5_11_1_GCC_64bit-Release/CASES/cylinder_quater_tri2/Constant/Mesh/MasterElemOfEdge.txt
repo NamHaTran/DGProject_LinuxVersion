@@ -2,12 +2,12 @@
 |--------------------DISCONTINUOS GALERKIN METHOD SOLVER-----------------|
 |                                  Author                                |
 |   Nam Ha Tran.                                                         |
-|   Ver 1.00                                                             |
+|   Ver 1.01                                                             |
 +------------------------------------------------------------------------+
 |   This program uses Discontinous Galerkin method to solve 2D problems  |
 |   on structural and unstructural mesh.                                 |
 +------------------------------------------------------------------------+
-	Program ran at (d-m-y_h-m-s) 09-04-2019_16-10-55
+	Program ran at (d-m-y_h-m-s) 15-05-2019_12-35-34
 
 	MasterElemOfEdge array
 
