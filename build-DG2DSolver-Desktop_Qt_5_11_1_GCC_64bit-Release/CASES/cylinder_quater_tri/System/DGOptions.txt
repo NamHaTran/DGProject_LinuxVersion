@@ -15,8 +15,8 @@ DGoptions
 	orderOfAccuracy				0
 	CourantNumber				0.1
 	totalTime(s)				10
-	writeInterval				500
+	writeInterval				100
 	writeLog				true
-	loadSavedCase				false
+	loadSavedCase				true
 	ddtScheme				Euler
 }

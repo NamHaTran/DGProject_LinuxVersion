@@ -40,6 +40,9 @@ namespace process
 
 	void calcVolumeGaussValues();
 
+    /*Function computes T at all Gauss points of element (surface and volume)*/
+    void calcTGauss();
+
 	namespace auxEq
 	{
 		void calcValuesAtInterface();
@@ -85,7 +88,7 @@ namespace process
 
 	namespace NSFEq
 	{
-		void calcValuesAtInterface();
+        void calcFinvFvisAtInterface();
 
         std::tuple<double, double> getFinvFvisAtInterfaces(int edge, int element, int nG, int mod, int direction, int valType);
 

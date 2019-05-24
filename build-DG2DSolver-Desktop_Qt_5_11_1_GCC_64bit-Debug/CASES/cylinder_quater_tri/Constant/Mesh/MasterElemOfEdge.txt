@@ -7,7 +7,7 @@
 |   This program uses Discontinous Galerkin method to solve 2D problems  |
 |   on structural and unstructural mesh.                                 |
 +------------------------------------------------------------------------+
-	Program ran at (d-m-y_h-m-s) 08-05-2019_22-58-04
+	Program ran at (d-m-y_h-m-s) 17-05-2019_08-14-15
 
 	MasterElemOfEdge array
 

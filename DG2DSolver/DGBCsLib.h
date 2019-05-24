@@ -80,7 +80,7 @@ namespace BCSupportFncs
 	bool checkInflow(double u, double v, double nx, double ny);
 
     namespace auxilaryBCs {
-        std::tuple<double, double> calcUPlus(int element, int edge, int nG, std::vector<double> &UPlus);
+        void calcUPlus(int element, int edge, int nG, std::vector<double> &UPlus);
     }
 
     namespace NSFEqBCs {

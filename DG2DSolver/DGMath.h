@@ -231,8 +231,13 @@ namespace math
 
 	double calcResidualFromResidualOfOrder(int element, double a, double b, int valType);
 
-    //Function solves polynomial equation by using Newton-Raphson methd
-    double solvePolynomialsEq_NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue);
+    namespace solvePolynomialsEq {
+        double NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue);
+
+        double Bisection(std::vector<double> &power, std::vector<double> &coefs, double initialValue);
+
+        double subValToPolynomial(std::vector<double> &power, std::vector<double> &coefs, double Value);
+    }
 
 	namespace numericalFluxes
 	{
@@ -278,7 +283,7 @@ namespace math
 		[tau_xx	    tau_xy		Qx]
 		[tau_yx	    tau_yy		Qy]
 		*/
-        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);
+        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy, double TVal);
 
 		/*Function calculates heat flux terms Qx, Qy*/
 		std::tuple<double, double> calcHeatFluxTerms(double dTx, double dTy, double k);
@@ -325,7 +330,7 @@ namespace math
 	double calcMaxT(int element);
 
     namespace massDiffusionFncs {
-    double calcTotalVelocity(double rho, double advecV, double dRho);
+    double calcTotalVelocity(double rho, double advecV, double mudRho);
     }
 }
 

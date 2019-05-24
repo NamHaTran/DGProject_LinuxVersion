@@ -13,5 +13,5 @@ LimiterSettings
 limiter		PositivityPreserving
 PositivityPreserving
 {
-	version	full
+	version	simplified
 }

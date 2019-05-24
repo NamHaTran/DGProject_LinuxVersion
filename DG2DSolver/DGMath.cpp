@@ -586,7 +586,8 @@ namespace math
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
     {
         //Em is total energy with total velocity (um), not advective velocity (u)
-        double T(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
+        /*
+        double T(0.0), TIni(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
                 u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
         std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
         Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
@@ -603,14 +604,21 @@ namespace math
                     B3*pow(material::Ts,2)
         };
         //compute initial T
-        T=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+
+        TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
         //Solve T
-        T=math::solvePolynomialsEq_NewtonRaphson(polynomialPower,polynomialCoeffs,T);
-        if (T!=T)
+        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
+        if (T!=T || T<0)
         {
-            T=math::solvePolynomialsEq_NewtonRaphson(polynomialPower,polynomialCoeffs,iniValues::TIni);
+            //std::cout<<"Failed to solve T\n";
+            //int c = getchar();
+            return TIni;
         }
-        return T;
+        else {
+            return TIni;
+        }
+        */
+        return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
     }
 
 	double CalcP(double T, double rho)
@@ -1347,14 +1355,14 @@ namespace math
 				term1 = rhoVal * uVal;
                 term2 = rhoVal * uVal*umVal + pVal;
                 term3 = rhoVal * uVal*vmVal;
-                term4 = (rhoVal*totalE + pVal)*umVal;
+                term4 = rhoVal*totalE*umVal + pVal*uVal;
 			}
 			else if (dir==2)  //Oy direction
 			{
 				term1 = rhoVal * vVal;
                 term2 = rhoVal * umVal*vVal;
                 term3 = rhoVal * vVal*vmVal + pVal;
-                term4 = (rhoVal*totalE + pVal)*vmVal;
+                term4 = rhoVal*totalE*vmVal + pVal*vVal;
 			}
 			return std::make_tuple(term1, term2, term3, term4);
 		}
@@ -1362,7 +1370,7 @@ namespace math
 
 	namespace viscousTerms
 	{
-        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy)
+        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy, double TVal)
 		{
 			/*Output matrix has form:
 			[tauXx		tauXy		Qx]
@@ -1382,7 +1390,14 @@ namespace math
 			rhoVal = U[0];
 			rhouVal = U[1];
 			rhovVal = U[2];
-			rhoEVal = U[3];
+            if (flowProperties::massDiffusion)
+            {
+                rhoEVal=rhoVal*material::Cv*TVal+0.5*(rhouVal*rhouVal+rhovVal*rhovVal)/rhoVal;
+            }
+            else
+            {
+                rhoEVal = U[3];
+            }
 
 			uVal = rhouVal / rhoVal;
 			vVal = rhovVal / rhoVal;
@@ -1811,40 +1826,84 @@ namespace math
 		return index;
 	}
 
-    double solvePolynomialsEq_NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue)
-    {
-        int polySize(static_cast<int>(power.size()));
-        std::vector<double> power_deriv(polySize, 0.0),
-                coefs_deriv(polySize, 0.0);
-        double error(1), convergence_cri(1e-6), output(0.0), fValue(0.0), derivfValue(0.0);
+    namespace solvePolynomialsEq {
+        double NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue)
+        {
+            int polySize(static_cast<int>(power.size()));
+            std::vector<double> power_deriv(polySize, 0.0),
+                    coefs_deriv(polySize, 0.0);
+            double error(1), convergence_cri(1e-6), output(0.0), fValue(0.0), derivfValue(0.0);
 
-        //find 1st derivative of input polynomial
-        for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {
-            power_deriv[polyOrder]=power[polyOrder] - 1.0;
-            coefs_deriv[polyOrder]=power[polyOrder]*coefs[polyOrder];
-        }
-
-        //solve equation
-        while (error > convergence_cri) {
-            fValue = 0.0;
-            derivfValue = 0.0;
+            //find 1st derivative of input polynomial
             for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {
-                fValue+=pow(initialValue,power[polyOrder])*coefs[polyOrder];
-                derivfValue+=pow(initialValue,power_deriv[polyOrder])*coefs_deriv[polyOrder];
+                power_deriv[polyOrder]=power[polyOrder] - 1.0;
+                coefs_deriv[polyOrder]=power[polyOrder]*coefs[polyOrder];
             }
-            output = initialValue - fValue/derivfValue;
-            error = fabs(output - initialValue)/initialValue;
-            initialValue = output;
+
+            //solve equation
+            while (error > convergence_cri) {
+                fValue = 0.0;
+                derivfValue = 0.0;
+                for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {
+                    fValue+=pow(initialValue,power[polyOrder])*coefs[polyOrder];
+                    derivfValue+=pow(initialValue,power_deriv[polyOrder])*coefs_deriv[polyOrder];
+                }
+                output = initialValue - fValue/derivfValue;
+                error = fabs(output - initialValue)/initialValue;
+                initialValue = output;
+            }
+            return output;
         }
-        return output;
+
+        double Bisection(std::vector<double> &power, std::vector<double> &coefs, double initialValue)
+        {
+            const double range(0.3);
+            double upper(initialValue*(1+range)), lower((initialValue*(1-range))), fUpper(0.0), fLower(0.0);
+            double error(1), convergence_cri(1e-6), output(0.0), fOutput(0.0), outputOld(0.0);
+            //solve equation
+            fUpper=math::solvePolynomialsEq::subValToPolynomial(power,coefs,upper);
+            fLower=math::solvePolynomialsEq::subValToPolynomial(power,coefs,lower);
+            if (fUpper*fLower>0)
+            {
+                std::cout<<"Failed to solve polynomial equation by using Bisection\n";
+                int c = getchar();
+            }
+            else {
+                while (error > convergence_cri) {
+                    fUpper=math::solvePolynomialsEq::subValToPolynomial(power,coefs,upper);
+                    fLower=math::solvePolynomialsEq::subValToPolynomial(power,coefs,lower);
+                    output = 0.5*(upper+lower);
+                    fOutput=math::solvePolynomialsEq::subValToPolynomial(power,coefs,output);
+                    if (fUpper*fOutput<0)
+                    {
+                        lower=output;
+                    }
+                    else if (fLower*fOutput<0) {
+                        upper=output;
+                    }
+                    error = fabs((output - outputOld)/output);
+                    outputOld=output;
+                }
+            }
+            return output;
+        }
+
+        double subValToPolynomial(std::vector<double> &power, std::vector<double> &coefs, double Value)
+        {
+            int polySize(static_cast<int>(power.size()));
+            double fValue(0.0);
+            for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {
+                fValue+=pow(Value,power[polyOrder])*coefs[polyOrder];
+            }
+            return fValue;
+        }
     }
 
     namespace massDiffusionFncs {
-    double calcTotalVelocity(double rho, double advecV, double dRho)
+    double calcTotalVelocity(double rho, double advecV, double mudRho)
     {
         //dRho here is mu*d(rho)/d(x,y)
-        return (advecV-material::massDiffusion::DmCoeff*dRho/(rho*rho));
-        //return (advecV);
+        return (advecV-material::massDiffusion::DmCoeff*mudRho/(rho*rho));
     }
     }
 }//end of namespace math

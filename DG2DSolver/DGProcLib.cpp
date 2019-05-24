@@ -261,11 +261,94 @@ namespace process
                     volumeFields::rhouVolGauss[nelem][na][nb] = math::pointValue(nelem, a, b, 2, 2);
                     volumeFields::rhovVolGauss[nelem][na][nb] = math::pointValue(nelem, a, b, 3, 2);
                     volumeFields::rhoEVolGauss[nelem][na][nb] = math::pointValue(nelem, a, b, 4, 2);
-                    volumeFields::T[nelem][na][nb] = math::pointValue(nelem, a, b, 6, 1);
 				}
 			}
 		}
 	}
+
+    void calcTGauss()
+    {
+        if (flowProperties::massDiffusion)
+        {
+            //Volume
+            double a(0.0), b(0.0), rhoX(0.0), rhoY(0.0);
+            for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+            {
+                for (int na = 0; na <= mathVar::nGauss; na++)
+                {
+                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    {
+                        std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+                        rhoX=math::pointAuxValue(nelem,a,b,1,1);
+                        rhoY=math::pointAuxValue(nelem,a,b,1,2);
+                        volumeFields::T[nelem][na][nb] = math::CalcTFromConsvVar_massDiff(volumeFields::rhoVolGauss[nelem][na][nb],volumeFields::rhouVolGauss[nelem][na][nb],volumeFields::rhovVolGauss[nelem][na][nb],volumeFields::rhoEVolGauss[nelem][na][nb],rhoX,rhoY);
+                    }
+                }
+            }
+
+            //Surface
+            int masterCell(-1), slaveCell(-1), bcGrp(0);
+            double rhoMaster(0.0), rhouMaster(0.0), rhovMaster(0.0), rhoEMaster(0.0),
+                    rhoSlave(0.0), rhouSlave(0.0), rhovSlave(0.0), rhoESlave(0.0),
+                    rhoXMaster(0.0), rhoYMaster(0.0), rhoXSlave(0.0), rhoYSlave(0.0);
+            for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+            {
+                bcGrp = auxUlti::getBCType(iedge);
+                if (bcGrp == 0)
+                {
+                    std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
+                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    {
+                        std::tie(rhoMaster,rhoSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,1);
+                        std::tie(rhouMaster,rhouSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,2);
+                        std::tie(rhovMaster,rhovSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,3);
+                        std::tie(rhoEMaster,rhoESlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,4);
+                        std::tie(rhoXMaster,rhoXSlave)=math::internalSurfaceDerivativeValue(iedge,masterCell,nG,1,1);
+                        std::tie(rhoYMaster,rhoYSlave)=math::internalSurfaceDerivativeValue(iedge,masterCell,nG,1,2);
+                        surfaceFields::T[iedge][nG]=math::CalcTFromConsvVar_massDiff(rhoMaster,rhouMaster,rhovMaster,rhoEMaster,rhoXMaster,rhoYMaster);
+                        surfaceFields::T[iedge][nG + mathVar::nGauss + 1]=math::CalcTFromConsvVar_massDiff(rhoSlave,rhouSlave,rhovSlave,rhoESlave,rhoXSlave,rhoYSlave);
+                    }
+                }
+            }
+        }
+        else {
+            //Volume
+            double a(0.0), b(0.0);
+            for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+            {
+                for (int na = 0; na <= mathVar::nGauss; na++)
+                {
+                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    {
+                        std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+                        volumeFields::T[nelem][na][nb] = math::pointValue(nelem, a, b, 6, 1);
+                    }
+                }
+            }
+
+            //Surface
+            int masterCell(-1), slaveCell(-1), bcGrp(0);
+            double rhoMaster(0.0), rhouMaster(0.0), rhovMaster(0.0), rhoEMaster(0.0),
+                    rhoSlave(0.0), rhouSlave(0.0), rhovSlave(0.0), rhoESlave(0.0);
+            for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
+            {
+                bcGrp = auxUlti::getBCType(iedge);
+                if (bcGrp == 0)
+                {
+                    std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
+                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    {
+                        std::tie(rhoMaster,rhoSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,1);
+                        std::tie(rhouMaster,rhouSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,2);
+                        std::tie(rhovMaster,rhovSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,3);
+                        std::tie(rhoEMaster,rhoESlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,4);
+                        surfaceFields::T[iedge][nG]=math::CalcTFromConsvVar(rhoMaster,rhouMaster,rhovMaster,rhoEMaster);
+                        surfaceFields::T[iedge][nG + mathVar::nGauss + 1]=math::CalcTFromConsvVar(rhoSlave,rhouSlave,rhovSlave,rhoESlave);
+                    }
+                }
+            }
+        }
+    }
 
     void calcValuesAtInterface()
     {
@@ -424,16 +507,24 @@ namespace process
 				process::auxEq::CalcRHSTerm(nelement, rhoRHSTermOxDir, rhoRHSTermOyDir, rhouRHSTermOxDir, rhouRHSTermOyDir, rhovRHSTermOxDir, rhovRHSTermOyDir, rhoERHSTermOxDir, rhoERHSTermOyDir);
 
                 //2) Solve for auxilary variables
+                if (!flowProperties::massDiffusion)
+                {
+                    for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                    {
+                        //Ox direction
+                        rhoX[nelement][iorder] = rhoRHSTermOxDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
+                        //Oy direction
+                        rhoY[nelement][iorder] = rhoRHSTermOyDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
+                    }
+                }
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
 				{
 					//Ox direction
-                    rhoX[nelement][iorder] = rhoRHSTermOxDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					rhouX[nelement][iorder] = rhouRHSTermOxDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					rhovX[nelement][iorder] = rhovRHSTermOxDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					rhoEX[nelement][iorder] = rhoERHSTermOxDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 
 					//Oy direction
-                    rhoY[nelement][iorder] = rhoRHSTermOyDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					rhouY[nelement][iorder] = rhouRHSTermOyDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					rhovY[nelement][iorder] = rhovRHSTermOyDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
 					rhoEY[nelement][iorder] = rhoERHSTermOyDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
@@ -495,8 +586,18 @@ namespace process
 				rhoEGsVol(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
 
             //Calculates Gauss matrix
-            //rho -------------------------------------------------------------------------------------------
-            rhoGsVol = process::auxEq::getGaussMatrixOfConserVar(element, 1);
+            if (!flowProperties::massDiffusion)
+            {
+                //rho -------------------------------------------------------------------------------------------
+                rhoGsVol = process::auxEq::getGaussMatrixOfConserVar(element, 1);
+                for (int order = 1; order <= mathVar::orderElem; order++)
+                {
+                    rhoVolIntX[order] = process::volumeInte(element, rhoGsVol, order, 1);
+                    rhoVolIntY[order] = process::volumeInte(element, rhoGsVol, order, 2);
+                }
+                rhoVolIntX[0] = 0;
+                rhoVolIntY[0] = 0;
+            }
 			//rhou ------------------------------------------------------------------------------------------
 			rhouGsVol = process::auxEq::getGaussMatrixOfConserVar(element, 2);
 			//rhov ------------------------------------------------------------------------------------------
@@ -506,22 +607,18 @@ namespace process
 
             for (int order = 1; order <= mathVar::orderElem; order++)
 			{
-                rhoVolIntX[order] = process::volumeInte(element, rhoGsVol, order, 1);
 				rhouVolIntX[order] = process::volumeInte(element, rhouGsVol, order, 1);
 				rhovVolIntX[order] = process::volumeInte(element, rhovGsVol, order, 1);
 				rhoEVolIntX[order] = process::volumeInte(element, rhoEGsVol, order, 1);
 
-                rhoVolIntY[order] = process::volumeInte(element, rhoGsVol, order, 2);
 				rhouVolIntY[order] = process::volumeInte(element, rhouGsVol, order, 2);
 				rhovVolIntY[order] = process::volumeInte(element, rhovGsVol, order, 2);
 				rhoEVolIntY[order] = process::volumeInte(element, rhoEGsVol, order, 2);
 			}
-            rhoVolIntX[0] = 0;
             rhouVolIntX[0] = 0;
             rhovVolIntX[0] = 0;
             rhoEVolIntX[0] = 0;
 
-            rhoVolIntY[0] = 0;
             rhouVolIntY[0] = 0;
             rhovVolIntY[0] = 0;
             rhoEVolIntY[0] = 0;
@@ -592,38 +689,41 @@ namespace process
 		{
             //rhoE used for solving auxilary equation is advective rhoE!!
 			std::vector<std::vector<double>> GaussMatrix(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
-            double muGs(0.0), val(0.0);
             for (int na = 0; na <= mathVar::nGauss; na++)
 			{
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
-                    muGs=math::CalcVisCoef(volumeFields::T[element][na][nb]);
 					switch (valType)
 					{
 					case 1:
 					{
-                        val = volumeFields::rhoVolGauss[element][na][nb];
+                        GaussMatrix[na][nb] = volumeFields::rhoVolGauss[element][na][nb];
 					}
 					break;
 					case 2:
 					{
-                        val = volumeFields::rhouVolGauss[element][na][nb];
+                        GaussMatrix[na][nb] = volumeFields::rhouVolGauss[element][na][nb];
 					}
 					break;
 					case 3:
 					{
-                        val = volumeFields::rhovVolGauss[element][na][nb];
+                        GaussMatrix[na][nb] = volumeFields::rhovVolGauss[element][na][nb];
 					}
 					break;
 					case 4:
 					{
-                        val = volumeFields::rhoEVolGauss[element][na][nb];
+                        if (!flowProperties::massDiffusion)
+                        {
+                            GaussMatrix[na][nb] = volumeFields::rhoEVolGauss[element][na][nb];
+                        }
+                        else {
+                            GaussMatrix[na][nb]=volumeFields::rhoVolGauss[element][na][nb]*material::Cv*volumeFields::T[element][na][nb]+0.5*(pow(volumeFields::rhouVolGauss[element][na][nb],2)+pow(volumeFields::rhovVolGauss[element][na][nb],2))/volumeFields::rhoVolGauss[element][na][nb];
+                        }
 					}
 					break;
 					default:
 						break;
 					}
-					GaussMatrix[na][nb] = val*muGs;
 				}
 			}
 			return GaussMatrix;
@@ -632,13 +732,28 @@ namespace process
 		std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny)
 		{
 			std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0)); //columns 0, 1 are Ox, Oy values
-			double tempP(0.0), tempM(0.0);
-            for (int i = 0; i < 4; i++)
-			{
-				std::tie(tempP, tempM) = process::auxEq::getInternalValuesFromCalculatedArrays(edge, element, nG, i+1);
-				gaussVector[i][0] = math::numericalFluxes::auxFlux(tempM, tempP, nx);
-				gaussVector[i][1] = math::numericalFluxes::auxFlux(tempM, tempP, ny);
-			}
+            double rhoM(0.0), rhoP(0.0), rhouM(0.0), rhouP(0.0), rhovM(0.0), rhovP(0.0), TP(0.0), TM(0.0), rhoEM(0.0), rhoEP(0.0);
+            std::tie(rhoP, rhoM) = auxUlti::getUAtInterfaces(edge, element, nG, 1);
+            std::tie(rhouP, rhouM) = auxUlti::getUAtInterfaces(edge, element, nG, 2);
+            std::tie(rhovP, rhovM) = auxUlti::getUAtInterfaces(edge, element, nG, 3);
+            if (flowProperties::massDiffusion)
+            {
+                std::tie(TP, TM)=auxUlti::getTAtInterfaces(edge,element,nG);
+                rhoEP=rhoP*material::Cv*TP+0.5*(rhouP*rhouP+rhovP*rhovP)/rhoP;
+                rhoEM=rhoM*material::Cv*TM+0.5*(rhouM*rhouM+rhovM*rhovM)/rhoM;
+            }
+            else {
+                std::tie(rhoEP, rhoEM) = auxUlti::getUAtInterfaces(edge, element, nG, 4);
+                gaussVector[0][0] = math::numericalFluxes::auxFlux(rhoM, rhoP, nx);
+                gaussVector[0][1] = math::numericalFluxes::auxFlux(rhoM, rhoP, ny);
+            }
+
+            gaussVector[1][0] = math::numericalFluxes::auxFlux(rhouM, rhouP, nx);
+            gaussVector[1][1] = math::numericalFluxes::auxFlux(rhouM, rhouP, ny);
+            gaussVector[2][0] = math::numericalFluxes::auxFlux(rhovM, rhovP, nx);
+            gaussVector[2][1] = math::numericalFluxes::auxFlux(rhovM, rhovP, ny);
+            gaussVector[3][0] = math::numericalFluxes::auxFlux(rhoEM, rhoEP, nx);
+            gaussVector[3][1] = math::numericalFluxes::auxFlux(rhoEM, rhoEP, ny);
 
 			return gaussVector;
 		}
@@ -697,10 +812,6 @@ namespace process
         {
             void solveDivRho()
             {
-                /*NOTE:
-                 * When mass diffusion is on, d(rho)/dx, d(rho)/dy are saved in rhoX, rhoY
-                 * When mass diffusion is off, mu*d(rho)/dx, mu*d(rho)/dy are saved in rhoX, rhoY
-                */
                 std::vector<double> rhoRHSTermOxDir(mathVar::orderElem + 1, 0.0),
                     rhoRHSTermOyDir(mathVar::orderElem + 1, 0.0);
 
@@ -832,14 +943,14 @@ namespace process
 
 	namespace NSFEq
 	{
-		void calcValuesAtInterface()
+        void calcFinvFvisAtInterface()
 		{
 			//mu included
 			int masterCell(-1), slaveCell(-1), bcGrp(0);
 			double uMaster(0.0), vMaster(0.0), totalEMaster(0.0), TMaster(0.0), pMaster(0.0),
 				uSlave(0.0), vSlave(0.0), totalESlave(0.0), TSlave(0.0), pSlave(0.0), eMaster(0.0), eSlave(0.0),
                 uMagM(0.0), uMagP(0.0), aM(0.0), aP(0.0),
-                    umMaster(0.0), umSlave(0.0), vmMaster(0.0), vmSlave(0.0);
+                    umMaster(0.0), umSlave(0.0), vmMaster(0.0), vmSlave(0.0), muMaster(0.0), muSlave(0.0);
 			std::vector<double> UMaster(4, 0.0), dUXMaster(4, 0.0), dUYMaster(4, 0.0),
 				USlave(4, 0.0), dUXSlave(4, 0.0), dUYSlave(4, 0.0),
                 CArray(mathVar::nGauss + 1, 0.0), vectorn(2, 0.0); // BetaArray(mathVar::nGauss + 1, 0.0),
@@ -860,6 +971,8 @@ namespace process
                     for (int nG = 0; nG <= mathVar::nGauss; nG++)
 					{
                         std::tie(TMaster,TSlave)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
+                        muMaster=math::CalcVisCoef(TMaster);
+                        muSlave=math::CalcVisCoef(TSlave);
                         for (int i = 0; i < 4; i++)
 						{
                             //std::tie(UMaster[i], USlave[i]) = math::internalSurfaceValue(iedge, masterCell, nG, i + 1, 2);
@@ -867,6 +980,10 @@ namespace process
                             //d(U)/dx, d(U)/dy
                             std::tie(dUXMaster[i], dUXSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i+1, 1);
                             std::tie(dUYMaster[i], dUYSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i+1, 2);
+                            dUXMaster[i]*=muMaster;
+                            dUYMaster[i]*=muMaster;
+                            dUXSlave[i]*=muSlave;
+                            dUYSlave[i]*=muSlave;
 						}
 
 						uMaster = (UMaster[1] / UMaster[0]);
@@ -920,11 +1037,11 @@ namespace process
                         std::tie(surfaceFields::invis_rhoY[iedge][nG + mathVar::nGauss + 1], surfaceFields::invis_rhouY[iedge][nG + mathVar::nGauss + 1], surfaceFields::invis_rhovY[iedge][nG + mathVar::nGauss + 1], surfaceFields::invis_rhoEY[iedge][nG + mathVar::nGauss + 1]) = math::inviscidTerms::calcInvisTermsFromPriVars(USlave[0], uSlave, umSlave, vSlave, vmSlave, totalESlave, pSlave, 2);
 
 						/*calculate viscous terms*/
-                        StressHeatP = math::viscousTerms::calcStressTensorAndHeatFlux(UMaster, dUXMaster, dUYMaster);
+                        StressHeatP = math::viscousTerms::calcStressTensorAndHeatFlux(UMaster, dUXMaster, dUYMaster, TMaster);
                         std::tie(surfaceFields::Vis_rhoX[iedge][nG], surfaceFields::Vis_rhouX[iedge][nG], surfaceFields::Vis_rhovX[iedge][nG], surfaceFields::Vis_rhoEX[iedge][nG]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatP, uMaster, vMaster, dUXMaster[0]/UMaster[0], 1);
                         std::tie(surfaceFields::Vis_rhoY[iedge][nG], surfaceFields::Vis_rhouY[iedge][nG], surfaceFields::Vis_rhovY[iedge][nG], surfaceFields::Vis_rhoEY[iedge][nG]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatP, uMaster, vMaster, dUYMaster[0]/UMaster[0], 2);
 
-                        StressHeatM = math::viscousTerms::calcStressTensorAndHeatFlux(USlave, dUXSlave, dUYSlave);
+                        StressHeatM = math::viscousTerms::calcStressTensorAndHeatFlux(USlave, dUXSlave, dUYSlave, TSlave);
                         std::tie(surfaceFields::Vis_rhoX[iedge][nG + mathVar::nGauss + 1], surfaceFields::Vis_rhouX[iedge][nG + mathVar::nGauss + 1], surfaceFields::Vis_rhovX[iedge][nG + mathVar::nGauss + 1], surfaceFields::Vis_rhoEX[iedge][nG + mathVar::nGauss + 1]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatM, uSlave, vSlave, dUXSlave[0]/USlave[0], 1);
                         std::tie(surfaceFields::Vis_rhoY[iedge][nG + mathVar::nGauss + 1], surfaceFields::Vis_rhouY[iedge][nG + mathVar::nGauss + 1], surfaceFields::Vis_rhovY[iedge][nG + mathVar::nGauss + 1], surfaceFields::Vis_rhoEY[iedge][nG + mathVar::nGauss + 1]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatM, uSlave, vSlave, dUYSlave[0]/USlave[0], 2);
 					
@@ -936,8 +1053,6 @@ namespace process
 				}
 			}
 		}
-
-
 
 		void solveNSFEquation(int RKOrder)
 		{
@@ -1107,18 +1222,19 @@ namespace process
                 umVal(0.0),
                 vmVal(0.0),
                 totalE(0.0),
-                    a(0.0),b(0.0);
+                a(0.0),b(0.0),muVal(0.0);
 
             std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
 			uVal = rhouVal / rhoVal;
 			vVal = rhovVal / rhoVal;
 			totalE = rhoEVal / rhoVal;
             pVal = math::CalcP(volumeFields::T[element][na][nb], rhoVal);
+            muVal=math::CalcVisCoef(volumeFields::T[element][na][nb]);
 
             if (flowProperties::massDiffusion)
             {
-                umVal=math::massDiffusionFncs::calcTotalVelocity(rhoVal,uVal,math::pointAuxValue(element,a,b,1,1));
-                vmVal=math::massDiffusionFncs::calcTotalVelocity(rhoVal,vVal,math::pointAuxValue(element,a,b,1,2));
+                umVal=math::massDiffusionFncs::calcTotalVelocity(rhoVal,uVal,math::pointAuxValue(element,a,b,1,1)*muVal);
+                vmVal=math::massDiffusionFncs::calcTotalVelocity(rhoVal,vVal,math::pointAuxValue(element,a,b,1,2)*muVal);
             }
             else {
                 umVal=uVal;
@@ -1137,7 +1253,7 @@ namespace process
 		/*Function calculates Viscous terms at Gauss point (a, b)*/
 		std::vector<std::vector<double>> calcGaussViscousTerm(int element, int na, int nb)
 		{
-            double uVal(0.0), vVal(0.0), a(0.0), b(0.0);
+            double uVal(0.0), vVal(0.0), a(0.0), b(0.0), muVal(0.0);
 			/*ViscousTerm 2D array has 4 row 2 column:
 			- column 1: Ox direction
 			- column 2: Oy direction*/
@@ -1156,15 +1272,16 @@ namespace process
 
             uVal=vectorU[1]/vectorU[0];
             vVal=vectorU[2]/vectorU[0];
+            muVal=math::CalcVisCoef(volumeFields::T[element][na][nb]);
 
             for (int i = 0; i < 4; i++)
 			{
-				vectordUx[i] = math::pointAuxValue(element, a, b, i + 1, 1);
-				vectordUy[i] = math::pointAuxValue(element, a, b, i + 1, 2);
+                vectordUx[i] = math::pointAuxValue(element, a, b, i + 1, 1)*muVal;
+                vectordUy[i] = math::pointAuxValue(element, a, b, i + 1, 2)*muVal;
 			}
 
 			/*calculate stresses and heat fluxes*/
-            StressHeatFlux = math::viscousTerms::calcStressTensorAndHeatFlux(vectorU, vectordUx, vectordUy);
+            StressHeatFlux = math::viscousTerms::calcStressTensorAndHeatFlux(vectorU, vectordUx, vectordUy, volumeFields::T[element][na][nb]);
             std::tie(ViscousTerm[0][0], ViscousTerm[1][0], ViscousTerm[2][0], ViscousTerm[3][0]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, vectordUx[0]/vectorU[0], 1);
             std::tie(ViscousTerm[0][1], ViscousTerm[1][1], ViscousTerm[2][1], ViscousTerm[3][1]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, vectordUy[0]/vectorU[0], 2);
 			return ViscousTerm;
@@ -1743,12 +1860,18 @@ namespace process
 			process::calcVolumeGaussValues();
             process::calcValuesAtInterface();
 
+            if (flowProperties::massDiffusion)
+            {
+                process::auxEq::massDiffusion::solveDivRho();
+            }
+            //CALCULATE T
+            process::calcTGauss();
+
             //SOLVE AUXILARY EQUATION
-			process::auxEq::calcValuesAtInterface();
 			process::auxEq::solveAuxEquation();
 
 			//SOLVE NSF EQUATION
-			process::NSFEq::calcValuesAtInterface();
+            process::NSFEq::calcFinvFvisAtInterface();
 			process::NSFEq::solveNSFEquation(RKOrder);
 		}
 
