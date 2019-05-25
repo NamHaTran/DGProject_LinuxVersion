@@ -11,9 +11,5 @@
 
 SubmitCase
 {
-//caseName FlatPlateRefine
-//caseName fullCylinder
-caseName cylinder_quater_tri2
-//caseName cavity
-//caseName forward4
+caseName argon_cylinder_2_mass
 }

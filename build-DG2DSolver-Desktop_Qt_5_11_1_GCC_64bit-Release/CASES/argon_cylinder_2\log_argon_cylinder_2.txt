@@ -1,0 +1,2 @@
+log was created at 25-05-2019_18-41-48
+Cannot open file </home/nam/NamTHFolders/CPPCodes/DGProject_LinuxVersion/build-DG2DSolver-Desktop_Qt_5_11_1_GCC_64bit-Release/CASES/argon_cylinder_2/7900/rho.txt> located at /home/nam/NamTHFolders/CPPCodes/DGProject_LinuxVersion/build-DG2DSolver-Desktop_Qt_5_11_1_GCC_64bit-Release/CASES/argon_cylinder_2/7900/rho.txt

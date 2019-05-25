@@ -17,7 +17,7 @@ namespace systemVar
     bool wrtLog(true), loadSavedCase(false);
 
     int ddtScheme(1);
-    double epsilon(1e-9);
+    double epsilon(1e-13);
 
 	int iterCount(0), savingCout(0);
 	double rhoResNorm(1.0), rhouResNorm(1.0), rhovResNorm(1.0), rhoEResNorm(1.0);
