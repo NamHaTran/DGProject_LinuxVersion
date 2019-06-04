@@ -657,7 +657,7 @@ namespace limiter
 					{
 						aG = mathVar::GaussPts[na][nb][0];
 						bG = mathVar::GaussPts[na][nb][1];
-						vectorRho.push_back(math::pointValue(element, aG, bG, 1, 2));
+                        vectorRho.push_back(math::pointValueNoLimiter(element, aG, bG, 12));
 					}
 				}
 			
@@ -899,7 +899,7 @@ namespace limiter
 					vectorOmega[1] = meanRho;
 					double omega(*std::min_element(vectorOmega.begin(), vectorOmega.end()));  //find min value of vector
 
-					temp1 = (meanRho - systemVar::epsilon) / (meanRho - minRho);
+                    temp1 = (meanRho - omega) / (meanRho - minRho);
 					if (temp1 < 1.0)
 					{
 						theta = temp1;
@@ -920,7 +920,7 @@ namespace limiter
 					vectorOmega[2] = meanRhoe;
 					double omega(*std::min_element(vectorOmega.begin(), vectorOmega.end()));  //find min value of vector
 
-					temp1 = (meanRhoe - systemVar::epsilon) / (meanRhoe - minRhoe);
+                    temp1 = (meanRhoe - omega) / (meanRhoe - minRhoe);
 					if (temp1 < 1.0)
 					{
 						theta = temp1;

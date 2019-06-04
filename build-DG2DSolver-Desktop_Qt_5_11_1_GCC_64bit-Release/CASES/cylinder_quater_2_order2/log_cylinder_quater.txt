@@ -1,2 +1,0 @@
-log was created at time
-Cannot open file <D:\Working\Code C++ for fun\DGProject\DG2DSolver\x64\Release\CASES\cylinder_quater\Mesj_1.unv> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\x64\Release\CASES\cylinder_quater

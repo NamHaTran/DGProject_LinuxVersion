@@ -163,10 +163,7 @@ namespace BCSupportFncs
         {
             double a(0.0), b(0.0), TP(0.0);
             std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
-            for (int i = 0; i < 4; i++)
-            {
-                UPlus[i] = math::pointValue(element, a, b, i + 1, 2);
-            }
+            UPlus=math::pointUVars(element, a, b);
 
             if (flowProperties::massDiffusion)
             {
@@ -175,7 +172,6 @@ namespace BCSupportFncs
                 UPlus[3]=UPlus[0]*material::Cv*TP+0.5*(UPlus[1]*UPlus[1]+UPlus[2]*UPlus[2])/UPlus[0];
             }
             else {
-                UPlus[3] = math::pointValue(element, a, b, 4, 2);
                 TP=math::CalcTFromConsvVar(UPlus[0],UPlus[1],UPlus[2],UPlus[3]);
             }
             surfaceFields::T[edge][nG]=TP;
@@ -186,11 +182,15 @@ namespace BCSupportFncs
     void calcdUPlus(int element, double a, double b, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus)
     {
         //Compute dU+
+        /*
         for (int i = 0; i < 4; i++)
         {
             dUXPlus[i] = math::pointAuxValue(element, a, b, i + 1, 1);
             dUYPlus[i] = math::pointAuxValue(element, a, b, i + 1, 2);
         }
+        */
+        dUXPlus=math::pointSVars(element,a,b,1);
+        dUYPlus=math::pointSVars(element,a,b,2);
     }
 
     std::tuple<double, double, double, double> calcTotalVelocity(int BCType, double rhoP, double rhoM, double uP, double uM, double vP, double vM, double mudRhoXP, double mudRhoXM, double mudRhoYP, double mudRhoYM)
@@ -575,12 +575,22 @@ namespace auxilaryBCs
 
             //Compute minus values--------------------------------------------------------
             UMinus[0] = UPlus[0];
+            //UMinus[0]=UPlus[0]*surfaceFields::T[edge][nG]/bcValues::TBC[edgeGrp - 1];
+
+            if (bcValues::UBcType[edgeGrp - 1] == 2)
+            {
+                UMinus[1] = -UPlus[1];
+                UMinus[2] = -UPlus[2];
+                UMinus[3] = UMinus[0]*material::Cv*bcValues::TBC[edgeGrp - 1]+0.5*(pow(UMinus[1],2)+pow(UMinus[2],2))/UMinus[0];
+            }
+            /*
             if (bcValues::UBcType[edgeGrp - 1] == 2)
             {
                 UMinus[1] = 0;
                 UMinus[2] = 0;
                 UMinus[3] = UMinus[0]*material::Cv*bcValues::TBC[edgeGrp - 1];
             }
+            */
             else if (bcValues::UBcType[edgeGrp - 1] == 3)
             {
                 UMinus[1] = bcValues::uBC[edgeGrp - 1]*UMinus[0];
@@ -601,6 +611,7 @@ namespace auxilaryBCs
             {
                 UPlus[3]=math::pointValue(element,a,b,4,2);
             }
+            //UMinus[3]=UPlus[3];
             auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
             return Fluxes;
         }

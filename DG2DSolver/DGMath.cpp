@@ -563,6 +563,11 @@ namespace math
 	{
 		double mu(0.0);
 		mu = material::As*pow(T, 1.5) / (T + material::Ts);
+        if (mu!=mu)
+        {
+            std::cout << "Negative T = " << T << std::endl;
+            int c = getchar();
+        }
 		return mu;
 	}
 
@@ -579,8 +584,13 @@ namespace math
 
 	double CalcTFromConsvVar(double rho, double rhou, double rhov, double rhoE)
     {
-        double T((material::gamma - 1)*(rhoE - 0.5*(pow(rhou, 2) + pow(rhov, 2)) / rho) / (material::R*rho));
-		return T;
+        double out((material::gamma - 1)*(rhoE - 0.5*(pow(rhou, 2) + pow(rhov, 2)) / rho) / (material::R*rho));
+        if (out < 0)
+        {
+            std::cout << "Negative T" << std::endl;
+            int c = getchar();
+        }
+        return out;
 	}
 
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
@@ -610,12 +620,12 @@ namespace math
         T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
         if (T!=T || T<0)
         {
-            //std::cout<<"Failed to solve T\n";
-            //int c = getchar();
-            return TIni;
+            std::cout<<"Failed to solve T\n";
+            int c = getchar();
+            //return TIni;
         }
         else {
-            return TIni;
+            return T;
         }
         */
         return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
@@ -749,7 +759,7 @@ namespace math
 					rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
 					rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 out=math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-				if ((out < 0) && (fabs(out) < 0.001))
+                if (out < 0)
 				{
 					std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
                     int c = getchar();
@@ -1825,6 +1835,52 @@ namespace math
 		}
 		return index;
 	}
+
+    std::vector<double> pointUVars(int element, double a, double b)
+    {
+        std::vector<double> U(4, 0.0);
+
+        math::basisFc(a, b, auxUlti::checkType(element));
+        for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
+        {
+            U[0] += rho[element][iorder]* mathVar::B[iorder] * theta2Arr[element] * theta1Arr[element];
+            U[1] += rhou[element][iorder]* mathVar::B[iorder] * theta2Arr[element];
+            U[2] += rhov[element][iorder]* mathVar::B[iorder] * theta2Arr[element];
+            U[3] += rhoE[element][iorder]* mathVar::B[iorder] * theta2Arr[element];
+        }
+        U[0] += rho[element][0];
+        U[1] += rhou[element][0];
+        U[2] += rhov[element][0];
+        U[3] += rhoE[element][0];
+        return U;
+    }
+
+    std::vector<double> pointSVars(int element, double a, double b, int dir)
+    {
+        std::vector<double> dU(4, 0.0);
+
+        math::basisFc(a, b, auxUlti::checkType(element));
+        if (dir==1)
+        {
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            {
+                dU[0] += rhoX[element][iorder]* mathVar::B[iorder];
+                dU[1] += rhouX[element][iorder]* mathVar::B[iorder];
+                dU[2] += rhovX[element][iorder]* mathVar::B[iorder];
+                dU[3] += rhoEX[element][iorder]* mathVar::B[iorder];
+            }
+        }
+        else {
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            {
+                dU[0] += rhoY[element][iorder]* mathVar::B[iorder];
+                dU[1] += rhouY[element][iorder]* mathVar::B[iorder];
+                dU[2] += rhovY[element][iorder]* mathVar::B[iorder];
+                dU[3] += rhoEY[element][iorder]* mathVar::B[iorder];
+            }
+        }
+        return dU;
+    }
 
     namespace solvePolynomialsEq {
         double NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue)
