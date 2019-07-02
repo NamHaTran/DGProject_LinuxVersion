@@ -35,6 +35,9 @@ namespace systemVar
 
 	extern int iterCount, savingCout;
 	extern double rhoResNorm, rhouResNorm, rhovResNorm, rhoEResNorm;
+
+    //1: BR1, 2: BR2
+    extern int auxVariables;
 }
 
 namespace meshVar

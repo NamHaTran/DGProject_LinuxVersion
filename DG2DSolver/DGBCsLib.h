@@ -84,7 +84,7 @@ namespace BCSupportFncs
     }
 
     namespace NSFEqBCs {
-        void calcdUPlus(int element, double a, double b, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus);
+        void calcdUPlus(int edge, int element, double a, double b, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus);
 
         /*Function calculates fluxes of all advective and diffusive terms of NSF equation from conservative variables*/
         std::vector<std::vector<double>> NSFEqFluxes(int edge, int BCType, double TPlus, double TMinus, std::vector<double> &UPlus, std::vector<double> &UMinus, std::vector<double> &dUXPlus, std::vector<double> &dUXMinus, std::vector<double> &dUYPlus, std::vector<double> &dUYMinus, std::vector<double> &normVector);

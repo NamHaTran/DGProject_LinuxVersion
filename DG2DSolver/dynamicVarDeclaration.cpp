@@ -67,8 +67,9 @@ T(1, std::vector<double>(1, 0.0)),
 mu(1, std::vector<double>(1, 0.0));
 */
 
-/*Auxilary variables
-//X direction*/
+/*Auxilary variables*/
+namespace BR1Vars {
+//X direction
 std::vector<std::vector<double>>
 rhoX(1, std::vector<double>(1, 0.0)),
 rhouX(1, std::vector<double>(1, 0.0)),
@@ -81,6 +82,45 @@ rhoY(1, std::vector<double>(1, 0.0)),
 rhouY(1, std::vector<double>(1, 0.0)),
 rhovY(1, std::vector<double>(1, 0.0)),
 rhoEY(1, std::vector<double>(1, 0.0));
+}
+
+namespace BR2Vars {
+//X direction
+std::vector<std::vector<double>>
+rhoXVol(1, std::vector<double>(1, 0.0)),
+rhouXVol(1, std::vector<double>(1, 0.0)),
+rhovXVol(1, std::vector<double>(1, 0.0)),
+rhoEXVol(1, std::vector<double>(1, 0.0));
+
+/*Y direction*/
+std::vector<std::vector<double>>
+rhoYVol(1, std::vector<double>(1, 0.0)),
+rhouYVol(1, std::vector<double>(1, 0.0)),
+rhovYVol(1, std::vector<double>(1, 0.0)),
+rhoEYVol(1, std::vector<double>(1, 0.0));
+
+//X direction
+std::vector<std::vector<double>>
+rhoXSurMaster(1, std::vector<double>(1, 0.0)),
+rhouXSurMaster(1, std::vector<double>(1, 0.0)),
+rhovXSurMaster(1, std::vector<double>(1, 0.0)),
+rhoEXSurMaster(1, std::vector<double>(1, 0.0)),
+rhoXSurSlave(1, std::vector<double>(1, 0.0)),
+rhouXSurSlave(1, std::vector<double>(1, 0.0)),
+rhovXSurSlave(1, std::vector<double>(1, 0.0)),
+rhoEXSurSlave(1, std::vector<double>(1, 0.0));
+
+/*Y direction*/
+std::vector<std::vector<double>>
+rhoYSurMaster(1, std::vector<double>(1, 0.0)),
+rhouYSurMaster(1, std::vector<double>(1, 0.0)),
+rhovYSurMaster(1, std::vector<double>(1, 0.0)),
+rhoEYSurMaster(1, std::vector<double>(1, 0.0)),
+rhoYSurSlave(1, std::vector<double>(1, 0.0)),
+rhouYSurSlave(1, std::vector<double>(1, 0.0)),
+rhovYSurSlave(1, std::vector<double>(1, 0.0)),
+rhoEYSurSlave(1, std::vector<double>(1, 0.0));
+}
 
 /*Interface conservative variables*/
 namespace surfaceFields {

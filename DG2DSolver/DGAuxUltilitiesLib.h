@@ -129,6 +129,10 @@ namespace auxUlti
 
     void saveUAtBCToSurfaceFields(int edge, int nG, std::vector<double>&UPlus, std::vector<double>&UMinus);
 
+    std::vector<double> getElementAuxValuesOfOrder_BR2_vol(int element, int type, int dir);
+
+    std::vector<double> getElementAuxValuesOfOrder_BR2_sur(int edge, int element, int type, int dir);
+
 	//Auxilary functions support for postProcessing
 	namespace postProcess
 	{

@@ -23,6 +23,9 @@ namespace systemVar
 	double rhoResNorm(1.0), rhouResNorm(1.0), rhovResNorm(1.0), rhoEResNorm(1.0);
 
 	bool initializedOrNot(false), runPreProcess(false);
+
+    //1: BR1, 2: BR2
+    int auxVariables(2);
 }
 
 namespace meshVar

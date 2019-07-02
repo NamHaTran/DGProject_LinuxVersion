@@ -51,11 +51,27 @@ NOTE: in case of mass diffusion:
 - S=mu*grad(U) with all components of vector U being computed by using advective velocity
 (now i define rhoE_adv is total energy with advective kinetic energy)
 */
+namespace BR1Vars {
 //X direction
 extern std::vector<std::vector<double>> rhoX, rhouX, rhovX, rhoEX;
 
 /*Y direction*/
 extern std::vector<std::vector<double>> rhoY, rhouY, rhovY, rhoEY;
+}
+
+namespace BR2Vars {
+//X direction
+extern std::vector<std::vector<double>>rhoXVol,rhouXVol,rhovXVol,rhoEXVol;
+
+/*Y direction*/
+extern std::vector<std::vector<double>>rhoYVol,rhouYVol,rhovYVol,rhoEYVol;
+
+//X direction
+extern std::vector<std::vector<double>>rhoXSurMaster,rhouXSurMaster,rhovXSurMaster,rhoEXSurMaster,rhoXSurSlave,rhouXSurSlave,rhovXSurSlave,rhoEXSurSlave;
+
+/*Y direction*/
+extern std::vector<std::vector<double>>rhoYSurMaster,rhouYSurMaster,rhovYSurMaster,rhoEYSurMaster,rhoYSurSlave,rhouYSurSlave,rhovYSurSlave,rhoEYSurSlave;
+}
 
 namespace surfaceFields {
     /*Interface values*/

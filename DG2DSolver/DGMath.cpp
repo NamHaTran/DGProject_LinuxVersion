@@ -848,13 +848,29 @@ namespace math
 
 		if (masterElem == element)  //considering element is master
 		{
-			valPlus = math::pointAuxValue(masterElem, aMaster, bMaster, valType, dir);
-			valMinus = math::pointAuxValue(servantElem, aServant, bServant, valType, dir);
+            if (systemVar::auxVariables==1)
+            {
+                valPlus = math::pointAuxValue(masterElem, aMaster, bMaster, valType, dir);
+                valMinus = math::pointAuxValue(servantElem, aServant, bServant, valType, dir);
+            }
+            else if (systemVar::auxVariables==2)
+            {
+                valPlus = math::BR2Fncs::pointAuxValue_sur(edge,masterElem,aMaster,bMaster,valType,dir);
+                valMinus = math::BR2Fncs::pointAuxValue_sur(edge,servantElem, aServant, bServant, valType, dir);
+            }
 		}
 		else
 		{
-			valMinus = math::pointAuxValue(masterElem, aMaster, bMaster, valType, dir);
-			valPlus = math::pointAuxValue(servantElem, aServant, bServant, valType, dir);
+            if (systemVar::auxVariables==1)
+            {
+                valMinus = math::pointAuxValue(masterElem, aMaster, bMaster, valType, dir);
+                valPlus = math::pointAuxValue(servantElem, aServant, bServant, valType, dir);
+            }
+            else if (systemVar::auxVariables==2)
+            {
+                valMinus = math::BR2Fncs::pointAuxValue_sur(edge,masterElem,aMaster,bMaster,valType,dir);
+                valPlus = math::BR2Fncs::pointAuxValue_sur(edge,servantElem, aServant, bServant, valType, dir);
+            }
 		}
 
 		return std::make_tuple(valPlus, valMinus);
@@ -938,14 +954,14 @@ namespace math
         {
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
             {
-                Value[iorder] = rhoX[element][iorder];
+                Value[iorder] = BR1Vars::rhoX[element][iorder];
             }
         }
         else if (dir==2)  //Ox direction
         {
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
             {
-                Value[iorder] = rhoY[element][iorder];
+                Value[iorder] = BR1Vars::rhoY[element][iorder];
             }
         }
 
@@ -1020,7 +1036,14 @@ namespace math
 			xC = 0.0;
 			yC = 0.0;
 		}
-		output = math::pointAuxValue(element, xC, yC, valType, dir);
+        if (systemVar::auxVariables==1)
+        {
+            output = math::pointAuxValue(element, xC, yC, valType, dir);
+        }
+        else if (systemVar::auxVariables==2)
+        {
+            output = math::BR2Fncs::pointAuxValue_vol(element, xC, yC, valType, dir);
+        }
 		return output;
 	}
 
@@ -1855,30 +1878,108 @@ namespace math
         return U;
     }
 
-    std::vector<double> pointSVars(int element, double a, double b, int dir)
+    std::vector<double> pointSVars(int edge, int element, double a, double b, int dir, int option)
     {
+        //option dung trong truong hop BRScheme la BR2:
+        //- option=1: volume
+        //- option=2: surface
         std::vector<double> dU(4, 0.0);
 
         math::basisFc(a, b, auxUlti::checkType(element));
-        if (dir==1)
+
+        if (systemVar::auxVariables==1)
         {
-            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            if (dir==1)
             {
-                dU[0] += rhoX[element][iorder]* mathVar::B[iorder];
-                dU[1] += rhouX[element][iorder]* mathVar::B[iorder];
-                dU[2] += rhovX[element][iorder]* mathVar::B[iorder];
-                dU[3] += rhoEX[element][iorder]* mathVar::B[iorder];
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder];
+                    dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder];
+                    dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder];
+                    dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder];
+                }
+            }
+            else {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder];
+                    dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder];
+                    dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder];
+                    dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder];
+                }
             }
         }
-        else {
-            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+        else if (systemVar::auxVariables==2)
+        {
+            if (option==1) //volume
             {
-                dU[0] += rhoY[element][iorder]* mathVar::B[iorder];
-                dU[1] += rhouY[element][iorder]* mathVar::B[iorder];
-                dU[2] += rhovY[element][iorder]* mathVar::B[iorder];
-                dU[3] += rhoEY[element][iorder]* mathVar::B[iorder];
+                if (dir==1)
+                {
+                    for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                    {
+                        dU[0] += BR2Vars::rhoXVol[element][iorder]* mathVar::B[iorder];
+                        dU[1] += BR2Vars::rhouXVol[element][iorder]* mathVar::B[iorder];
+                        dU[2] += BR2Vars::rhovXVol[element][iorder]* mathVar::B[iorder];
+                        dU[3] += BR2Vars::rhoEXVol[element][iorder]* mathVar::B[iorder];
+                    }
+                }
+                else {
+                    for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                    {
+                        dU[0] += BR2Vars::rhoYVol[element][iorder]* mathVar::B[iorder];
+                        dU[1] += BR2Vars::rhouYVol[element][iorder]* mathVar::B[iorder];
+                        dU[2] += BR2Vars::rhovYVol[element][iorder]* mathVar::B[iorder];
+                        dU[3] += BR2Vars::rhoEYVol[element][iorder]* mathVar::B[iorder];
+                    }
+                }
+            }
+            else if (option==2) { //surface
+                if (auxUlti::checkMaster(element,edge)) //element is master of edge
+                {
+                    if (dir==1)
+                    {
+                        for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                        {
+                            dU[0] += BR2Vars::rhoXSurMaster[edge][iorder]* mathVar::B[iorder];
+                            dU[1] += BR2Vars::rhouXSurMaster[edge][iorder]* mathVar::B[iorder];
+                            dU[2] += BR2Vars::rhovXSurMaster[edge][iorder]* mathVar::B[iorder];
+                            dU[3] += BR2Vars::rhoEXSurMaster[edge][iorder]* mathVar::B[iorder];
+                        }
+                    }
+                    else {
+                        for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                        {
+                            dU[0] += BR2Vars::rhoYSurMaster[edge][iorder]* mathVar::B[iorder];
+                            dU[1] += BR2Vars::rhouYSurMaster[edge][iorder]* mathVar::B[iorder];
+                            dU[2] += BR2Vars::rhovYSurMaster[edge][iorder]* mathVar::B[iorder];
+                            dU[3] += BR2Vars::rhoEYSurMaster[edge][iorder]* mathVar::B[iorder];
+                        }
+                    }
+                }
+                else {
+                    if (dir==1)
+                    {
+                        for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                        {
+                            dU[0] += BR2Vars::rhoXSurSlave[edge][iorder]* mathVar::B[iorder];
+                            dU[1] += BR2Vars::rhouXSurSlave[edge][iorder]* mathVar::B[iorder];
+                            dU[2] += BR2Vars::rhovXSurSlave[edge][iorder]* mathVar::B[iorder];
+                            dU[3] += BR2Vars::rhoEXSurSlave[edge][iorder]* mathVar::B[iorder];
+                        }
+                    }
+                    else {
+                        for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                        {
+                            dU[0] += BR2Vars::rhoYSurSlave[edge][iorder]* mathVar::B[iorder];
+                            dU[1] += BR2Vars::rhouYSurSlave[edge][iorder]* mathVar::B[iorder];
+                            dU[2] += BR2Vars::rhovYSurSlave[edge][iorder]* mathVar::B[iorder];
+                            dU[3] += BR2Vars::rhoEYSurSlave[edge][iorder]* mathVar::B[iorder];
+                        }
+                    }
+                }
             }
         }
+
         return dU;
     }
 
@@ -1953,6 +2054,38 @@ namespace math
             }
             return fValue;
         }
+    }
+
+    namespace BR2Fncs {
+    double pointAuxValue_vol(int element, double a, double b, int valType, int dir)
+    {
+        double out(0.0);
+        std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+
+        Value = auxUlti::getElementAuxValuesOfOrder_BR2_vol(element, valType, dir);
+
+        math::basisFc(a, b, auxUlti::checkType(element));
+        for (int order = 0; order <= mathVar::orderElem; order++)
+        {
+            out += Value[order] * mathVar::B[order];
+        }
+        return out;
+    }
+
+    double pointAuxValue_sur(int edge, int element, double a, double b, int valType, int dir)
+    {
+        double out(0.0);
+        std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+
+        Value = auxUlti::getElementAuxValuesOfOrder_BR2_sur(edge, element, valType, dir);
+
+        math::basisFc(a, b, auxUlti::checkType(element));
+        for (int order = 0; order <= mathVar::orderElem; order++)
+        {
+            out += Value[order] * mathVar::B[order];
+        }
+        return out;
+    }
     }
 
     namespace massDiffusionFncs {

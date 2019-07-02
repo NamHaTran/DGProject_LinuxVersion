@@ -299,72 +299,322 @@ namespace auxUlti
 
 	std::vector<double> getElementAuxValuesOfOrder(int element, int type, int dir)
 	{
-		std::vector<double> Out(mathVar::orderElem + 1, 0.0);
-		if (dir==1)  //Ox direction
-		{
-			if (type == 1)  //d(rho)x
-			{
+        std::vector<double> Out(mathVar::orderElem + 1, 0.0);
+        if (dir==1)  //Ox direction
+        {
+            if (type == 1)  //d(rho)x
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhoX[element][iorder];
-				}
-			}
-			else if (type == 2)  //d(rhou)x
-			{
+                {
+                    Out[iorder] = BR1Vars::rhoX[element][iorder];
+                }
+            }
+            else if (type == 2)  //d(rhou)x
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhouX[element][iorder];
-				}
-			}
-			else if (type == 3)  //d(rhov)x
-			{
+                {
+                    Out[iorder] = BR1Vars::rhouX[element][iorder];
+                }
+            }
+            else if (type == 3)  //d(rhov)x
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhovX[element][iorder];
-				}
-			}
-			else if (type == 4)  //d(rhoE)x
-			{
+                {
+                    Out[iorder] = BR1Vars::rhovX[element][iorder];
+                }
+            }
+            else if (type == 4)  //d(rhoE)x
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhoEX[element][iorder];
-				}
-			}
-		}
-		else if (dir==2)  //Oy direction
-		{
-			if (type == 1)  //d(rho)y
-			{
+                {
+                    Out[iorder] = BR1Vars::rhoEX[element][iorder];
+                }
+            }
+        }
+        else if (dir==2)  //Oy direction
+        {
+            if (type == 1)  //d(rho)y
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhoY[element][iorder];
-				}
-			}
-			else if (type == 2)  //d(rhou)y
-			{
+                {
+                    Out[iorder] = BR1Vars::rhoY[element][iorder];
+                }
+            }
+            else if (type == 2)  //d(rhou)y
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhouY[element][iorder];
-				}
-			}
-			else if (type == 3)  //d(rhov)y
-			{
+                {
+                    Out[iorder] = BR1Vars::rhouY[element][iorder];
+                }
+            }
+            else if (type == 3)  //d(rhov)y
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhovY[element][iorder];
-				}
-			}
-			else if (type == 4)  //d(rhoE)y
-			{
+                {
+                    Out[iorder] = BR1Vars::rhovY[element][iorder];
+                }
+            }
+            else if (type == 4)  //d(rhoE)y
+            {
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					Out[iorder] = rhoEY[element][iorder];
-				}
-			}
-		}
+                {
+                    Out[iorder] = BR1Vars::rhoEY[element][iorder];
+                }
+            }
+        }
 
 		return Out;
 	}
+
+    std::vector<double> getElementAuxValuesOfOrder_BR2_vol(int element, int type, int dir)
+    {
+        std::vector<double> Out(mathVar::orderElem + 1, 0.0);
+        if (dir==1) //Ox
+        {
+            switch (type) {
+            case 1:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhoXVol[element][iorder];
+                }
+            }
+                break;
+            case 2:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhouXVol[element][iorder];
+                }
+            }
+                break;
+            case 3:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhovXVol[element][iorder];
+                }
+            }
+                break;
+            case 4:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhoEXVol[element][iorder];
+                }
+            }
+                break;
+            default:
+                break;
+            }
+        }
+        else { //Oy
+            switch (type) {
+            case 1:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhoYVol[element][iorder];
+                }
+            }
+                break;
+            case 2:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhouYVol[element][iorder];
+                }
+            }
+                break;
+            case 3:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhovYVol[element][iorder];
+                }
+            }
+                break;
+            case 4:
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    Out[iorder] = BR2Vars::rhoEYVol[element][iorder];
+                }
+            }
+                break;
+            default:
+                break;
+            }
+        }
+
+        return Out;
+    }
+
+     std::vector<double> getElementAuxValuesOfOrder_BR2_sur(int edge, int element, int type, int dir)
+     {
+         bool isMaster(auxUlti::checkMaster(element,edge));
+         std::vector<double> Out(mathVar::orderElem + 1, 0.0);
+         if (isMaster)
+         {
+             if (dir==1) //Ox
+             {
+                 switch (type) {
+                 case 1:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhoXSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 case 2:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhouXSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 case 3:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhovXSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 case 4:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhoEXSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 default:
+                     break;
+                 }
+             }
+             else { //Oy
+                 switch (type) {
+                 case 1:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhoYSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 case 2:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhouYSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 case 3:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhovYSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 case 4:
+                 {
+                     for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                     {
+                         Out[iorder] = BR2Vars::rhoEYSurMaster[edge][iorder];
+                     }
+                 }
+                     break;
+                 default:
+                     break;
+                 }
+             }
+         }
+         else {
+             if (dir==1) //Ox
+              {
+                  switch (type) {
+                  case 1:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhoXSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  case 2:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhouXSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  case 3:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhovXSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  case 4:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhoEXSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  default:
+                      break;
+                  }
+              }
+              else { //Oy
+                  switch (type) {
+                  case 1:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhoYSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  case 2:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhouYSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  case 3:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhovYSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  case 4:
+                  {
+                      for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                      {
+                          Out[iorder] = BR2Vars::rhoEYSurSlave[edge][iorder];
+                      }
+                  }
+                      break;
+                  default:
+                      break;
+                  }
+              }
+         }
+         return Out;
+     }
 
 	std::tuple<double, double> getGaussCoor(int na, int nb)
 	{
@@ -580,15 +830,51 @@ namespace auxUlti
         auxUlti::resize2DArray(surfaceFields::rhov, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
         auxUlti::resize2DArray(surfaceFields::rhoE, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-        auxUlti::resize2DArray(rhoX, meshVar::nelem2D, mathVar::orderElem + 1);
-        auxUlti::resize2DArray(rhouX, meshVar::nelem2D, mathVar::orderElem + 1);
-        auxUlti::resize2DArray(rhovX, meshVar::nelem2D, mathVar::orderElem + 1);
-        auxUlti::resize2DArray(rhoEX, meshVar::nelem2D, mathVar::orderElem + 1);
+        if (systemVar::auxVariables==1)
+        {
+            auxUlti::resize2DArray(BR1Vars::rhoX, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhouX, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhovX, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhoEX, meshVar::nelem2D, mathVar::orderElem + 1);
 
-        auxUlti::resize2DArray(rhoY, meshVar::nelem2D, mathVar::orderElem + 1);
-        auxUlti::resize2DArray(rhouY, meshVar::nelem2D, mathVar::orderElem + 1);
-        auxUlti::resize2DArray(rhovY, meshVar::nelem2D, mathVar::orderElem + 1);
-        auxUlti::resize2DArray(rhoEY, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhoY, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhouY, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhovY, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR1Vars::rhoEY, meshVar::nelem2D, mathVar::orderElem + 1);
+
+        }
+        else if (systemVar::auxVariables==2)
+        {
+            auxUlti::resize2DArray(BR2Vars::rhoXVol, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR2Vars::rhouXVol, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR2Vars::rhovXVol, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR2Vars::rhoEXVol, meshVar::nelem2D, mathVar::orderElem + 1);
+
+            auxUlti::resize2DArray(BR2Vars::rhoYVol, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR2Vars::rhouYVol, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR2Vars::rhovYVol, meshVar::nelem2D, mathVar::orderElem + 1);
+            auxUlti::resize2DArray(BR2Vars::rhoEYVol, meshVar::nelem2D, mathVar::orderElem + 1);
+
+            auxUlti::resize2DArray(BR2Vars::rhoXSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhouXSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhovXSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhoEXSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+
+            auxUlti::resize2DArray(BR2Vars::rhoYSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhouYSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhovYSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhoEYSurMaster,meshVar::inpoedCount,(mathVar::orderElem + 1));
+
+            auxUlti::resize2DArray(BR2Vars::rhoXSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhouXSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhovXSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhoEXSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+
+            auxUlti::resize2DArray(BR2Vars::rhoYSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhouYSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhovYSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+            auxUlti::resize2DArray(BR2Vars::rhoEYSurSlave,meshVar::inpoedCount,(mathVar::orderElem + 1));
+        }
 
         auxUlti::resize2DArray(surfaceFields::invis_rhoX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
         auxUlti::resize2DArray(surfaceFields::invis_rhouX, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));

@@ -233,7 +233,13 @@ namespace math
 
     std::vector<double> pointUVars(int element, double a, double b);
 
-    std::vector<double> pointSVars(int element, double a, double b, int dir);
+    std::vector<double> pointSVars(int edge, int element, double a, double b, int dir, int option);
+
+    namespace BR2Fncs {
+    double pointAuxValue_vol(int element, double a, double b, int valType, int dir);
+
+    double pointAuxValue_sur(int edge, int element, double a, double b, int valType, int dir);
+    }
 
     namespace solvePolynomialsEq {
         double NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue);
