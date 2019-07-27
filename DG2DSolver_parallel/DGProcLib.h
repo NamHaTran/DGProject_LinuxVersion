@@ -45,35 +45,37 @@ namespace process
 
 	namespace auxEq
 	{
-		void calcValuesAtInterface();
+        /*Function solves auxilary equation at all elements for auxilary variables*/
+        void solveAuxEquation();
 
-		std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int valType);
+        namespace BR1 {
+        void calcValuesAtInterface();
 
-		/*Function solves auxilary equation at all elements for auxilary variables*/
-		void solveAuxEquation();
+        std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int valType);
 
-		/*Function calculates right hand side term of auxilary equations at all order*/
-		void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy, std::vector<double> &rhouRHSOx, std::vector<double> &rhouRHSOy, std::vector<double> &rhovRHSOx, std::vector<double> &rhovRHSOy, std::vector<double> &rhoERHSOx, std::vector<double> &rhoERHSOy);
+        /*Function calculates right hand side term of auxilary equations at all order*/
+        void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy, std::vector<double> &rhouRHSOx, std::vector<double> &rhouRHSOy, std::vector<double> &rhovRHSOx, std::vector<double> &rhovRHSOy, std::vector<double> &rhoERHSOx, std::vector<double> &rhoERHSOy);
 
-		/*Function calculates volume integral terms of element*/
-		void calcVolumeIntegralTerms(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhouVolIntX, std::vector<double> &rhovVolIntX, std::vector<double> &rhoEVolIntX, std::vector<double> &rhoVolIntY, std::vector<double> &rhouVolIntY, std::vector<double> &rhovVolIntY, std::vector<double> &rhoEVolIntY);
+        /*Function calculates volume integral terms of element*/
+        void calcVolumeIntegralTerms(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhouVolIntX, std::vector<double> &rhovVolIntX, std::vector<double> &rhoEVolIntX, std::vector<double> &rhoVolIntY, std::vector<double> &rhouVolIntY, std::vector<double> &rhovVolIntY, std::vector<double> &rhoEVolIntY);
 
-		/*Function calculates surface integral terms of element*/
-		void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhouSurfIntX, std::vector<double> &rhovSurfIntX, std::vector<double> &rhoESurfIntX, std::vector<double> &rhoSurfIntY, std::vector<double> &rhouSurfIntY, std::vector<double> &rhovSurfIntY, std::vector<double> &rhoESurfIntY);
+        /*Function calculates surface integral terms of element*/
+        void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhouSurfIntX, std::vector<double> &rhovSurfIntX, std::vector<double> &rhoESurfIntX, std::vector<double> &rhoSurfIntY, std::vector<double> &rhouSurfIntY, std::vector<double> &rhovSurfIntY, std::vector<double> &rhoESurfIntY);
 
-		/*Function returns matrix content Gauss values of <valType> conservative variable at all Gauss points in element volume,
-		use only for auxilary equation*/
-		std::vector<std::vector<double>> getGaussMatrixOfConserVar(int element, int valType);
+        /*Function returns matrix content Gauss values of <valType> conservative variable at all Gauss points in element volume,
+        use only for auxilary equation*/
+        std::vector<std::vector<double>> getGaussMatrixOfConserVar(int element, int valType);
 
-		/*Function returns vector of flux of all conservative variables at all faces of element*/
-		void getGaussVectorOfConserVar(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhouFluxX, std::vector<std::vector<double>> &rhovFluxX, std::vector<std::vector<double>> &rhoEFluxX, std::vector<std::vector<double>> &rhoFluxY, std::vector<std::vector<double>> &rhouFluxY, std::vector<std::vector<double>> &rhovFluxY, std::vector<std::vector<double>> &rhoEFluxY);
+        /*Function returns vector of flux of all conservative variables at all faces of element*/
+        void getGaussVectorOfConserVar(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhouFluxX, std::vector<std::vector<double>> &rhovFluxX, std::vector<std::vector<double>> &rhoEFluxX, std::vector<std::vector<double>> &rhoFluxY, std::vector<std::vector<double>> &rhouFluxY, std::vector<std::vector<double>> &rhovFluxY, std::vector<std::vector<double>> &rhoEFluxY);
 
-		/*Function returns vector content Gauss values of all conservative variable at all Gauss points on the edge,
-		use only for auxilary equation*/
-		std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny);
-
+        /*Function returns vector content Gauss values of all conservative variable at all Gauss points on the edge,
+        use only for auxilary equation*/
+        std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny);
+        }
         namespace massDiffusion
         {
+        namespace BR1 {
             void solveDivRho();
 
             void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy);
@@ -83,6 +85,20 @@ namespace process
             void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhoSurfIntY);
 
             void getGaussVectorOfRho(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhoFluxY);
+        }
+        namespace BR2 {
+            void calcVolDivRho(int element);
+
+            void calcSurDivRho(int element);
+
+            void solveDivRho();
+        }
+        }
+
+        namespace BR2 {
+            void calcVolDivU(int element);
+
+            void calcSurDivU(int element);
         }
 	}
 

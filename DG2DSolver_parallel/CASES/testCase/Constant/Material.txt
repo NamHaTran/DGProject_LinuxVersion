@@ -9,14 +9,13 @@
 +------------------------------------------------------------------------+
 	Program ran at (d-m-y_h-m-s) time
 	Note: all parameter are in SI unit.
+	//Argon
 Material Properties
 {
-	gammaRatio				1.4
-	gasConstant				287
-	PrandtlNumber				0.72
-	SutherlandAs				1.46e-6
-	SutherlandTs				110.4
-	
-	//Mass diffusion on
-	DmCoef					1.32
+	gammaRatio					1.667
+	gasConstant					208.13
+	PrandtlNumber					0.677
+	SutherlandAs					1.93e-6
+	SutherlandTs					142
+	DmCoef						1.32
 }

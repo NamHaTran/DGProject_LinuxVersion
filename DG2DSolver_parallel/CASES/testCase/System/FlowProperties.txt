@@ -10,6 +10,6 @@
 	Program ran at (d-m-y_h-m-s) time
 Flow Properties
 {
-Viscosity		true
-MassDiffusion		true
+Viscosity			true
+MassDiffusion		false
 }

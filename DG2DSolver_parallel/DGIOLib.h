@@ -49,6 +49,10 @@ namespace IO
 
 	void loadCase();
 
+	void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, int numRow, int numCol);
+
+    void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol);
+
 	namespace importCase {
 
 		void importResultsFromAnotherCase();

@@ -20,26 +20,20 @@ inlet
 {
 	Group				2
 	Type				patch
-	Method				weakPrescribed
-}
- 
-outlet
-{
-	Group				3
-	Type				patch
-	Method				weakPrescribed
+	Method				weakRiemann
 }
  
 wall
 {
-	Group				4
+	Group				3
 	Type				wall
 	Method				weakRiemann
 }
  
-farfield
+outlet
 {
-	Group				5
-	Type				symmetry
+	Group				4
+	Type				patch
+	Method				weakRiemann
 }
  

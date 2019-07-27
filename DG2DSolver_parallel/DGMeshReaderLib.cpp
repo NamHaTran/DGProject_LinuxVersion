@@ -9,7 +9,9 @@
 #include <fstream>
 #include <iostream>
 #include <math.h>
+#include <sstream>
 #include <tuple>  //Include this for returning multiple values in function
+#include "DGMessagesLib.h"
 namespace MshReader
 {
 	/*Declare local variables of DGMeshReaderLib, these variables are used throughout library*/
@@ -797,4 +799,479 @@ namespace MshReader
 			std::cout << "Error of writting files\n";
 		}
 	}
+}
+
+namespace MshExporter
+{
+    void exportMeshToMetis()
+    {
+        std::string fileLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/DGMesh.mesh");
+        std::ofstream fileFlux(fileLoc.c_str());
+        fileFlux << meshVar::nelem2D<<" 1\n";
+        for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+        {
+            for (int i = 0; i <= 2; i++)
+            {
+                fileFlux << meshVar::Elements2D[nelem][i]+1 << " ";
+            }
+            if (meshVar::Elements2D[nelem][3]>=0)
+            {
+                fileFlux << meshVar::Elements2D[nelem][3]+1 << " ";
+            }
+            fileFlux << std::endl;
+        }
+    }
+
+    void testMeshPartitionResult()
+    {
+        std::string fileName(systemVar::caseName + "ProcIdValues.dat"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/TecplotFile/PartitionedMesh"), code;
+        auxUlti::createFolder(Loc);
+
+        std::string fileLoc(Loc + "/" + fileName);
+        std::ofstream fileFlux(fileLoc.c_str());
+
+        code = R"(
+TITLE     = "DG2D to Tecplot"
+VARIABLES = "X"
+"Y"
+"PROC_RANK"
+ZONE T="ZONE 1"
+STRANDID=0
+ZONETYPE=FEQuadrilateral
+DATAPACKING=BLOCK
+VARLOCATION=([3]=CELLCENTERED)
+DT=(SINGLE SINGLE SINGLE)
+)";
+
+        if (fileFlux)
+        {
+            fileFlux << code << std::endl << "Nodes=" << std::to_string(meshVar::npoin) << ", " << "Elements=" << std::to_string(meshVar::nelem2D) << std::endl;
+            //X
+            int counter(0);
+            for (int i = 0; i < meshVar::npoin; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << meshVar::Points[i][0] << " ";
+            }
+            fileFlux << std::endl;
+
+            //Y
+            counter = 0;
+            for (int i = 0; i < meshVar::npoin; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << meshVar::Points[i][1] << " ";
+            }
+            fileFlux << std::endl;
+
+            /*Declare loading locations*/
+            std::string  procIdLoc = systemVar::pwd + "/DGMesh.mesh.epart";
+
+            /*Load Points*/
+            std::ifstream procFlux(procIdLoc.c_str());
+            if (procFlux)
+            {
+                std::string line(" ");
+                int nproc;
+                meshVar::npoin = 0;
+                while (std::getline(procFlux, line))
+                {
+                    std::istringstream procData(line);
+                    procData >> nproc;
+                    fileFlux<<nproc<<std::endl;
+                }
+            }
+            else
+            {
+                std::cout<<"Can not open file DGMesh.mesh.epart.\n";
+                std::cout << "DGSolver will exit after you hit return.\n";
+                exit(EXIT_FAILURE);
+            }
+
+            //CONNECTIVITY
+            for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+            {
+                int elemType(auxUlti::checkType(ielem));
+                for (int ipoin = 0; ipoin < 3; ipoin++)
+                {
+                    fileFlux << meshVar::Elements2D[ielem][ipoin] + 1 << " ";
+                }
+                switch (elemType)
+                {
+                case 3:
+                {
+                    fileFlux << meshVar::Elements2D[ielem][0] + 1 << std::endl;
+                    break;
+                }
+                case 4:
+                {
+                    fileFlux << meshVar::Elements2D[ielem][3] + 1 << std::endl;
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+        }
+        else
+        {
+            std::cout<<"Can not open file .dat to write data.\n";
+            std::cout << "DGSolver will exit after you hit return.\n";
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+namespace decomposeMesh {
+    //NOTE!! ALL FUNCTIONS OF THIS NAMESPACE MUST BE EXCUTED AFTER LOADING MESH
+
+    std::vector<int> loadPartitionedMesh()
+    {
+        meshVar::rankOf2DElem.resize(meshVar::nelem2D);
+        meshVar::Elem2DlocalIdWithRank.resize(meshVar::nelem2D);
+        std::vector<int> idMarker(systemVar::totalProc,0);
+        /*Declare loading locations*/
+        std::string  procIdLoc = systemVar::pwd + "/DGMesh.mesh.epart";
+
+        /*Load process id*/
+        std::ifstream procFlux(procIdLoc.c_str());
+        if (procFlux)
+        {
+            std::string line(" ");
+            int elemId(0), nproc(0);
+            while (std::getline(procFlux, line))
+            {
+                std::istringstream procData(line);
+                procData >> nproc;
+                meshVar::rankOf2DElem[elemId]=nproc;
+                meshVar::Elem2DlocalIdWithRank[elemId]=idMarker[nproc];
+                elemId++;
+                idMarker[nproc]++;
+            }
+        }
+        else
+        {
+            std::cout<<"Can not open file DGMesh.mesh.epart.\n";
+            std::cout << "DGSolver will exit after you hit return.\n";
+            exit(EXIT_FAILURE);
+        }
+        return idMarker;
+    }
+
+    std::vector<int> findLocalIdOfPts()
+    {
+        //NOTE: RUN AFTER LOADING PARTITIONED MESH
+        int ielem(-1), elemRank(-1);
+        //std::vector<int> counter(systemVar::totalProc,0);
+        auxUlti::resize2DIntArray(meshVar::PointslocalIdWithRank, meshVar::npoin, systemVar::totalProc);
+        std::vector<int> idMarker(systemVar::totalProc,0), helpArray(systemVar::totalProc,0);
+        for (int ipoin = 0; ipoin < meshVar::npoin; ipoin++)
+        {
+            for (int iesup = meshVar::esup2[ipoin] + 1; iesup <= meshVar::esup2[ipoin + 1]; iesup++)
+            {
+                ielem = meshVar::esup1[iesup];
+                elemRank=meshVar::rankOf2DElem[ielem];
+                if (helpArray[elemRank]==0)
+                {
+                    helpArray[elemRank]=1;
+                }
+            }
+
+            for (int irank=0;irank<systemVar::totalProc;irank++) {
+                if (helpArray[irank]==1)
+                {
+                    meshVar::PointslocalIdWithRank[ipoin][irank]=idMarker[irank];
+                    idMarker[irank]++;
+                }
+                else {
+                    meshVar::PointslocalIdWithRank[ipoin][irank]=-1;
+                }
+                helpArray[irank]=0;
+            }
+        }
+        return idMarker;
+    }
+
+    void findEdgeWithBCTypeMatched()
+    {
+    	//Run this function after loadPartitionedMesh()
+        int masterCell, slaveCell, masterCellRank, slaveCellRank;
+        for (int iedge=0;iedge<meshVar::inpoedCount;iedge++) {
+            std::tie(masterCell,slaveCell)=auxUlti::getMasterServantOfEdge(iedge);
+            if (masterCell>=0)
+            {
+                masterCellRank=meshVar::rankOf2DElem[masterCell];
+            }
+            if (slaveCell>=0)
+            {
+                slaveCellRank=meshVar::rankOf2DElem[slaveCell];
+            }
+            else {
+                slaveCellRank=-1;
+            }
+
+            if ((masterCellRank!=slaveCellRank)&&(slaveCellRank>=0))
+            {
+                meshVar::inpoed[iedge][3]=6;
+            }
+        }
+    }
+
+    std::vector<int> getMeshInforOfRanks(std::vector<std::vector<std::vector<double>>>&Points, std::vector<std::vector<std::vector<int>>>&Elem1D, std::vector<std::vector<std::vector<int>>>&Elem2D, std::vector<std::vector<std::vector<int>>>&meshConnection)
+    {
+        int localptsId;
+        for (int ipoint = 0; ipoint < meshVar::npoin; ++ipoint) {
+            for (int irank = 0; irank < systemVar::totalProc; ++irank) {
+                localptsId=meshVar::PointslocalIdWithRank[ipoint][irank];
+                if (localptsId>=0)
+                {
+                    Points[irank][localptsId][0]=localptsId+1;
+                    for (int i = 0; i < 2; ++i) {
+                        Points[irank][localptsId][i+1]=meshVar::Points[ipoint][i];
+                    }
+                    Points[irank][localptsId][3]=0.0;
+                }
+            }
+        }
+
+        int elemRank(0), ptId;
+        for (int ielem = 0; ielem < meshVar::nelem2D; ++ielem) {
+            elemRank=meshVar::rankOf2DElem[ielem];
+            int localId(meshVar::Elem2DlocalIdWithRank[ielem]);
+            Elem2D[elemRank][localId][0]=meshVar::Elem2DlocalIdWithRank[ielem]+1;
+            for (int i = 0; i < 4; ++i) {
+                ptId=meshVar::Elements2D[ielem][i];
+                if (ptId>=0)
+                {
+                    Elem2D[elemRank][localId][i+1]=meshVar::PointslocalIdWithRank[ptId][elemRank]+1;
+                }
+                else {
+                    Elem2D[elemRank][localId][i+1]=-23;
+                }
+            }
+        }
+
+        int pt1, pt2, BCType, BCGrp, masterElem, slaveElem, masterRank, slaveRank, id;
+        std::vector<int> idMarker(systemVar::totalProc,0);
+        for (int iedge = 0; iedge < meshVar::inpoedCount; ++iedge) {
+            pt1=meshVar::inpoed[iedge][0];
+            pt2=meshVar::inpoed[iedge][1];
+            BCType=auxUlti::getBCType(iedge);
+            BCGrp=auxUlti::getGrpOfEdge(iedge);
+            std::tie(masterElem,slaveElem)=auxUlti::getMasterServantOfEdge(iedge);
+            masterRank=meshVar::rankOf2DElem[masterElem];
+
+            if (slaveElem>=0)
+            {
+                slaveRank=meshVar::rankOf2DElem[slaveElem];
+            }
+            else {
+                slaveRank=-1;
+            }
+
+            if (BCType!=0)
+            {
+                for (int irank = 0; irank < systemVar::totalProc; ++irank) {
+                    if ((meshVar::PointslocalIdWithRank[pt1][irank]>=0) && (meshVar::PointslocalIdWithRank[pt2][irank]>=0))
+                    {
+                        id=idMarker[irank];
+                        Elem1D[irank][id][0]=idMarker[irank]+1;
+                        Elem1D[irank][id][1]=meshVar::PointslocalIdWithRank[pt1][irank]+1;
+                        Elem1D[irank][id][2]=meshVar::PointslocalIdWithRank[pt2][irank]+1;
+
+                        if (BCType==6)
+                        {
+                            Elem1D[irank][id][3]=2212;
+                            //Save information to meshConnection array
+                            if (masterRank==irank)
+                            {
+                                meshConnection[irank][id][0]=slaveRank;
+                                meshConnection[irank][id][1]=slaveElem;
+                            }
+                            else if (slaveRank==irank) {
+                                meshConnection[irank][id][0]=masterRank;
+                                meshConnection[irank][id][1]=masterElem;
+                            }
+                        }
+                        else {
+                            Elem1D[irank][id][3]=BCGrp;
+                            meshConnection[irank][id][0]=-1;
+                            meshConnection[irank][id][1]=-1;
+                        }
+                        idMarker[irank]++;
+                    }
+                }
+            }
+        }
+        return idMarker;
+    }
+
+    void decomposingMesh()
+    {
+    	int maxNumOfElem2D(0), maxNumOfPts(0);
+    	std::vector<int> maxElem2DIdOfRanks(systemVar::totalProc,0),
+    	maxElem1DIdOfRanks(systemVar::totalProc,0),
+    	maxPtsIdOfRanks(systemVar::totalProc,0);
+
+    	//Load partitioned mesh
+    	maxElem2DIdOfRanks=decomposeMesh::loadPartitionedMesh();
+        maxNumOfElem2D=*std::max_element(maxElem2DIdOfRanks.begin(), maxElem2DIdOfRanks.end());
+
+    	//Find local id of points
+    	maxPtsIdOfRanks=decomposeMesh::findLocalIdOfPts();
+        maxNumOfPts=*std::max_element(maxPtsIdOfRanks.begin(), maxPtsIdOfRanks.end());
+
+    	//Mark BCType "matched"
+    	decomposeMesh::findEdgeWithBCTypeMatched();
+
+    	std::vector<std::vector<std::vector<int>>> Elem2D (systemVar::totalProc,std::vector<std::vector<int>>(maxNumOfElem2D,std::vector <int>(4,0))),
+        Elem1D (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(4,0))),
+        meshConnection (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(2,0)));
+    	std::vector<std::vector<std::vector<double>>> Points (systemVar::totalProc,std::vector<std::vector<double>>(maxNumOfPts,std::vector <double>(4,0)));
+
+    	maxElem1DIdOfRanks=decomposeMesh::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
+
+    	/*CREATE DECOMPOSED CASE*/
+        std::cout<<"Decomposing case...\n";
+        for (int irank = 0; irank < systemVar::totalProc; ++irank)
+		{
+			//Create processor folders
+            std::cout<<"Processor "<<irank<<std::endl;
+	    	std::string rank = std::to_string(irank);
+	        std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + rank);
+	        auxUlti::createFolder(Loc);
+	        auxUlti::createFolder(Loc+"/Constant");
+	        auxUlti::createFolder(Loc+"/Constant/Mesh");
+
+            std::string  elems1DLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/Elements1D.txt",
+            elems2DLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/Elements2D.txt",
+            pointsLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/Points.txt",
+            meshConnectionLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/meshConnection.txt";
+
+			//Elements2D
+            IO::write2DIntArrayToFile(Elem2D[irank], elems2DLoc, maxElem2DIdOfRanks[irank], 4);
+
+			//Points
+            IO::write2DDoubleArrayToFile(Points[irank], pointsLoc, maxPtsIdOfRanks[irank], 4);
+
+            //Elements1D
+            IO::write2DIntArrayToFile(Elem1D[irank], elems1DLoc, maxElem1DIdOfRanks[irank], 4);
+
+            //Elements1D
+            IO::write2DIntArrayToFile(meshConnection[irank], meshConnectionLoc, maxElem1DIdOfRanks[irank], 2);
+
+            decomposeMesh::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
+
+            std::cout<<"DONE!\n";
+		}
+    }
+
+    void exportPartitionedMesh(int rank, int npoin, int nelem2D, std::vector<std::vector<double>>&Points, std::vector<std::vector<int>>&Elements2D)
+    {
+        //DIDN'T CHECK FOR QUADRILATERAL ELEMENTS
+
+        std::string fileName(systemVar::caseName + "proc"+std::to_string(rank)+".dat"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/TecplotFile/PartitionedMesh"), code;
+        auxUlti::createFolder(Loc);
+
+        std::string fileLoc(Loc + "/" + fileName);
+        std::ofstream fileFlux(fileLoc.c_str());
+
+        code = R"(
+TITLE     = "DG2D to Tecplot"
+VARIABLES = "X"
+"Y"
+"PROC_RANK"
+ZONE T="ZONE 1"
+STRANDID=0
+ZONETYPE=FEQuadrilateral
+DATAPACKING=BLOCK
+VARLOCATION=([3]=CELLCENTERED)
+DT=(SINGLE SINGLE SINGLE)
+)";
+
+        if (fileFlux)
+        {
+            fileFlux << code << std::endl << "Nodes=" << std::to_string(npoin) << ", " << "Elements=" << std::to_string(nelem2D) << std::endl;
+            //X
+            int counter(0);
+            for (int i = 0; i < npoin; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << Points[i][1] << " ";
+            }
+            fileFlux << std::endl;
+
+            //Y
+            counter = 0;
+            for (int i = 0; i < npoin; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << Points[i][2] << " ";
+            }
+            fileFlux << std::endl;
+
+            //RHO
+            counter = 0;
+            for (int i = 0; i < nelem2D; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << rank << " ";
+            }
+            fileFlux << std::endl;
+
+            //CONNECTIVITY
+            for (int ielem = 0; ielem < nelem2D; ielem++)
+            {
+                int elemType(3);
+                for (int ipoin = 1; ipoin < 4; ipoin++)
+                {
+                    fileFlux << Elements2D[ielem][ipoin] << " ";
+                }
+                switch (elemType)
+                {
+                case 3:
+                {
+                    fileFlux << Elements2D[ielem][1] << std::endl;
+                    break;
+                }
+                case 4:
+                {
+                    fileFlux << Elements2D[ielem][4] << std::endl;
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(systemVar::caseName + ".dat", fileLoc));
+        }
+    }
 }

@@ -112,7 +112,7 @@ std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
 {
     int edgeGrp(auxUlti::getGrpOfEdge(edge));
     int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
-    double rhoP(0.0), rhoM(0.0), rhoFluxX(0.0), rhoFluxY(0.0), a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+    double rhoP(0.0), rhoM(0.0), a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
     std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
     rhoP = math::pointValue(element, a, b, 1, 2);
 
@@ -129,9 +129,9 @@ std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
         std::string errorStr = message::BcCompatibleError(edgeGrp);
         message::writeLog(systemVar::pwd, systemVar::caseName, errorStr);
     }
-    rhoFluxX = math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
-    rhoFluxY = math::numericalFluxes::auxFlux(rhoP, rhoM, ny);
-    return std::make_tuple(rhoFluxX,rhoFluxY);
+    //rhoFluxX = math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
+    //rhoFluxY = math::numericalFluxes::auxFlux(rhoP, rhoM, ny);
+    return std::make_tuple(rhoP,rhoM);
 }
 
 namespace BCSupportFncs
@@ -723,7 +723,7 @@ namespace auxilaryBCs
             //Compute minus values--------------------------------------------------------
             double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
             //Apply PNR (2), R (1)
-            int implementation(1);
+            int implementation(2);
             switch (implementation)
             {
             case 1: //R

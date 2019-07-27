@@ -402,6 +402,29 @@ namespace IO
         {
             material::massDiffusion::DmCoeff=0.0;
         }
+
+        /*Read DGSchemes*/
+        fileName=("DGSchemes.txt");
+        Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+        std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[1] = {"diffusionTermScheme"};
+        double DGSchemesoutDB[1] = {};
+        int DGSchemesoutInt[1] = {};
+        bool DGSchemesoutBool[1] = {};
+        std::string DGSchemesoutStr[1] = {};
+
+        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 1);
+        if (DGSchemesoutStr[0].compare("BR1")==0)
+        {
+            systemVar::auxVariables=1;
+        }
+        else if (DGSchemesoutStr[0].compare("BR2")==0)
+        {
+            systemVar::auxVariables=2;
+        }
+        else {
+            std::string str0("diffusionTermScheme '"+DGSchemesoutStr[0]+"' is not a diffusion scheme.");
+            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
+        }
 	}
 
 	void loadLimiterSettings()

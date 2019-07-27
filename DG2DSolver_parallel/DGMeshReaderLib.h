@@ -1,6 +1,7 @@
 #ifndef DGMESHREADERLIB_H_INCLUDED
 #define DGMESHREADERLIB_H_INCLUDED
 #include <tuple>  //Include this for returning multiple values in function
+#include <vector>
 namespace MshReader
 {
 	/*Function creates matrixes which save mesh data get from files, by using EleSurPtProcess()*/
@@ -37,4 +38,26 @@ namespace MshReader
 
 	void sortPointsOfElements();
 }
+
+namespace MshExporter
+{
+    void exportMeshToMetis();
+
+    void testMeshPartitionResult();
+}
+
+namespace decomposeMesh {
+    std::vector<int> loadPartitionedMesh();
+
+    std::vector<int> findLocalIdOfPts();
+
+    void findEdgeWithBCTypeMatched();
+
+    std::vector<int> getMeshInforOfRanks(std::vector<std::vector<std::vector<double>>>&Points, std::vector<std::vector<std::vector<int>>>&Elem1D, std::vector<std::vector<std::vector<int>>>&Elem2D, std::vector<std::vector<std::vector<int>>>&meshConnection);
+
+    void decomposingMesh();
+
+    void exportPartitionedMesh(int rank, int npoin, int nelem2D, std::vector<std::vector<double>>&Points, std::vector<std::vector<int>>&Elements2D);
+}
+
 #endif // DGMESHREADERLIB_H_INCLUDED

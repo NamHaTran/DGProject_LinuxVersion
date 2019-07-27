@@ -72,9 +72,10 @@ namespace process
         /*Function returns vector content Gauss values of all conservative variable at all Gauss points on the edge,
         use only for auxilary equation*/
         std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny);
-
+        }
         namespace massDiffusion
         {
+        namespace BR1 {
             void solveDivRho();
 
             void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy);
@@ -84,6 +85,13 @@ namespace process
             void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhoSurfIntY);
 
             void getGaussVectorOfRho(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhoFluxY);
+        }
+        namespace BR2 {
+            void calcVolDivRho(int element);
+
+            void calcSurDivRho(int element);
+
+            void solveDivRho();
         }
         }
 

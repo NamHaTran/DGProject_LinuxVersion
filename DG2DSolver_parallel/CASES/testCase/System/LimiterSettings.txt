@@ -8,14 +8,10 @@
 |   on structural and unstructural mesh.                                 |
 +------------------------------------------------------------------------+
 	Program ran at (d-m-y_h-m-s) time
-Limiter Settings
- 
+	Note: all parameter are in SI unit.
+LimiterSettings
 limiter		PositivityPreserving
 PositivityPreserving
 {
-		version	full
-}
-PAdaptive
-{
-	\nothing here
+	version	simplified
 }

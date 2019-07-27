@@ -2,7 +2,6 @@
 #include <string>
 #include "ConstDeclaration.h"
 #include <vector>
-#include <mpi.h>
 
 namespace systemVar
 {
@@ -25,11 +24,11 @@ namespace systemVar
 
 	bool initializedOrNot(false), runPreProcess(false);
 
-    namespace parallelVars {
-    std::vector<std::vector<int>>Elems2DDist(1, std::vector<int>(1, 0)),
-    Elems1DDist(1, std::vector<int>(1, 0));
-    int currentNode, totalNode;
-    }
+    //1: BR1, 2: BR2
+    int auxVariables(1);
+
+    //For parallel computing
+    int totalProc(4);
 }
 
 namespace meshVar

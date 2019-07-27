@@ -626,3 +626,29 @@ void clearVar()
 	n2D = 0;
 	numOfBoundEdge = 1;
 }
+
+void exportMeshToMetis()
+{
+    QString MeshLoc(wD + "/CASES/" + caseName + "/DGMesh.mesh");
+    QFile MeshFlux(MeshLoc);
+    if (MeshFlux.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text))
+    {
+        QTextStream MeshFluxstream(&MeshFlux);
+        MeshFluxstream<<n2D<<" 1\n";
+        for (int i=0;i<n2D;i++) {
+            for (int j=1;j<4;j++) {
+                MeshFluxstream<< Elements2D[i][j] << " ";
+            }
+            if (Elements2D[i][4]>=0)
+            {
+                MeshFluxstream<< Elements2D[i][4] << " ";
+            }
+            MeshFluxstream << endl;
+        }
+    }
+    else
+    {
+        QString logFile(wD + "/CASES/" + caseName);
+        message::writeLog(pwd, caseName, message::opFError("DGMesh.mesh", logFile));
+    }
+}

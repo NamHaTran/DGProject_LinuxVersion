@@ -112,7 +112,7 @@ std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
 {
     int edgeGrp(auxUlti::getGrpOfEdge(edge));
     int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
-    double rhoP(0.0), rhoM(0.0), rhoFluxX(0.0), rhoFluxY(0.0), a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+    double rhoP(0.0), rhoM(0.0), a(0.0), b(0.0);
     std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
     rhoP = math::pointValue(element, a, b, 1, 2);
 
@@ -129,9 +129,9 @@ std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
         std::string errorStr = message::BcCompatibleError(edgeGrp);
         message::writeLog(systemVar::pwd, systemVar::caseName, errorStr);
     }
-    rhoFluxX = math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
-    rhoFluxY = math::numericalFluxes::auxFlux(rhoP, rhoM, ny);
-    return std::make_tuple(rhoFluxX,rhoFluxY);
+    //rhoFluxX = math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
+    //rhoFluxY = math::numericalFluxes::auxFlux(rhoP, rhoM, ny);
+    return std::make_tuple(rhoP,rhoM);
 }
 
 namespace BCSupportFncs
@@ -167,7 +167,17 @@ namespace BCSupportFncs
 
             if (flowProperties::massDiffusion)
             {
-                double rhoXP(math::pointAuxValue(element,a,b,1,1)), rhoYP(math::pointAuxValue(element,a,b,1,1));
+                double rhoXP(0.0), rhoYP(0.0);
+                if (systemVar::auxVariables==1)
+                {
+                    rhoXP=math::pointAuxValue(element,a,b,1,1);
+                    rhoYP=math::pointAuxValue(element,a,b,1,2);
+                }
+                else if (systemVar::auxVariables==2)
+                {
+                    rhoXP=math::BR2Fncs::pointAuxValue_sur(edge,element,a,b,1,1);
+                    rhoYP=math::BR2Fncs::pointAuxValue_sur(edge,element,a,b,1,2);
+                }
                 TP=math::CalcTFromConsvVar_massDiff(UPlus[0],UPlus[1],UPlus[2],UPlus[3],rhoXP,rhoYP);
                 UPlus[3]=UPlus[0]*material::Cv*TP+0.5*(UPlus[1]*UPlus[1]+UPlus[2]*UPlus[2])/UPlus[0];
             }
@@ -179,7 +189,7 @@ namespace BCSupportFncs
     }
 
     namespace NSFEqBCs {
-    void calcdUPlus(int element, double a, double b, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus)
+    void calcdUPlus(int edge, int element, double a, double b, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus)
     {
         //Compute dU+
         /*
@@ -189,8 +199,8 @@ namespace BCSupportFncs
             dUYPlus[i] = math::pointAuxValue(element, a, b, i + 1, 2);
         }
         */
-        dUXPlus=math::pointSVars(element,a,b,1);
-        dUYPlus=math::pointSVars(element,a,b,2);
+        dUXPlus=math::pointSVars(edge,element,a,b,1,2);
+        dUYPlus=math::pointSVars(edge,element,a,b,2,2);
     }
 
     std::tuple<double, double, double, double> calcTotalVelocity(int BCType, double rhoP, double rhoM, double uP, double uM, double vP, double vM, double mudRhoXP, double mudRhoXM, double mudRhoYP, double mudRhoYM)
@@ -369,7 +379,7 @@ namespace NSFEqBCs
             muMinus=math::CalcVisCoef(TMinus);
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(element,a,b,dUXPlus,dUYPlus);
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
             for (int i = 0; i < 4; i++)
@@ -407,7 +417,7 @@ namespace NSFEqBCs
             muPlus=math::CalcVisCoef(TPlus);
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(element,a,b,dUXPlus,dUYPlus);
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             for (int i = 0; i < 4; i++)
             {
                 dUXPlus[i]*=muPlus;
@@ -452,7 +462,7 @@ namespace NSFEqBCs
             muPlus=math::CalcVisCoef(TPlus);
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(element,a,b,dUXPlus,dUYPlus);
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
             for (int i = 0; i < 4; i++)
@@ -500,7 +510,7 @@ namespace NSFEqBCs
             muMinus=math::CalcVisCoef(TMinus);
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(element,a,b,dUXPlus,dUYPlus);
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
             for (int i = 0; i < 4; i++)
@@ -541,7 +551,7 @@ namespace NSFEqBCs
         muPlus=math::CalcVisCoef(TPlus);
 
         //Compute dU+/-
-        BCSupportFncs::NSFEqBCs::calcdUPlus(element,a,b,dUXPlus,dUYPlus);
+        BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
         for (int i = 0; i < 4; i++)
         {
             dUXPlus[i]*=muPlus;
@@ -568,7 +578,6 @@ namespace auxilaryBCs
                 UMinus(4, 0.0);
             double a(0.0), b(0.0);
             std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
-            double nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
 
             //Compute plus values--------------------------------------------------------
             BCSupportFncs::auxilaryBCs::calcUPlus(element,edge,nG,UPlus);
@@ -601,8 +610,8 @@ namespace auxilaryBCs
 
             for (int i = 0; i < 4; i++)
             {
-                Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], nx);
-                Fluxes[i][1] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], ny);
+                Fluxes[i][0] = UPlus[i];
+                Fluxes[i][1] = UMinus[i];
             }
 
             //Save U+ and U- at boundary to arrays
@@ -623,7 +632,7 @@ namespace auxilaryBCs
             std::vector<double>
                 UPlus(4, 0.0),
                 UMinus(4, 0.0);
-            double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+            double a(0.0), b(0.0);
             std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
             //Compute plus values--------------------------------------------------------
@@ -647,8 +656,8 @@ namespace auxilaryBCs
 
             for (int i = 0; i < 4; i++)
             {
-                Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], nx);
-                Fluxes[i][1] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], ny);
+                Fluxes[i][0] = UPlus[i];
+                Fluxes[i][1] = UMinus[i];
             }
             //Save U+ and U- at boundary to arrays
             //Recompute rhoEm
@@ -669,7 +678,7 @@ namespace auxilaryBCs
             std::vector<double>
                 UPlus(4, 0.0),
                 UMinus(4, 0.0);
-            double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+            double a(0.0), b(0.0);
             std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
             //Compute plus values--------------------------------------------------------
@@ -685,8 +694,8 @@ namespace auxilaryBCs
 
             for (int i = 0; i < 4; i++)
             {
-                Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], nx);
-                Fluxes[i][1] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], ny);
+                Fluxes[i][0] = UPlus[i];
+                Fluxes[i][1] = UMinus[i];
             }
 
             //Save U+ and U- at boundary to arrays
@@ -704,12 +713,9 @@ namespace auxilaryBCs
             std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
             std::vector<double>
                 UPlus(4, 0.0),
-                UMinus(4, 0.0),
-                norm(2, 0.0);
-            double a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+                UMinus(4, 0.0);
+            double a(0.0), b(0.0);
             std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
-            norm[0] = nx;
-            norm[1] = ny;
 
             //Compute plus values--------------------------------------------------------
             BCSupportFncs::auxilaryBCs::calcUPlus(element,edge,nG,UPlus);
@@ -717,7 +723,7 @@ namespace auxilaryBCs
             //Compute minus values--------------------------------------------------------
             double uPlus(UPlus[1] / UPlus[0]), vPlus(UPlus[2] / UPlus[0]);
             //Apply PNR (2), R (1)
-            int implementation(1);
+            int implementation(2);
             switch (implementation)
             {
             case 1: //R
@@ -765,8 +771,8 @@ namespace auxilaryBCs
 
             for (int i = 0; i < 4; i++)
             {
-                Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], nx);
-                Fluxes[i][1] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], ny);
+                Fluxes[i][0] = UPlus[i];
+                Fluxes[i][1] = UMinus[i];
             }
 
             //Save U+ and U- at boundary to arrays
@@ -804,8 +810,8 @@ namespace auxilaryBCs
 
 		for (int i = 0; i < 4; i++)
 		{
-            Fluxes[i][0] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], nx);
-            Fluxes[i][1] = math::numericalFluxes::auxFlux(UMinus[i], UPlus[i], ny);
+            Fluxes[i][0] = UPlus[i];
+            Fluxes[i][1] = UMinus[i];
 		}
 
         //Save U+ and U- at boundary to arrays

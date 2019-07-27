@@ -69,6 +69,36 @@ namespace preProcessKey
 		return trigger;
 	}
 
+    bool exportMeshToMetis(std::string cmd)
+    {
+        bool trigger(false);
+        if ((cmd.compare("DGMeshToMetis") == 0) || (cmd.compare("dgmeshtometis") == 0))
+        {
+            trigger = true;
+        }
+        return trigger;
+    }
+
+    bool testMeshPartitionResult(std::string cmd)
+    {
+        bool trigger(false);
+        if ((cmd.compare("testmeshpartitionresult") == 0) || (cmd.compare("testMeshPartitionResult") == 0))
+        {
+            trigger = true;
+        }
+        return trigger;
+    }
+
+    bool decomposeCase(std::string cmd)
+    {
+        bool trigger(false);
+        if ((cmd.compare("decomposecase") == 0) || (cmd.compare("decomposeCase") == 0))
+        {
+            trigger = true;
+        }
+        return trigger;
+    }
+
 	namespace debug
 	{
 		bool checkElement(std::string cmd)

@@ -36,10 +36,11 @@ namespace systemVar
 	extern int iterCount, savingCout;
 	extern double rhoResNorm, rhouResNorm, rhovResNorm, rhoEResNorm;
 
-    namespace parallelVars {
-    extern std::vector<std::vector<int>>Elems2DDist,Elems1DDist;
-    extern int currentNode, totalNode;
-    }
+    //1: BR1, 2: BR2
+    extern int auxVariables;
+
+    //For parallel computing
+    extern int totalProc;
 }
 
 namespace meshVar

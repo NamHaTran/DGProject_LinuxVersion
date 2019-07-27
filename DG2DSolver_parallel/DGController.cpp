@@ -10,7 +10,6 @@
 #include <iostream>
 #include "dynamicVarDeclaration.h"
 #include "DGLimiterLib.h"
-#include <mpi.h>
 
 void Executer(std::string cmd)
 {
@@ -51,13 +50,41 @@ void Executer(std::string cmd)
 		IO::importCase::importResultsFromAnotherCase();
 		systemVar::initializedOrNot = true;
 	}
-	else if (preProcessKey::debug::checkElement(cmd))
-	{
-		int input(-1);
+    else if (preProcessKey::exportMeshToMetis(cmd))
+    {
+        IO::loadMesh();
+        std::cout<<"Exporting DG mesh to Metis's format\n";
+        MshExporter::exportMeshToMetis();
+    }
+    else if (preProcessKey::testMeshPartitionResult(cmd))
+    {
+        std::string key("n");
+        std::cout<<"Do you want to read mesh? <y/n>: ";
+        std::cin>>key;
+        if ((key.compare("y") == 0) || (cmd.compare("Y") == 0))
+        {
+            IO::loadMesh();
+        }
+        std::cout<<"Creating techplot file\n";
+        MshExporter::testMeshPartitionResult();
+    }
+    else if (preProcessKey::debug::checkElement(cmd))
+    {
+        int input(-1);
         std::cout << "Input element ID (ID is supplied by SALOME): ";
-		std::cin >> input;
-		std::cout << " \n";
-		debugTool::checkElemInfor(input);
+        std::cin >> input;
+        std::cout << " \n";
+        debugTool::checkElemInfor(input);
+    }
+    else if (preProcessKey::decomposeCase(cmd))
+	{
+        /*LOAD MESH*/
+        IO::loadMesh();
+
+        /*PROCESS MESH*/
+        MshReader::meshProcess();
+
+        decomposeMesh::decomposingMesh();
 	}
 	else
 	{
@@ -67,13 +94,9 @@ void Executer(std::string cmd)
 
 void Processing()
 {
-    //Initialize MPI
-    MPI::Init();
-
 	if (systemVar::loadSavedCase)
 	{
 		meshParam::calcStiffMatrixCoeffs();
-
 		std::cout << "Loading case...\n" << std::endl;
 		IO::loadCase();
 	}
@@ -127,8 +150,6 @@ void Processing()
 			loadConstCount = 0;
 		}
 	}
-    //Finish MPI
-    MPI::Finalize();
 }
 
 void PreProcessing()

@@ -4,14 +4,13 @@
 #include <iostream>
 using namespace std;
 
-int main(int argc, char **argv)
+int main()
 {
 	/*DISPLAY LOGO*/
 	IO::dispLogo();
 	std::cout << "                     Welcome to DG2D solver console!!\n";
 	IO::getCase();
 	//PreProcessing();
-
 	while (systemVar::endKey==false)
 	{
 		std::cout << ">> ";

@@ -110,34 +110,6 @@ namespace debugTool
 			<< "- T: " << TVal << std::endl << std::endl;
 			//<< "- mu: " << muVal << std::endl << std::endl;
 	}
-
-	/*
-	void writeMinRho_MinRhoe()
-	{
-		//forDebugging
-		std::string iter_str = std::to_string(systemVar::iterCount);
-		std::string fileName_rho("rho_" + iter_str + ".txt"), fileName_rhoe("rhoe_" + iter_str + ".txt"),
-            Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/forDebugging"), code;
-
-        std::string fileLoc_rho(Loc + "/" + fileName_rho), fileLoc_rhoe(Loc + "/" + fileName_rhoe);
-		std::ofstream fileFlux_rho(fileLoc_rho.c_str()), fileFlux_rhoe(fileLoc_rhoe.c_str());
-
-		if (fileFlux_rho && fileFlux_rhoe)
-		{
-			for (int i = 0; i < meshVar::nelem2D; i++)
-			{
-				fileFlux_rho << debug::minRhoArr[i] << std::endl;
-				fileFlux_rhoe << debug::minRhoeArr[i] << std::endl;
-			}
-		}
-		else
-		{
-			std::cout << "Cannot open neither rho_.txt nor rhoe_.txt in folder <forDebugging>\n" << "DGSolver will exit after you hit return.\n";
-			system("pause");
-			exit(EXIT_FAILURE);
-		}
-	}
-	*/
 }
 
 namespace DG2Tecplot

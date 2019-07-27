@@ -490,8 +490,11 @@ namespace process
                 GammaRhouX(0.0), GammaRhouY(0.0),
                 GammaRhovX(0.0), GammaRhovY(0.0),
                 GammaRhoEX(0.0), GammaRhoEY(0.0),
-                GammaX(0.0), GammaY(0.0);
-        rhoC=auxUlti::getElementConserValuesOfOrder(element,1);
+                GammaX(0.0), GammaY(0.0), theta1(1.0), theta2(1.0);
+        if (!flowProperties::massDiffusion)
+        {
+            rhoC=auxUlti::getElementConserValuesOfOrder(element,1);
+        }
         rhouC=auxUlti::getElementConserValuesOfOrder(element,2);
         rhovC=auxUlti::getElementConserValuesOfOrder(element,3);
         rhoEC=auxUlti::getElementConserValuesOfOrder(element,4);
@@ -502,6 +505,16 @@ namespace process
             GammaRhoEX=0; GammaRhoEY=0;
 
             for (int m=0;m<=mathVar::orderElem;m++) {
+                if (m==0)
+                {
+                    theta1=1.0;
+                    theta2=1.0;
+                }
+                else {
+                    theta1=theta1Arr[element];
+                    theta2=theta2Arr[element];
+                }
+
                 if (elemType==4)
                 {
                     for (int na=0;na<=mathVar::nGauss;na++) {
@@ -530,21 +543,27 @@ namespace process
                 GammaX=math::volumeInte(gaussMX,element);
                 GammaY=math::volumeInte(gaussMY,element);
 
-                GammaRhoX+=GammaX*rhoC[m];
-                GammaRhoY+=GammaY*rhoC[m];
+                if (!flowProperties::massDiffusion)
+                {
+                    GammaRhoX+=GammaX*rhoC[m]*theta1*theta2;
+                    GammaRhoY+=GammaY*rhoC[m]*theta1*theta2;
+                }
 
-                GammaRhouX+=GammaX*rhouC[m];
-                GammaRhouY+=GammaY*rhouC[m];
+                GammaRhouX+=GammaX*rhouC[m]*theta2;
+                GammaRhouY+=GammaY*rhouC[m]*theta2;
 
-                GammaRhovX+=GammaX*rhovC[m];
-                GammaRhovY+=GammaY*rhovC[m];
+                GammaRhovX+=GammaX*rhovC[m]*theta2;
+                GammaRhovY+=GammaY*rhovC[m]*theta2;
 
-                GammaRhoEX+=GammaX*rhoEC[m];
-                GammaRhoEY+=GammaY*rhoEC[m];
+                GammaRhoEX+=GammaX*rhoEC[m]*theta2;
+                GammaRhoEY+=GammaY*rhoEC[m]*theta2;
             }
             double stiffCoeff(stiffMatrixCoeffs[element][n]);
-            BR2Vars::rhoXVol[element][n]=GammaRhoX/stiffCoeff;
-            BR2Vars::rhoYVol[element][n]=GammaRhoY/stiffCoeff;
+            if (!flowProperties::massDiffusion)
+            {
+                BR2Vars::rhoXVol[element][n]=GammaRhoX/stiffCoeff;
+                BR2Vars::rhoYVol[element][n]=GammaRhoY/stiffCoeff;
+            }
 
             BR2Vars::rhouXVol[element][n]=GammaRhouX/stiffCoeff;
             BR2Vars::rhouYVol[element][n]=GammaRhouY/stiffCoeff;
@@ -560,7 +579,7 @@ namespace process
     void calcSurDivU(int element)
     {
         int elemType(auxUlti::checkType(element)), edgeId(0), BCType(-1);
-        double a(0.0), b(0.0),BVar(0.0), nx(0.0), ny(0.0), UP(0.0), UM(0.0), BRConst(6.0),
+        double a(0.0), b(0.0),BVar(0.0), nx(0.0), ny(0.0), UP(0.0), UM(0.0), BRConst(4.0),
                 dRhoXVar(0.0), dRhoYVar(0.0),
                 dRhouXVar(0.0), dRhouYVar(0.0),
                 dRhovXVar(0.0), dRhovYVar(0.0),
@@ -585,9 +604,14 @@ namespace process
                 vectordRhoEXVol_org(mathVar::orderElem+1,0.0),
                 vectordRhoEYVol_org(mathVar::orderElem+1,0.0);
 
+        if (!flowProperties::massDiffusion)
+        {
+            for (int iorder=0;iorder<=mathVar::orderElem;iorder++) {
+                vectordRhoXVol_org[iorder]=BR2Vars::rhoXVol[element][iorder];
+                vectordRhoYVol_org[iorder]=BR2Vars::rhoYVol[element][iorder];
+            }
+        }
         for (int iorder=0;iorder<=mathVar::orderElem;iorder++) {
-            vectordRhoXVol_org[iorder]=BR2Vars::rhoXVol[element][iorder];
-            vectordRhoYVol_org[iorder]=BR2Vars::rhoYVol[element][iorder];
             vectordRhouXVol_org[iorder]=BR2Vars::rhouXVol[element][iorder];
             vectordRhouYVol_org[iorder]=BR2Vars::rhouYVol[element][iorder];
             vectordRhovXVol_org[iorder]=BR2Vars::rhovXVol[element][iorder];
@@ -602,15 +626,37 @@ namespace process
             isMaster=auxUlti::checkMaster(element,edgeId);
             nx=auxUlti::getNormVectorComp(element,edgeId,1);
             ny=auxUlti::getNormVectorComp(element,edgeId,2);
+
+            if (!flowProperties::massDiffusion)
+            {
+                if (BCType!=0)
+                {
+                    for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                        std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
+                        gaussVector = auxEqBCsImplement(element, edgeId, nG);
+
+                        //Rho
+                        vectorRhoX[nG]=0.5*(gaussVector[0][1]-gaussVector[0][0])*nx;
+                        vectorRhoY[nG]=0.5*(gaussVector[0][1]-gaussVector[0][0])*ny;
+                    }
+                }
+                else {
+                    for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                        std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
+
+                        //Rho
+                        std::tie(UP,UM)=process::getInternalValuesFromCalculatedArrays(edgeId,element,nG,1);
+                        vectorRhoX[nG]=0.5*(UM-UP)*nx;
+                        vectorRhoY[nG]=0.5*(UM-UP)*ny;
+                    }
+                }
+            }
+
             if (BCType!=0)
             {
                 for (int nG=0;nG<=mathVar::nGauss;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
                     gaussVector = auxEqBCsImplement(element, edgeId, nG);
-
-                    //Rho
-                    vectorRhoX[nG]=0.5*(gaussVector[0][1]-gaussVector[0][0])*nx;
-                    vectorRhoY[nG]=0.5*(gaussVector[0][1]-gaussVector[0][0])*ny;
 
                     //Rhou
                     vectorRhouX[nG]=0.5*(gaussVector[1][1]-gaussVector[1][0])*nx;
@@ -628,11 +674,6 @@ namespace process
             else {
                 for (int nG=0;nG<=mathVar::nGauss;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
-
-                    //Rho
-                    std::tie(UP,UM)=process::getInternalValuesFromCalculatedArrays(edgeId,element,nG,1);
-                    vectorRhoX[nG]=0.5*(UM-UP)*nx;
-                    vectorRhoY[nG]=0.5*(UM-UP)*ny;
 
                     //Rhou
                     std::tie(UP,UM)=process::getInternalValuesFromCalculatedArrays(edgeId,element,nG,2);
@@ -673,8 +714,12 @@ namespace process
                     vectorRhoEX[nG]*=BVar;
                     vectorRhoEY[nG]*=BVar;
                 }
-                dRhoXVar=math::surfaceInte(vectorRhoX,edgeId)/stiffCoeff;
-                dRhoYVar=math::surfaceInte(vectorRhoY,edgeId)/stiffCoeff;
+
+                if (!flowProperties::massDiffusion)
+                {
+                    dRhoXVar=math::surfaceInte(vectorRhoX,edgeId)/stiffCoeff;
+                    dRhoYVar=math::surfaceInte(vectorRhoY,edgeId)/stiffCoeff;
+                }
 
                 dRhouXVar=math::surfaceInte(vectorRhouX,edgeId)/stiffCoeff;
                 dRhouYVar=math::surfaceInte(vectorRhouY,edgeId)/stiffCoeff;
@@ -687,8 +732,11 @@ namespace process
 
                 if (isMaster)
                 {
-                    BR2Vars::rhoXSurMaster[edgeId][iorder]=BRConst*dRhoXVar+vectordRhoXVol_org[iorder];
-                    BR2Vars::rhoYSurMaster[edgeId][iorder]=BRConst*dRhoYVar+vectordRhoYVol_org[iorder];
+                    if (!flowProperties::massDiffusion)
+                    {
+                        BR2Vars::rhoXSurMaster[edgeId][iorder]=BRConst*dRhoXVar+vectordRhoXVol_org[iorder];
+                        BR2Vars::rhoYSurMaster[edgeId][iorder]=BRConst*dRhoYVar+vectordRhoYVol_org[iorder];
+                    }
 
                     BR2Vars::rhouXSurMaster[edgeId][iorder]=BRConst*dRhouXVar+vectordRhouXVol_org[iorder];
                     BR2Vars::rhouYSurMaster[edgeId][iorder]=BRConst*dRhouYVar+vectordRhouYVol_org[iorder];
@@ -700,8 +748,11 @@ namespace process
                     BR2Vars::rhoEYSurMaster[edgeId][iorder]=BRConst*dRhoEYVar+vectordRhoEYVol_org[iorder];
                 }
                 else {
-                    BR2Vars::rhoXSurSlave[edgeId][iorder]=BRConst*dRhoXVar+vectordRhoXVol_org[iorder];
-                    BR2Vars::rhoYSurSlave[edgeId][iorder]=BRConst*dRhoYVar+vectordRhoYVol_org[iorder];
+                    if (!flowProperties::massDiffusion)
+                    {
+                        BR2Vars::rhoXSurSlave[edgeId][iorder]=BRConst*dRhoXVar+vectordRhoXVol_org[iorder];
+                        BR2Vars::rhoYSurSlave[edgeId][iorder]=BRConst*dRhoYVar+vectordRhoYVol_org[iorder];
+                    }
 
                     BR2Vars::rhouXSurSlave[edgeId][iorder]=BRConst*dRhouXVar+vectordRhouXVol_org[iorder];
                     BR2Vars::rhouYSurSlave[edgeId][iorder]=BRConst*dRhouYVar+vectordRhouYVol_org[iorder];
@@ -713,8 +764,10 @@ namespace process
                     BR2Vars::rhoEYSurSlave[edgeId][iorder]=BRConst*dRhoEYVar+vectordRhoEYVol_org[iorder];
                 }
 
-                BR2Vars::rhoXVol[element][iorder]+=dRhoXVar;
-                BR2Vars::rhoYVol[element][iorder]+=dRhoYVar;
+                if (!flowProperties::massDiffusion){
+                    BR2Vars::rhoXVol[element][iorder]+=dRhoXVar;
+                    BR2Vars::rhoYVol[element][iorder]+=dRhoYVar;
+                }
 
                 BR2Vars::rhouXVol[element][iorder]+=dRhouXVar;
                 BR2Vars::rhouYVol[element][iorder]+=dRhouYVar;
@@ -727,6 +780,8 @@ namespace process
             }
         }
     }
+
+
     }
     namespace BR1 {
     void calcValuesAtInterface()
@@ -820,8 +875,6 @@ namespace process
         }
         return std::make_tuple(valPlus, valMinus);
     }
-
-
 
     /*Function calculates right hand side terms of all conservative variables at all order in all directions*/
     void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy, std::vector<double> &rhouRHSOx, std::vector<double> &rhouRHSOy, std::vector<double> &rhovRHSOx, std::vector<double> &rhovRHSOy, std::vector<double> &rhoERHSOx, std::vector<double> &rhoERHSOy)
@@ -1099,9 +1152,11 @@ namespace process
             }
         }
     }
+    }
 
     namespace massDiffusion
     {
+        namespace BR1 {
         void solveDivRho()
         {
             std::vector<double> rhoRHSTermOxDir(mathVar::orderElem + 1, 0.0),
@@ -1110,7 +1165,7 @@ namespace process
             for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
             {
                 //2) Calculate Right hand side terms
-                process::auxEq::BR1::massDiffusion::CalcRHSTerm(nelement, rhoRHSTermOxDir, rhoRHSTermOyDir);
+                process::auxEq::massDiffusion::BR1::CalcRHSTerm(nelement, rhoRHSTermOxDir, rhoRHSTermOyDir);
 
                 //3) Solve for div(rho)
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
@@ -1136,10 +1191,10 @@ namespace process
                 rhoSurfIntOy(mathVar::orderElem + 1, 0.0);
 
             /*1. Calculate volume integral term*/
-            process::auxEq::BR1::massDiffusion::calcVolumeIntegralTerms(element, rhoVolIntOx, rhoVolIntOy);
+            process::auxEq::massDiffusion::BR1::calcVolumeIntegralTerms(element, rhoVolIntOx, rhoVolIntOy);
 
             /*2. Calculate surface integral term*/
-            process::auxEq::BR1::massDiffusion::calcSurfaceIntegralTerms(element, rhoSurfIntOx, rhoSurfIntOy);
+            process::auxEq::massDiffusion::BR1::calcSurfaceIntegralTerms(element, rhoSurfIntOx, rhoSurfIntOy);
 
             for (int order = 0; order <= mathVar::orderElem; order++)
             {
@@ -1181,7 +1236,7 @@ namespace process
                 rhoFluxYTemp(mathVar::nGauss + 1, 0.0);
 
             /*1. Calculate flux of rho at all Gauss points on all faces of element*/
-            process::auxEq::BR1::massDiffusion::getGaussVectorOfRho(element, rhoFluxX, rhoFluxY);
+            process::auxEq::massDiffusion::BR1::getGaussVectorOfRho(element, rhoFluxX, rhoFluxY);
 
             /*2. Calculates surface integrals of rho at all order*/
             for (int nface = 0; nface < elemType; nface++)
@@ -1225,12 +1280,163 @@ namespace process
                 {
                     for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
                     {
-                        std::tie(rhoFluxX[nGauss][nface], rhoFluxY[nGauss][nface])=rhoBCsImplement(element, edgeName, nGauss);
+                        std::tie(rhoP, rhoM)=rhoBCsImplement(element, edgeName, nGauss);
+                        rhoFluxX[nGauss][nface]=math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
+                        rhoFluxY[nGauss][nface]=math::numericalFluxes::auxFlux(rhoP, rhoM, ny);
                     }
                 }
             }
         }
-    }
+        }
+
+        namespace BR2 {
+        void solveDivRho()
+        {
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            {
+                //1) Calculate volume divU
+                process::auxEq::massDiffusion::BR2::calcVolDivRho(nelement);
+
+                //2) Calculate suface divU
+                process::auxEq::massDiffusion::BR2::calcSurDivRho(nelement);
+            }
+        }
+
+        void calcVolDivRho(int element)
+        {
+            std::vector<std::vector<double>> gaussMX(mathVar::nGauss+1,std::vector<double>(mathVar::nGauss+1,0.0)),
+                    gaussMY(mathVar::nGauss+1,std::vector<double>(mathVar::nGauss+1,0.0));
+            std::vector<double>rhoC(mathVar::orderElem+1,0.0);
+            int elemType(auxUlti::checkType(element));
+            double Bn(0.0),dBmX(0.0),dBmY(0.0),
+                    GammaRhoX(0.0), GammaRhoY(0.0),
+                    GammaX(0.0), GammaY(0.0), theta1(1.0), theta2(1.0);
+            rhoC=auxUlti::getElementConserValuesOfOrder(element,1);
+            for (int n=0;n<=mathVar::orderElem;n++) {
+                GammaRhoX=0; GammaRhoY=0;
+
+                for (int m=0;m<=mathVar::orderElem;m++) {
+                    if (m==0)
+                    {
+                        theta1=1.0;
+                        theta2=1.0;
+                    }
+                    else {
+                        theta1=theta1Arr[element];
+                        theta2=theta2Arr[element];
+                    }
+
+                    if (elemType==4)
+                    {
+                        for (int na=0;na<=mathVar::nGauss;na++) {
+                            for (int nb=0;nb<=mathVar::nGauss;nb++) {
+                                Bn=mathVar::BPts_Quad[n][na][nb];
+                                dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
+                                dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
+                                gaussMX[na][nb]=Bn*dBmX;
+                                gaussMY[na][nb]=Bn*dBmY;
+                            }
+                        }
+                    }
+                    else if (elemType==3)
+                    {
+                        for (int na=0;na<=mathVar::nGauss;na++) {
+                            for (int nb=0;nb<=mathVar::nGauss;nb++) {
+                                Bn=mathVar::BPts_Tri[n][na][nb];
+                                dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
+                                dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
+                                gaussMX[na][nb]=Bn*dBmX;
+                                gaussMY[na][nb]=Bn*dBmY;
+                            }
+                        }
+                    }
+
+                    GammaX=math::volumeInte(gaussMX,element);
+                    GammaY=math::volumeInte(gaussMY,element);
+
+                    GammaRhoX+=GammaX*rhoC[m]*theta1*theta2;
+                    GammaRhoY+=GammaY*rhoC[m]*theta1*theta2;
+                }
+                double stiffCoeff(stiffMatrixCoeffs[element][n]);
+                BR2Vars::rhoXVol[element][n]=GammaRhoX/stiffCoeff;
+                BR2Vars::rhoYVol[element][n]=GammaRhoY/stiffCoeff;
+            }
+        }
+
+        void calcSurDivRho(int element)
+        {
+            int elemType(auxUlti::checkType(element)), edgeId(0), BCType(-1);
+            double a(0.0), b(0.0),BVar(0.0), nx(0.0), ny(0.0), UP(0.0), UM(0.0), BRConst(4.0),
+                    dRhoXVar(0.0), dRhoYVar(0.0), rhoP(0.0), rhoM(0.0);
+            bool isMaster;
+            std::vector<double> vectorRhoX(mathVar::nGauss+1,0.0),
+                    vectorRhoY(mathVar::nGauss+1,0.0),
+
+                    vectordRhoXVol_org(mathVar::orderElem+1,0.0),
+                    vectordRhoYVol_org(mathVar::orderElem+1,0.0);
+
+            for (int iorder=0;iorder<=mathVar::orderElem;iorder++) {
+                vectordRhoXVol_org[iorder]=BR2Vars::rhoXVol[element][iorder];
+                vectordRhoYVol_org[iorder]=BR2Vars::rhoYVol[element][iorder];
+            }
+
+            for (int iedge=0;iedge<elemType;iedge++) {
+                edgeId=meshVar::inedel[element][iedge];
+                BCType=auxUlti::getBCType(edgeId);
+                isMaster=auxUlti::checkMaster(element,edgeId);
+                nx=auxUlti::getNormVectorComp(element,edgeId,1);
+                ny=auxUlti::getNormVectorComp(element,edgeId,2);
+                if (BCType!=0)
+                {
+                    for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                        std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
+                        std::tie(rhoP,rhoM)=rhoBCsImplement(element, edgeId, nG);
+
+                        //Rho
+                        vectorRhoX[nG]=0.5*(rhoM-rhoP)*nx;
+                        vectorRhoY[nG]=0.5*(rhoM-rhoP)*ny;
+                    }
+                }
+                else {
+                    for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                        std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
+
+                        //Rho
+                        std::tie(UP,UM)=process::getInternalValuesFromCalculatedArrays(edgeId,element,nG,1);
+                        vectorRhoX[nG]=0.5*(UM-UP)*nx;
+                        vectorRhoY[nG]=0.5*(UM-UP)*ny;
+                    }
+                }
+
+                for (int iorder=0;iorder<=mathVar::orderElem;iorder++) {
+                    double stiffCoeff(stiffMatrixCoeffs[element][iorder]);
+                    for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                        std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
+                        math::basisFc(a,b,elemType);
+                        BVar=mathVar::B[iorder];
+                        //Rho
+                        vectorRhoX[nG]*=BVar;
+                        vectorRhoY[nG]*=BVar;
+                    }
+                    dRhoXVar=math::surfaceInte(vectorRhoX,edgeId)/stiffCoeff;
+                    dRhoYVar=math::surfaceInte(vectorRhoY,edgeId)/stiffCoeff;
+
+                    if (isMaster)
+                    {
+                        BR2Vars::rhoXSurMaster[edgeId][iorder]=BRConst*dRhoXVar+vectordRhoXVol_org[iorder];
+                        BR2Vars::rhoYSurMaster[edgeId][iorder]=BRConst*dRhoYVar+vectordRhoYVol_org[iorder];
+                    }
+                    else {
+                        BR2Vars::rhoXSurSlave[edgeId][iorder]=BRConst*dRhoXVar+vectordRhoXVol_org[iorder];
+                        BR2Vars::rhoYSurSlave[edgeId][iorder]=BRConst*dRhoYVar+vectordRhoYVol_org[iorder];
+                    }
+
+                    BR2Vars::rhoXVol[element][iorder]+=dRhoXVar;
+                    BR2Vars::rhoYVol[element][iorder]+=dRhoYVar;
+                }
+            }
+        }
+        }
     }
 
 	}//end namespace auxEq
@@ -2173,7 +2379,10 @@ namespace process
 
             if (flowProperties::massDiffusion)
             {
-                process::auxEq::BR1::massDiffusion::solveDivRho();
+                if (systemVar::auxVariables==1)
+                    process::auxEq::massDiffusion::BR1::solveDivRho();
+                else if (systemVar::auxVariables==2)
+                    process::auxEq::massDiffusion::BR2::solveDivRho();
             }
             //CALCULATE T
             process::calcTGauss();

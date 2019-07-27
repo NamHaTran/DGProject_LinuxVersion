@@ -34,4 +34,6 @@ void createTemplate();
 //Function clear all variables
 void clearVar();
 
+void exportMeshToMetis();
+
 #endif // UNV2DREADERLIB_H_INCLUDED

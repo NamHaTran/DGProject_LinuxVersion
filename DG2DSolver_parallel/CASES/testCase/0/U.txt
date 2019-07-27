@@ -9,35 +9,30 @@
 +------------------------------------------------------------------------+
 	Program ran at (d-m-y_h-m-s) time
 Velocity conditions (m/s)
-initialValue			1098.34 0 0
-outlet
-{
-	Group 3
-	Type				outFlow
-	value				1098.34 0 0
-}
- 
-inlet
-{
-	Group 2
-	Type				inFlow
-	value				1098.34 0 0
-}
- 
+initialValue			2624 0 0
 symmetry
 {
 	Group 1
 	Type				symmetry
 }
  
+inlet
+{
+	Group 2
+	Type				inFlow
+	value				2624 0 0
+}
+ 
 wall
 {
-	Group 4
+	Group 3
 	Type				noSlip
 }
  
-farfield
+outlet
 {
-	Group 5
-	Type				symmetry
+	Group 4
+	Type				outFlow
+	value				2624 0 0
 }
+ 

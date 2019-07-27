@@ -110,7 +110,7 @@ namespace IO
 			std::string line(" ");
 			while (std::getline(Elem1DFlux, line))
 			{
-                auxUlti::addRowTo2DIntArray(meshVar::Elements1D, 4); //Hang 4 luu id cua processor ma edge thuoc ve
+				auxUlti::addRowTo2DIntArray(meshVar::Elements1D, 3);
 				std::istringstream elData(line);
 				elData >> meshVar::nelem1D >> node1 >> node2 >> bcGrp;
 				meshVar::Elements1D[meshVar::nelem1D - 1][0] = node1 - 1;
@@ -132,7 +132,7 @@ namespace IO
 			meshVar::nelem2D = 0;
 			while (std::getline(Elem2DFlux, line))
 			{
-                auxUlti::addRowTo2DIntArray(meshVar::Elements2D, 5);//Hang 5 de luu id cua processor ma element thuoc ve
+				auxUlti::addRowTo2DIntArray(meshVar::Elements2D, 4);
 				meshVar::nelem2D++;
 				std::istringstream elData(line);
 				elData >> temp >> node1 >> node2 >> node3 >> node4;
@@ -401,6 +401,29 @@ namespace IO
         if (!flowProperties::massDiffusion)
         {
             material::massDiffusion::DmCoeff=0.0;
+        }
+
+        /*Read DGSchemes*/
+        fileName=("DGSchemes.txt");
+        Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+        std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[1] = {"diffusionTermScheme"};
+        double DGSchemesoutDB[1] = {};
+        int DGSchemesoutInt[1] = {};
+        bool DGSchemesoutBool[1] = {};
+        std::string DGSchemesoutStr[1] = {};
+
+        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 1);
+        if (DGSchemesoutStr[0].compare("BR1")==0)
+        {
+            systemVar::auxVariables=1;
+        }
+        else if (DGSchemesoutStr[0].compare("BR2")==0)
+        {
+            systemVar::auxVariables=2;
+        }
+        else {
+            std::string str0("diffusionTermScheme '"+DGSchemesoutStr[0]+"' is not a diffusion scheme.");
+            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
         }
 	}
 
@@ -1192,6 +1215,50 @@ namespace IO
 		else
 		{
             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
+		}
+	}
+
+	void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, int numRow, int numCol)
+	{
+		std::ofstream Flux(loc.c_str());
+		if (Flux)
+		{
+            for (int i = 0; i < numRow; i++)
+			{
+                for (int j = 0; j < numCol; j++)
+				{
+					Flux << array[i][j] << " ";
+				}
+				Flux << "\n";
+			}
+		}
+		else
+		{
+			std::cout<<"Can not open file "<<loc<<" to write.\n";
+			std::cout << "DGSolver will exit after you hit return.\n";
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol)
+	{
+		std::ofstream Flux(loc.c_str());
+		if (Flux)
+		{
+            for (int i = 0; i < numRow; i++)
+			{
+                for (int j = 0; j < numCol; j++)
+				{
+					Flux << array[i][j] << " ";
+				}
+				Flux << "\n";
+			}
+		}
+		else
+		{
+			std::cout<<"Can not open file "<<loc<<" to write.\n";
+			std::cout << "DGSolver will exit after you hit return.\n";
+			exit(EXIT_FAILURE);
 		}
 	}
 
