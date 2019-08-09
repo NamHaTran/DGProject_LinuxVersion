@@ -11,85 +11,181 @@
 #include "dynamicVarDeclaration.h"
 #include "DGLimiterLib.h"
 
-void Executer(std::string cmd)
+void Executer()
 {
-	if (preProcessKey::checkUnvReader(cmd))
-	{
-        std::string UnvReaderLoc(systemVar::wD + "/Ultilities/MeshReader/UnvToDG");
-		auxUlti::openFileEXE(UnvReaderLoc);
-	}
-	else if (processKey::checkDGRun(cmd))
-	{
-		if (systemVar::runPreProcess == false)
-		{
-			PreProcessing();
-		}
-		Processing();
-	}
-	else if (postProcessKey::checkExit(cmd))
-	{
-		systemVar::endKey = true;
-	}
-	else if (preProcessKey::checkUnvHelper(cmd))
-	{
-		message::UnvReaderHelp();
-	}
-	else if (preProcessKey::checkBCsHelper(cmd))
-	{
-		message::BCsHelp();
-	}
-	else if (preProcessKey::reSubmit(cmd))
-	{
-		IO::getCase();
-		//PreProcessing();
-	}
-	else if (preProcessKey::mappResults(cmd))
-	{
-		PreProcessing();
-		meshParam::calcStiffMatrixCoeffs();
-		IO::importCase::importResultsFromAnotherCase();
-		systemVar::initializedOrNot = true;
-	}
-    else if (preProcessKey::exportMeshToMetis(cmd))
+    /*Functions run only at rank 0:
+        exportMeshToMetis
+        testMeshPartitionResult
+        decomposeCase
+        checkUnvReader
+        checkBCsHelper
+        reSubmit
+        mappResults
+    */
+
+    if (controlFlag::sequence::checkUnvReader)
     {
-        IO::loadMesh();
-        std::cout<<"Exporting DG mesh to Metis's format\n";
-        MshExporter::exportMeshToMetis();
+        if (systemVar::currentProc==0)
+        {
+            std::string UnvReaderLoc(systemVar::wD + "/Ultilities/MeshReader/UnvToDG");
+            auxUlti::openFileEXE(UnvReaderLoc);
+            controlFlag::sequence::checkUnvReader=false;
+        }
     }
-    else if (preProcessKey::testMeshPartitionResult(cmd))
+    else if (controlFlag::parallel::checkDGRun)
     {
-        std::string key("n");
-        std::cout<<"Do you want to read mesh? <y/n>: ";
-        std::cin>>key;
-        if ((key.compare("y") == 0) || (cmd.compare("Y") == 0))
+        if (systemVar::runPreProcess == false)
+        {
+            PreProcessing();
+        }
+        Processing();
+        controlFlag::parallel::checkDGRun=false;
+    }
+    /*
+    else if (postProcessKey::checkExit(cmd))
+    {
+        systemVar::endKey = true;
+    }
+    */
+    else if (controlFlag::sequence::checkUnvHelper)
+    {
+        if (systemVar::currentProc==0)
+        {
+            message::UnvReaderHelp();
+        }
+        controlFlag::sequence::checkUnvHelper=false;
+    }
+    else if (controlFlag::sequence::checkBCsHelper)
+    {
+        if (systemVar::currentProc==0)
+        {
+            message::BCsHelp();
+        }
+        controlFlag::sequence::checkBCsHelper=false;
+    }
+    else if (controlFlag::sequence::reSubmit)
+    {
+        if (systemVar::currentProc==0)
+        {
+            IO::getCase();
+        }
+        //PreProcessing();
+        controlFlag::sequence::reSubmit=false;
+    }
+    else if (controlFlag::sequence::mappResults)
+    {
+        if (systemVar::currentProc==0)
+        {
+            PreProcessing();
+            meshParam::calcStiffMatrixCoeffs();
+            IO::importCase::importResultsFromAnotherCase();
+            systemVar::initializedOrNot = true;
+            controlFlag::sequence::mappResults=false;
+        }
+    }
+    else if (controlFlag::sequence::exportMeshToMetis)
+    {
+        if (systemVar::currentProc==0)
         {
             IO::loadMesh();
+            std::cout<<"Exporting DG mesh to Metis's format\n";
+            MshExporter::exportMeshToMetis();
+            controlFlag::sequence::exportMeshToMetis=false;
         }
-        std::cout<<"Creating techplot file\n";
-        MshExporter::testMeshPartitionResult();
     }
-    else if (preProcessKey::debug::checkElement(cmd))
+    else if (controlFlag::sequence::testMeshPartitionResult)
+    {
+        if (systemVar::currentProc==0)
+        {
+            std::string key("n");
+            std::cout<<"Do you want to read mesh? <y/n>: ";
+            std::cin>>key;
+            if ((key.compare("y") == 0) || (key.compare("Y") == 0))
+            {
+                IO::loadMesh();
+            }
+            std::cout<<"Creating techplot file\n";
+            MshExporter::testMeshPartitionResult();
+            controlFlag::sequence::testMeshPartitionResult=false;
+        }
+    }
+    else if (controlFlag::sequence::debug_checkElement)
     {
         int input(-1);
         std::cout << "Input element ID (ID is supplied by SALOME): ";
         std::cin >> input;
         std::cout << " \n";
         debugTool::checkElemInfor(input);
+        controlFlag::sequence::debug_checkElement=false;
+    }
+    else if (controlFlag::sequence::decomposeCase)
+    {
+        if (systemVar::currentProc==0)
+        {
+            systemVar::runDecomposeCaseFnc=true;
+            /*LOAD MESH*/
+            IO::loadMesh();
+
+            /*PROCESS MESH*/
+            MshReader::meshProcess();
+
+            decomposeMesh::decomposingMesh();
+
+            controlFlag::sequence::decomposeCase=false;
+        }
+    }
+}
+
+void checkCommandLine(std::string cmd)
+{
+    if (preProcessKey::checkUnvReader(cmd))
+    {
+        controlFlag::sequence::checkUnvReader=true;
+    }
+    else if (processKey::checkDGRun(cmd))
+    {
+        controlFlag::parallel::checkDGRun=true;
+    }
+    else if (postProcessKey::checkExit(cmd))
+    {
+        systemVar::endKey = true;
+    }
+    else if (preProcessKey::checkUnvHelper(cmd))
+    {
+        controlFlag::sequence::checkUnvHelper=true;
+    }
+    else if (preProcessKey::checkBCsHelper(cmd))
+    {
+        controlFlag::sequence::checkBCsHelper=true;
+    }
+    else if (preProcessKey::reSubmit(cmd))
+    {
+        controlFlag::sequence::reSubmit=true;
+    }
+    else if (preProcessKey::mappResults(cmd))
+    {
+        controlFlag::sequence::mappResults=true;
+    }
+    else if (preProcessKey::exportMeshToMetis(cmd))
+    {
+        controlFlag::sequence::exportMeshToMetis=true;
+    }
+    else if (preProcessKey::testMeshPartitionResult(cmd))
+    {
+        controlFlag::sequence::testMeshPartitionResult=true;
+    }
+    else if (preProcessKey::debug::checkElement(cmd))
+    {
+        controlFlag::sequence::debug_checkElement=true;
     }
     else if (preProcessKey::decomposeCase(cmd))
-	{
-        /*LOAD MESH*/
-        IO::loadMesh();
-
-        /*PROCESS MESH*/
-        MshReader::meshProcess();
-
-        decomposeMesh::decomposingMesh();
-	}
-	else
-	{
-		std::cout << "	ERROR: unknow command <" << cmd << ">!!!\n";
-	}
+    {
+        controlFlag::sequence::decomposeCase=true;
+    }
+    else
+    {
+        std::cout << "	ERROR: unknow command <" << cmd << ">!!!\n";
+    }
 }
 
 void Processing()

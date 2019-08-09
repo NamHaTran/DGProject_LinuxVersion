@@ -28,7 +28,8 @@ namespace systemVar
     int auxVariables(1);
 
     //For parallel computing
-    int totalProc(4);
+    int totalProc(4), currentProc(0);
+    bool runDecomposeCaseFnc(false), parallelMode(true);
 }
 
 namespace meshVar
@@ -63,6 +64,9 @@ namespace meshVar
 	int inpoedCount(0);  //can be used for normalVector, MasterElemOfEdge, ineled
 
 	int numBCEdges(0);
+
+    //Number of BC groups
+    int numBCGrp(0);
 }
 
 namespace mathVar
@@ -140,4 +144,22 @@ namespace limitVal
 		*/
 		int version(2);
 	}
+}
+
+namespace controlFlag {
+namespace sequence {
+bool checkUnvReader(false),
+checkBCsHelper(false),
+checkUnvHelper(false),
+reSubmit(false),
+mappResults(false),
+exportMeshToMetis(false),
+testMeshPartitionResult(false),
+debug_checkElement(false),
+decomposeCase(false);
+}
+
+namespace parallel {
+bool checkDGRun(false);
+}
 }

@@ -52,6 +52,8 @@ namespace NSFEqBCs
 
     /*Function computes numerical flux at symmetry BC by using weakRiemann approach*/
     std::vector <std::vector<double>> Symmetry(int element, int edge, int nG);
+
+    std::vector <std::vector<double>> matched(int element, int edge, int nG);
 }
 
 namespace auxilaryBCs
@@ -71,6 +73,8 @@ namespace auxilaryBCs
 
 	/*Function computes numerical flux of auxilary variables at symmetry BC by using weakRiemann approach*/
 	std::vector <std::vector<double>> Symmetry(int element, int edge, int nG);
+
+    std::vector <std::vector<double>> matched(int element, int edge, int nG);
 }
 
 namespace BCSupportFncs
@@ -90,6 +94,10 @@ namespace BCSupportFncs
         std::vector<std::vector<double>> NSFEqFluxes(int edge, int BCType, double TPlus, double TMinus, std::vector<double> &UPlus, std::vector<double> &UMinus, std::vector<double> &dUXPlus, std::vector<double> &dUXMinus, std::vector<double> &dUYPlus, std::vector<double> &dUYMinus, std::vector<double> &normVector);
 
         std::tuple<double, double, double, double> calcTotalVelocity(int BCType, double rhoP, double rhoM, double uP, double uM, double vP, double vM, double mudRhoXP, double mudRhoXM, double mudRhoYP, double mudRhoYM);
+    }
+
+    namespace parallel {
+    void calcUMinus(int edge, int nG, std::vector<double> &UMinus);
     }
 }
 

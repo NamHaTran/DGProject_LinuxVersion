@@ -38,8 +38,11 @@ namespace MshReader
 		/*Get points at boundary (for postProcessing)*/
 		getBoundaryPoints();
 
-		/*Save mesh data*/
-		IO::SaveMeshInfor();
+        if (!systemVar::runDecomposeCaseFnc)
+        {
+            /*Save mesh data*/
+            IO::SaveMeshInfor();
+        }
 	}
 
 	void EleSurPt()
@@ -628,6 +631,11 @@ namespace MshReader
                     meshVar::inpoed[ninpoed][3] = meshVar::BoundaryType[BcGroup - 1][1];  //Get boundary type
 					meshVar::adressOfBCVals.push_back(ninpoed);
 					meshVar::numBCEdges++;
+                    //Counting number of BC groups
+                    if (BcGroup>meshVar::numBCGrp)
+                    {
+                        meshVar::numBCGrp=BcGroup;
+                    }
 					break;
 				}
 			}
@@ -1022,7 +1030,7 @@ namespace decomposeMesh {
 
             if ((masterCellRank!=slaveCellRank)&&(slaveCellRank>=0))
             {
-                meshVar::inpoed[iedge][3]=6;
+                meshVar::inpoed[iedge][3]=10;
             }
         }
     }
@@ -1089,9 +1097,9 @@ namespace decomposeMesh {
                         Elem1D[irank][id][1]=meshVar::PointslocalIdWithRank[pt1][irank]+1;
                         Elem1D[irank][id][2]=meshVar::PointslocalIdWithRank[pt2][irank]+1;
 
-                        if (BCType==6)
+                        if (BCType==10)
                         {
-                            Elem1D[irank][id][3]=2212;
+                            Elem1D[irank][id][3]=meshVar::numBCGrp+1;
                             //Save information to meshConnection array
                             if (masterRank==irank)
                             {
@@ -1142,6 +1150,22 @@ namespace decomposeMesh {
     	maxElem1DIdOfRanks=decomposeMesh::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
 
     	/*CREATE DECOMPOSED CASE*/
+        //Delete previous processor
+        std::string key;
+        std::cout<<"Do you want to delete previous Processor folders! <y/n>: ";
+        std::cin>>key;
+        if (key.compare("y") == 0)
+        {
+            std::cout<<"Deleting Processor folders...\n";
+            std::string command("rm -rf "+systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor*");
+            const int dir_err = system(command.c_str());
+            if (-1 == dir_err)
+            {
+                printf("Error of deleting Processor folders\n");
+                exit(1);
+            }
+        }
+
         std::cout<<"Decomposing case...\n";
         for (int irank = 0; irank < systemVar::totalProc; ++irank)
 		{
@@ -1152,6 +1176,9 @@ namespace decomposeMesh {
 	        auxUlti::createFolder(Loc);
 	        auxUlti::createFolder(Loc+"/Constant");
 	        auxUlti::createFolder(Loc+"/Constant/Mesh");
+
+            auxUlti::createFolder(Loc+"/0");
+            auxUlti::copyFolder(systemVar::wD + "/CASES/" + systemVar::caseName+"/0",systemVar::wD + "/CASES/" + systemVar::caseName+ "/Processor" + rank + "/0");
 
             std::string  elems1DLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/Elements1D.txt",
             elems2DLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/Elements2D.txt",
@@ -1172,8 +1199,36 @@ namespace decomposeMesh {
 
             decomposeMesh::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
 
-            std::cout<<"DONE!\n";
+            decomposeMesh::decomposingTime0(Loc);
+
+            //Create file boundaryPatch and Material
+            auxUlti::copyFile(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant/boundaryPatch.txt",Loc+"/Constant");
+            auxUlti::copyFile(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant/Material.txt",Loc+"/Constant");
+            std::string content1 = R"(matchedBoundary
+{
+        Group )", content2 = R"(
+        Type				matched
+}
+    )";
+            IO::openFileToAppend(Loc+"/Constant/boundaryPatch.txt",content1+std::to_string(meshVar::numBCGrp+1)+content2);
 		}
+        std::cout<<"DONE!\n";
+    }
+
+    void decomposingTime0(std::string Loc)
+    {
+        std::string  pLoc = Loc + "/0/p.txt",
+        TLoc = Loc + "/0/T.txt", ULoc = Loc + "/0/U.txt";
+
+        std::string content1 = R"(matchedBoundary
+{
+        Group )", content2 = R"(
+        Type				matched
+}
+)";
+        IO::openFileToAppend(pLoc,content1+std::to_string(meshVar::numBCGrp+1)+content2);
+        IO::openFileToAppend(TLoc,content1+std::to_string(meshVar::numBCGrp+1)+content2);
+        IO::openFileToAppend(ULoc,content1+std::to_string(meshVar::numBCGrp+1)+content2);
     }
 
     void exportPartitionedMesh(int rank, int npoin, int nelem2D, std::vector<std::vector<double>>&Points, std::vector<std::vector<int>>&Elements2D)

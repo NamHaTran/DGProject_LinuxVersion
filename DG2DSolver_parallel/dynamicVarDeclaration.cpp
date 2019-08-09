@@ -213,3 +213,27 @@ namespace debug
 		//minRhoArr(1, 1.0),
 		//minRhoeArr(1, 1.0);
 }
+
+namespace parallelBuffer {
+    std::vector<std::vector<double>> rho(1, std::vector<double>(1, 0.0)),
+        rhou(1, std::vector<double>(1, 0.0)),
+        rhov(1, std::vector<double>(1, 0.0)),
+        rhoE(1, std::vector<double>(1, 0.0)),
+
+        //Neu div scheme la BR2, cac mang nay chua S_Surface
+        drhoX(1, std::vector<double>(1, 0.0)),
+        drhouX(1, std::vector<double>(1, 0.0)),
+        drhovX(1, std::vector<double>(1, 0.0)),
+        drhoEX(1, std::vector<double>(1, 0.0)),
+        drhoY(1, std::vector<double>(1, 0.0)),
+        drhouY(1, std::vector<double>(1, 0.0)),
+        drhovY(1, std::vector<double>(1, 0.0)),
+        drhoEY(1, std::vector<double>(1, 0.0)),
+
+        aSurface(1, std::vector<double>(1, 0.0)),
+        bSurface(1, std::vector<double>(1, 0.0))
+    ;
+
+    std::vector<double> theta1(1,1.0), theta2(1,1.0);
+    std::vector<int> elemType(1,1);
+}

@@ -28,6 +28,7 @@ namespace meshVar
     extern std::vector<std::vector<std::vector<double>>> J2D;
     extern std::vector<double> J1D;
 
+    /*Arrays for parallel computing*/
     extern std::vector<int> Elem2DlocalIdWithRank, rankOf2DElem;
     extern std::vector<std::vector<int>> PointslocalIdWithRank;
 }
@@ -127,5 +128,16 @@ namespace SurfaceBCFields
 namespace debug
 {
 	//extern std::vector<double> minRhoArr, minRhoeArr;
+}
+
+namespace parallelBuffer {
+    extern std::vector<std::vector<double>> rho,rhou,rhov,rhoE,
+    drhoX,drhouX,drhovX,drhoEX,
+    drhoY,drhouY,drhovY,drhoEY,
+    aSurface, bSurface
+    ;
+
+    extern std::vector<double> theta1, theta2;
+    extern std::vector<int> elemType;
 }
 #endif // DYNAMICVARDECLARATION_H_INCLUDED

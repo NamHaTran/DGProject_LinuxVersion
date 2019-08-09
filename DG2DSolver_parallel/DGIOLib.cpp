@@ -74,11 +74,21 @@ namespace IO
 
 	void loadMesh()
 	{
+        std::string  Elem1DLoc, ptLoc, Elem2DLoc, bcLoc;
 		/*Declare loading locations*/
-        std::string  Elem1DLoc = systemVar::pwd + "/Constant/Mesh/Elements1D.txt";
-        std::string  ptLoc = systemVar::pwd + "/Constant/Mesh/Points.txt";
-        std::string  Elem2DLoc = systemVar::pwd + "/Constant/Mesh/Elements2D.txt";
-        std::string  bcLoc = systemVar::pwd + "/Constant/boundaryPatch.txt";
+        if (systemVar::runDecomposeCaseFnc)
+        {
+            Elem1DLoc = systemVar::pwd + "/Constant/Mesh/Elements1D.txt";
+            ptLoc = systemVar::pwd + "/Constant/Mesh/Points.txt";
+            Elem2DLoc = systemVar::pwd + "/Constant/Mesh/Elements2D.txt";
+            bcLoc = systemVar::pwd + "/Constant/boundaryPatch.txt";
+        }
+        else {
+            Elem1DLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/Mesh/Elements1D.txt";
+            ptLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/Mesh/Points.txt";
+            Elem2DLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/Mesh/Elements2D.txt";
+            bcLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/boundaryPatch.txt";
+        }
 
 		/*Load Points*/
 		std::ifstream ptFlux(ptLoc.c_str());
@@ -197,19 +207,24 @@ namespace IO
 								{
 									meshVar::BoundaryType[boundIndex - 1][1] = 3;  //type 3 is symmetry
 								}
+                                else if (str2.compare("matched") == 0)
+                                {
+                                    meshVar::BoundaryType[boundIndex - 1][1] = 4;  //type 4 is matched (boundary condition type for parallel computing)
+                                }
 								else
 								{
 									std::string errorStr = "Boundary type <" + ptr[1] + R"(> is unknown, available boundary types in file boundaryPatch are:
 	wall
 	patch
-	symmetry)";
+    symmetry
+    matched)";
 									message::writeLog(systemVar::pwd, systemVar::caseName, errorStr);
 								}
 							}
 						}
 						else
 						{
-							std::string errorStr = "Maximum number of boundaries DG2D solver supports is only " + std::to_string(bcSize) + ". Make sure number of boundaries is less than " + std::to_string(bcSize);
+                            std::string errorStr = "Maximum number of boundaries DG2D solver supports is only " + std::to_string(bcSize) + ". Make sure the number of boundaries is less than " + std::to_string(bcSize);
 							message::writeLog(systemVar::pwd, systemVar::caseName, errorStr);
 						}
 					}
@@ -232,7 +247,7 @@ namespace IO
 		- normalVector: array contents information of normal vector of edges
 		- MasterElemOfEdge: array content master element of iedge, use it with normalVector to get information of normal vector of edge*/
 
-		std::string headerFile(message::headerFile());
+        std::string headerFile(message::headerFile());
         std::string  inedelLoc = systemVar::pwd + "/Constant/Mesh/inedel.txt";
         std::string  ineledLoc = systemVar::pwd + "/Constant/Mesh/ineled.txt";
         std::string  inpoedLoc = systemVar::pwd + "/Constant/Mesh/inpoed.txt";
@@ -337,19 +352,20 @@ namespace IO
 		/*Read DGOptions*/
 		std::string DGOptfileName("DGOptions.txt");
         std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-        std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[3] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval" }, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[1] = {"ddtScheme"};
+        std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[4] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval","totalProcess"}, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[2] = {"ddtScheme", "runningMode"};
 		double DGOptoutDB[3] = {};
-		int DGOptoutInt[3] = {};
+        int DGOptoutInt[4] = {};
 		bool DGOptoutBool[2] = {};
 		std::string DGOptoutStr[2] = {};
 
-        readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 3, 2, 1);
+        readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 4, 2, 2);
 		
 		systemVar::CFL = DGOptoutDB[0];
 		systemVar::Ttime = DGOptoutDB[1];
         mathVar::nGauss = DGOptoutInt[0];
         mathVar::orderElem = DGOptoutInt[1];
         systemVar::wrtI = DGOptoutInt[2];
+        systemVar::totalProc = DGOptoutInt[3];
 		systemVar::wrtLog = DGOptoutBool[0];
 		systemVar::loadSavedCase = DGOptoutBool[1];
 
@@ -365,6 +381,15 @@ namespace IO
 		{
 			systemVar::ddtScheme = 3;
 		}
+
+        if (DGOptoutStr[1].compare("parallel") == 0)
+        {
+            systemVar::parallelMode = true;
+        }
+        else if (DGOptoutStr[1].compare("sequence") == 0)
+        {
+            systemVar::parallelMode = false;
+        }
 		
 		/*Read Material*/
 		std::string MatfileName("Material.txt");
@@ -753,6 +778,20 @@ namespace IO
                                 message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "symmetry"));
 							}
 						}
+                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)  //MATCHED
+                        {
+                            if ((str0.compare("matched") == 0))  //Type matched
+                            {
+                                bcValues::UBcType[bcGrp - 1] = 10;
+                                bcValues::uBC[bcGrp - 1] = 0.0;
+                                bcValues::vBC[bcGrp - 1] = 0.0;
+                                bcValues::wBC[bcGrp - 1] = 0.0;
+                            }
+                            else
+                            {
+                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "matched"));
+                            }
+                        }
 					}
 					else if ((str1.compare("Group") == 0))  //Group
 					{
@@ -787,6 +826,8 @@ namespace IO
 		+-------------------+-------------------+-------------------+
 		|7.	symmetry		|7. symmetry		|7. symmetry		|
 		+-------------------+-------------------+-------------------+
+        |10.matched 		|10.matched 		|10.matched 		|
+        +-------------------+-------------------+-------------------+
 		*/
 
 		fileName = fileName + ".txt";
@@ -876,6 +917,18 @@ namespace IO
                                     message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "symmetry"));
 								}
 							}
+                            else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)
+                            {
+                                if ((str0.compare("matched") == 0))  //Type matched
+                                {
+                                    bcValues::pBcType[bcGrp - 1] = 10;
+                                    bcValues::pBC[bcGrp - 1] = iniValues::pIni;
+                                }
+                                else
+                                {
+                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "matched"));
+                                }
+                            }
 						}
 						else if ((str1.compare("Group") == 0))  //Group
 						{
@@ -970,6 +1023,18 @@ namespace IO
                                     message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "symmetry"));
 								}
 							}
+                            else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)
+                            {
+                                if ((str0.compare("matched") == 0))  //Type matched
+                                {
+                                    bcValues::TBcType[bcGrp - 1] = 10;
+                                    bcValues::TBC[bcGrp - 1] = iniValues::TIni;
+                                }
+                                else
+                                {
+                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "matched"));
+                                }
+                            }
 						}
 						else if ((str1.compare("Group") == 0))  //Group
 						{
@@ -1261,6 +1326,16 @@ namespace IO
 			exit(EXIT_FAILURE);
 		}
 	}
+
+    void openFileToAppend(std::string Loc, std::string content)
+    {
+        std::fstream fs;
+          fs.open (Loc, std::fstream::app);
+
+          fs << content;
+
+          fs.close();
+    }
 
 	namespace importCase
 	{

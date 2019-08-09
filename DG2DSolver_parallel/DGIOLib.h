@@ -53,6 +53,8 @@ namespace IO
 
     void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol);
 
+    void openFileToAppend(std::string Loc, std::string content);
+
 	namespace importCase {
 
 		void importResultsFromAnotherCase();

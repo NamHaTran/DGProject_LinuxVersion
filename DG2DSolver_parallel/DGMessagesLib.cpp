@@ -143,20 +143,24 @@ To convert unv mesh format to DG2D readable format, do following task step by st
 	{
 		std::string Str(" ");
 		Str = R"(DG Solver supports the following boundary conditions:
-		+-------------------+-------------------+-------------------+
-		|U					|T					|p					|
-		+-------------------+-------------------+-------------------+
-		|1. inOutFlow		|1. inOutFlow		|1. inOutFlow		|
-		|	Value u v w		|	Value T			|	Value p			|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-		|					|	Value T			|					|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-		+-------------------+-------------------+-------------------+
-		|3.	fixedValue		|4. fixedValue		|3. fixedValue		|
-		|	Value u v w		|	Value T			|	Value p			|
-		+-------------------+-------------------+-------------------+
+    +-------------------+-------------------+-------------------+
+    |U                  |T                  |p                  |
+    +-------------------+-------------------+-------------------+
+    |1. inFlow          |1. inFlow          |1. inFlow          |
+    |   value u v w     |   value T         |   value p         |
+    +-------------------+-------------------+-------------------+
+    |2. noSlip          |2. WallIsothermal  |2. zeroGradient    |
+    |                   |   Value T         |                   |
+    +-------------------+-------------------+-------------------+
+    |2. noSlip          |3. WallAdiabatic   |2. zeroGradient    |
+    +-------------------+-------------------+-------------------+
+    |4. outFlow         |4. outFlow         |4. outFlow         |
+    |   value u v w     |   value T         |   value p         |
+    +-------------------+-------------------+-------------------+
+    |7. symmetry        |7. symmetry        |7. symmetry        |
+    +-------------------+-------------------+-------------------+
+    |10. matched        |10. matched        |10. matched        |
+    +-------------------+-------------------+-------------------+
 )";
 		std::cout << Str;
 	}

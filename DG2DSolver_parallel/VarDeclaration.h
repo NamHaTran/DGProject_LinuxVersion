@@ -40,7 +40,8 @@ namespace systemVar
     extern int auxVariables;
 
     //For parallel computing
-    extern int totalProc;
+    extern int totalProc, currentProc;
+    extern bool runDecomposeCaseFnc, parallelMode;
 }
 
 namespace meshVar
@@ -73,6 +74,9 @@ namespace meshVar
 	extern int inpoedCount;  //can be used for normalVector, MasterElemOfEdge, ineled
 
 	extern int numBCEdges;
+
+    //Number of BC groups
+    extern int numBCGrp;
 }
 
 namespace mathVar
@@ -150,5 +154,23 @@ namespace limitVal
 		*/
 		extern int version;
 	}
+}
+
+namespace controlFlag {
+namespace sequence {
+extern bool checkUnvReader,
+checkBCsHelper,
+checkUnvHelper,
+reSubmit,
+mappResults,
+exportMeshToMetis,
+testMeshPartitionResult,
+debug_checkElement,
+decomposeCase;
+}
+
+namespace parallel {
+extern bool checkDGRun;
+}
 }
 #endif // VARDECLARATION_H_INCLUDED

@@ -63,6 +63,10 @@ std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG
 	{
         Fluxes = NSFEqBCs::Symmetry(element, edge, nG);
 	}
+    else if (UType == 10 && TType == 10 && pType == 10)
+    {
+        Fluxes = NSFEqBCs::matched(element, edge, nG);
+    }
 	else
 	{
 		std::string errorStr = message::BcCompatibleError(edgeGrp);
@@ -97,6 +101,10 @@ std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG
 	{
 		Fluxes = auxilaryBCs::Symmetry(element, edge, nG);
 	}
+    else if (UType == 10 && TType == 10 && pType == 10)
+    {
+        Fluxes = auxilaryBCs::matched(element, edge, nG);
+    }
 	else
 	{
 		std::string errorStr = message::BcCompatibleError(edgeGrp);
@@ -123,6 +131,16 @@ std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
     else if ((UType == 4 && TType == 4 && pType == 4) || ((UType == 2 || UType == 3) && (TType == 2 || TType == 3) && pType == 2) || (UType == 7 && TType == 7 && pType == 7))
     {
         rhoM = rhoP;
+    }
+    else if (UType == 10 && TType == 10 && pType == 10)
+    {
+        int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+        math::basisFc(a, b, parallelBuffer::elemType[loc]);
+        for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
+        {
+            rhoM += parallelBuffer::rho[loc][iorder]*mathVar::B[iorder]*parallelBuffer::theta2[loc]*parallelBuffer::theta1[loc];
+        }
+        rhoM += parallelBuffer::rho[loc][0];
     }
     else
     {
@@ -348,6 +366,57 @@ namespace BCSupportFncs
         return Fluxes;
     }
     }
+
+    namespace parallel {
+    void calcUMinus(int edge, int nG, std::vector<double> &UMinus)
+    {
+        double a(0.0), b(0.0);
+        int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+        std::tie(a,b)=auxUlti::functionsOfParallelComputing::getGaussPointCoorsOfNeighborCell(loc,nG);
+        math::basisFc(a, b, parallelBuffer::elemType[loc]);
+        for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
+        {
+            UMinus[0] += parallelBuffer::rho[loc][iorder]*mathVar::B[iorder]*parallelBuffer::theta2[loc]*parallelBuffer::theta1[loc];
+            UMinus[1] += parallelBuffer::rhou[loc][iorder]*mathVar::B[iorder]*parallelBuffer::theta2[loc];
+            UMinus[2] += parallelBuffer::rhov[loc][iorder]*mathVar::B[iorder]*parallelBuffer::theta2[loc];
+            UMinus[3] += parallelBuffer::rhoE[loc][iorder]*mathVar::B[iorder]*parallelBuffer::theta2[loc];
+        }
+        UMinus[0] += parallelBuffer::rho[loc][0];
+        UMinus[1] += parallelBuffer::rhou[loc][0];
+        UMinus[2] += parallelBuffer::rhov[loc][0];
+        UMinus[3] += parallelBuffer::rhoE[loc][0];
+    }
+
+    void calcdUMinus(int edge, int nG, std::vector<double> &dUMinus, int dir)
+    {
+        double a(0.0), b(0.0);
+        int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+        std::tie(a,b)=auxUlti::functionsOfParallelComputing::getGaussPointCoorsOfNeighborCell(loc,nG);
+        math::basisFc(a, b, parallelBuffer::elemType[loc]);
+        if (systemVar::auxVariables==1)
+        {
+            if (dir==1)
+            {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    dUMinus[0] += parallelBuffer::drhoX[loc][iorder]* mathVar::B[iorder];
+                    dUMinus[1] += parallelBuffer::drhouX[loc][iorder]* mathVar::B[iorder];
+                    dUMinus[2] += parallelBuffer::drhovX[loc][iorder]* mathVar::B[iorder];
+                    dUMinus[3] += parallelBuffer::drhoEX[loc][iorder]* mathVar::B[iorder];
+                }
+            }
+            else {
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    dUMinus[0] += parallelBuffer::drhoY[loc][iorder]* mathVar::B[iorder];
+                    dUMinus[1] += parallelBuffer::drhouY[loc][iorder]* mathVar::B[iorder];
+                    dUMinus[2] += parallelBuffer::drhovY[loc][iorder]* mathVar::B[iorder];
+                    dUMinus[3] += parallelBuffer::drhoEY[loc][iorder]* mathVar::B[iorder];
+                }
+            }
+        }
+    }
+    }
 }
 
 namespace NSFEqBCs
@@ -558,6 +627,47 @@ namespace NSFEqBCs
             dUYPlus[i]*=muPlus;
             dUXMinus[i] = dUXPlus[i] - 2 * (dUXPlus[i] * nx + dUYPlus[i] * ny)*nx;
             dUYMinus[i] = dUYPlus[i] - 2 * (dUXPlus[i] * nx + dUYPlus[i] * ny)*ny;
+        }
+
+        Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge,3, TPlus, TPlus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
+        return Fluxes;
+    }
+
+    std::vector <std::vector<double>> matched(int element, int edge, int nG)
+    {
+        std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+        std::vector<double>
+            UPlus(4, 0.0),
+            UMinus(4, 0.0),
+            dUXPlus(4, 0.0),
+            dUYPlus(4, 0.0),
+            dUXMinus(4, 0.0),
+            dUYMinus(4, 0.0),
+            norm(2, 0.0);
+        double a(0.0), b(0.0), TPlus(0.0), TMinus(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+        norm[0] = nx;
+        norm[1] = ny;
+
+        //Compute U+
+        for (int i = 0; i < 4; i++)
+        {
+            std::tie(UPlus[i],UMinus[i])=auxUlti::getUAtInterfaces(edge,element,nG,i+1);
+        }
+        TPlus=surfaceFields::T[edge][nG];
+
+        //Compute dU+/-
+        BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+        BCSupportFncs::parallel::calcdUMinus(edge,nG,dUXMinus,1);
+        BCSupportFncs::parallel::calcdUMinus(edge,nG,dUYMinus,2);
+
+        //Compute T-
+        if (flowProperties::massDiffusion)
+        {
+            TMinus=math::CalcTFromConsvVar_massDiff(UMinus[0],UMinus[1],UMinus[2],UMinus[3],dUXMinus[0],dUYMinus[0]);
+        }
+        else {
+            TMinus=math::CalcTFromConsvVar(UMinus[0],UMinus[1],UMinus[2],UMinus[3]);
         }
 
         Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge,3, TPlus, TPlus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
@@ -823,4 +933,35 @@ namespace auxilaryBCs
         auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
 		return Fluxes;
 	}
+
+    std::vector <std::vector<double>> matched(int element, int edge, int nG)
+    {
+        std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+        std::vector<double>
+            UPlus(4, 0.0),
+            UMinus(4, 0.0);
+        double a(0.0), b(0.0);
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+
+        //Compute plus values--------------------------------------------------------
+        BCSupportFncs::auxilaryBCs::calcUPlus(element,edge,nG,UPlus);
+
+        //Compute minus values--------------------------------------------------------
+        BCSupportFncs::parallel::calcUMinus(edge,nG,UMinus);
+
+        for (int i = 0; i < 4; i++)
+        {
+            Fluxes[i][0] = UPlus[i];
+            Fluxes[i][1] = UMinus[i];
+        }
+
+        //Save U+ and U- at boundary to arrays
+        //Recompute rhoEm
+        if (flowProperties::massDiffusion)
+        {
+            UPlus[3]=math::pointValue(element,a,b,4,2);
+        }
+        auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
+        return Fluxes;
+    }
 }

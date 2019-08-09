@@ -58,6 +58,8 @@ namespace decomposeMesh {
     void decomposingMesh();
 
     void exportPartitionedMesh(int rank, int npoin, int nelem2D, std::vector<std::vector<double>>&Points, std::vector<std::vector<int>>&Elements2D);
+
+    void decomposingTime0(std::string Loc);
 }
 
 #endif // DGMESHREADERLIB_H_INCLUDED

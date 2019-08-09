@@ -133,6 +133,10 @@ namespace auxUlti
 
     std::vector<double> getElementAuxValuesOfOrder_BR2_sur(int edge, int element, int type, int dir);
 
+    void copyFolder(std::string source, std::string destination);
+
+    void copyFile(std::string source, std::string destination);
+
 	//Auxilary functions support for postProcessing
 	namespace postProcess
 	{
@@ -142,5 +146,11 @@ namespace auxUlti
 		//Function finds index of inputted integer in inputted array
 		std::tuple<double, double> findPointCoorInStandardSpace(int point, int element);
 	}
+
+    namespace functionsOfParallelComputing {
+    std::tuple<double,double> getGaussPointCoorsOfNeighborCell(int loc, int nG);
+
+    void prepareParallelCase();
+    }
 }
 #endif // DGAUXULTILITIESLIB_H_INCLUDED

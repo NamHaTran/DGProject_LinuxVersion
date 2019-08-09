@@ -8,6 +8,7 @@
 #include <QString>
 #include <QDir>
 #include <QProcess>
+#include <mpi.h>
 
 namespace auxUlti
 {
@@ -936,6 +937,31 @@ namespace auxUlti
         auxUlti::resize3DArray(mathVar::wGaussPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
         auxUlti::resize3DArray(mathVar::GaussLobattoPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
         auxUlti::resize3DArray(mathVar::wGaussLobattoPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
+
+        //Buffer (parallel computing)
+        //Conservative variables
+        auxUlti::resize2DArray(parallelBuffer::rho, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::rhou, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::rhov, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::rhoE, meshVar::numBCEdges, mathVar::orderElem + 1);
+
+        //Auxilary variables
+        auxUlti::resize2DArray(parallelBuffer::drhoX, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhouX, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhovX, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhoEX, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhoY, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhouY, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhovY, meshVar::numBCEdges, mathVar::orderElem + 1);
+        auxUlti::resize2DArray(parallelBuffer::drhoEY, meshVar::numBCEdges, mathVar::orderElem + 1);
+
+        //Surface Gauss point coordinates
+        auxUlti::resize2DArray(parallelBuffer::aSurface, meshVar::numBCEdges, mathVar::nGauss + 1);
+        auxUlti::resize2DArray(parallelBuffer::bSurface, meshVar::numBCEdges, mathVar::nGauss + 1);
+
+        parallelBuffer::theta1.resize(meshVar::numBCEdges);
+        parallelBuffer::theta2.resize(meshVar::numBCEdges);
+        parallelBuffer::elemType.resize(meshVar::numBCEdges);
 	}
 
 	int getAdressOfBCEdgesOnBCValsArray(int edge)
@@ -1114,7 +1140,29 @@ namespace auxUlti
         const int dir_err = system(command.c_str());
         if (-1 == dir_err)
         {
-            printf("Error creating directory!n");
+            printf("Error creating directory\n");
+            exit(1);
+        }
+    }
+
+    void copyFolder(std::string source, std::string destination)
+    {
+        std::string command("cp -a "+source+"/. "+destination+"/");
+        const int dir_err = system(command.c_str());
+        if (-1 == dir_err)
+        {
+            printf("Error of copying directory\n");
+            exit(1);
+        }
+    }
+
+    void copyFile(std::string source, std::string destination)
+    {
+        std::string command("cp -r "+source + " " +destination+"/");
+        const int dir_err = system(command.c_str());
+        if (-1 == dir_err)
+        {
+            printf("Error of copying file\n");
             exit(1);
         }
     }
@@ -1235,5 +1283,33 @@ namespace auxUlti
         surfaceFields::rhou[edge][nG+mathVar::nGauss+1]=UMinus[1];
         surfaceFields::rhov[edge][nG+mathVar::nGauss+1]=UMinus[2];
         surfaceFields::rhoE[edge][nG+mathVar::nGauss+1]=UMinus[3];
+    }
+
+    namespace functionsOfParallelComputing {
+    std::tuple<double,double> getGaussPointCoorsOfNeighborCell(int loc, int nG)
+    {
+        //Phai revert thu tu cua diem Gauss
+        double a(parallelBuffer::aSurface[loc][mathVar::nGauss-nG]), b(parallelBuffer::bSurface[loc][mathVar::nGauss-nG]);
+        return std::make_tuple(a,b);
+    }
+
+    void prepareParallelCase()
+    {
+        MPI_Init(NULL, NULL);
+        int maxNode;
+        MPI_Comm_size(MPI_COMM_WORLD, &maxNode);
+        if (maxNode<systemVar::totalProc)
+        {
+            std::cout<<"Number of processors ("<<systemVar::totalProc<<") exceeds maximum number of available processors of system ("<<maxNode<<").\n";
+            std::cout << "DGSolver will exit after you hit return.\n";
+            exit(EXIT_FAILURE);
+        }
+        MPI_Comm_rank(MPI_COMM_WORLD, &systemVar::currentProc);
+    }
+
+    void sendReceiveData()
+    {
+
+    }
     }
 }
