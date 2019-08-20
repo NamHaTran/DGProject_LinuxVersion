@@ -16,17 +16,15 @@ int main()
     {
         IO::dispLogo();
         std::cout << "                     Welcome to DG2D solver console!!\n";
-        IO::getCase();
     }
-	//PreProcessing();
+    IO::getCase();
+
 	while (systemVar::endKey==false)
 	{
-        if (systemVar::currentProc==0)
-        {
-            std::cout << ">> ";
-            std::cin >> systemVar::cmd;
-            checkCommandLine(systemVar::cmd);
-        }
+        auxUlti::getCommand();
+
+        checkCommandLine(systemVar::cmd);
+
         MPI_Barrier(MPI_COMM_WORLD);
         Executer();
 	}

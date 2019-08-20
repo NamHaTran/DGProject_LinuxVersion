@@ -1,6 +1,7 @@
 #ifndef DGPOSTPROCESSLIB_H_INCLUDED
 #define DGPOSTPROCESSLIB_H_INCLUDED
 #include <vector>
+#include <string>
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin);
@@ -21,7 +22,7 @@ namespace DG2Tecplot
 
 	void exportNodeData(int iter);
 
-	void exportCellCenteredData(int iter);
+    void exportCellCenteredData(int iter, std::string writeMode);
 
 	namespace calcNodeValueAtBCChildFuncs
 	{

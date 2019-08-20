@@ -29,7 +29,8 @@ namespace MshReader
 		ElemsSurElem();
 
 		/*Edges's informations*/
-		EdgesInfor();
+        EdgesInfor();
+
 		EdgesOfElem();
 
 		/*Calculate normal vector of each face (edge)*/
@@ -41,7 +42,7 @@ namespace MshReader
         if (!systemVar::runDecomposeCaseFnc)
         {
             /*Save mesh data*/
-            IO::SaveMeshInfor();
+            IO::SaveMeshInfor("p");
         }
 	}
 
@@ -333,6 +334,7 @@ namespace MshReader
 			{
 				iHelpArray[row] = helpArray[row][ipoin];
 			}
+
 			for (int isupoin = (meshVar::psup2[ipoin]+1); isupoin <= (meshVar::psup2[ipoin+1]); isupoin++)  //isupoin: i surrounding point
 			{
 				jpoin = meshVar::psup1[isupoin];  //scan all points which surrounding base point
@@ -345,7 +347,7 @@ namespace MshReader
 					helpArrIndexI++;
 					helpArrIndexJ++;
 					helpArray[19][ipoin]++;
-					helpArray[19][jpoin]++;
+                    helpArray[19][jpoin]++;
 
 					helpArray[helpArrIndexI][ipoin] = jpoin;
 					helpArray[helpArrIndexJ][jpoin] = ipoin;
@@ -572,6 +574,7 @@ namespace MshReader
 			{
 				rootPosition = findIndex(rootPt, pointArray, 4);
 				tipPosition = findIndex(tipPt, pointArray, 4);
+                std::cout<<"asasasas\n";  //--------------------------------
 				if (tipPosition>=0)
 				{
 					if (((rootPosition==0)&(tipPosition==3||tipPosition==1)) || ((rootPosition == 1)&(tipPosition == 0 || tipPosition == 2)) || ((rootPosition == 2)&(tipPosition == 1 || tipPosition == 3)) || ((rootPosition == 3)&(tipPosition == 2 || tipPosition == 0)))
@@ -629,7 +632,8 @@ namespace MshReader
 				if (BcGroup != 0)  //Edge is not belong to internal group
 				{
                     meshVar::inpoed[ninpoed][3] = meshVar::BoundaryType[BcGroup - 1][1];  //Get boundary type
-					meshVar::adressOfBCVals.push_back(ninpoed);
+                    meshVar::inpoed[ninpoed][4] = iedge;
+                    //meshVar::adressOfBCVals.push_back(ninpoed);
 					meshVar::numBCEdges++;
                     //Counting number of BC groups
                     if (BcGroup>meshVar::numBCGrp)
@@ -638,6 +642,9 @@ namespace MshReader
                     }
 					break;
 				}
+                else {
+                    meshVar::inpoed[ninpoed][4] = -1;
+                }
 			}
 		}
 	}
@@ -683,38 +690,41 @@ namespace MshReader
 		meshVar::markPointsAtBC.resize(meshVar::npoin);
 		std::vector<int> helpArr(meshVar::npoin, 0);
 		int edgeId(-1), pt1(-1), pt2(-1), BCPtsId(0);
-		for (int i = 0; i < meshVar::numBCEdges; i++)
+        for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 		{
-			edgeId = meshVar::adressOfBCVals[i];
-            pt1 = meshVar::inpoed[edgeId][0];
-            pt2 = meshVar::inpoed[edgeId][1];
-			if (helpArr[pt1] == 0)
-			{
-				auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);
-				//SurfaceBCFields::BCPoints[numBCPts][0] = pt1;
-				meshVar::markPointsAtBC[pt1] = BCPtsId + 1;
-				SurfaceBCFields::BCPointsInfor[BCPtsId][0] = edgeId;
-				helpArr[pt1] = 1;
-				BCPtsId++;
-			}
-			else
-			{
-				SurfaceBCFields::BCPointsInfor[meshVar::markPointsAtBC[pt1] - 1][1] = edgeId;
-			}
+            if (meshVar::inpoed[iedge][4]>=0)
+            {
+                edgeId=iedge;
+                pt1 = meshVar::inpoed[edgeId][0];
+                pt2 = meshVar::inpoed[edgeId][1];
+                if (helpArr[pt1] == 0)
+                {
+                    auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);
+                    //SurfaceBCFields::BCPoints[numBCPts][0] = pt1;
+                    meshVar::markPointsAtBC[pt1] = BCPtsId + 1;
+                    SurfaceBCFields::BCPointsInfor[BCPtsId][0] = edgeId;
+                    helpArr[pt1] = 1;
+                    BCPtsId++;
+                }
+                else
+                {
+                    SurfaceBCFields::BCPointsInfor[meshVar::markPointsAtBC[pt1] - 1][1] = edgeId;
+                }
 
-			if (helpArr[pt2] == 0)
-			{
-				auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);
-				//SurfaceBCFields::BCPoints[numBCPts][0] = pt2;
-				meshVar::markPointsAtBC[pt2] = BCPtsId + 1;
-				SurfaceBCFields::BCPointsInfor[BCPtsId][0] = edgeId;
-				helpArr[pt2] = 1;
-				BCPtsId++;
-			}
-			else
-			{
-				SurfaceBCFields::BCPointsInfor[meshVar::markPointsAtBC[pt2] - 1][1] = edgeId;
-			}
+                if (helpArr[pt2] == 0)
+                {
+                    auxUlti::addRowTo2DIntArray(SurfaceBCFields::BCPointsInfor, 2);
+                    //SurfaceBCFields::BCPoints[numBCPts][0] = pt2;
+                    meshVar::markPointsAtBC[pt2] = BCPtsId + 1;
+                    SurfaceBCFields::BCPointsInfor[BCPtsId][0] = edgeId;
+                    helpArr[pt2] = 1;
+                    BCPtsId++;
+                }
+                else
+                {
+                    SurfaceBCFields::BCPointsInfor[meshVar::markPointsAtBC[pt2] - 1][1] = edgeId;
+                }
+            }
 		}
 		auxUlti::clear1DIntVector(helpArr);
 	}
@@ -983,12 +993,15 @@ namespace decomposeMesh {
         //std::vector<int> counter(systemVar::totalProc,0);
         auxUlti::resize2DIntArray(meshVar::PointslocalIdWithRank, meshVar::npoin, systemVar::totalProc);
         std::vector<int> idMarker(systemVar::totalProc,0), helpArray(systemVar::totalProc,0);
+        //Lap theo so points
         for (int ipoin = 0; ipoin < meshVar::npoin; ipoin++)
         {
+            //Tai moi point tim cac cell co chua point dang xet
             for (int iesup = meshVar::esup2[ipoin] + 1; iesup <= meshVar::esup2[ipoin + 1]; iesup++)
             {
                 ielem = meshVar::esup1[iesup];
                 elemRank=meshVar::rankOf2DElem[ielem];
+                //Mark cac node co chua point dang xet (1=marked)
                 if (helpArray[elemRank]==0)
                 {
                     helpArray[elemRank]=1;
@@ -996,6 +1009,7 @@ namespace decomposeMesh {
             }
 
             for (int irank=0;irank<systemVar::totalProc;irank++) {
+                //dem so thu tu xuat hien cua point dang xet trong tung node (tuong ung voi localId)
                 if (helpArray[irank]==1)
                 {
                     meshVar::PointslocalIdWithRank[ipoin][irank]=idMarker[irank];
@@ -1103,16 +1117,19 @@ namespace decomposeMesh {
                             //Save information to meshConnection array
                             if (masterRank==irank)
                             {
-                                meshConnection[irank][id][0]=slaveRank;
-                                meshConnection[irank][id][1]=slaveElem;
+                                meshConnection[irank][id][0]=meshVar::Elem2DlocalIdWithRank[masterElem];
+                                meshConnection[irank][id][1]=slaveRank;
+                                meshConnection[irank][id][2]=meshVar::Elem2DlocalIdWithRank[slaveElem];
                             }
                             else if (slaveRank==irank) {
-                                meshConnection[irank][id][0]=masterRank;
-                                meshConnection[irank][id][1]=masterElem;
+                                meshConnection[irank][id][0]=meshVar::Elem2DlocalIdWithRank[slaveElem];
+                                meshConnection[irank][id][1]=masterRank;
+                                meshConnection[irank][id][2]=meshVar::Elem2DlocalIdWithRank[masterElem];
                             }
                         }
                         else {
                             Elem1D[irank][id][3]=BCGrp;
+                            meshConnection[irank][id][0]=meshVar::Elem2DlocalIdWithRank[irank];
                             meshConnection[irank][id][0]=-1;
                             meshConnection[irank][id][1]=-1;
                         }
@@ -1142,12 +1159,12 @@ namespace decomposeMesh {
     	//Mark BCType "matched"
     	decomposeMesh::findEdgeWithBCTypeMatched();
 
-    	std::vector<std::vector<std::vector<int>>> Elem2D (systemVar::totalProc,std::vector<std::vector<int>>(maxNumOfElem2D,std::vector <int>(4,0))),
+        std::vector<std::vector<std::vector<int>>> Elem2D (systemVar::totalProc,std::vector<std::vector<int>>(maxNumOfElem2D,std::vector <int>(5,0))),
         Elem1D (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(4,0))),
-        meshConnection (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(2,0)));
+        meshConnection (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(3,0)));
     	std::vector<std::vector<std::vector<double>>> Points (systemVar::totalProc,std::vector<std::vector<double>>(maxNumOfPts,std::vector <double>(4,0)));
 
-    	maxElem1DIdOfRanks=decomposeMesh::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
+        maxElem1DIdOfRanks=decomposeMesh::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
 
     	/*CREATE DECOMPOSED CASE*/
         //Delete previous processor
@@ -1186,7 +1203,7 @@ namespace decomposeMesh {
             meshConnectionLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/meshConnection.txt";
 
 			//Elements2D
-            IO::write2DIntArrayToFile(Elem2D[irank], elems2DLoc, maxElem2DIdOfRanks[irank], 4);
+            IO::write2DIntArrayToFile(Elem2D[irank], elems2DLoc, maxElem2DIdOfRanks[irank], 5);
 
 			//Points
             IO::write2DDoubleArrayToFile(Points[irank], pointsLoc, maxPtsIdOfRanks[irank], 4);
@@ -1195,7 +1212,7 @@ namespace decomposeMesh {
             IO::write2DIntArrayToFile(Elem1D[irank], elems1DLoc, maxElem1DIdOfRanks[irank], 4);
 
             //Elements1D
-            IO::write2DIntArrayToFile(meshConnection[irank], meshConnectionLoc, maxElem1DIdOfRanks[irank], 2);
+            IO::write2DIntArrayToFile(meshConnection[irank], meshConnectionLoc, maxElem1DIdOfRanks[irank], 3);
 
             decomposeMesh::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
 

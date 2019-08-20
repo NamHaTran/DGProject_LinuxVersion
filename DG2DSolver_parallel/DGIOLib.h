@@ -11,22 +11,22 @@ namespace IO
 	void getCase();
 
 	/*Function reads mesh data from files*/
-	void loadMesh();
+    void loadMesh(std::string mode);
 
 	/*Function saves mesh data to files*/
-	void SaveMeshInfor();
+    void SaveMeshInfor(std::string mode);
 
 	/*Function reads constants from folder constant*/
-	void loadConstants();
+    void loadConstants(std::string mode);
 
 	/*Function reads u, v, p, U values from folder 0*/
-	void loadpTU();
+    void loadpTU(std::string mode);
 
 	/*Function reads non scalar values from file*/
-	void readNonScalar();
+    void readNonScalar(std::string mode);
 
 	/*Function reads scalar values from file*/
-	void readScalar(std::string fileName);
+    void readScalar(std::string fileName, std::string mode);
 
 	/*Function read informations of limiters*/
 	void loadLimiterSettings();
@@ -45,9 +45,9 @@ namespace IO
 	/*Function writes residuals on console*/
 	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
-	void saveCase();
+    void saveCase(std::string mode);
 
-	void loadCase();
+    void loadCase(std::string mode);
 
 	void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, int numRow, int numCol);
 

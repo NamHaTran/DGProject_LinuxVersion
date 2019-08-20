@@ -52,7 +52,7 @@ namespace meshVar
     int esuel[elements2DArrSize][4] = {};  //Default is 4 faces
 
 	/*Edges informations*/
-    int inpoed[2 * elements2DArrSize][4] = {};
+    int inpoed[2 * elements2DArrSize][5] = {};
 	/*column 3 contents group which edge belongs to (group 0 is internal group),
 	column 4 contents type of boundary (type 0 is internal edge)*/
 

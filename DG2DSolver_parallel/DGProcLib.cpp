@@ -2380,15 +2380,22 @@ namespace process
             if (flowProperties::massDiffusion)
             {
                 if (systemVar::auxVariables==1)
+                {
                     process::auxEq::massDiffusion::BR1::solveDivRho();
+                    auxUlti::functionsOfParallelComputing::sendReceivedRho();
+                }
                 else if (systemVar::auxVariables==2)
+                {
                     process::auxEq::massDiffusion::BR2::solveDivRho();
+                    //Chua sua cho BR2
+                }
             }
             //CALCULATE T
             process::calcTGauss();
 
             //SOLVE AUXILARY EQUATION
 			process::auxEq::solveAuxEquation();
+            auxUlti::functionsOfParallelComputing::sendReceivedU();
 
 			//SOLVE NSF EQUATION
             process::NSFEq::calcFinvFvisAtInterface();
@@ -2397,6 +2404,7 @@ namespace process
 
 		void TVDRK3()
 		{
+            auxUlti::functionsOfParallelComputing::sendReceiveU();
             for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
                 for (int order = 0; order <= mathVar::orderElem; order++)

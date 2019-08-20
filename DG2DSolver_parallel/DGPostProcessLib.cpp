@@ -414,7 +414,7 @@ DATAPACKING=BLOCK)";
 		}
 	}
 
-	void exportCellCenteredData(int iter)
+    void exportCellCenteredData(int iter, std::string writeMode)
 	{
 		std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0);
 		nodeRho = DG2Tecplot::calcCellCenteredValues(1);
@@ -428,7 +428,15 @@ DATAPACKING=BLOCK)";
 		}
 
 		std::string iter_str = std::to_string(iter);
-        std::string fileName(systemVar::caseName + "cellCentered.dat"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/TecplotFile/" + iter_str), code;
+        std::string fileName(systemVar::caseName + "cellCentered.dat"), Loc, code;
+
+        if (writeMode.compare("p")==0)
+        {
+            Loc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/TecplotFile/" + iter_str;
+        }
+        else {
+            Loc = systemVar::wD + "/CASES/" + systemVar::caseName + "/TecplotFile/" + iter_str;
+        }
         auxUlti::createFolder(Loc);
 
         std::string fileLoc(Loc + "/" + fileName);

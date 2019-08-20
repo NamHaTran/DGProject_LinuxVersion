@@ -14,7 +14,7 @@ namespace meshVar
 		edgeGaussPoints_b(1, std::vector<double>(1, 0.0));
 
 	/*Vector contents BC edges name and location of them on BC values arrays*/
-	std::vector<int>adressOfBCVals(0, 0);
+    //std::vector<int>adressOfBCVals(0, 0);
 	std::vector<std::vector<int>>neighboringElements(1, std::vector<int>(1, 0));
 
     std::vector<std::vector<double>> geoCenter(0, std::vector<double>(2, 0.0));
@@ -30,6 +30,9 @@ namespace meshVar
     /*Array needed for decomposing case*/
     std::vector<int> Elem2DlocalIdWithRank, rankOf2DElem;
     std::vector<std::vector<int>> PointslocalIdWithRank;
+
+    /*Mesh connection*/
+    std::vector<std::vector<int>> meshConnection;
 }
 
 namespace mathVar {
@@ -230,8 +233,10 @@ namespace parallelBuffer {
         drhovY(1, std::vector<double>(1, 0.0)),
         drhoEY(1, std::vector<double>(1, 0.0)),
 
-        aSurface(1, std::vector<double>(1, 0.0)),
-        bSurface(1, std::vector<double>(1, 0.0))
+        xCoor(1, std::vector<double>(1, 0.0)),
+        yCoor(1, std::vector<double>(1, 0.0)),
+        aCoor(1, std::vector<double>(1, 0.0)),
+        bCoor(1, std::vector<double>(1, 0.0))
     ;
 
     std::vector<double> theta1(1,1.0), theta2(1,1.0);

@@ -64,7 +64,8 @@ namespace meshVar
     extern int esuel[elements2DArrSize][4];
 
 	/*Edges informations*/
-    extern int inpoed[2 * elements2DArrSize][4];
+    extern int inpoed[2 * elements2DArrSize][5];
+    /*Cot 5 chua edgeId cua edge tai bien ung voi Element1D array*/
 
 	/*Edges of element*/
     extern int inedel[elements2DArrSize][4], //number of row is 4 because of default quad element

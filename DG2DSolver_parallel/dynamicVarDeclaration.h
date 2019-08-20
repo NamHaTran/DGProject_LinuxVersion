@@ -14,8 +14,8 @@ namespace meshVar
 	/*Gauss points on edges*/
 	extern std::vector<std::vector<double>> edgeGaussPoints_a, edgeGaussPoints_b;
 	
-	/*Vector contents BC edges name and location of them on BC values arrays*/
-	extern std::vector<int>adressOfBCVals;
+    /*Vector contents BC edges id and location of them on BC values arrays*/
+    //extern std::vector<int>adressOfBCVals;
 	extern std::vector<std::vector<int>>neighboringElements;
 
     extern std::vector<std::vector<double>> geoCenter;
@@ -31,6 +31,9 @@ namespace meshVar
     /*Arrays for parallel computing*/
     extern std::vector<int> Elem2DlocalIdWithRank, rankOf2DElem;
     extern std::vector<std::vector<int>> PointslocalIdWithRank;
+
+    /*Mesh connection*/
+    extern std::vector<std::vector<int>> meshConnection;
 }
 
 namespace mathVar {
@@ -134,8 +137,7 @@ namespace parallelBuffer {
     extern std::vector<std::vector<double>> rho,rhou,rhov,rhoE,
     drhoX,drhouX,drhovX,drhoEX,
     drhoY,drhouY,drhovY,drhoEY,
-    aSurface, bSurface
-    ;
+    xCoor, yCoor, aCoor, bCoor;
 
     extern std::vector<double> theta1, theta2;
     extern std::vector<int> elemType;

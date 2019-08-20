@@ -87,7 +87,7 @@ void Executer()
     {
         if (systemVar::currentProc==0)
         {
-            IO::loadMesh();
+            IO::loadMesh("s");
             std::cout<<"Exporting DG mesh to Metis's format\n";
             MshExporter::exportMeshToMetis();
             controlFlag::sequence::exportMeshToMetis=false;
@@ -102,7 +102,7 @@ void Executer()
             std::cin>>key;
             if ((key.compare("y") == 0) || (key.compare("Y") == 0))
             {
-                IO::loadMesh();
+                IO::loadMesh("s");
             }
             std::cout<<"Creating techplot file\n";
             MshExporter::testMeshPartitionResult();
@@ -124,7 +124,7 @@ void Executer()
         {
             systemVar::runDecomposeCaseFnc=true;
             /*LOAD MESH*/
-            IO::loadMesh();
+            IO::loadMesh("s");
 
             /*PROCESS MESH*/
             MshReader::meshProcess();
@@ -190,11 +190,20 @@ void checkCommandLine(std::string cmd)
 
 void Processing()
 {
+    std::string readWriteMode;
+    if (systemVar::parallelMode)
+    {
+        readWriteMode="p";
+    }
+    else {
+        readWriteMode="s";
+    }
+
 	if (systemVar::loadSavedCase)
 	{
 		meshParam::calcStiffMatrixCoeffs();
 		std::cout << "Loading case...\n" << std::endl;
-		IO::loadCase();
+        IO::loadCase(readWriteMode);
 	}
 	else
 	{
@@ -214,6 +223,7 @@ void Processing()
 	limiter::limiter();
 
 	int loadConstCount(0);
+    std::cout<<"Processor "<<systemVar::currentProc<<" is running\n";
 	while (process::checkRunningCond())
 	{
 		systemVar::iterCount++;
@@ -233,16 +243,16 @@ void Processing()
 		if (systemVar::savingCout == systemVar::wrtI)
 		{
 			std::cout << "Saving case...\n" << std::endl;
-			IO::saveCase();
+            IO::saveCase(readWriteMode);
 			std::cout << "Exporting data to Tecplot...\n" << std::endl;
-			DG2Tecplot::exportCellCenteredData(systemVar::iterCount);
+            DG2Tecplot::exportCellCenteredData(systemVar::iterCount,readWriteMode);
 			systemVar::savingCout = 0;
 		}
 
 		loadConstCount++;
 		if (loadConstCount == 10)
 		{
-			IO::loadConstants();
+            IO::loadConstants(readWriteMode);
 			loadConstCount = 0;
 		}
 	}
@@ -250,20 +260,27 @@ void Processing()
 
 void PreProcessing()
 {
-	/*LOAD MESH*/
-	IO::loadMesh();
+    /*LOAD CONSTANTS*/
+    IO::loadConstants("s");
+    IO::loadLimiterSettings();
 
-	/*LOAD CONSTANTS*/
-	IO::loadConstants();
-	IO::loadLimiterSettings();
+    std::string readWriteMode;
+    if (systemVar::parallelMode)
+    {
+        readWriteMode="p";
+    }
+    else {
+        readWriteMode="s";
+    }
+
+	/*LOAD MESH*/
+    IO::loadMesh(readWriteMode);
 
 	/*LOAD p T U*/
-	IO::loadpTU();
+    IO::loadpTU(readWriteMode);
 
-	//Check subsonic
-    refValues::subsonic = auxUlti::checkSubSonic();
-    //Check case's information
-    message::checkCaseInformations();
+    /*CHECK INFROMATIONS BEFORE RUNNING*/
+    //auxUlti::checkInforBeforeRunning();
 
 	/*PROCESS MESH*/
 	MshReader::meshProcess();
@@ -283,6 +300,7 @@ void PreProcessing()
 	/*CALCULATE COORDINATES DERIVATIVES*/
 	meshParam::derivCoordinates();
 
+    auxUlti::functionsOfParallelComputing::sendReceiveMeshData();
 	auxUlti::mappingEdges();
 
 	systemVar::runPreProcess = true;

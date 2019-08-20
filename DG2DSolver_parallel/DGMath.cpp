@@ -1261,6 +1261,145 @@ namespace math
 		return std::make_tuple(aCoor, bCoor);
 	}
 
+    std::tuple<double, double> inverseMapping_ForParallel(int edge, double xCoor, double yCoor)
+    {
+        int elemType(3),
+        loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+        double aCoor(0.0), bCoor(0.0), xA(0.0), xB(0.0), xC(0.0),
+            yA(0.0), yB(0.0), yC(0.0),
+            Ax(0.0), Bx(0.0), Cx(0.0), Dx(0.0),
+            Ay(0.0), By(0.0), Cy(0.0), Dy(0.0), AA(0.0), BB(0.0), CC(0.0);
+        bool realRoot(true);
+
+        xA=parallelBuffer::xCoor[loc][0];
+        xB=parallelBuffer::xCoor[loc][1];
+        xC=parallelBuffer::xCoor[loc][2];
+        yA=parallelBuffer::yCoor[loc][0];
+        yB=parallelBuffer::yCoor[loc][1];
+        yC=parallelBuffer::yCoor[loc][2];
+
+        if (elemType == 3) //Tri element
+        {
+            Ax = (xA - xB) / 4.0;
+            Bx = (xB - xA) / 4.0;
+            Cx = (2 * xC - xA - xB) / 4.0;
+            Dx = (2 * xC + xA + xB) / 4.0 - xCoor;
+            Ay = (yA - yB) / 4.0;
+            By = (yB - yA) / 4.0;
+            Cy = (2 * yC - yA - yB) / 4.0;
+            Dy = (2 * yC + yA + yB) / 4.0 - yCoor;
+        }
+        else if (elemType == 4) //Quad element
+        {
+            //PARALLEL RUNNING CHUA KIEM TRA DUOC CHO QUADRILATERAL ELEMENT
+            double xD(0.0), yD(0.0);
+            //std::tie(xD, yD) = auxUlti::getElemCornerCoord(element, 3);
+
+            Ax = (xA - xB - xD + xC) / 4.0;
+            Bx = (- xA + xB - xD + xC) / 4.0;
+            Cx = (- xA - xB + xD + xC) / 4.0;
+            Dx = (xA + xB + xD + xC) / 4.0 - xCoor;
+            Ay = (yA - yB - yD + yC) / 4.0;
+            By = (-yA + yB - yD + yC) / 4.0;
+            Cy = (-yA - yB + yD + yC) / 4.0;
+            Dy = (yA + yB + yD + yC) / 4.0 - yCoor;
+        }
+
+        //solve a
+        AA = -Ax * By + Ay * Bx;
+        BB = -Ax * Dy + Bx * Cy - Cx * By + Ay * Dx;
+        CC = Dx * Cy - Cx * Dy;
+        if (fabs(AA) < 1e-12 && fabs(BB) < 1e-12 && fabs(CC) < 1e-12)
+        {
+            aCoor = -1;
+            bCoor = 1;
+        }
+        else
+        {
+            std::vector<double> vectorRoot_a(2, 0.0);
+            std::tie(realRoot, vectorRoot_a[0], vectorRoot_a[1]) = math::solvQuadraticEq(AA, BB, CC);
+            if (realRoot)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    double error(fabs(fabs(vectorRoot_a[i]) - 1) * 100);
+                    if ((fabs(vectorRoot_a[i]) <= 1) || (error <= 0.00001))
+                    {
+                        aCoor = vectorRoot_a[i];
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                /*
+                std::cout << "Element " << element << std::endl;
+                std::cout << "A: " << AA << " B: " << BB << " C: " << CC << std::endl;
+                std::cout << "x: " << xCoor << " y: " << yCoor << std::endl;
+                */
+                std::string str("mapping error occured_a");
+                exitDG(str);
+            }
+
+            if (fabs(aCoor*Ay + Cy) <= 1e-12)
+            {
+                //std::cout << "aCoor: " << aCoor << " criteria: " << fabs((aCoor*By + Dy) - (aCoor*Ay + Cy)) << std::endl;
+                //bCoor = 2;
+                AA = -Ay * Bx + Ax * By;
+                BB = -Ay * Dx + By * Cx - Cy * Bx + Ax * Dy;
+                CC = Dy * Cx - Cy * Dx;
+                if (fabs(AA) < 1e-12 && fabs(BB) < 1e-12 && fabs(CC) < 1e-12)
+                {
+                    aCoor = -1;
+                    bCoor = 1;
+                }
+                else
+                {
+                    std::vector<double> vectorRoot_a(2, 0.0);
+                    std::tie(realRoot, vectorRoot_a[0], vectorRoot_a[1]) = math::solvQuadraticEq(AA, BB, CC);
+                    if (realRoot)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            double error(fabs(fabs(vectorRoot_a[i]) - 1) * 100);
+                            if ((fabs(vectorRoot_a[i]) <= 1) || (error <= 0.00001))
+                            {
+                                aCoor = vectorRoot_a[i];
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        /*
+                        std::cout << "Element " << element << std::endl;
+                        std::cout << "A: " << AA << " B: " << BB << " C: " << CC << std::endl;
+                        std::cout << "x: " << xCoor << " y: " << yCoor << std::endl;
+                        */
+                        std::string str("mapping error occured");
+                        exitDG(str);
+                    }
+
+                    if (fabs(aCoor*Ax + Cx) == 0)
+                    {
+                        std::string str("mapping error occured");
+                        exitDG(str);
+                    }
+                    else
+                    {
+                        bCoor = -(aCoor*Bx + Dx) / (aCoor*Ax + Cx);
+                    }
+                }
+            }
+            else
+            {
+                bCoor = -(aCoor*By + Dy) / (aCoor*Ay + Cy);
+            }
+        }
+
+        return std::make_tuple(aCoor, bCoor);
+    }
+
 	std::vector<double> tensorVectorDotProduct(std::vector<std::vector<double>> tensor, std::vector<double> vector)
 	{
 		int size(vector.size());

@@ -205,6 +205,8 @@ namespace math
 	//Function maps point coordinates from real element to standard element
 	std::tuple<double, double> inverseMapping(int element, double xCoor, double yCoor);
 
+    std::tuple<double, double> inverseMapping_ForParallel(int edge, double xCoor, double yCoor);
+
 	/*
 	//Function supports for math::mappingRealToStd
 	double solve_abQuad(int option, double A, double B, double D, double C, double inVar);

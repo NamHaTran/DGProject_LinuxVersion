@@ -25,7 +25,10 @@ namespace IO
 
 	void getCase()
 	{
-		std::cout << "***Getting case's information***\n";
+        if (systemVar::currentProc==0)
+        {
+            std::cout << "***Getting case's information***\n";
+        }
 		systemVar::wD = auxUlti::workingdir();
 
 		/*Get caseName from SubmitCase*/
@@ -56,7 +59,10 @@ namespace IO
 					{
 						systemVar::caseName = ptr[1];
 						keyWFlag = 1;
-						std::cout << "	Case " << systemVar::caseName << " has been submitted\n";
+                        if (systemVar::currentProc==0)
+                        {
+                            std::cout << "	Case " << systemVar::caseName << " has been submitted\n";
+                        }
 					}
 				}
 			}
@@ -72,11 +78,11 @@ namespace IO
         systemVar::pwd = systemVar::wD + "/CASES/" + systemVar::caseName;
 	}
 
-	void loadMesh()
+    void loadMesh(std::string mode)
 	{
         std::string  Elem1DLoc, ptLoc, Elem2DLoc, bcLoc;
 		/*Declare loading locations*/
-        if (systemVar::runDecomposeCaseFnc)
+        if (mode.compare("p")!=0)
         {
             Elem1DLoc = systemVar::pwd + "/Constant/Mesh/Elements1D.txt";
             ptLoc = systemVar::pwd + "/Constant/Mesh/Points.txt";
@@ -236,9 +242,31 @@ namespace IO
 		{
 			message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("boundaryPatch.txt", bcLoc));
 		}
+
+        if (mode.compare("p")==0)
+        {
+            std::string mshConnect = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/Mesh/meshConnection.txt";
+            std::ifstream mshConnectFlux(mshConnect.c_str());
+            if (mshConnectFlux)
+            {
+                std::string line("");
+                int counter = 0;
+                while (std::getline(mshConnectFlux, line))
+                {
+                    auxUlti::addRowTo2DIntArray(meshVar::meshConnection, 3);
+                    std::istringstream Data(line);
+                    Data >> meshVar::meshConnection[counter][0] >> meshVar::meshConnection[counter][1] >> meshVar::meshConnection[counter][2];
+                    counter++;
+                }
+            }
+            else
+            {
+                message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("meshConnection.txt", mshConnect));
+            }
+        }
 	}
 
-	void SaveMeshInfor()
+    void SaveMeshInfor(std::string mode)
 	{
 		/*List of arrays need to be saved:
 		- inedel: array contents information of edges belong to elements, column index is element index, each row in column contents index of edge belong to element, number of row is 4 because of default quad element.
@@ -247,12 +275,25 @@ namespace IO
 		- normalVector: array contents information of normal vector of edges
 		- MasterElemOfEdge: array content master element of iedge, use it with normalVector to get information of normal vector of edge*/
 
-        std::string headerFile(message::headerFile());
-        std::string  inedelLoc = systemVar::pwd + "/Constant/Mesh/inedel.txt";
-        std::string  ineledLoc = systemVar::pwd + "/Constant/Mesh/ineled.txt";
-        std::string  inpoedLoc = systemVar::pwd + "/Constant/Mesh/inpoed.txt";
-        std::string  normVectorLoc = systemVar::pwd + "/Constant/Mesh/normalVector.txt";
-        std::string  MasterElemOfEdgeLoc = systemVar::pwd + "/Constant/Mesh/MasterElemOfEdge.txt";
+        std::string headerFile(message::headerFile()), inedelLoc, ineledLoc, inpoedLoc, normVectorLoc, MasterElemOfEdgeLoc;
+
+        std::string  Elem1DLoc, ptLoc, Elem2DLoc, bcLoc;
+        /*Declare loading locations*/
+        if (mode.compare("p")!=0)
+        {
+            inedelLoc = systemVar::pwd + "/Constant/Mesh/inedel.txt";
+            ineledLoc = systemVar::pwd + "/Constant/Mesh/ineled.txt";
+            inpoedLoc = systemVar::pwd + "/Constant/Mesh/inpoed.txt";
+            normVectorLoc = systemVar::pwd + "/Constant/Mesh/normalVector.txt";
+            MasterElemOfEdgeLoc = systemVar::pwd + "/Constant/Mesh/MasterElemOfEdge.txt";
+        }
+        else {
+            inedelLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc)+ "/Constant/Mesh/inedel.txt";
+            ineledLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc)+ "/Constant/Mesh/ineled.txt";
+            inpoedLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc)+ "/Constant/Mesh/inpoed.txt";
+            normVectorLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc)+ "/Constant/Mesh/normalVector.txt";
+            MasterElemOfEdgeLoc = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc)+ "/Constant/Mesh/MasterElemOfEdge.txt";
+        }
 
 		/*inedel*/
 		std::ofstream Fluxinedel(inedelLoc.c_str());
@@ -347,7 +388,7 @@ namespace IO
 		}
 	}
 
-	void loadConstants()
+    void loadConstants(std::string mode)
 	{
 		/*Read DGOptions*/
 		std::string DGOptfileName("DGOptions.txt");
@@ -393,7 +434,14 @@ namespace IO
 		
 		/*Read Material*/
 		std::string MatfileName("Material.txt");
-        std::string MatLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant");
+        std::string MatLoc;
+        if (mode.compare("p")==0)
+        {
+            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor"+std::to_string(systemVar::currentProc) + "/Constant";
+        }
+        else {
+            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
+        }
         std::string MatkeyWordsDouble[6] = { "gammaRatio", "gasConstant", "PrandtlNumber", "SutherlandAs", "SutherlandTs" , "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {};
         double MatoutDB[6] = {};
 		int MatoutInt[1] = {};
@@ -536,16 +584,16 @@ namespace IO
 		}
 	}
 
-	void loadpTU()
+    void loadpTU(std::string mode)
 	{
 		/*Read U*/  //U must be read first of all
-		readNonScalar();
+        readNonScalar(mode);
 
 		/*Read T*/
-		readScalar("T");
+        readScalar("T", mode);
 
 		/*Read p*/
-		readScalar("p");
+        readScalar("p", mode);
 	}
 
 	void readDataFile(std::string fileName, std::string direction, std::string keyWordsDbl[], std::string keyWordsInt[], std::string keyWordsBool[], std::string keyWordsStr[], double *outDbl, int *outInt, bool *outBool, std::string *outStr, int numParamDbl, int numParamInt, int numParamBool, int numParamStr)  //Declaration of funciton which returns pointer of 1D array
@@ -566,7 +614,11 @@ namespace IO
 		double dataDbl(0.0);
         int dataInt(0);
 		std::string dataStr("abc");
-		std::cout << "	Reading " << fileName <<"\n";
+        if (systemVar::currentProc==0)
+        {
+            std::cout << "	Reading " << fileName <<"\n";
+        }
+
         std::string FileLoc(direction + "/" + fileName);
 		std::ifstream FileFlux(FileLoc.c_str());
 		int indexDbl(0), indexInt(0), indexBool(0), indexStr(0);
@@ -648,7 +700,7 @@ namespace IO
 		}
 	}
 
-	void readNonScalar()
+    void readNonScalar(std::string mode)
 	{
 		/*NOTES:
 		Boundary conditions compatibility
@@ -673,9 +725,20 @@ namespace IO
         velocity        u v w
 		*/
 
-		std::string fileName("U.txt"), tempStr("");
-        std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/0");
-		std::cout << "	Reading " << fileName << "\n";
+        std::string fileName("U.txt"), tempStr(""), Loc;
+        if (mode.compare("p")==0)
+        {
+            Loc = (systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0");
+        }
+        else {
+            Loc = (systemVar::wD + "/CASES/" + systemVar::caseName + "/0");
+        }
+
+        if (systemVar::currentProc==0)
+        {
+            std::cout << "	Reading " << fileName << "\n";
+        }
+
         std::string FileLoc(Loc + "/" + fileName);
 		std::ifstream FileFlux(FileLoc.c_str());
         int bcGrp(0);
@@ -807,7 +870,7 @@ namespace IO
 		}
 	}
 
-	void readScalar(std::string fileName)
+    void readScalar(std::string fileName, std::string mode)
 	{
 		/*NOTES:
 		Boundary conditions compatibility
@@ -832,8 +895,19 @@ namespace IO
 
 		fileName = fileName + ".txt";
 		std::string tempStr("");
-        std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/0");
-		std::cout << "	Reading " << fileName << "\n";
+        std::string Loc;
+        if (mode.compare("p")==0)
+        {
+            Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0";
+        }
+        else {
+            Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/0";
+        }
+
+        if (systemVar::currentProc==0)
+        {
+            std::cout << "	Reading " << fileName << "\n";
+        }
         std::string FileLoc(Loc + "/" + fileName);
 		std::ifstream FileFlux(FileLoc.c_str());
 		
@@ -1085,10 +1159,18 @@ namespace IO
 		std::cout << std::endl;
 	}
 
-	void saveCase()
+    void saveCase(std::string mode)
 	{
 		std::string iter_str = std::to_string(systemVar::iterCount);
-        std::string fileName("rho.txt"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/" + iter_str);
+        std::string fileName("rho.txt"), Loc;
+        Loc = systemVar::wD + "/CASES/" + systemVar::caseName;
+        if (mode.compare("p")==0)
+        {
+            Loc=Loc+"/Processor"+std::to_string(systemVar::currentProc) + "/" + iter_str;
+        }
+        else {
+            Loc=Loc+"/" +iter_str;
+        }
         auxUlti::createFolder(Loc);
 
 		/*Conservative variables*/
@@ -1154,8 +1236,9 @@ namespace IO
 		fileFluxTime << systemVar::iterCount << std::endl;
 	}
 
-	void loadCase()
+    void loadCase(std::string mode)
 	{
+        //Read file time.txt
         std::string fileName("time.txt"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName);
         std::string fileLoc(Loc + "/" + fileName);
 		std::ifstream FileFluxTime(fileLoc.c_str());
@@ -1172,7 +1255,14 @@ namespace IO
 		}
 
 		std::string iter_str = std::to_string(systemVar::iterCount);
-        Loc = systemVar::wD + "/CASES/" + systemVar::caseName + "/" + iter_str;
+        Loc = systemVar::wD + "/CASES/" + systemVar::caseName;
+        if (mode.compare("p")==0)
+        {
+            Loc=Loc+"/Processor"+std::to_string(systemVar::currentProc) + "/" + iter_str;
+        }
+        else {
+            Loc=Loc+"/" +iter_str;
+        }
 
 		//Read rho
 		fileName = "rho.txt";

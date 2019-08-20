@@ -165,7 +165,7 @@ To convert unv mesh format to DG2D readable format, do following task step by st
 		std::cout << Str;
 	}
 
-    void checkCaseInformations()
+    void showCaseInformations()
     {
         std::string runOrNot(" ");
         std::cout<<"\nCase's informations:\n";
@@ -201,12 +201,6 @@ To convert unv mesh format to DG2D readable format, do following task step by st
                 std::cout << limitVal::limiterName[i] << " ";
             }
             std::cout << "\n";
-        }
-        std::cout<<"Do you want to continue? <y/n> ";
-        std::cin>>runOrNot;
-        if (runOrNot.compare("n") == 0){
-            std::cout << "DGSolver is exitting.\n";
-            exit(EXIT_SUCCESS);
         }
     }
 }
