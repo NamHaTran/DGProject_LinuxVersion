@@ -20,7 +20,7 @@ void Executer()
         checkUnvReader
         checkBCsHelper
         reSubmit
-        mappResults
+        mapResults
     */
 
     if (controlFlag::sequence::checkUnvReader)
@@ -72,16 +72,13 @@ void Executer()
         //PreProcessing();
         controlFlag::sequence::reSubmit=false;
     }
-    else if (controlFlag::sequence::mappResults)
+    else if (controlFlag::parallel::mapResults)
     {
-        if (systemVar::currentProc==0)
-        {
-            PreProcessing();
-            meshParam::calcStiffMatrixCoeffs();
-            IO::importCase::importResultsFromAnotherCase();
-            systemVar::initializedOrNot = true;
-            controlFlag::sequence::mappResults=false;
-        }
+        PreProcessing();
+        meshParam::calcStiffMatrixCoeffs();
+        IO::importCase::importResultsFromAnotherCase();
+        systemVar::initializedOrNot = true;
+        controlFlag::parallel::mapResults=false;
     }
     else if (controlFlag::sequence::exportMeshToMetis)
     {
@@ -164,7 +161,7 @@ void checkCommandLine(std::string cmd)
     }
     else if (preProcessKey::mappResults(cmd))
     {
-        controlFlag::sequence::mappResults=true;
+        controlFlag::parallel::mapResults=true;
     }
     else if (preProcessKey::exportMeshToMetis(cmd))
     {
@@ -221,6 +218,12 @@ void Processing()
 	limiter::mathForLimiter::getNeighborElements();
 	limitVal::numOfLimitCell = 0;
 	limiter::limiter();
+
+    //SEND/RECEIVE INITIAL CONDITIONS
+    if (systemVar::parallelMode)
+    {
+        auxUlti::functionsOfParallelComputing::sendReceiveU();
+    }
 
 	int loadConstCount(0);
     std::cout<<"Processor "<<systemVar::currentProc<<" is running\n";
@@ -280,7 +283,7 @@ void PreProcessing()
     IO::loadpTU(readWriteMode);
 
     /*CHECK INFROMATIONS BEFORE RUNNING*/
-    //auxUlti::checkInforBeforeRunning();
+    auxUlti::checkInforBeforeRunning();
 
 	/*PROCESS MESH*/
 	MshReader::meshProcess();

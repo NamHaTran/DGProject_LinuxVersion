@@ -163,7 +163,6 @@ extern bool checkUnvReader,
 checkBCsHelper,
 checkUnvHelper,
 reSubmit,
-mappResults,
 exportMeshToMetis,
 testMeshPartitionResult,
 debug_checkElement,
@@ -171,7 +170,8 @@ decomposeCase;
 }
 
 namespace parallel {
-extern bool checkDGRun;
+extern bool checkDGRun,
+mapResults;
 }
 }
 #endif // VARDECLARATION_H_INCLUDED

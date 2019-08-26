@@ -2404,7 +2404,6 @@ namespace process
 
 		void TVDRK3()
 		{
-            auxUlti::functionsOfParallelComputing::sendReceiveU();
             for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
 			{
                 for (int order = 0; order <= mathVar::orderElem; order++)
@@ -2430,6 +2429,7 @@ namespace process
 					}
 				}
 				limiter::limiter();
+                auxUlti::functionsOfParallelComputing::sendReceiveU();
 			}
 		}
 	}

@@ -152,7 +152,6 @@ bool checkUnvReader(false),
 checkBCsHelper(false),
 checkUnvHelper(false),
 reSubmit(false),
-mappResults(false),
 exportMeshToMetis(false),
 testMeshPartitionResult(false),
 debug_checkElement(false),
@@ -160,6 +159,7 @@ decomposeCase(false);
 }
 
 namespace parallel {
-bool checkDGRun(false);
+bool checkDGRun(false),
+mapResults(false);
 }
 }

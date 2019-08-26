@@ -1751,7 +1751,7 @@ namespace auxUlti
         char *buf = new char[l];
         MPI::COMM_WORLD.Recv(buf, l, MPI::CHAR, source, tag, status);
         std::string str(buf, l);
-        delete [] buf;
+        delete[] buf;
         return str;
     }
     }
@@ -1773,7 +1773,6 @@ namespace auxUlti
         }
         else {
             runOrNot=auxUlti::functionsOfParallelComputing::receiveString(0,2);
-            std::cout<<runOrNot<<std::endl;
         }
         //MPI_Barrier(MPI_COMM_WORLD);
         if (runOrNot.compare("n") == 0){

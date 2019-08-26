@@ -13,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdlib> //include this library to create folder in linux
+#include <mpi.h>
 
 namespace IO
 {
@@ -394,7 +395,7 @@ namespace IO
 		std::string DGOptfileName("DGOptions.txt");
         std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
         std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[4] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval","totalProcess"}, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[2] = {"ddtScheme", "runningMode"};
-		double DGOptoutDB[3] = {};
+        double DGOptoutDB[2] = {};
         int DGOptoutInt[4] = {};
 		bool DGOptoutBool[2] = {};
 		std::string DGOptoutStr[2] = {};
@@ -430,6 +431,7 @@ namespace IO
         else if (DGOptoutStr[1].compare("sequence") == 0)
         {
             systemVar::parallelMode = false;
+            systemVar::totalProc=1;
         }
 		
 		/*Read Material*/
@@ -1431,11 +1433,50 @@ namespace IO
 	{
 		void importResultsFromAnotherCase()
 		{
-			std::string sourceCaseName(" "), sourceLoc(" "), timeLoc(" "), fileName(" "), fileLoc(" ");
-			std::cout << "NOTE: source case must has the same mesh with current case\n" << "Enter source name: ";
-			std::cin >> sourceCaseName;
+            //SUA TAM THOI
+            //import case parallel
+            std::string sourceCaseName(" "), sourceLoc(" "), timeLoc(" "), fileName(" "), fileLoc(" "), processor("");
+
+            if (systemVar::currentProc==0)
+            {
+                std::cout << "NOTE: source case must has the same mesh with current case.\n" << "Enter source name: ";
+                std::cin>>sourceCaseName;
+                //Send command to all processors
+                for (int irank=1;irank<systemVar::totalProc;irank++) {
+                    auxUlti::functionsOfParallelComputing::sendString(sourceCaseName,irank,2);
+                }
+            }
+            else {
+                sourceCaseName=auxUlti::functionsOfParallelComputing::receiveString(0,2);
+            }
+
             sourceLoc = systemVar::wD + "/CASES/" + sourceCaseName;
             timeLoc = sourceLoc + "/time.txt";
+
+            //read source DGOptions
+            /*Read DGOptions*/
+            std::string DGOptfileName("DGOptions.txt");
+            std::string DGOptLoc(systemVar::wD + "/CASES/" + sourceCaseName + "/System");
+            std::string DGOptkeyWordsDouble[1] = {}, DGOptkeyWordsInt[1] = {}, DGOptkeyWordsBool[1] = {}, DGOptkeyWordsStr[1] = {"runningMode"};
+            double DGOptoutDB[1] = {};
+            int DGOptoutInt[1] = {};
+            bool DGOptoutBool[1] = {};
+            std::string DGOptoutStr[1] = {};
+
+            readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 0, 0, 0, 1);
+            if ((DGOptoutStr[0].compare("parallel") == 0)&& systemVar::parallelMode)
+            {
+                processor="Processor"+std::to_string(systemVar::currentProc);
+            }
+            else if (DGOptoutStr[0].compare("sequence") == 0 && !systemVar::parallelMode)
+            {
+                processor="";
+            }
+            else {
+                std::cout << "runningMode option of source and destination cases are not the same.\n";
+                std::cout << "DGSolver will exit after you hit return.\n";
+                exit(EXIT_FAILURE);
+            }
 
 			//get time at source folder
 			std::ifstream timeFlux(timeLoc.c_str());
@@ -1447,29 +1488,44 @@ namespace IO
 				std::istringstream lineflux(line);
 				lineflux >> time;
 
-				std::cout << "Source time: " << std::to_string(time) <<std::endl;
-				std::cout << "Mapping fields:\n";
+                if (systemVar::currentProc==0)
+                {
+                    std::cout << "Source time: " << std::to_string(time) <<std::endl;
+                    std::cout << "Mapping fields:\n";
+                }
 				//read results from source folder
 				fileName = "rho.txt";
-                fileLoc = (sourceLoc + "/" + std::to_string(time) + "/" + fileName);
+                fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
 				mappSourceToCurrent(fileLoc, rho);
-				std::cout << "	rho\n";
+                if (systemVar::currentProc==0)
+                {
+                    std::cout << "	rho\n";
+                }
 
 				fileName = "rhou.txt";
-                fileLoc = (sourceLoc + "/" + std::to_string(time) + "/" + fileName);
+                fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
 				mappSourceToCurrent(fileLoc, rhou);
-				std::cout << "	rhou\n";
+                if (systemVar::currentProc==0)
+                {
+                    std::cout << "	rhou\n";
+                }
 
 				fileName = "rhov.txt";
-                fileLoc = (sourceLoc + "/" + std::to_string(time) + "/" + fileName);
+                fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
 				mappSourceToCurrent(fileLoc, rhov);
-				std::cout << "	rhov\n";
+                if (systemVar::currentProc==0)
+                {
+                    std::cout << "	rhov\n";
+                }
 
 				fileName = "rhoE.txt";
-                fileLoc = (sourceLoc + "/" + std::to_string(time) + "/" + fileName);
+                fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
 				mappSourceToCurrent(fileLoc, rhoE);
-				std::cout << "	rhoE\n";
-				std::cout << "DONE\n";
+                if (systemVar::currentProc==0)
+                {
+                    std::cout << "	rhoE\n";
+                    std::cout << "DONE\n";
+                }
 			}
 			else
 			{
