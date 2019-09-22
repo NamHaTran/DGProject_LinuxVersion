@@ -164,7 +164,7 @@ namespace IO
 			message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("Elements2D.txt", Elem2DLoc));
 		}
 
-		/*Load boundary conditions*/
+        /*Load boundary conditions from boundaryPatch file*/
 		std::ifstream bcFlux(bcLoc.c_str());
 		if (bcFlux)
 		{
@@ -388,6 +388,22 @@ namespace IO
 			message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("MasterElemOfEdge.txt", MasterElemOfEdgeLoc));
 		}
 	}
+
+    void readNumberOfCores()
+    {
+        /*Read totalProcess in DGOptions*/
+        std::string DGOptfileName("DGOptions.txt");
+        std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+        std::string DGOptkeyWordsDouble[1] = {" "}, DGOptkeyWordsInt[1] = {"totalProcess"}, DGOptkeyWordsBool[1] = {" "}, DGOptkeyWordsStr[1] = {" "};
+        double DGOptoutDB[1] = {};
+        int DGOptoutInt[1] = {};
+        bool DGOptoutBool[1] = {};
+        std::string DGOptoutStr[1] = {};
+
+        readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 0, 1, 0, 0);
+
+        systemVar::totalProc = DGOptoutInt[0];
+    }
 
     void loadConstants(std::string mode)
 	{
@@ -1156,24 +1172,17 @@ namespace IO
 			rhovResGlobal /= systemVar::rhovResNorm;
 			rhoEResGlobal /= systemVar::rhoEResNorm;
 		}
-		std::cout << "Time step: " << dt << std::endl;
-		std::cout << "Residuals: ddt(rho)=" << rhoResGlobal << ", ddt(rhou)=" << rhouResGlobal << ", ddt(rhov)=" << rhovResGlobal << ", ddt(rhoE)=" << rhoEResGlobal << std::endl;
-		std::cout << std::endl;
+
+        std::cout << "Time step: " << dt << std::endl;
+        std::cout << "Residuals: ddt(rho)=" << rhoResGlobal << ", ddt(rhou)=" << rhouResGlobal << ", ddt(rhov)=" << rhovResGlobal << ", ddt(rhoE)=" << rhoEResGlobal << std::endl;
+        std::cout << std::endl;
 	}
 
-    void saveCase(std::string mode)
+    void saveCase()
 	{
 		std::string iter_str = std::to_string(systemVar::iterCount);
         std::string fileName("rho.txt"), Loc;
-        Loc = systemVar::wD + "/CASES/" + systemVar::caseName;
-        if (mode.compare("p")==0)
-        {
-            Loc=Loc+"/Processor"+std::to_string(systemVar::currentProc) + "/" + iter_str;
-        }
-        else {
-            Loc=Loc+"/" +iter_str;
-        }
-        auxUlti::createFolder(Loc);
+        Loc = auxUlti::createTimeStepFolder(systemVar::iterCount,"case");
 
 		/*Conservative variables*/
         std::string fileLoc(Loc + "/" + fileName);
@@ -1184,7 +1193,7 @@ namespace IO
 			{
 				fileFluxRho << rho[nelem][iorder] << " ";
 			}
-			fileFluxRho << std::endl;
+            fileFluxRho << "\n";
 		}
 
 		fileName = "rhou.txt";
@@ -1196,7 +1205,7 @@ namespace IO
 			{
 				fileFluxRhou << rhou[nelem][iorder] << " ";
 			}
-			fileFluxRhou << std::endl;
+            fileFluxRhou << "\n";
 		}
 
 		fileName = "rhov.txt";
@@ -1208,7 +1217,7 @@ namespace IO
 			{
 				fileFluxRhov << rhov[nelem][iorder] << " ";
 			}
-			fileFluxRhov << std::endl;
+            fileFluxRhov << "\n";
 		}
 
 		fileName = "rhoE.txt";
@@ -1220,7 +1229,7 @@ namespace IO
 			{
 				fileFluxRhoE << rhoE[nelem][iorder] << " ";
 			}
-			fileFluxRhoE << std::endl;
+            fileFluxRhoE << "\n";
 		}
 		/*end of saving conservative variables*/
 
@@ -1228,14 +1237,18 @@ namespace IO
 		fileName = "ResidualNormCoeffs.txt";
         fileLoc = (Loc + "/" + fileName);
 		std::ofstream fileFluxResNorm(fileLoc.c_str());
-		fileFluxResNorm << systemVar::rhoResNorm << " " << systemVar::rhouResNorm << " " << systemVar::rhovResNorm << " " << systemVar::rhoEResNorm << std::endl;
+        fileFluxResNorm << systemVar::rhoResNorm << " " << systemVar::rhouResNorm << " " << systemVar::rhovResNorm << " " << systemVar::rhoEResNorm << "\n";
 
 		/*Time informations*/
-        Loc = systemVar::wD + "/CASES/" + systemVar::caseName;
-		fileName = "time.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ofstream fileFluxTime(fileLoc.c_str());
-		fileFluxTime << systemVar::iterCount << std::endl;
+        if (systemVar::currentProc==0)
+        {
+            Loc = systemVar::wD + "/CASES/" + systemVar::caseName;
+            fileName = "time.txt";
+            fileLoc = (Loc + "/" + fileName);
+            std::ofstream fileFluxTime(fileLoc.c_str());
+            fileFluxTime << systemVar::iterCount << "\n";
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
 	}
 
     void loadCase(std::string mode)
@@ -1560,4 +1573,40 @@ namespace IO
 			}
 		}
 	}
+
+    void write2DDoubleVectorToFile(std::string location, std::string fileName, std::vector<std::vector<double>> &vector)
+    {
+        std::ofstream FileFlux((location+"/"+fileName).c_str());
+        if (FileFlux)
+        {
+            for (int irow=0; irow<vector.size(); irow++)
+            {
+                for (int icol=0; icol<vector[irow].size(); icol++)
+                {
+                    FileFlux<<vector[irow][icol]<<" ";
+                }
+                FileFlux<<"\n";
+            }
+        }
+        else
+        {
+            std::cout<<"Cannot open file at location "<<(location+"/"+fileName)<<" to write.\n";
+        }
+    }
+
+    void write1DDoubleVectorToFile(std::string location, std::string fileName, std::vector<double> &vector)
+    {
+        std::ofstream FileFlux((location+"/"+fileName).c_str());
+        if (FileFlux)
+        {
+            for (int irow=0; irow<vector.size(); irow++)
+            {
+                FileFlux<<vector[irow]<<"\n";
+            }
+        }
+        else
+        {
+            std::cout<<"Cannot open file at location "<<(location+"/"+fileName)<<" to write.\n";
+        }
+    }
 }

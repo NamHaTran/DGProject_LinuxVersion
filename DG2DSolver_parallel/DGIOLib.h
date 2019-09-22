@@ -28,6 +28,9 @@ namespace IO
 	/*Function reads scalar values from file*/
     void readScalar(std::string fileName, std::string mode);
 
+    /*Function reads number of total processes in DGOPtions*/
+    void readNumberOfCores();
+
 	/*Function read informations of limiters*/
 	void loadLimiterSettings();
 
@@ -45,7 +48,7 @@ namespace IO
 	/*Function writes residuals on console*/
 	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
-    void saveCase(std::string mode);
+    void saveCase();
 
     void loadCase(std::string mode);
 
@@ -54,6 +57,10 @@ namespace IO
     void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol);
 
     void openFileToAppend(std::string Loc, std::string content);
+
+    void write2DDoubleVectorToFile(std::string location, std::string fileName, std::vector<std::vector<double>> &vector);
+
+    void write1DDoubleVectorToFile(std::string location, std::string fileName, std::vector<double> &vector);
 
 	namespace importCase {
 

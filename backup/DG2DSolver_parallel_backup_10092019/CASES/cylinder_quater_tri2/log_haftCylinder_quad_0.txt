@@ -1,0 +1,2 @@
+log was created at 23-12-2018_00-27-41
+Cannot open file <rho.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\x64\Release\CASES\haftCylinder_quad_0\9450

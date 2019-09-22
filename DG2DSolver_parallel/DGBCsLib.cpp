@@ -8,6 +8,9 @@
 #include "DGMessagesLib.h"
 #include <math.h>
 
+//Debug
+#include <iostream>
+
 /*NOTES:
 - All boundary functions must return numerical fluxes (rho, rhou, rhov, rhoE fluxes) at surface Gauss points!
 - Method index: 1: weak weak Riemann, 2: weak Prescribed
@@ -368,7 +371,7 @@ namespace BCSupportFncs
     }
 
     namespace parallel {
-    void calcUMinus(int edge, int nG, std::vector<double> &UMinus)
+    void calcUMinus_total(int edge, int nG, std::vector<double> &UMinus)
     {
         double a(0.0), b(0.0);
         int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
@@ -385,6 +388,18 @@ namespace BCSupportFncs
         UMinus[1] += parallelBuffer::rhou[loc][0];
         UMinus[2] += parallelBuffer::rhov[loc][0];
         UMinus[3] += parallelBuffer::rhoE[loc][0];
+
+        /*
+        if ((loc==54 && systemVar::currentProc==0)||(loc==37 && systemVar::currentProc==1))
+        {
+            for (int i = 0; i < 4; i++)
+            {
+
+                std::cout<<UMinus[i]<<", ";
+            }
+            std::cout<<"\n";
+        }
+        */
     }
 
     void calcdUMinus(int edge, int nG, std::vector<double> &dUMinus, int dir)
@@ -644,7 +659,7 @@ namespace NSFEqBCs
             dUXMinus(4, 0.0),
             dUYMinus(4, 0.0),
             norm(2, 0.0);
-        double a(0.0), b(0.0), TPlus(0.0), TMinus(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+        double a(0.0), b(0.0), TPlus(0.0), TMinus(0.0), muPlus(0.0), muMinus(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
         std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
         norm[0] = nx;
         norm[1] = ny;
@@ -670,7 +685,17 @@ namespace NSFEqBCs
             TMinus=math::CalcTFromConsvVar(UMinus[0],UMinus[1],UMinus[2],UMinus[3]);
         }
 
-        Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge,3, TPlus, TPlus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
+        muPlus=math::CalcVisCoef(TPlus);
+        muMinus=math::CalcVisCoef(TMinus);
+        for (int i = 0; i < 4; i++)
+        {
+            dUXPlus[i]*=muPlus;
+            dUYPlus[i]*=muPlus;
+            dUXMinus[i]*=muMinus;
+            dUYMinus[i]*=muMinus;
+        }
+
+        Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge,4, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
         return Fluxes;
     }
 }
@@ -947,7 +972,8 @@ namespace auxilaryBCs
         BCSupportFncs::auxilaryBCs::calcUPlus(element,edge,nG,UPlus);
 
         //Compute minus values--------------------------------------------------------
-        BCSupportFncs::parallel::calcUMinus(edge,nG,UMinus);
+        //dang le o day phai tinh UMinus convective, nhung version hien tai van coi UMinus convective = UMinus total
+        BCSupportFncs::parallel::calcUMinus_total(edge,nG,UMinus);
 
         for (int i = 0; i < 4; i++)
         {

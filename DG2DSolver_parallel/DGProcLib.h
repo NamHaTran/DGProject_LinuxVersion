@@ -155,6 +155,10 @@ namespace process
 		void TVDRK_1step(int RKOrder);
 
 		void TVDRK3();
+
+        namespace parallel {
+        void minTimeStep();
+        }
 	}
 
 	/*Function calculates volume integral terms of auxilary equations of ONLY one order

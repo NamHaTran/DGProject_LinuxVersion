@@ -33,7 +33,7 @@ namespace limiter
 						limitVal::pAdaptive::limitFlagLocal = false;
 					}
 				}
-				if (limitVal::pAdaptive::numOfLimitCell > 0)
+                if (limitVal::pAdaptive::numOfLimitCell > 0)
 				{
 					std::cout << "P-adaptive limiter is applied at " << limitVal::pAdaptive::numOfLimitCell << " cell(s)\n";
 					limitVal::pAdaptive::numOfLimitCell = 0;
@@ -71,11 +71,15 @@ namespace limiter
 						}
 					}
 				}
-				if (limitVal::numOfLimitCell > 0)
+                if (limitVal::numOfLimitCell > 0)
 				{
 					std::cout << "Posivity preserving limiter is applied at " << limitVal::numOfLimitCell << " cell(s)\n";
 					limitVal::numOfLimitCell = 0;
 				}
+
+                //send/recv theta1, theta2
+                auxUlti::functionsOfParallelComputing::sendRecvTheta(theta1Arr,parallelBuffer::theta1);
+                auxUlti::functionsOfParallelComputing::sendRecvTheta(theta2Arr,parallelBuffer::theta2);
 			}
 		}
 		else  //No limiter

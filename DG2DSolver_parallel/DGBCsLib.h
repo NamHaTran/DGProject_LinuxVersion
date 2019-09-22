@@ -97,7 +97,7 @@ namespace BCSupportFncs
     }
 
     namespace parallel {
-    void calcUMinus(int edge, int nG, std::vector<double> &UMinus);
+    void calcUMinus_total(int edge, int nG, std::vector<double> &UMinus);
     }
 }
 

@@ -120,6 +120,9 @@ void Executer()
         if (systemVar::currentProc==0)
         {
             systemVar::runDecomposeCaseFnc=true;
+            /*LOAD TOTAL PROCESSES*/
+            IO::readNumberOfCores();
+
             /*LOAD MESH*/
             IO::loadMesh("s");
 
@@ -235,6 +238,7 @@ void Processing()
 
 		//CALCULATE TIME STEP
 		process::timeDiscretization::calcGlobalTimeStep();
+        //process::timeDiscretization::parallel::minTimeStep();
 
 		//SOLVE TIME MARCHING BY USING TVDRK3
 		process::timeDiscretization::TVDRK3();
@@ -246,9 +250,9 @@ void Processing()
 		if (systemVar::savingCout == systemVar::wrtI)
 		{
 			std::cout << "Saving case...\n" << std::endl;
-            IO::saveCase(readWriteMode);
+            IO::saveCase();
 			std::cout << "Exporting data to Tecplot...\n" << std::endl;
-            DG2Tecplot::exportCellCenteredData(systemVar::iterCount,readWriteMode);
+            DG2Tecplot::exportCellCenteredData(systemVar::iterCount);
 			systemVar::savingCout = 0;
 		}
 

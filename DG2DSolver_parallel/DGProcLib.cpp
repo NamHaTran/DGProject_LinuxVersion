@@ -10,6 +10,7 @@
 #include <iostream>
 #include "DGLimiterLib.h"
 #include <math.h>
+#include <mpi.h>
 
 namespace meshParam
 {
@@ -1663,16 +1664,10 @@ namespace process
 
 		void updateVariables()
 		{
-            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
-			{
-                for (int order = 0; order <= mathVar::orderElem; order++)
-				{
-					rho[nelement][order] = rhoN[nelement][order];
-					rhou[nelement][order] = rhouN[nelement][order];
-					rhov[nelement][order] = rhovN[nelement][order];
-					rhoE[nelement][order] = rhoEN[nelement][order];
-				}
-			}
+            rho = rhoN;
+            rhou = rhouN;
+            rhov = rhovN;
+            rhoE = rhoEN;
 		}
 
 		/*Function calculates right hand side terms of all conservative variables at ONLY one order*/
@@ -2390,6 +2385,7 @@ namespace process
                     //Chua sua cho BR2
                 }
             }
+
             //CALCULATE T
             process::calcTGauss();
 
@@ -2404,34 +2400,56 @@ namespace process
 
 		void TVDRK3()
 		{
-            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
-			{
-                for (int order = 0; order <= mathVar::orderElem; order++)
-				{
-					rho0[nelement][order] = rho[nelement][order];
-					rhou0[nelement][order] = rhou[nelement][order];
-					rhov0[nelement][order] = rhov[nelement][order];
-					rhoE0[nelement][order] = rhoE[nelement][order];
-				}
-			}
+            rho0 = rho;
+            rhou0 = rhou;
+            rhov0 = rhov;
+            rhoE0 = rhoE;
 
             for (int iRKOrder = 1; iRKOrder <= 3; iRKOrder++)
 			{
 				process::timeDiscretization::TVDRK_1step(iRKOrder);
-                for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
-				{
-                    for (int order = 0; order <= mathVar::orderElem; order++)
-					{
-						rho[nelement][order] = rhoN[nelement][order];
-						rhou[nelement][order] = rhouN[nelement][order];
-						rhov[nelement][order] = rhovN[nelement][order];
-						rhoE[nelement][order] = rhoEN[nelement][order];
-					}
-				}
+                rho = rhoN;
+                rhou = rhouN;
+                rhov = rhovN;
+                rhoE = rhoEN;
 				limiter::limiter();
                 auxUlti::functionsOfParallelComputing::sendReceiveU();
 			}
 		}
+
+        namespace parallel {
+        void minTimeStep()
+        {
+            MPI_Barrier(MPI_COMM_WORLD);
+            if (systemVar::currentProc==0)
+            {
+                std::vector<double>vectorTimeStep(systemVar::totalProc,1.0);
+                vectorTimeStep[0]=dt;
+                for (int inode=1;inode<systemVar::totalProc;inode++)
+                {
+                    MPI_Recv(&vectorTimeStep[inode], 1, MPI_DOUBLE, inode, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                }
+                dt=*std::min_element(vectorTimeStep.begin(), vectorTimeStep.end());
+            }
+            else
+            {
+                MPI_Send(&dt, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+            }
+
+            //Sau khi tim duoc dt min, send gia tri dt lai ve cac process
+            if (systemVar::currentProc==0)
+            {
+                for (int inode=1;inode<systemVar::totalProc;inode++)
+                {
+                    MPI_Send(&dt, 1, MPI_DOUBLE, inode, 0, MPI_COMM_WORLD);
+                }
+            }
+            else
+            {
+                MPI_Recv(&dt, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
+        }
+        }
 	}
 
 	std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int valType)

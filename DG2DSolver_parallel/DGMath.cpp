@@ -566,7 +566,7 @@ namespace math
         if (mu!=mu)
         {
             std::cout << "Negative T = " << T << std::endl;
-            int c = getchar();
+            exit(1);
         }
 		return mu;
 	}
@@ -588,7 +588,7 @@ namespace math
         if (out < 0)
         {
             std::cout << "Negative T" << std::endl;
-            int c = getchar();
+            exit(1);
         }
         return out;
 	}
@@ -621,7 +621,7 @@ namespace math
         if (T!=T || T<0)
         {
             std::cout<<"Failed to solve T\n";
-            int c = getchar();
+            exit(1);
             //return TIni;
         }
         else {
@@ -762,7 +762,7 @@ namespace math
                 if (out < 0)
 				{
 					std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
-                    int c = getchar();
+                    exit(1);
 				}
 			}
 			else if (valType == 7)  //mu
@@ -781,7 +781,7 @@ namespace math
 				if (out < 0 || out != out)
 				{
 					std::cout << "unphysical mu at cell " << element + meshVar::nelem1D + 1 << std::endl;
-                    int c = getchar();
+                    exit(1);
 				}
 			}
 		}
@@ -2162,7 +2162,7 @@ namespace math
             if (fUpper*fLower>0)
             {
                 std::cout<<"Failed to solve polynomial equation by using Bisection\n";
-                int c = getchar();
+                exit(1);
             }
             else {
                 while (error > convergence_cri) {

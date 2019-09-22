@@ -119,7 +119,9 @@ namespace auxUlti
     void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol);
 
     //Function create folder at input location
-    void createFolder(std::string location);
+    void createFolder(std::string location, bool passExit);
+
+    std::string createTimeStepFolder(int iter, std::string option);
 
     std::tuple<double, double> getUAtInterfaces(int edge, int element, int nG, int valType);
     double getUPlusAtBC(int edge, int nG, int valType);
@@ -157,7 +159,8 @@ namespace auxUlti
     std::string receiveString(int source, int tag);
 
     void sendReceiveMeshData();
-
+    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer);
+    void sendRecvTheta(std::vector<double>&thetaArray,std::vector<double>&Buffer);
     void sendReceiveU();
     void sendReceivedU();
     void sendReceivedRho();

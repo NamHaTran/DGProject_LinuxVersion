@@ -757,7 +757,8 @@ namespace auxUlti
         for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 		{
  			std::tie(masterElem, servantElem) = auxUlti::getMasterServantOfEdge(iedge);
-			bcType = auxUlti::getBCType(iedge);
+            bcType = auxUlti::getBCType(iedge);
+
             for (int nG = 0; nG <= mathVar::nGauss; nG++)
 			{
 				std::tie(aMaster, bMaster) = auxUlti::getGaussSurfCoorMaster(iedge, masterElem, nG);
@@ -768,7 +769,7 @@ namespace auxUlti
 				{
                     aServant = 0.0;
                     bServant = 0.0;
-                    if (systemVar::parallelMode && bcType==10)
+                    if (bcType==4) //boundary type 4 at file boundaryPatch: matched
                     {
                         int localEdgeIdOnElem1DArray=auxUlti::getAdressOfBCEdgesOnBCValsArray(iedge);
                         std::tie(parallelBuffer::aCoor[localEdgeIdOnElem1DArray][nG], parallelBuffer::bCoor[localEdgeIdOnElem1DArray][nG]) = math::inverseMapping_ForParallel(iedge, xMaster, yMaster);
@@ -1137,15 +1138,52 @@ namespace auxUlti
 		return outputEdgeId;
 	}
 
-    void createFolder(std::string location)
+    void createFolder(std::string location, bool passExit)
     {
         std::string command("mkdir -p "+location);
         const int dir_err = system(command.c_str());
         if (-1 == dir_err)
         {
-            printf("Error creating directory\n");
-            exit(1);
+            printf("Error of creating directory\n");
+            if (!passExit)
+            {
+                exit(1);
+            }
         }
+    }
+
+    std::string createTimeStepFolder(int iter, std::string option)
+    {
+        std::string Loc;
+        if (systemVar::currentProc==0)
+        {
+            std::string iter_str = std::to_string(iter), tecplotName("/");
+            if (option.compare("tecplot")==0)
+            {
+                tecplotName="/TecplotFile/";
+            }
+
+            if (systemVar::parallelMode)
+            {
+                for (int iproc = 1; iproc < systemVar::totalProc; iproc++)
+                {
+                    Loc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(iproc) + tecplotName + iter_str;
+                    auxUlti::createFolder(Loc,true);
+                    auxUlti::functionsOfParallelComputing::sendString(Loc,iproc,1);
+                }
+                Loc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor0" + tecplotName + iter_str;
+                auxUlti::createFolder(Loc,true);
+            }
+            else {
+                Loc = systemVar::wD + "/CASES/" + systemVar::caseName + tecplotName + iter_str;
+                auxUlti::createFolder(Loc,true);
+            }
+        }
+        else
+        {
+            Loc=auxUlti::functionsOfParallelComputing::receiveString(0,1);
+        }
+        return Loc;
     }
 
     void copyFolder(std::string source, std::string destination)
@@ -1309,29 +1347,15 @@ namespace auxUlti
         MPI_Comm_rank(MPI_COMM_WORLD, &systemVar::currentProc);
     }
 
-    void sendReceiveU()
+    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer)
     {
-        /*
-         * List of tag:
-         * - 100: rho -> 10i tuong duong iorder
-         * - 200: rhou
-         * - 300: rhov
-         * - 400: rhoE
-         * - 500: drhoX
-         * - 600: drhouX
-         * - 700: drhovX
-         * - 800: drhoEX
-         * - 900: drhoY
-         * - 110: drhouY
-         * - 120: drhovY
-         * - 130: drhoEY
-         * - 140: theta1
-         * - 141: theta2
-        */
-        MPI_Request request_send, request_recv;
         MPI_Barrier(MPI_COMM_WORLD);
+        //Declare dynamic array
+        MPI_Request *request_send = new MPI_Request[meshVar::numBCEdges*(mathVar::orderElem+1)],
+                *request_recv = new MPI_Request[meshVar::numBCEdges*(mathVar::orderElem+1)];
+
         int coef(1);
-        int destination, source, cellId, neighborCellId, tag_sent, tag_recv;
+        int destination, source, cellId, neighborCellId, tag_sent, tag_recv, sentCount(0), recvCount(0);
 
         //Send
         for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
@@ -1355,19 +1379,9 @@ namespace auxUlti
                 tag_sent = neighborCellId*coef + destination;
 
                 for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    //rho
-                    MPI_Isend(&rho[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+100+iorder, MPI_COMM_WORLD, &request_send);
-                    //rhou
-                    MPI_Isend(&rhou[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+200+iorder, MPI_COMM_WORLD, &request_send);
-                    //rhov
-                    MPI_Isend(&rhov[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+300+iorder, MPI_COMM_WORLD, &request_send);
-                    //rhoE
-                    MPI_Isend(&rhoE[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+400+iorder, MPI_COMM_WORLD, &request_send);
+                    MPI_Isend(&Var[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+100+iorder, MPI_COMM_WORLD, &request_send[sentCount]);
+                    sentCount++;
                 }
-                //theta1
-                MPI_Isend(&theta1Arr[cellId], 1, MPI_DOUBLE, destination, tag_sent*1000+140, MPI_COMM_WORLD, &request_recv);
-                //theta2
-                MPI_Isend(&theta2Arr[cellId], 1, MPI_DOUBLE, destination, tag_sent*1000+141, MPI_COMM_WORLD, &request_recv);
             }
         }
 
@@ -1397,274 +1411,157 @@ namespace auxUlti
 
                 for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
                     //rho
-                    MPI_Irecv(&parallelBuffer::rho[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+100+iorder, MPI_COMM_WORLD, &request_recv);
-                    //rhou
-                    MPI_Irecv(&parallelBuffer::rhou[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+200+iorder, MPI_COMM_WORLD, &request_recv);
-                    //rhov
-                    MPI_Irecv(&parallelBuffer::rhov[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+300+iorder, MPI_COMM_WORLD, &request_recv);
-                    //rhoE
-                    MPI_Irecv(&parallelBuffer::rhoE[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+400+iorder, MPI_COMM_WORLD, &request_recv);
+                    MPI_Irecv(&Buffer[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+100+iorder, MPI_COMM_WORLD, &request_recv[recvCount]);
+                    recvCount++;
                 }
-                //theta1
-                MPI_Irecv(&parallelBuffer::theta1[iBCedge], 1, MPI_DOUBLE, source, tag_recv*1000+140, MPI_COMM_WORLD, &request_recv);
-                //theta2
-                MPI_Irecv(&parallelBuffer::theta1[iBCedge], 1, MPI_DOUBLE, source, tag_recv*1000+141, MPI_COMM_WORLD, &request_recv);
             }
         }
+
+        //Wait for all request fullfilled
+        MPI_Waitall(sentCount,request_send,MPI_STATUSES_IGNORE);
+        MPI_Waitall(recvCount,request_recv,MPI_STATUSES_IGNORE);
+
+        delete [] request_send;
+        delete [] request_recv;
+    }
+
+    void sendRecvTheta(std::vector<double>&thetaArray,std::vector<double>&Buffer)
+    {
         MPI_Barrier(MPI_COMM_WORLD);
+        int coef(1);
+        int destination, source, cellId, neighborCellId, tag_sent, tag_recv, sentCount(0), recvCount(0);
+
+        //Declare dynamic array
+        MPI_Request *request_send = new MPI_Request[meshVar::numBCEdges],
+                *request_recv = new MPI_Request[meshVar::numBCEdges];
+
+        //Send
+        for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
+            destination=meshVar::meshConnection[iBCedge][1];
+            cellId=meshVar::meshConnection[iBCedge][0];
+            neighborCellId=meshVar::meshConnection[iBCedge][2];
+
+            //tag = neighborCellId*10 + destination
+            if (destination>=0)
+            {
+                if (systemVar::totalProc<10)
+                {
+                    coef=10;
+                }
+                else if ((systemVar::totalProc>=10)&&(systemVar::totalProc<100))
+                {
+                    coef=100;
+                }
+
+                //define tags
+                tag_sent = neighborCellId*coef + destination;
+
+                MPI_Isend(&thetaArray[cellId], 1, MPI_DOUBLE, destination, tag_sent*1000+140, MPI_COMM_WORLD, &request_send[sentCount]);
+                sentCount++;
+            }
+        }
+
+        MPI_Barrier(MPI_COMM_WORLD);
+        /*Chi receive khi nao toan bo cac processor send data xong*/
+
+        //Receive
+        for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
+            source=meshVar::meshConnection[iBCedge][1];
+            cellId=meshVar::meshConnection[iBCedge][0];
+            neighborCellId=meshVar::meshConnection[iBCedge][2];
+
+            //tag = neighborCellId*10 + destination
+            if (source>=0)
+            {
+                if (systemVar::totalProc<10)
+                {
+                    coef=10;
+                }
+                else if ((systemVar::totalProc>=10)&&(systemVar::totalProc<100))
+                {
+                    coef=100;
+                }
+
+                //define tags
+                tag_recv = cellId*coef + systemVar::currentProc;
+
+                MPI_Irecv(&Buffer[iBCedge], 1, MPI_DOUBLE, source, tag_recv*1000+140, MPI_COMM_WORLD, &request_recv[recvCount]);
+                recvCount++;
+            }
+        }
+
+        //Wait for all request fullfilled
+        MPI_Waitall(sentCount,request_send,MPI_STATUSES_IGNORE);
+        MPI_Waitall(recvCount,request_recv,MPI_STATUSES_IGNORE);
+
+        delete [] request_send;
+        delete [] request_recv;
+    }
+
+    void sendReceiveU()
+    {
+        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rho,parallelBuffer::rho);
+        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhou,parallelBuffer::rhou);
+        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhov,parallelBuffer::rhov);
+        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhoE,parallelBuffer::rhoE);
     }
 
     void sendReceivedU()
     {
-        /*
-         * List of tag:
-         * - 100: rho -> 10i tuong duong iorder
-         * - 200: rhou
-         * - 300: rhov
-         * - 400: rhoE
-         * - 500: drhoX
-         * - 600: drhouX
-         * - 700: drhovX
-         * - 800: drhoEX
-         * - 900: drhoY
-         * - 110: drhouY
-         * - 120: drhovY
-         * - 130: drhoEY
-        */
-        MPI_Request request_send, request_recv;
-        MPI_Barrier(MPI_COMM_WORLD);
-        int coef(1);
-        int destination, source, cellId, neighborCellId, tag_sent, tag_recv;
-
-        //Send
-        for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
-            destination=meshVar::meshConnection[iBCedge][1];
-            cellId=meshVar::meshConnection[iBCedge][0];
-            neighborCellId=meshVar::meshConnection[iBCedge][2];
-
-            //tag = neighborCellId*10 + destination
-            if (destination>=0)
+        if (!flowProperties::massDiffusion)
+        {
+            if (systemVar::auxVariables==1)
             {
-                if (systemVar::totalProc<10)
-                {
-                    coef=10;
-                }
-                else if ((systemVar::totalProc>=10)&&(systemVar::totalProc<100))
-                {
-                    coef=100;
-                }
-
-                //define tags
-                tag_sent = neighborCellId*coef + destination;
-
-                for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    if (!flowProperties::massDiffusion)
-                    {
-                        if (systemVar::auxVariables==1)
-                        {
-                            //drhoX
-                            MPI_Isend(&BR1Vars::rhoX[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+500+iorder, MPI_COMM_WORLD, &request_send);
-
-                            //drhoY
-                            MPI_Isend(&BR1Vars::rhoY[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+900+iorder, MPI_COMM_WORLD, &request_send);
-                        }
-                        else if (systemVar::auxVariables==2)
-                        {
-                            //Chua lam cho method BR2
-                        }
-                    }
-
-                    if (systemVar::auxVariables==1)
-                    {
-                        //drhouX
-                        MPI_Isend(&BR1Vars::rhouX[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+600+iorder, MPI_COMM_WORLD, &request_send);
-                        //drhovX
-                        MPI_Isend(&BR1Vars::rhovX[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+700+iorder, MPI_COMM_WORLD, &request_send);
-                        //drhoEX
-                        MPI_Isend(&BR1Vars::rhoEX[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+800+iorder, MPI_COMM_WORLD, &request_send);
-
-                        //drhouY
-                        MPI_Isend(&BR1Vars::rhouY[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+110+iorder, MPI_COMM_WORLD, &request_send);
-                        //drhovY
-                        MPI_Isend(&BR1Vars::rhovY[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+120+iorder, MPI_COMM_WORLD, &request_send);
-                        //drhoEY
-                        MPI_Isend(&BR1Vars::rhoEY[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+130+iorder, MPI_COMM_WORLD, &request_send);
-                    }
-                    else if (systemVar::auxVariables==2)
-                    {
-                        //Chua lam cho method BR2
-                    }
-                }
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoX,parallelBuffer::drhoX);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoY,parallelBuffer::drhoY);
+            }
+            else if (systemVar::auxVariables==2)
+            {
+                //Chua lam cho method BR2
             }
         }
 
-        MPI_Barrier(MPI_COMM_WORLD);
-        /*Chi receive khi nao toan bo cac processor send data xong*/
+        if (systemVar::auxVariables==1)
+        {
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhouX,parallelBuffer::drhouX);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhouY,parallelBuffer::drhouY);
 
-        //Receive
-        for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
-            source=meshVar::meshConnection[iBCedge][1];
-            cellId=meshVar::meshConnection[iBCedge][0];
-            neighborCellId=meshVar::meshConnection[iBCedge][2];
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhovX,parallelBuffer::drhovX);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhovY,parallelBuffer::drhovY);
 
-            //tag = neighborCellId*10 + destination
-            if (source>=0)
-            {
-                if (systemVar::totalProc<10)
-                {
-                    coef=10;
-                }
-                else if ((systemVar::totalProc>=10)&&(systemVar::totalProc<100))
-                {
-                    coef=100;
-                }
-
-                //define tags
-                tag_recv = cellId*coef + systemVar::currentProc;
-
-                for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    if (!flowProperties::massDiffusion)
-                    {
-                        if (systemVar::auxVariables==1)
-                        {
-                            //drhoX
-                            MPI_Irecv(&parallelBuffer::drhoX[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+500+iorder, MPI_COMM_WORLD, &request_recv);
-
-                            //drhoY
-                            MPI_Irecv(&parallelBuffer::drhoY[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+900+iorder, MPI_COMM_WORLD, &request_recv);
-                        }
-                        else if (systemVar::auxVariables==2)
-                        {
-                            //Chua lam cho method BR2
-                        }
-                    }
-
-                    if (systemVar::auxVariables==1)
-                    {
-                        //drhouX
-                        MPI_Irecv(&parallelBuffer::drhouX[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+600+iorder, MPI_COMM_WORLD, &request_recv);
-                        //drhovX
-                        MPI_Irecv(&parallelBuffer::drhovX[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+700+iorder, MPI_COMM_WORLD, &request_recv);
-                        //drhoEX
-                        MPI_Irecv(&parallelBuffer::drhoEX[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+800+iorder, MPI_COMM_WORLD, &request_recv);
-
-                        //drhouY
-                        MPI_Irecv(&parallelBuffer::drhouY[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+110+iorder, MPI_COMM_WORLD, &request_recv);
-                        //drhovY
-                        MPI_Irecv(&parallelBuffer::drhovY[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+120+iorder, MPI_COMM_WORLD, &request_recv);
-                        //drhoEY
-                        MPI_Irecv(&parallelBuffer::drhoEY[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+130+iorder, MPI_COMM_WORLD, &request_recv);
-                    }
-                    else if (systemVar::auxVariables==2)
-                    {
-                        //Chua lam cho method BR2
-                    }
-                }
-            }
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoEX,parallelBuffer::drhoEX);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoEY,parallelBuffer::drhoEY);
         }
-        MPI_Barrier(MPI_COMM_WORLD);
+        else if (systemVar::auxVariables==2)
+        {
+            //Chua lam cho method BR2
+        }
     }
 
     void sendReceivedRho()
     {
-        /*
-         * List of tag:
-         * - 100: rho -> 10i tuong duong iorder
-         * - 500: drhoX
-         * - 900: drhoY
-        */
-        MPI_Request request_send, request_recv;
-        MPI_Barrier(MPI_COMM_WORLD);
-        int coef(1);
-        int destination, source, cellId, neighborCellId, tag_sent, tag_recv;
-
-        //Send
-        for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
-            destination=meshVar::meshConnection[iBCedge][1];
-            cellId=meshVar::meshConnection[iBCedge][0];
-            neighborCellId=meshVar::meshConnection[iBCedge][2];
-
-            //tag = neighborCellId*10 + destination
-            if (destination>=0)
-            {
-                if (systemVar::totalProc<10)
-                {
-                    coef=10;
-                }
-                else if ((systemVar::totalProc>=10)&&(systemVar::totalProc<100))
-                {
-                    coef=100;
-                }
-
-                //define tags
-                tag_sent = neighborCellId*coef + destination;
-
-                for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    if (systemVar::auxVariables==1)
-                    {
-                        //drhoX
-                        MPI_Isend(&BR1Vars::rhoX[iBCedge][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+500+iorder, MPI_COMM_WORLD, &request_send);
-
-                        //drhoY
-                        MPI_Isend(&BR1Vars::rhoY[iBCedge][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+900+iorder, MPI_COMM_WORLD, &request_send);
-                    }
-                    else if (systemVar::auxVariables==2)
-                    {
-                        //Chua lam cho method BR2
-                    }
-                }
-            }
+        if (systemVar::auxVariables==1)
+        {
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoX,parallelBuffer::drhoX);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoY,parallelBuffer::drhoY);
         }
-
-        MPI_Barrier(MPI_COMM_WORLD);
-        /*Chi receive khi nao toan bo cac processor send data xong*/
-
-        //Receive
-        for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
-            source=meshVar::meshConnection[iBCedge][1];
-            cellId=meshVar::meshConnection[iBCedge][0];
-            neighborCellId=meshVar::meshConnection[iBCedge][2];
-
-            //tag = neighborCellId*10 + destination
-            if (source>=0)
-            {
-                if (systemVar::totalProc<10)
-                {
-                    coef=10;
-                }
-                else if ((systemVar::totalProc>=10)&&(systemVar::totalProc<100))
-                {
-                    coef=100;
-                }
-
-                //define tags
-                tag_recv = cellId*coef + systemVar::currentProc;
-
-                for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    if (systemVar::auxVariables==1)
-                    {
-                        //drhoX
-                        MPI_Irecv(&parallelBuffer::drhoX[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+500+iorder, MPI_COMM_WORLD, &request_recv);
-
-                        //drhoY
-                        MPI_Irecv(&parallelBuffer::drhoY[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+900+iorder, MPI_COMM_WORLD, &request_recv);
-                    }
-                    else if (systemVar::auxVariables==2)
-                    {
-                        //Chua lam cho method BR2
-                    }
-                }
-            }
+        else if (systemVar::auxVariables==2)
+        {
+            //Chua lam cho method BR2
         }
-        MPI_Barrier(MPI_COMM_WORLD);
     }
 
     void sendReceiveMeshData()
     {
-        MPI_Request request_send, request_recv;
+        //MPI_Request request_send, request_recv;
+        MPI_Request *request_send_x = new MPI_Request[meshVar::numBCEdges*4], //Phai nhan 4 vi phan tu nhieu node nhat la quad
+                *request_recv_x = new MPI_Request[meshVar::numBCEdges*4],
+                *request_send_y = new MPI_Request[meshVar::numBCEdges*4],
+                *request_recv_y = new MPI_Request[meshVar::numBCEdges*4];
+
         MPI_Barrier(MPI_COMM_WORLD);
         int coef(1);
-        int destination, source, cellId, neighborCellId, tag_sent, tag_recv;
+        int destination, source, cellId, neighborCellId, tag_sent, tag_recv, sentCount(0), recvCount(0);
 
         //Send
         for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
@@ -1694,8 +1591,9 @@ namespace auxUlti
                     ptId=meshVar::Elements2D[cellId][vertex];
                     //tag*10 + 1: gui toa do x
                     //tag*10 + 2: gui toa do y
-                    MPI_Isend(&meshVar::Points[ptId][0], 1, MPI_DOUBLE, destination, tag_sent*10+1, MPI_COMM_WORLD, &request_send);
-                    MPI_Isend(&meshVar::Points[ptId][1], 1, MPI_DOUBLE, destination, tag_sent*10+2, MPI_COMM_WORLD, &request_send);
+                    MPI_Isend(&meshVar::Points[ptId][0], 1, MPI_DOUBLE, destination, tag_sent*10+1, MPI_COMM_WORLD, &request_send_x[sentCount]);
+                    MPI_Isend(&meshVar::Points[ptId][1], 1, MPI_DOUBLE, destination, tag_sent*10+2, MPI_COMM_WORLD, &request_send_y[sentCount]);
+                    sentCount++;
                 }
             }
         }
@@ -1729,12 +1627,22 @@ namespace auxUlti
                 for (int vertex = 0; vertex < elemType; ++vertex) {
                     //tag*10 + 1: gui toa do x
                     //tag*10 + 2: gui toa do y
-                    MPI_Irecv(&parallelBuffer::xCoor[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*10+1, MPI_COMM_WORLD, &request_recv);
-                    MPI_Irecv(&parallelBuffer::yCoor[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*10+2, MPI_COMM_WORLD, &request_recv);
+                    MPI_Irecv(&parallelBuffer::xCoor[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*10+1, MPI_COMM_WORLD, &request_recv_x[recvCount]);
+                    MPI_Irecv(&parallelBuffer::yCoor[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*10+2, MPI_COMM_WORLD, &request_recv_y[recvCount]);
+                    recvCount++;
                 }
             }
         }
+        MPI_Waitall(sentCount,request_send_x,MPI_STATUSES_IGNORE);
+        MPI_Waitall(sentCount,request_send_y,MPI_STATUSES_IGNORE);
+        MPI_Waitall(recvCount,request_recv_x,MPI_STATUSES_IGNORE);
+        MPI_Waitall(recvCount,request_recv_y,MPI_STATUSES_IGNORE);
+
         MPI_Barrier(MPI_COMM_WORLD);
+        delete [] request_send_x;
+        delete [] request_send_y;
+        delete [] request_recv_x;
+        delete [] request_recv_y;
     }
 
     void sendString(std::string content, int destination, int tag)
@@ -1747,9 +1655,9 @@ namespace auxUlti
         //From internet
         MPI::Status status;
         MPI::COMM_WORLD.Probe(source, tag, status);
-        int l = status.Get_count(MPI::CHAR);
+        int l = status.Get_count(MPI_CHAR);
         char *buf = new char[l];
-        MPI::COMM_WORLD.Recv(buf, l, MPI::CHAR, source, tag, status);
+        MPI::COMM_WORLD.Recv(buf, l, MPI_CHAR, source, tag, status);
         std::string str(buf, l);
         delete[] buf;
         return str;
@@ -1759,10 +1667,10 @@ namespace auxUlti
     void checkInforBeforeRunning()
     {
         std::string runOrNot;
+        //Check subsonic
+        refValues::subsonic = auxUlti::checkSubSonic();
         if (systemVar::currentProc==0)
         {
-            //Check subsonic
-            refValues::subsonic = auxUlti::checkSubSonic();
             //Check case's information
             message::showCaseInformations();
             std::cout<<"Do you want to continue? <y/n> ";
