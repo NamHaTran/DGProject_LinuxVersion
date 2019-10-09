@@ -223,7 +223,7 @@ namespace DG2Tecplot
 			BCEdgeId = SurfaceBCFields::BCPointsInfor[ptAtBCId][iedge];
 			BCElem = meshVar::MasterElemOfEdge[BCEdgeId];
 			int edgeGrp(auxUlti::getGrpOfEdge(BCEdgeId));
-			int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]), method(meshVar::BoundaryType[edgeGrp - 1][2]);
+            int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
 
 			std::tie(a, b) = auxUlti::postProcess::findPointCoorInStandardSpace(BCEdgeId, BCElem);
 
@@ -256,17 +256,52 @@ namespace DG2Tecplot
 		return U;
 	}
 
-	std::vector<double> calcCellCenteredValues(int valType)
+    void calcCellCenteredValues(std::vector<double>&node_rho,std::vector<double>&node_p,std::vector<double>&node_T,std::vector<double>&node_u,std::vector<double>&node_v)
 	{
-		std::vector<double>cellCenteredValues(meshVar::nelem2D, 0.0);
 		double xC(0.0), yC(0.0), aC(0.0), bC(0.0);
-		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
-		{
-			std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
-			std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
-			cellCenteredValues[ielem] = math::pointValue(ielem, aC, bC, valType, 1);
-		}
-		return cellCenteredValues;
+
+        if (flowProperties::massDiffusion)
+        {
+            double dRhoX(0.0),dRhoY(0.0),rhoVal(0.0),rhouVal(0.0),rhovVal(0.0),rhoEmVal(0.0);
+            for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+            {
+                std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
+                std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
+                if (systemVar::auxVariables==1)
+                {
+                    dRhoX=math::pointAuxValue(ielem,aC,bC,1,1);
+                    dRhoY=math::pointAuxValue(ielem,aC,bC,1,2);
+                }
+                else if (systemVar::auxVariables==2)
+                {
+                    dRhoX=math::BR2Fncs::pointAuxValue_vol(ielem,aC,bC,1,1);
+                    dRhoY=math::BR2Fncs::pointAuxValue_vol(ielem,aC,bC,1,2);
+                }
+                rhoVal=math::pointValue(ielem,aC,bC,1,2);
+                rhouVal=math::pointValue(ielem,aC,bC,2,2);
+                rhovVal=math::pointValue(ielem,aC,bC,3,2);
+                rhoEmVal=math::pointValue(ielem,aC,bC,4,2);
+
+                node_T[ielem] = math::CalcTFromConsvVar_massDiff(rhoVal,rhouVal,rhovVal,rhoEmVal,dRhoX,dRhoY);
+                node_rho[ielem] = rhoVal;
+                node_u[ielem] = rhouVal/rhoVal;
+                node_v[ielem] = rhovVal/rhoVal;
+                node_p[ielem] = math::CalcP(node_T[ielem],rhoVal);
+            }
+        }
+        else
+        {
+            for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+            {
+                std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
+                std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
+                node_rho[ielem] = math::pointValue(ielem, aC, bC, 1, 1);
+                node_u[ielem] = math::pointValue(ielem, aC, bC, 2, 1);
+                node_v[ielem] = math::pointValue(ielem, aC, bC, 3, 1);
+                node_p[ielem] = math::pointValue(ielem, aC, bC, 5, 1);
+                node_T[ielem] = math::pointValue(ielem, aC, bC, 6, 1);
+            }
+        }
 	}
 
 	void exportNodeData(int iter)
@@ -445,11 +480,8 @@ DATAPACKING=BLOCK)";
 	void exportCellCenteredData(int iter)
 	{
 		std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0);
-		nodeRho = DG2Tecplot::calcCellCenteredValues(1);
-		node_u = DG2Tecplot::calcCellCenteredValues(2);
-		node_v = DG2Tecplot::calcCellCenteredValues(3);
-		node_p = DG2Tecplot::calcCellCenteredValues(5);
-		node_T = DG2Tecplot::calcCellCenteredValues(6);
+        DG2Tecplot::calcCellCenteredValues(nodeRho,node_p,node_T,node_u,node_v);
+
 		for (int i = 0; i < meshVar::nelem2D; i++)
 		{
 			node_uMag[i] = sqrt(pow(node_u[i], 2) + pow(node_v[i], 2));

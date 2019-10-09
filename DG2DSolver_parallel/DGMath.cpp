@@ -1263,8 +1263,7 @@ namespace math
 
     std::tuple<double, double> inverseMapping_ForParallel(int edge, double xCoor, double yCoor)
     {
-        int elemType(3),
-        loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+        int elemType(3), loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
         double aCoor(0.0), bCoor(0.0), xA(0.0), xB(0.0), xC(0.0),
             yA(0.0), yB(0.0), yC(0.0),
             Ax(0.0), Bx(0.0), Cx(0.0), Dx(0.0),

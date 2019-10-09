@@ -897,11 +897,6 @@ namespace auxUlti
         auxUlti::resize2DArray(surfaceFields::Vis_rhoEY, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
         auxUlti::resize2DArray(surfaceFields::T, meshVar::inpoedCount, 2 * (mathVar::nGauss + 1));
 
-        theta1Arr.resize(meshVar::nelem2D);
-        theta2Arr.resize(meshVar::nelem2D);
-        //debug::minRhoArr.resize(meshVar::nelem2D);
-        //debug::minRhoeArr.resize(meshVar::nelem2D);
-
         LxFConst.resize(meshVar::inpoedCount);
         DiffusiveFluxConst.resize(meshVar::inpoedCount);
 
@@ -936,6 +931,16 @@ namespace auxUlti
         auxUlti::resize3DArray(mathVar::wGaussPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
         auxUlti::resize3DArray(mathVar::GaussLobattoPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
         auxUlti::resize3DArray(mathVar::wGaussLobattoPts, mathVar::nGauss + 1, mathVar::nGauss + 1, 2);
+
+        //Resize array limiter
+        if (limitVal::massDiffusion)
+        {
+            limitVal::troubleCellsMarker.resize(meshVar::nelem2D);
+        }
+
+        //Vi theta1 va theta2 luon xuat hien trong ham pointValue nen 2 vector nay luon co
+        theta1Arr.resize(meshVar::nelem2D);
+        theta2Arr.resize(meshVar::nelem2D);
 	}
 
 	int getAdressOfBCEdgesOnBCValsArray(int edge)

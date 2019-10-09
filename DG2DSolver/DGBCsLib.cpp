@@ -112,7 +112,7 @@ std::tuple<double, double> rhoBCsImplement(int element, int edge, int nG)
 {
     int edgeGrp(auxUlti::getGrpOfEdge(edge));
     int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
-    double rhoP(0.0), rhoM(0.0), a(0.0), b(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+    double rhoP(0.0), rhoM(0.0), a(0.0), b(0.0);
     std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
     rhoP = math::pointValue(element, a, b, 1, 2);
 

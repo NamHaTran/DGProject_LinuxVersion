@@ -500,6 +500,12 @@ namespace IO
 								std::getline(FileFlux, line); //jump
 								goto label;
 							}
+                            if ((limitVal::limiterName[ilimiter].compare("massDiffusion") == 0) || (limitVal::limiterName[ilimiter].compare("massdiffusion") == 0)) //PositivityPreserving settings
+                            {
+                                limitVal::massDiffusion = true;
+                                std::getline(FileFlux, line); //jump
+                                goto label;
+                            }
 						}
 					}
 				}

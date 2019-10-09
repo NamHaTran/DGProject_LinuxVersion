@@ -17,7 +17,7 @@ namespace DG2Tecplot
 
 	std::vector<double> calcNodeValuesAtBC(int ptAtBCId);
 
-	std::vector<double> calcCellCenteredValues(int valType);
+    void calcCellCenteredValues(std::vector<double>&node_rho,std::vector<double>&node_p,std::vector<double>&node_T,std::vector<double>&node_u,std::vector<double>&node_v);
 
 	void exportNodeData(int iter);
 

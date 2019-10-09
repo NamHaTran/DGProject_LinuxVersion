@@ -125,4 +125,9 @@ namespace debug
 {
 	//extern std::vector<double> minRhoArr, minRhoeArr;
 }
+
+namespace limitVal
+{
+    extern std::vector<bool> troubleCellsMarker;
+}
 #endif // DYNAMICVARDECLARATION_H_INCLUDED

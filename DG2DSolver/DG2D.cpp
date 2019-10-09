@@ -17,7 +17,5 @@ int main()
 		std::cin >> systemVar::cmd;
 		Executer(systemVar::cmd);
 	}
-
-	system("pause");
 	return 0;
 }

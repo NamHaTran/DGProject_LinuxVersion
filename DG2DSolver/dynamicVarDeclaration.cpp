@@ -209,3 +209,8 @@ namespace debug
 		//minRhoArr(1, 1.0),
 		//minRhoeArr(1, 1.0);
 }
+
+namespace limitVal
+{
+    std::vector<bool> troubleCellsMarker(1, false);
+}

@@ -128,7 +128,9 @@ namespace limitVal
 	}
 
 	std::vector<std::string> limiterName;
-	bool PositivityPreserving(false), PAdaptive(false);
+
+    //keys of limiter
+    bool PositivityPreserving(false), PAdaptive(false), massDiffusion(false);
 	namespace PositivityPreservingSettings
 	{
 		/*version:

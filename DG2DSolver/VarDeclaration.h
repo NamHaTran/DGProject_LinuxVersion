@@ -138,7 +138,7 @@ namespace limitVal
 	}
 
 	extern std::vector<std::string> limiterName;
-	extern bool PositivityPreserving, PAdaptive;
+    extern bool PositivityPreserving, PAdaptive, massDiffusion;
 	namespace PositivityPreservingSettings
 	{
 		/*version:

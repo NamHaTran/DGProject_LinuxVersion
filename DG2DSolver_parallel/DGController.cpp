@@ -238,7 +238,7 @@ void Processing()
 
 		//CALCULATE TIME STEP
 		process::timeDiscretization::calcGlobalTimeStep();
-        //process::timeDiscretization::parallel::minTimeStep();
+        process::timeDiscretization::parallel::minTimeStep();
 
 		//SOLVE TIME MARCHING BY USING TVDRK3
 		process::timeDiscretization::TVDRK3();

@@ -87,7 +87,9 @@ void Processing()
 	//APPLY LIMITER
 	limiter::mathForLimiter::getNeighborElements();
 	limitVal::numOfLimitCell = 0;
-	limiter::limiter();
+	//set intialise theta1 theta2 vectors
+	limiter::Pp::initialiseThetaVector();
+    limiter::limiter_1Step();
 
 	int loadConstCount(0);
 	while (process::checkRunningCond())

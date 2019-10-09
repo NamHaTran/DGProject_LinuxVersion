@@ -1453,7 +1453,7 @@ namespace process
                     umMaster(0.0), umSlave(0.0), vmMaster(0.0), vmSlave(0.0), muMaster(0.0), muSlave(0.0);
 			std::vector<double> UMaster(4, 0.0), dUXMaster(4, 0.0), dUYMaster(4, 0.0),
 				USlave(4, 0.0), dUXSlave(4, 0.0), dUYSlave(4, 0.0),
-                CArray(mathVar::nGauss + 1, 0.0), vectorn(2, 0.0); // BetaArray(mathVar::nGauss + 1, 0.0),
+                CArray(mathVar::nGauss + 1, 0.0); // BetaArray(mathVar::nGauss + 1, 0.0),
 			/*StressHeat matrix has form:
 			[tauXx		tauXy		Qx]
 			[tauYx		tauYy		Qy]
@@ -1466,8 +1466,6 @@ namespace process
 				if (bcGrp == 0)
 				{
 					std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-					vectorn[0] = auxUlti::getNormVectorComp(masterCell, iedge, 1);
-					vectorn[1] = auxUlti::getNormVectorComp(masterCell, iedge, 2);
                     for (int nG = 0; nG <= mathVar::nGauss; nG++)
 					{
                         std::tie(TMaster,TSlave)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
@@ -1554,7 +1552,7 @@ namespace process
 			}
 		}
 
-		void solveNSFEquation(int RKOrder)
+        void solveNSFEquation(int RKOrder)
 		{
 			std::vector<double> rhoError(meshVar::nelem2D, 1.0),
 				rhouError(meshVar::nelem2D, 1.0),
@@ -2421,8 +2419,9 @@ namespace process
 						rhoE[nelement][order] = rhoEN[nelement][order];
 					}
 				}
-				limiter::limiter();
+                limiter::limiter_1Step();
 			}
+            limiter::limiter_allStep();
 		}
 	}
 

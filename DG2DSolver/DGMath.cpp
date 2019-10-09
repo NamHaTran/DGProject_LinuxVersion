@@ -596,7 +596,6 @@ namespace math
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
     {
         //Em is total energy with total velocity (um), not advective velocity (u)
-        /*
         double T(0.0), TIni(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
                 u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
         std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
@@ -617,18 +616,18 @@ namespace math
 
         TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
         //Solve T
-        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
+        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni*10);
         if (T!=T || T<0)
         {
-            std::cout<<"Failed to solve T\n";
-            int c = getchar();
-            //return TIni;
+            std::cout<<"Failed to solve T="<<T<<", TIni="<<TIni<<"\n";
+            //int c = getchar();
+            T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni*10);
+            return TIni;
         }
         else {
             return T;
         }
-        */
-        return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+        //return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
     }
 
 	double CalcP(double T, double rho)
@@ -933,7 +932,6 @@ namespace math
 	double pointAuxValue(int element, double a, double b, int valType, int dir)
     {
         double out(0.0);
-        //if Mass diffusion is on, d(rho) must be multiplied by mu before returning
         std::vector<double> Value(mathVar::orderElem + 1, 0.0);
 
         Value = auxUlti::getElementAuxValuesOfOrder(element, valType, dir);

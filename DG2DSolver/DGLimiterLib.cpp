@@ -9,14 +9,50 @@
 #include <algorithm>
 #include "DGPostProcessLib.h"
 #include <math.h>
+#include "DGProcLib.h"
 
 namespace limiter
 {
-	void limiter()
+    //ham limiter chay sau khi hoan thanh 1 step TVDRK3
+    void limiter_1Step()
 	{
+        if (limitVal::massDiffusion)
+        {
+            bool limit(false);
+            int iter(0);
+
+            //save current time step
+            double dt_temp(dt);
+
+            //modify dt
+            dt*=0.05;
+
+            limit = massDiffusionLimiter::checkTroubleCells();
+            if (limit)
+            {
+                do {
+                    std::cout <<"   -Iter "<<iter+1<<": ";
+                    //Giai pt NSF mo rong bang TVDRK3
+                    rho0 = rho;
+
+                    for (int iRKOrder = 1; iRKOrder <= 3; iRKOrder++)
+                    {
+                        massDiffusionLimiter::mathForMassDiffLimiter::limiter_1step(iRKOrder);
+                        massDiffusionLimiter::mathForMassDiffLimiter::updateVariables();
+                        limiter::limiter_1Step();
+                    }
+                    iter++;
+                }
+                while (massDiffusionLimiter::checkRunning()&&iter<=100);
+            }
+
+            //return dt to original value
+            dt=dt_temp;
+        }
+
 		if (mathVar::orderElem != 0)
 		{
-			//p-Adaptive first
+            //p-Adaptive
 			if (limitVal::PAdaptive)
 			{
 				for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
@@ -40,7 +76,7 @@ namespace limiter
 				}
 			}
 
-			//PositivityPreserving second
+            //PositivityPreserving final
 			if (limitVal::PositivityPreserving)
 			{
 				if (limitVal::PositivityPreservingSettings::version == 1)
@@ -78,7 +114,11 @@ namespace limiter
 				}
 			}
 		}
-		else  //No limiter
+	}
+
+	namespace Pp
+	{
+		void initialiseThetaVector()
 		{
 			for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
 			{
@@ -86,10 +126,7 @@ namespace limiter
 				theta2Arr[nelem] = 1.0;
 			}
 		}
-	}
 
-	namespace Pp
-	{
 		namespace triangleCell
 		{
 			//Function calculates coefficients of positivity preserving limiter
@@ -143,7 +180,8 @@ namespace limiter
 				std::tie(theta1, omega) = limiter::mathForLimiter::quadratureCell::calcTheta1Coeff(meanRho, minRho, meanP);
 
 				//Find theta2
-				std::vector<double> vectort;
+				std::vector<double> vectort((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0);
+				int counter(0);
 
 				//Compute t at all internal Gauss point
 				
@@ -153,7 +191,8 @@ namespace limiter
 					{
 						aG = mathVar::GaussPts[na][nb][0];
 						bG = mathVar::GaussPts[na][nb][1];
-						vectort.push_back(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+						vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+						counter++;
 					}
 				}
 				
@@ -162,28 +201,32 @@ namespace limiter
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					bG = mathVar::xGauss[nG];
-					vectort.push_back(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					counter++;
 				}
 				//Compute t at edge BC
 				aG = 1;
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					bG = mathVar::xGauss[nG];
-					vectort.push_back(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					counter++;
 				}
 				//Compute t at edge AB
 				bG = -1;
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					aG = mathVar::xGauss[nG];
-					vectort.push_back(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					counter++;;
 				}
 				//Compute t at edge CD
 				bG = 1;
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					aG = mathVar::xGauss[nG];
-					vectort.push_back(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
+					counter++;
 				}
 
 				theta2 = *std::min_element(vectort.begin(), vectort.end());  //find min value of vector
@@ -469,6 +512,346 @@ namespace limiter
 		}
 	}
 
+    namespace massDiffusionLimiter {
+        bool checkTroubleCells()
+        {
+            bool trouble(false);
+            int counter(0);
+            for (int nelem=0; nelem<meshVar::nelem2D; nelem++)
+            {
+                if (troubledCellDetection::checkTroubleCell_massDiff(nelem))
+                {
+                    limitVal::troubleCellsMarker[nelem]=true;
+                    trouble=true;
+                    counter++;
+                }
+                else
+                    limitVal::troubleCellsMarker[nelem]=false;
+            }
+
+            if (counter!=0)
+            {
+                std::cout << "massDiffusion limiter is applied at " << counter << " cell(s)\n";
+            }
+            return trouble;
+        }
+
+        bool checkRunning()
+        {
+            bool run(false);
+            int numTroubleCells(0);
+            for (int nelem=0; nelem<meshVar::nelem2D; nelem++)
+            {
+                if (limiter::mathForLimiter::quadratureCell::calcMinRhoQuad(nelem)<0)
+                {
+                    run=true;
+                    limitVal::troubleCellsMarker[nelem]=true;
+                    numTroubleCells++;
+                }
+                else
+                {
+                    limitVal::troubleCellsMarker[nelem]=false;
+                }
+            }
+            std::cout <<"Mass diffusion limiter is not converged at "<<numTroubleCells<<" cell.\n";
+            return run;
+        }
+
+        namespace mathForMassDiffLimiter {
+            void limiter_1step(int RKOrder)
+            {
+                for (int nelem=0; nelem<meshVar::nelem2D; nelem++)
+                {
+                    if (limitVal::troubleCellsMarker[nelem])
+                    {
+                        massDiffusionLimiter::mathForMassDiffLimiter::calcVolumeGaussRho(nelem);
+
+                        massDiffusionLimiter::mathForMassDiffLimiter::calcRhoAtElementEdge(nelem);
+
+                        massDiffusionLimiter::mathForMassDiffLimiter::solveDivRho(nelem);
+
+                        massDiffusionLimiter::mathForMassDiffLimiter::calcFinvFvisAtInterface(nelem);
+
+                        massDiffusionLimiter::mathForMassDiffLimiter::solveNSFEquation(RKOrder,nelem);
+                    }
+                }
+            }
+
+            void calcVolumeGaussRho(int element)
+            {
+                double a(0.0), b(0.0);
+                std::vector<double>UVol(4,0.0);
+                for (int na = 0; na <= mathVar::nGauss; na++)
+                {
+                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    {
+                        std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+                        volumeFields::rhoVolGauss[element][na][nb] = rho[element][0];
+                        for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
+                        {
+                            volumeFields::rhoVolGauss[element][na][nb] += rho[element][iorder]* mathVar::B[iorder];
+                        }
+                    }
+                }
+            }
+
+            void calcRhoAtElementEdge(int element)
+            {
+                int bcGrp(0), elemType(auxUlti::checkType(element)), iedge(0), loc(0);
+                double aSurf(0.0), bSurf(0.0);
+
+                for (int i = 0; i < elemType; i++)
+                {
+                	//get id of edge
+                	iedge=meshVar::inedel[element][i];
+                    bcGrp = auxUlti::getBCType(iedge);
+                    if (bcGrp == 0)
+                    {
+                        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                        {
+                            std::tie(aSurf, bSurf) = auxUlti::getGaussSurfCoor(iedge, element, nG);
+                            if (auxUlti::checkMaster(element,iedge)) loc=nG;
+                            else loc=nG + mathVar::nGauss + 1;
+
+                            surfaceFields::rho[iedge][loc] = math::pointValue(element, aSurf, bSurf, 1, 2);
+                        }
+                    }
+                }
+            }
+
+            void solveDivRho(int element)
+	        {
+	            std::vector<double> rhoRHSTermOxDir(mathVar::orderElem + 1, 0.0),
+	                rhoRHSTermOyDir(mathVar::orderElem + 1, 0.0);
+
+	            //2) Calculate Right hand side terms
+                process::auxEq::massDiffusion::BR1::CalcRHSTerm(element, rhoRHSTermOxDir, rhoRHSTermOyDir);
+
+                //3) Solve for div(rho)
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    //Ox direction
+                    BR1Vars::rhoX[element][iorder] = rhoRHSTermOxDir[iorder] / stiffMatrixCoeffs[element][iorder];
+
+                    //Oy direction
+                    BR1Vars::rhoY[element][iorder] = rhoRHSTermOyDir[iorder] / stiffMatrixCoeffs[element][iorder];
+                }
+	        }
+
+            void calcFinvFvisAtInterface(int element)
+            {
+                /* gia tri cua T, rhou, rhov volume va surface deu lay gia tri cua vong lap truoc nen
+                 * khong can tinh lai
+                */
+
+                int masterCell(-1), slaveCell(-1), bcGrp(0), elemType(auxUlti::checkType(element)), iedge(0);
+                double uMaster(0.0), vMaster(0.0), TMaster(0.0), uSlave(0.0), vSlave(0.0), TSlave(0.0),
+                    uMagM(0.0), uMagP(0.0), aM(0.0), aP(0.0), muMaster(0.0), muSlave(0.0),
+                    rhoMaster(0.0), dRhoXMaster(0.0), dRhoYMaster(0.0),
+                    rhoSlave(0.0), dRhoXSlave(0.0), dRhoYSlave(0.0),
+                    rhouMaster(0.0), rhovMaster(0.0), rhouSlave(0.0), rhovSlave(0.0);
+                std::vector<double> CArray(mathVar::nGauss + 1, 0.0);
+
+                for (int i = 0; i < elemType; i++)
+                {
+                    iedge=meshVar::inedel[element][i];
+                    bcGrp = auxUlti::getBCType(iedge);
+                    if (bcGrp == 0)
+                    {
+                        std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
+                        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                        {
+                            std::tie(TMaster,TSlave)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
+                            muMaster=math::CalcVisCoef(TMaster);
+                            muSlave=math::CalcVisCoef(TSlave);
+
+                            std::tie(rhoMaster, rhoSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 1);
+                            std::tie(rhouMaster, rhouSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 2);
+                            std::tie(rhovMaster, rhovSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 3);
+                            std::tie(dRhoXMaster, dRhoXSlave) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, 1, 1);
+                            std::tie(dRhoYMaster, dRhoYSlave) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, 1, 2);
+                            dRhoXMaster*=muMaster;
+                            dRhoYMaster*=muMaster;
+                            dRhoXSlave*=muSlave;
+                            dRhoYSlave*=muSlave;
+
+                            uMaster = (rhouMaster / rhoMaster);
+                            uSlave = (rhouSlave / rhoSlave);
+
+                            vMaster = (rhovMaster / rhoMaster);
+                            vSlave = (rhovSlave / rhoSlave);
+
+                            /*INVISCID TERMS*/
+                            /*calculate velocity magnitude*/
+                            uMagP = sqrt(pow(uMaster, 2) + pow(vMaster, 2));
+                            uMagM = sqrt(pow(uSlave, 2) + pow(vSlave, 2));
+
+                            /*calculate speed of sound*/
+                            aP = math::CalcSpeedOfSound(TMaster);
+                            aM = math::CalcSpeedOfSound(TSlave);
+
+                            /*calculate constant for Lax-Friederich flux*/
+                            CArray[nG] = math::numericalFluxes::constantC(uMagP, uMagM, aP, aM);
+
+                            /*calculate inviscid terms*/
+                            surfaceFields::invis_rhoX[iedge][nG] = rhoMaster * uMaster;
+                            surfaceFields::invis_rhoX[iedge][nG + mathVar::nGauss + 1] = rhoSlave * uSlave;
+                            surfaceFields::invis_rhoY[iedge][nG] = rhoMaster * vMaster;
+                            surfaceFields::invis_rhoY[iedge][nG + mathVar::nGauss + 1] = rhoSlave * vSlave;
+
+                            /*calculate viscous terms*/
+                            surfaceFields::Vis_rhoX[iedge][nG]=-material::massDiffusion::DmCoeff*dRhoXMaster/rhoMaster;
+                            surfaceFields::Vis_rhoX[iedge][nG + mathVar::nGauss + 1]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
+                            surfaceFields::Vis_rhoY[iedge][nG]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
+                            surfaceFields::Vis_rhoY[iedge][nG + mathVar::nGauss + 1]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
+                        }
+                        LxFConst[iedge] = *std::max_element(CArray.begin(), CArray.end());
+                        //DiffusiveFluxConst[iedge] = *std::max_element(BetaArray.begin(), BetaArray.end());
+                    }
+                }
+            }
+
+            void solveNSFEquation(int RKOrder, int element)
+            {
+                std::vector<double> rhoError(meshVar::nelem2D, 1.0);
+
+                std::vector<double>
+                    RHSTerm1(mathVar::orderElem + 1, 0.0),
+
+                    ddtRhoVector(mathVar::orderElem + 1, 0.0),
+
+                    rhoVectorN(mathVar::orderElem + 1, 0.0),
+                    UnVector(mathVar::orderElem + 1, 0.0);
+
+                //2) Calculate Right hand side terms
+                std::vector<double>
+                    VolIntTerm1(mathVar::orderElem + 1, 0.0),
+                    SurfIntTerm1(mathVar::orderElem + 1, 0.0);
+
+                /*Volume integral term===========================================================================*/
+                process::NSFEq::calcVolumeIntegralTerms(element, VolIntTerm1, VolIntTerm2, VolIntTerm3, VolIntTerm4);
+
+                /*Surface integral term===========================================================================*/
+                process::NSFEq::calcSurfaceIntegralTerms(element, SurfIntTerm1, SurfIntTerm2, SurfIntTerm3, SurfIntTerm4);
+
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    RHSTerm1[order] = VolIntTerm1[order] - SurfIntTerm1[order];
+                }
+
+                //3) Solve for time derivartives of conservative variables
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    ddtRhoVector[iorder] = RHSTerm1[iorder] / stiffMatrixCoeffs[element][iorder];
+
+                    switch (RKOrder)
+                    {
+                    case 1:
+                    {
+                        rhoResArr[element][iorder] = (1.0 / 6.0)*ddtRhoVector[iorder];
+                    }
+                    break;
+                    case 2:
+                    {
+                        rhoResArr[element][iorder] += (1.0 / 6.0)*ddtRhoVector[iorder];
+                    }
+                    break;
+                    case 3:
+                    {
+                        rhoResArr[element][iorder] += (2.0 / 3.0)*ddtRhoVector[iorder];
+                    }
+                    break;
+                    default:
+                        break;
+                    }
+                }
+
+                //4) Solve time marching
+                //rho
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    UnVector[order] = rho[element][order];
+                }
+                rhoVectorN = process::NSFEq::solveTimeMarching(element, ddtRhoVector, UnVector, RKOrder, 1);
+
+                //5) Save results to conservative variables arrays
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    rhoN[element][order] = rhoVectorN[order];
+                }
+            }
+
+            void calcVolIntegralTerm(int element,std::vector<double>&VolIntTerm1)
+            {
+                std::vector<std::vector<double>> ViscousTerms(4, std::vector<double>(2, 0.0));
+                std::vector<std::vector<double>> InviscidTerms(4, std::vector<double>(2, 0.0));
+                //std::vector<double> VolInt(4, 0.0);
+
+                std::vector<std::vector<double>>
+                    GsVolX1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                    GsVolY1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+
+                double rhoVal,rhouVal,rhovVal,uVal(0.0),vVal(0.0),a(0.0),b(0.0),muVal(0.0),dRhoX(0.0),dRhoY(0.0);
+
+                for (int na = 0; na <= mathVar::nGauss; na++)
+                {
+                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    {
+                        //std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+                        /*A INVISCID TERMS*/
+                        rhoVal=volumeFields::rhoVolGauss[element][na][nb];
+                        rhouVal=volumeFields::rhouVolGauss[element][na][nb];
+                        rhovVal=volumeFields::rhovVolGauss[element][na][nb];
+
+                        std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
+                        uVal = rhouVal / rhoVal;
+                        vVal = rhovVal / rhoVal;
+
+                        /*A1. Inviscid term on Ox direction*/
+                        GsVolX1[na][nb] = rhoVal*uVal;
+                        /*A2. Inviscid term on Oy direction*/
+                        GsVolY1[na][nb] = rhoVal*vVal;
+
+                        /*B VISCOUS TERMS*/
+                        muVal=math::CalcVisCoef(volumeFields::T[element][na][nb]);
+                        dRhoX = math::pointAuxValue(element, a, b, 1, 1)*muVal;
+                        dRhoY = math::pointAuxValue(element, a, b, 1, 2)*muVal;
+
+                        /*B1. Viscous term on Ox direction*/
+                        GsVolX1[na][nb] += -material::massDiffusion::DmCoeff*dRhoX/rhoVal;
+                        /*B2. Viscous term on Oy direction*/
+                        GsVolY1[na][nb] += -material::massDiffusion::DmCoeff*dRhoY/rhoVal;
+                    }
+                }
+
+                for (int order = 1; order <= mathVar::orderElem; order++)
+                {
+                    /*CALCULATE INTEGRALS*/
+                    VolIntTerm1[order] = process::volumeInte(element, GsVolX1, order, 1);
+                    VolIntTerm1[order] += process::volumeInte(element, GsVolY1, order, 2);
+                }
+                VolIntTerm1[0] = 0;
+            }
+
+            void updateVariables()
+            {
+                for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+                {
+                    if (limitVal::troubleCellsMarker[nelement])
+                    {
+                        for (int order = 0; order <= mathVar::orderElem; order++)
+                        {
+                            rho[nelement][order] = rhoN[nelement][order];
+                            rhou[nelement][order] = rhouN[nelement][order];
+                            rhov[nelement][order] = rhovN[nelement][order];
+                            rhoE[nelement][order] = rhoEN[nelement][order];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 	//MATHEMATIC FUNCTIONS FOR LIMITER
 	namespace mathForLimiter
 	{
@@ -646,8 +1029,9 @@ namespace limiter
 			//Function calculates minimum value of rho of quad element
 			double calcMinRhoQuad(int element)
 			{
-				std::vector<double> vectorRho;
+				std::vector<double> vectorRho((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0);
 				double aG(0.0), bG(0.0), min(0.0);
+				int counter(0);
 
 				//Compute rho at all internal Gauss point
 				
@@ -657,7 +1041,8 @@ namespace limiter
 					{
 						aG = mathVar::GaussPts[na][nb][0];
 						bG = mathVar::GaussPts[na][nb][1];
-                        vectorRho.push_back(math::pointValueNoLimiter(element, aG, bG, 12));
+                        vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 12));
+                        counter++;
 					}
 				}
 			
@@ -666,28 +1051,32 @@ namespace limiter
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					bG = mathVar::xGauss[nG];
-					vectorRho.push_back(math::pointValueNoLimiter(element, aG, bG, 1));
+					vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
+					counter++;
 				}
 				//Compute rho at edge BC
 				aG = 1;
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					bG = mathVar::xGauss[nG];
-					vectorRho.push_back(math::pointValueNoLimiter(element, aG, bG, 1));
+					vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
+					counter++;
 				}
 				//Compute rho at edge AB
 				bG = -1;
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					aG = mathVar::xGauss[nG];
-					vectorRho.push_back(math::pointValueNoLimiter(element, aG, bG, 1));
+					vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
+					counter++;
 				}
 				//Compute rho at edge CD
 				bG = 1;
 				for (int nG = 0; nG <= mathVar::nGauss; nG++)
 				{
 					aG = mathVar::xGauss[nG];
-					vectorRho.push_back(math::pointValueNoLimiter(element, aG, bG, 1));
+					vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
+					counter++;
 				}
 				min = *std::min_element(vectorRho.begin(), vectorRho.end());  //find min value of vector
 				return min;
@@ -761,10 +1150,9 @@ namespace limiter
 				//coefficients of t equation
                 double A1(0.0), A2(0.0), A3(0.0), A4(0.0), ACoef(0.0), BCoef(0.0), CCoef(0.0);
 				bool realRoot(true);
-                double root1(0.0), root2(0.0), rhoOrigin(0.0), rhouOrigin(0.0), rhovOrigin(0.0), rhoEOrigin(0.0), rhoMod(0.0);
+                double root1(0.0), root2(0.0), rhouOrigin(0.0), rhovOrigin(0.0), rhoEOrigin(0.0), rhoMod(0.0);
 
 				rhoMod = limiter::mathForLimiter::quadratureCell::calcRhoModified(element, aG, bG, theta1);
-				rhoOrigin = math::pointValueNoLimiter(element, aG, bG, 1);
 				rhouOrigin = math::pointValueNoLimiter(element, aG, bG, 2);
 				rhovOrigin = math::pointValueNoLimiter(element, aG, bG, 3);
 				rhoEOrigin = math::pointValueNoLimiter(element, aG, bG, 4);
@@ -818,8 +1206,9 @@ namespace limiter
 			{
 				double calcMinRhoeQuad(int element, double theta1)
 				{
-					std::vector<double> vectorRhoe;
+					std::vector<double> vectorRhoe((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0);
 					double aG(0.0), bG(0.0), min(0.0), rhoMod(0.0), rhouOrg(0.0), rhovOrg(0.0), rhoEOrg(0.0);
+                    int counter(0);
 
 					//Compute rho at all internal Gauss point
 					for (int na = 0; na <= mathVar::nGauss; na++)
@@ -832,7 +1221,8 @@ namespace limiter
 							rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 							rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 							rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
-							vectorRhoe.push_back(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod,rhouOrg,rhovOrg,rhoEOrg));
+							vectorRhoe[counter]=limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod,rhouOrg,rhovOrg,rhoEOrg);
+							counter++;
 						}
 					}
 
@@ -845,7 +1235,8 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
-						vectorRhoe.push_back(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						counter++;
 					}
 					//Compute rho at edge BC
 					aG = 1;
@@ -856,7 +1247,8 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
-						vectorRhoe.push_back(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						counter++;
 					}
 					//Compute rho at edge AB
 					bG = -1;
@@ -867,7 +1259,8 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
-						vectorRhoe.push_back(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+                        counter++;
 					}
 					//Compute rho at edge CD
 					bG = 1;
@@ -878,7 +1271,8 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
-						vectorRhoe.push_back(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
+						counter++;
 					}
 					min = *std::min_element(vectorRhoe.begin(), vectorRhoe.end());  //find min value of vector
 					return min;
@@ -1063,4 +1457,39 @@ namespace troubledCellDetection
 		}
 		return needLimit;
 	}
+
+    bool checkTroubleCell_massDiff(int elem)
+    {
+        //Dung discontinuity dectector (Persson & Paraire)
+        bool troubleCell(false);
+        std::vector<std::vector<double>>
+            SnumGs(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+            SdenGs(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+        double a(0.0), b(0.0), S(0.0);
+
+        for (int na = 0; na <= mathVar::nGauss; na++)
+        {
+            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            {
+                std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
+                math::basisFc(a, b, auxUlti::checkType(elem));  //mathVar::B is changed after this command line is excuted
+
+                SnumGs[na][nb] = pow(mathVar::B[mathVar::orderElem]*rho[elem][mathVar::orderElem],2);
+                SdenGs[na][nb]=0.0;
+                for (int iorder=0; iorder<mathVar::orderElem; iorder++)
+                {
+                    SdenGs[na][nb]+=pow(mathVar::B[iorder]*rho[elem][iorder],2);
+                }
+                SdenGs[na][nb]+=SnumGs[na][nb];
+            }
+        }
+
+        S=math::volumeInte(SnumGs,elem)/math::volumeInte(SdenGs,elem);
+        //Check condition
+        if (S>1/pow(mathVar::orderElem+1,4))
+        {
+            troubleCell=true;
+        }
+        return troubleCell;
+    }
 }

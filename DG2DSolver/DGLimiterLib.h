@@ -5,10 +5,15 @@
 namespace limiter
 {
 	//Function applies limiter to input element
-	void limiter();
+    void limiter_1Step();
+
+    void limiter_allStep();
 
 	namespace Pp
 	{
+		//Set initial value for theta1 and theta2
+		void initialiseThetaVector();
+
 		namespace triangleCell
 		{
 			//Function computes coefficients theta1 theta2 for positivity preserving limiter
@@ -35,6 +40,29 @@ namespace limiter
 
 		std::vector<double> pAdaptiveChildFunction_Tri(int element, int valType, double IPlus, double IMinus, double JMinus);
 	}
+
+    namespace massDiffusionLimiter
+    {
+        bool checkTroubleCells();
+
+        bool checkRunning();
+
+        namespace mathForMassDiffLimiter {
+            void calcVolumeGaussRho(int element);
+
+            void calcRhoAtElementEdge(int element);
+
+            void solveDivRho(int element);
+
+            void calcFinvFvisAtInterface(int element);
+
+            void solveNSFEquation(int RKOrder, int element);
+
+            void updateVariables();
+
+            void limiter_1step(int RKOrder);
+        }
+    }
 
 	namespace mathForLimiter
 	{
@@ -108,5 +136,7 @@ namespace limiter
 namespace troubledCellDetection
 {
 	bool checkTroubledCell(std::vector<double> InputVector, double condition);
+
+    bool checkTroubleCell_massDiff(int elem);
 }
 #endif // DGLIMITERLIB_H_INCLUDED
