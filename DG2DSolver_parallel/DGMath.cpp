@@ -596,7 +596,7 @@ namespace math
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
     {
         //Em is total energy with total velocity (um), not advective velocity (u)
-        /*
+        
         double T(0.0), TIni(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
                 u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
         std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
@@ -617,18 +617,17 @@ namespace math
 
         TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
         //Solve T
-        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
+        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni*10);
         if (T!=T || T<0)
         {
             std::cout<<"Failed to solve T\n";
-            exit(1);
-            //return TIni;
+            //exit(1);
+            return TIni;
         }
         else {
             return T;
         }
-        */
-        return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+        //return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
     }
 
 	double CalcP(double T, double rho)
@@ -1263,7 +1262,8 @@ namespace math
 
     std::tuple<double, double> inverseMapping_ForParallel(int edge, double xCoor, double yCoor)
     {
-        int elemType(3), loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+        int elemType(3),
+        loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
         double aCoor(0.0), bCoor(0.0), xA(0.0), xB(0.0), xC(0.0),
             yA(0.0), yB(0.0), yC(0.0),
             Ax(0.0), Bx(0.0), Cx(0.0), Dx(0.0),

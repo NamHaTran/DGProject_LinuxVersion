@@ -388,18 +388,6 @@ namespace BCSupportFncs
         UMinus[1] += parallelBuffer::rhou[loc][0];
         UMinus[2] += parallelBuffer::rhov[loc][0];
         UMinus[3] += parallelBuffer::rhoE[loc][0];
-
-        /*
-        if ((loc==54 && systemVar::currentProc==0)||(loc==37 && systemVar::currentProc==1))
-        {
-            for (int i = 0; i < 4; i++)
-            {
-
-                std::cout<<UMinus[i]<<", ";
-            }
-            std::cout<<"\n";
-        }
-        */
     }
 
     void calcdUMinus(int edge, int nG, std::vector<double> &dUMinus, int dir)

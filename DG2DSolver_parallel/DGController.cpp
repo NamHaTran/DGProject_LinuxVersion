@@ -121,7 +121,7 @@ void Executer()
         {
             systemVar::runDecomposeCaseFnc=true;
             /*LOAD TOTAL PROCESSES*/
-            IO::readNumberOfCores();
+            //IO::readNumberOfCores();
 
             /*LOAD MESH*/
             IO::loadMesh("s");
@@ -190,6 +190,7 @@ void checkCommandLine(std::string cmd)
 
 void Processing()
 {
+    std::cout<<"node "<<systemVar::currentProc<<"\n";
     std::string readWriteMode;
     if (systemVar::parallelMode)
     {
@@ -220,7 +221,7 @@ void Processing()
 	//APPLY LIMITER
 	limiter::mathForLimiter::getNeighborElements();
 	limitVal::numOfLimitCell = 0;
-	limiter::limiter();
+    limiter::limiter_1Step();
 
     //SEND/RECEIVE INITIAL CONDITIONS
     if (systemVar::parallelMode)

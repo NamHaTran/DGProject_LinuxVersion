@@ -19,6 +19,9 @@ int main()
     }
     IO::getCase();
 
+    //Phai doc so cores truoc tien
+    IO::readNumberOfCores();
+
 	while (systemVar::endKey==false)
 	{
         auxUlti::getCommand();

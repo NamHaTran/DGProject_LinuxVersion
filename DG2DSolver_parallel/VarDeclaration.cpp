@@ -135,7 +135,11 @@ namespace limitVal
 	}
 
 	std::vector<std::string> limiterName;
-	bool PositivityPreserving(false), PAdaptive(false);
+
+    //keys of limiter
+    bool PositivityPreserving(false), PAdaptive(false), massDiffusion(false),
+        runningMassDiffLimiter(false) //bien kiem tra xem mass diffusion limiter co dang chay hay khong
+    ;
 	namespace PositivityPreservingSettings
 	{
 		/*version:

@@ -209,6 +209,10 @@ namespace SurfaceBCFields
 	std::vector<std::vector<int>>BCPointsInfor;
 }
 
+namespace limitVal {
+    std::vector<bool> troubleCellsMarker(1,false);
+}
+
 //for debugging
 namespace debug
 {

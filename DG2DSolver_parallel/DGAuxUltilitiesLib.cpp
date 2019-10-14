@@ -771,7 +771,7 @@ namespace auxUlti
                     bServant = 0.0;
                     if (bcType==4) //boundary type 4 at file boundaryPatch: matched
                     {
-                        int localEdgeIdOnElem1DArray(auxUlti::getAdressOfBCEdgesOnBCValsArray(iedge));
+                        int localEdgeIdOnElem1DArray=auxUlti::getAdressOfBCEdgesOnBCValsArray(iedge);
                         std::tie(parallelBuffer::aCoor[localEdgeIdOnElem1DArray][nG], parallelBuffer::bCoor[localEdgeIdOnElem1DArray][nG]) = math::inverseMapping_ForParallel(iedge, xMaster, yMaster);
                     }
 				}
@@ -909,6 +909,7 @@ namespace auxUlti
         theta2Arr.resize(meshVar::nelem2D);
         //debug::minRhoArr.resize(meshVar::nelem2D);
         //debug::minRhoeArr.resize(meshVar::nelem2D);
+        limitVal::troubleCellsMarker.resize(meshVar::nelem2D);
 
         LxFConst.resize(meshVar::inpoedCount);
         DiffusiveFluxConst.resize(meshVar::inpoedCount);

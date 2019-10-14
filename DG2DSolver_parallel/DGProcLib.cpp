@@ -2412,7 +2412,7 @@ namespace process
                 rhou = rhouN;
                 rhov = rhovN;
                 rhoE = rhoEN;
-				limiter::limiter();
+				limiter::limiter_1Step();
                 auxUlti::functionsOfParallelComputing::sendReceiveU();
 			}
 		}

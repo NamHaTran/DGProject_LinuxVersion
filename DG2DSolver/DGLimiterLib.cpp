@@ -1041,7 +1041,7 @@ namespace limiter
 					{
 						aG = mathVar::GaussPts[na][nb][0];
 						bG = mathVar::GaussPts[na][nb][1];
-                        vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 12));
+                        vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
                         counter++;
 					}
 				}
