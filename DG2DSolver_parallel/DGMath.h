@@ -207,6 +207,18 @@ namespace math
 
     std::tuple<double, double> inverseMapping_ForParallel(int edge, double xCoor, double yCoor);
 
+    //Function find trace of square matrix
+    std::vector<double> traceOfMatrix(std::vector<std::vector<double>> &M);
+
+    //Function calculate transformation tensor S = I - nn
+    std::vector<std::vector<double>> transformationTensor(double nx, double ny);
+
+    //Function calculates grad of U (is a vector field) from conservative vars and auxilary vars
+    std::vector<std::vector<double>> gradU(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);
+
+    //Transpose 2D matrix
+    std::vector<std::vector<double>> transposeDoubleMatrix(std::vector<std::vector<double>> &M);
+
 	/*
 	//Function supports for math::mappingRealToStd
 	double solve_abQuad(int option, double A, double B, double D, double C, double inVar);
@@ -236,6 +248,14 @@ namespace math
     std::vector<double> pointUVars(int element, double a, double b);
 
     std::vector<double> pointSVars(int edge, int element, double a, double b, int dir, int option);
+
+    namespace tensorMath {
+        //Function calculates dot product of tensor and vector
+        std::vector<double> tensorVectorDotProduct(std::vector<std::vector<double>>&S, std::vector<double>&V);
+
+        //Function calculates dot product of vector and tensor
+        std::vector<double> vectorTensorDotProduct(std::vector<double>&V, std::vector<std::vector<double>>&S);
+    }
 
     namespace BR2Fncs {
     double pointAuxValue_vol(int element, double a, double b, int valType, int dir);

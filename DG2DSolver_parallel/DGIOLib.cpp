@@ -727,22 +727,25 @@ namespace IO
     void readNonScalar(std::string mode)
 	{
 		/*NOTES:
-		Boundary conditions compatibility
-		|U					|T					|p					|
-		+-------------------+-------------------+-------------------+
-		|1. inFlow			|1. inFlow			|1. inFlow			|
-		|	Value u v w		|	Value T			|	Value p			|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-		|					|	Value T			|					|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-		+-------------------+-------------------+-------------------+
-		|7.	symmetry		|7. symmetry		|7. symmetry		|
-		+-------------------+-------------------+-------------------+
-		|4. outFlow			|4. outFlow			|4. outFlow			|
-		|	Value u v w		|	Value T			|	Value p			|
-		+-------------------+-------------------+-------------------+
+        Boundary conditions compatibility
+        |U					|T					|p					|
+        +-------------------+-------------------+-------------------+
+        |1. inFlow			|1. inFlow			|1. inFlow			|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+        |					|	Value T			|					|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+        +-------------------+-------------------+-------------------+
+        |7.	symmetry		|7. symmetry		|7. symmetry		|
+        +-------------------+-------------------+-------------------+
+        |4. outFlow			|4. outFlow			|4. outFlow			|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+        |   v_wall u v w    |   T_wall T        |                   |
+        +-------------------+-------------------+-------------------+
         U:
         + 3:
         movingWall
@@ -806,17 +809,13 @@ namespace IO
 								bcValues::vBC[bcGrp - 1] = 0.0;
 								bcValues::wBC[bcGrp - 1] = 0.0;
 							}
-							else if ((str0.compare("slip") == 0))  //Type slip  BO SUNG SAU
+                            else if ((str0.compare("slip") == 0))  //Type slip
 							{
 								//Use Maxwell-Smoluchovsky boundary condition
 								bcValues::UBcType[bcGrp - 1] = 5;
-								bcValues::uBC[bcGrp - 1] = 0.0;
-								bcValues::vBC[bcGrp - 1] = 0.0;
-								bcValues::vBC[bcGrp - 1] = 0.0;
-
 								std::getline(FileFlux, line);
 								std::istringstream fixedUStream(line);
-								fixedUStream >> tempStr >> bcValues::uWall[bcGrp - 1] >> bcValues::vWall[bcGrp - 1] >> bcValues::wWall[bcGrp - 1];
+                                fixedUStream >> tempStr >> bcValues::uBC[bcGrp - 1] >> bcValues::vBC[bcGrp - 1] >> bcValues::wBC[bcGrp - 1];
 							}
                             else if ((str0.compare("movingWall") == 0))  //Type movingWall
 							{
@@ -897,24 +896,29 @@ namespace IO
     void readScalar(std::string fileName, std::string mode)
 	{
 		/*NOTES:
-		Boundary conditions compatibility
-		|U					|T					|p					|
-		+-------------------+-------------------+-------------------+
-		|1. inFlow			|1. inFlow			|1. inFlow			|
-		|	value u v w		|	value T			|	value p			|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-		|					|	Value T			|					|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-		+-------------------+-------------------+-------------------+
-		|4. outFlow			|4. outFlow			|4. outFlow			|
-		|	value u v w		|	value T			|	value p			|
-		+-------------------+-------------------+-------------------+
-		|7.	symmetry		|7. symmetry		|7. symmetry		|
-		+-------------------+-------------------+-------------------+
-        |10.matched 		|10.matched 		|10.matched 		|
+        Boundary conditions compatibility
+        |U					|T					|p					|
         +-------------------+-------------------+-------------------+
+        |1. inFlow			|1. inFlow			|1. inFlow			|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+        |					|	Value T			|					|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+        +-------------------+-------------------+-------------------+
+        |7.	symmetry		|7. symmetry		|7. symmetry		|
+        +-------------------+-------------------+-------------------+
+        |4. outFlow			|4. outFlow			|4. outFlow			|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+        |   v_wall u v w    |   T_wall T        |                   |
+        +-------------------+-------------------+-------------------+
+        U:
+        + 3:
+        movingWall
+        velocity        u v w
 		*/
 
 		fileName = fileName + ".txt";
@@ -1075,13 +1079,12 @@ namespace IO
 									std::istringstream Stream(line);
 									Stream >> tempStr >> bcValues::TBC[bcGrp - 1];
 								}
-								else if ((str0.compare("temperatureJump") == 0))  //Type temperatureJump, BO SUNG SAU
+                                else if ((str0.compare("temperatureJump") == 0))  //Type temperatureJump
 								{
 									bcValues::TBcType[bcGrp - 1] = 6;
-									bcValues::TBC[bcGrp - 1] = iniValues::TIni;
 									std::getline(FileFlux, line);
 									std::istringstream Stream(line);
-									Stream >> tempStr >> bcValues::TWall[bcGrp - 1];
+                                    Stream >> tempStr >> bcValues::TBC[bcGrp - 1];
 								}
 								else
 								{

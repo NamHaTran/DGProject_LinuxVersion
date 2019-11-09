@@ -15,10 +15,14 @@
 namespace MshReader
 {
 	/*Declare local variables of DGMeshReaderLib, these variables are used throughout library*/
-	int ninpoed(-1), edgesOfPoint[20][pointsArrSize];
+	int ninpoed(-1);
+	std::vector<std::vector<int>>edgesOfPoint(20,std::vector<int> (pointsArrSize));
 
 	void meshProcess()
 	{
+        /*Resize temporary arrays*/
+        auxUlti::resizeTemporaryArrays();
+
 		/*Elements surrounding point*/
 		EleSurPt();
 
@@ -44,6 +48,9 @@ namespace MshReader
             /*Save mesh data*/
             IO::SaveMeshInfor("p");
         }
+
+        /*Clear dump var*/
+        auxUlti::clear2DIntVector(edgesOfPoint);
 	}
 
 	void EleSurPt()
@@ -51,6 +58,7 @@ namespace MshReader
 		//Default element type is quad
 		/*CREATE INPOEL MATRIX*/
 		//Default element type is quadrature
+
 		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
             meshVar::inpoel[ielem][0] = meshVar::Elements2D[ielem][0];
@@ -412,7 +420,8 @@ namespace MshReader
 			}
             meshVar::ineled[c][2] = -1;
 		}
-		int helpArray[4 * elements2DArrSize] = {}, index(-1), pointBase(0);
+		int index(-1), pointBase(0);
+		std::vector<int> helpArray(2 * elements2DArrSize,0);
 
 		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
@@ -1149,14 +1158,17 @@ namespace decomposeMesh {
     	maxPtsIdOfRanks(systemVar::totalProc,0);
 
     	//Load partitioned mesh
+    	std::cout<<"	Reading partitioned mesh.\n";
     	maxElem2DIdOfRanks=decomposeMesh::loadPartitionedMesh();
         maxNumOfElem2D=*std::max_element(maxElem2DIdOfRanks.begin(), maxElem2DIdOfRanks.end());
 
     	//Find local id of points
+    	std::cout<<"	Finding local id of points.\n";
     	maxPtsIdOfRanks=decomposeMesh::findLocalIdOfPts();
         maxNumOfPts=*std::max_element(maxPtsIdOfRanks.begin(), maxPtsIdOfRanks.end());
 
     	//Mark BCType "matched"
+    	std::cout<<"	Marking BCType <matched>.\n";
     	decomposeMesh::findEdgeWithBCTypeMatched();
 
         std::vector<std::vector<std::vector<int>>> Elem2D (systemVar::totalProc,std::vector<std::vector<int>>(maxNumOfElem2D,std::vector <int>(5,0))),
@@ -1164,6 +1176,7 @@ namespace decomposeMesh {
         meshConnection (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(3,0)));
     	std::vector<std::vector<std::vector<double>>> Points (systemVar::totalProc,std::vector<std::vector<double>>(maxNumOfPts,std::vector <double>(4,0)));
 
+    	std::cout<<"	Decomposing mesh.\n";
         maxElem1DIdOfRanks=decomposeMesh::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
 
     	/*CREATE DECOMPOSED CASE*/
@@ -1173,7 +1186,7 @@ namespace decomposeMesh {
         std::cin>>key;
         if (key.compare("y") == 0)
         {
-            std::cout<<"Deleting Processor folders...\n";
+            std::cout<<"	Deleting Processor folders...\n";
             std::string command("rm -rf "+systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor*");
             const int dir_err = system(command.c_str());
             if (-1 == dir_err)
@@ -1183,11 +1196,11 @@ namespace decomposeMesh {
             }
         }
 
-        std::cout<<"Decomposing case...\n";
+        std::cout<<"	Transfering fields...\n";
         for (int irank = 0; irank < systemVar::totalProc; ++irank)
 		{
 			//Create processor folders
-            std::cout<<"Processor "<<irank<<std::endl;
+            std::cout<<"	Processor "<<irank<<std::endl;
 	    	std::string rank = std::to_string(irank);
 	        std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + rank);
             auxUlti::createFolder(Loc, false);

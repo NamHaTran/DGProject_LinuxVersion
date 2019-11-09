@@ -596,7 +596,6 @@ namespace math
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
     {
         //Em is total energy with total velocity (um), not advective velocity (u)
-        
         double T(0.0), TIni(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
                 u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
         std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
@@ -1424,6 +1423,110 @@ namespace math
 		norm = pow(norm, 0.5);
 		return norm;
 	}
+
+    std::vector<double> traceOfMatrix(std::vector<std::vector<double>> &M)
+    {
+        int size(M.size());
+        std::vector<double> trace(size,0.0);
+        for (int i=0; i<size;i++)
+        {
+            trace[i]=M[i][i];
+        }
+        return trace;
+    }
+
+    std::vector<std::vector<double>> transformationTensor(double nx, double ny)
+    {
+        /*
+         * Transformation tensor S = I - nn
+         * I: identity tensor
+         * [ 1 0 0]
+         * [ 0 1 0]
+         * [ 0 0 1]
+         *
+         * nn = [nx] * [nx ny nz] = [nx*nx nx*ny nx*nz]
+         *      [ny]                [ny*nx ny*ny ny*nz]
+         *      [nz]                [nz*nx nz*ny nz*nz]
+        */
+        std::vector<std::vector<double>> S{{ 1-nx*nx, -nx*ny },
+                                           { -nx*ny, 1-ny*ny }};
+        return S;
+    }
+
+    std::vector<std::vector<double>> gradU(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy)
+    {
+        //Function calculates grad of U (is a vector field) from conservative vars and auxilary vars
+        double dux(0.0), duy(0.0), dvx(0.0), dvy(0.0), rhouVal(0.0), rhovVal, rhoVal(0.0);
+        double drhox(0.0), drhoy(0.0),
+            drhoux(0.0), drhouy(0.0),
+            drhovx(0.0), drhovy(0.0);
+
+        rhoVal = U[0];
+        rhouVal = U[1];
+        rhovVal = U[2];
+
+        drhox = dUx[0];
+        drhoy = dUy[0];
+
+        drhoux = dUx[1];
+        drhouy = dUy[1];
+
+        drhovx = dUx[2];
+        drhovy = dUy[2];
+
+        dux = math::calcRhouvEDeriv(drhoux, drhox, rhouVal, rhoVal);
+        duy = math::calcRhouvEDeriv(drhouy, drhoy, rhouVal, rhoVal);
+
+        dvx = math::calcRhouvEDeriv(drhovx, drhox, rhovVal, rhoVal);
+        dvy = math::calcRhouvEDeriv(drhovy, drhoy, rhovVal, rhoVal);
+
+        std::vector<std::vector<double>> gradU{{dux, duy}, {dvx, dvy}};
+        return gradU;
+    }
+
+    std::vector<std::vector<double>> transposeDoubleMatrix(std::vector<std::vector<double>> &M)
+    {
+        int rowNum(M.size()), colNum(M[0].size());
+        std::vector<std::vector<double>> MT(colNum,std::vector<double>(rowNum));
+        for (int row=0; row<rowNum; row++)
+        {
+            for (int col=0; col<colNum; col++)
+            {
+                MT[col][row]=M[row][col];
+            }
+        }
+        return MT;
+    }
+
+    namespace tensorMath {
+        std::vector<double> tensorVectorDotProduct(std::vector<std::vector<double>>&S, std::vector<double>&V)
+        {
+            int size(V.size());
+            std::vector<double> Product(size,0.0);
+            for (int i=0; i<size; i++)
+            {
+                for (int j=0; j<size; j++)
+                {
+                    Product[i]+=S[i][j]*V[j];
+                }
+            }
+            return Product;
+        }
+
+        std::vector<double> vectorTensorDotProduct(std::vector<double>&V, std::vector<std::vector<double>>&S)
+        {
+            int size(V.size());
+            std::vector<double> Product(size,0.0);
+            for (int i=0; i<size; i++)
+            {
+                for (int j=0; j<size; j++)
+                {
+                    Product[i]+=V[j]*S[j][i];
+                }
+            }
+            return Product;
+        }
+    }
 
 	namespace numericalFluxes
 	{

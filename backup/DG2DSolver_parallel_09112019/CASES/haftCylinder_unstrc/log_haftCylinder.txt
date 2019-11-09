@@ -1,0 +1,6 @@
+log was created at 17-02-2019_17-35-32
+Boundary condition <inOutFlow> of file U is not valid for type <wall>
+log was created at 17-02-2019_17-36-01
+Cannot open file <rho.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\x64\Release\CASES\haftCylinder\36500
+log was created at 18-02-2019_18-43-23
+Boundary condition <inOutFlow> of file U is not valid for type <wall>

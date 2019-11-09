@@ -202,11 +202,17 @@ theta2Arr(1, 1.0);
 
 namespace SurfaceBCFields
 {
-	std::vector<std::vector<double>> rhoBc(1, std::vector<double>(1, 0.0)),
-		rhouBc(1, std::vector<double>(1, 0.0)),
-		rhovBc(1, std::vector<double>(1, 0.0)),
-		rhoEBc(1, std::vector<double>(1, 0.0));
 	std::vector<std::vector<int>>BCPointsInfor;
+
+    /*
+     * - 2 fields SurfaceBCFields::TBC, SurfaceBCFields::uBC va SurfaceBCFields::vBC dung de
+     * luu gia tri TJump, uSlip va vSlip khi dung dieu kien bien temperatureJump va slip.
+     * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
+     * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
+    */
+    std::vector<std::vector<double>> TBc(1, std::vector<double>(1, 0.0)),
+        uBc(1, std::vector<double>(1, 0.0)),
+        vBc(1, std::vector<double>(1, 0.0));
 }
 
 namespace limitVal {

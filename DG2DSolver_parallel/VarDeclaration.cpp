@@ -43,22 +43,25 @@ namespace meshVar
 	int const nedel(4);  //change nedel value at file .h
 
 	/*Elements surrounding point*/
-    int esup1[4 * pointsArrSize] = {}, esup2[pointsArrSize + 1] = {}, inpoel[elements2DArrSize][5] = {};
+    std::vector<int> esup1, esup2;
+	std::vector<std::vector<int>> inpoel(elements2DArrSize,std::vector<int>(5));
 
 	/*Points surrounding point*/
-	int psup1[5 * pointsArrSize] = {}, psup2[pointsArrSize + 1] = {};
+	std::vector<int> psup1(5 * pointsArrSize), psup2(pointsArrSize + 1);
 
 	/*Elements surrounding element*/
-    int esuel[elements2DArrSize][4] = {};  //Default is 4 faces
+    std::vector<std::vector<int>> esuel(elements2DArrSize,std::vector<int>(4)); //Default is 4 faces
 
 	/*Edges informations*/
-    int inpoed[2 * elements2DArrSize][5] = {};
+    std::vector<std::vector<int>> inpoed(2*elements2DArrSize,std::vector<int>(5));
 	/*column 3 contents group which edge belongs to (group 0 is internal group),
 	column 4 contents type of boundary (type 0 is internal edge)*/
 
 	/*Edges of element*/
-    int inedel[elements2DArrSize][4] = {}, //column index is element index, each row in column contents index of edge belong to element, number of row is 4 because of default quad element
-        ineled[2 * elements2DArrSize][3] = {}; //column index is edge index, each row in column contents index of element which edge is belong to, row 3 contents pointer
+    //column index is element index, each row in column contents index of edge belong to element, number of row is 4 because of default quad element
+    //column index is edge index, each row in column contents index of element which edge is belong to, row 3 contents pointer
+    std::vector<std::vector<int>> inedel(elements2DArrSize,std::vector<int>(4)),
+    	ineled(2*elements2DArrSize,std::vector<int>(3));
 
 	/*Variables help to save mesh data*/
 	int inpoedCount(0);  //can be used for normalVector, MasterElemOfEdge, ineled

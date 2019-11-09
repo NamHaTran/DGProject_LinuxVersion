@@ -32,10 +32,13 @@ Boundary conditions compatibility
         |4. outFlow			|4. outFlow			|4. outFlow			|
         |	Value u v w		|	Value T			|	Value p			|
         +-------------------+-------------------+-------------------+
+        |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+        |   v_wall u v w    |   T_wall T        |                   |
+        +-------------------+-------------------+-------------------+
         U:
         + 3:
         movingWall
-        velocity        u v w
+        v_wall        u v w
 */
 
 std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG)
@@ -69,6 +72,10 @@ std::vector<std::vector<double>> NSFEqBCsImplement(int element, int edge, int nG
     else if (UType == 10 && TType == 10 && pType == 10)
     {
         Fluxes = NSFEqBCs::matched(element, edge, nG);
+    }
+    else if (UType == 5 && TType == 6 && pType == 2)
+    {
+        //Fluxes = NSFEqBCs::matched(element, edge, nG);
     }
 	else
 	{
@@ -107,6 +114,10 @@ std::vector<std::vector<double>> auxEqBCsImplement(int element, int edge, int nG
     else if (UType == 10 && TType == 10 && pType == 10)
     {
         Fluxes = auxilaryBCs::matched(element, edge, nG);
+    }
+    else if (UType == 5 && TType == 6 && pType == 2)
+    {
+        //Fluxes = NSFEqBCs::matched(element, edge, nG);
     }
 	else
 	{
@@ -788,6 +799,69 @@ namespace auxilaryBCs
             {
                 UPlus[3]=math::pointValue(element,a,b,4,2);
             }
+            auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
+            return Fluxes;
+        }
+
+        std::vector <std::vector<double>> wallTemperatureJump(int element, int edge, int edgeGrp, int nG)
+        {
+            /*
+             * Dieu kien bien temperature jump:
+             * - vi co thanh phan uslip tai be mat, rhou va rhov cua UMinus se khac 0:
+             * rhou=rhoPlus*uSlip
+             * rhov=rhoPlus*vSlip
+             * rhoMinus = rhoPlus
+            */
+
+            //columns 0, 1 are plus, minus values
+            std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+            std::vector<double>
+                UPlus(4, 0.0),
+                UMinus(4, 0.0);
+            double a(0.0), b(0.0);
+            std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+
+            //Compute plus values--------------------------------------------------------
+            BCSupportFncs::auxilaryBCs::calcUPlus(element,edge,nG,UPlus);
+
+            //Compute minus values--------------------------------------------------------
+            UMinus[0] = UPlus[0];
+
+            if (bcValues::UBcType[edgeGrp - 1] == 2)
+            {
+                UMinus[1] = UPlus[0]*;
+                UMinus[2] = -UPlus[2];
+                UMinus[3] = UMinus[0]*material::Cv*bcValues::TBC[edgeGrp - 1]+0.5*(pow(UMinus[1],2)+pow(UMinus[2],2))/UMinus[0];
+            }
+            /*
+            if (bcValues::UBcType[edgeGrp - 1] == 2)
+            {
+                UMinus[1] = 0;
+                UMinus[2] = 0;
+                UMinus[3] = UMinus[0]*material::Cv*bcValues::TBC[edgeGrp - 1];
+            }
+            */
+            else if (bcValues::UBcType[edgeGrp - 1] == 3)
+            {
+                UMinus[1] = bcValues::uBC[edgeGrp - 1]*UMinus[0];
+                UMinus[2] = bcValues::vBC[edgeGrp - 1]*UMinus[0];
+                UMinus[3] = UMinus[0]*(material::Cv*bcValues::TBC[edgeGrp - 1] + 0.5*(pow(bcValues::uBC[edgeGrp - 1],2)+pow(bcValues::vBC[edgeGrp - 1],2)));
+            }
+            //-----------------------------------------------------------------------------
+
+            for (int i = 0; i < 4; i++)
+            {
+                Fluxes[i][0] = UPlus[i];
+                Fluxes[i][1] = UMinus[i];
+            }
+
+            //Save U+ and U- at boundary to arrays
+            //Recompute rhoEm
+            if (flowProperties::massDiffusion)
+            {
+                UPlus[3]=math::pointValue(element,a,b,4,2);
+            }
+            //UMinus[3]=UPlus[3];
             auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
             return Fluxes;
         }

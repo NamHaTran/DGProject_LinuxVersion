@@ -1,0 +1,2 @@
+log was created at 02-03-2019_21-28-02
+Cannot open file <rho.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\x64\Release\CASES\cylinder\900

@@ -1,0 +1,4 @@
+log was created at 11-02-2019_13-48-55
+Boundary condition <symmetry> of file U is not valid for type <wall>
+log was created at 23-02-2019_10-39-29
+Cannot open file <time.txt> located at D:\Working\Code C++ for fun\DGProject\DG2DSolver\DG2DSolver\CASES\haftCylinder_unstrc0

@@ -11,6 +11,8 @@
 #include <QProcess>
 #include <mpi.h>
 
+#include <iostream>
+
 namespace auxUlti
 {
     int findEdgeOrder(int element, int edge)
@@ -818,10 +820,9 @@ namespace auxUlti
         auxUlti::resize2DArray(rhovResArr, meshVar::nelem2D, mathVar::orderElem + 1);
         auxUlti::resize2DArray(rhoEResArr, meshVar::nelem2D, mathVar::orderElem + 1);
 
-        auxUlti::resize2DArray(SurfaceBCFields::rhoBc, mathVar::nGauss + 1, meshVar::numBCEdges);
-        auxUlti::resize2DArray(SurfaceBCFields::rhouBc, mathVar::nGauss + 1, meshVar::numBCEdges);
-        auxUlti::resize2DArray(SurfaceBCFields::rhovBc, mathVar::nGauss + 1, meshVar::numBCEdges);
-        auxUlti::resize2DArray(SurfaceBCFields::rhoEBc, mathVar::nGauss + 1, meshVar::numBCEdges);
+        auxUlti::resize2DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, mathVar::nGauss + 1);
+        auxUlti::resize2DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, mathVar::nGauss + 1);
+        auxUlti::resize2DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, mathVar::nGauss + 1);
 
         auxUlti::resize2DArray(rhoN, meshVar::nelem2D, mathVar::orderElem + 1);
         auxUlti::resize2DArray(rhouN, meshVar::nelem2D, mathVar::orderElem + 1);
@@ -992,23 +993,24 @@ namespace auxUlti
 	void clear1DIntVector(std::vector<int>&vector)
 	{
 		int vectorLenth(vector.size());
-		/*Use erase function to clear vector*/
-		vector.erase(vector.begin(), vector.begin() + vectorLenth);
-		/*Shrink to fit*/
+		//Use erase function to clear vector
+		vector.erase(vector.begin(), vector.end());
+		//Shrink to fit
 		vector.shrink_to_fit();
 	}
 
     void clear2DIntVector(std::vector<std::vector<int>>&vector)
     {
         int numRow(static_cast<int>(vector.size()));
-        /*Use erase function to clear vector*/
-        for (int row = 0; row < numRow; ++row) {
+        //Use erase function to clear vector
+        for (int row = 0; row < numRow; row++) {
             int length(static_cast<int>(vector[row].size()));
             vector[row].erase(vector[row].begin(), vector[row].begin() + length);
             vector[row].shrink_to_fit();
         }
 
-        /*Shrink to fit*/
+        //Shrink to fit
+        vector.erase(vector.begin(), vector.end());
         vector.shrink_to_fit();
     }
 
@@ -1705,5 +1707,51 @@ namespace auxUlti
         else {
             systemVar::cmd=auxUlti::functionsOfParallelComputing::receiveString(0,1);
         }
+    }
+
+    void shrink2DIntVector(std::vector<std::vector<int>>&vector, int numRow)
+    {
+        int maxNumRow(static_cast<int>(vector.size()));
+        /*Use erase function to clear vector*/
+        //numRow+2 de chac an la khong xoa nham phan chua data
+        for (int row = numRow+2; row < maxNumRow; row++) {
+            vector[row].erase(vector[row].begin(), vector[row].end());
+            vector[row].shrink_to_fit();
+        }
+        vector.erase(vector.begin()+numRow+2, vector.end());
+        vector.shrink_to_fit();
+    }
+
+    void releaseMemory()
+    {
+        /*
+        Ham release bo nho sau khi doc va xu luoi
+        */
+        meshVar::esup1.clear();
+        meshVar::esup2.clear();
+        meshVar::psup1.clear();
+        meshVar::psup2.clear();
+
+        //shrink vector to fit its size
+        auxUlti::shrink2DIntVector(meshVar::inpoel,meshVar::nelem2D);
+        auxUlti::shrink2DIntVector(meshVar::esuel,meshVar::nelem2D);
+        auxUlti::shrink2DIntVector(meshVar::inpoed,meshVar::inpoedCount);
+        auxUlti::shrink2DIntVector(meshVar::inedel,meshVar::nelem2D);
+        auxUlti::shrink2DIntVector(meshVar::ineled,meshVar::inpoedCount);
+    }
+
+    void resizeTemporaryArrays()
+    {
+        //Resize array
+        std::cout<<meshVar::npoin<<"/n";
+        meshVar::esup1.resize(5*meshVar::npoin);
+        meshVar::esup2.resize(meshVar::npoin+1);
+        auxUlti::resize2DIntArray(meshVar::inpoel,meshVar::nelem2D,5);
+        meshVar::psup1.resize(meshVar::npoin*5);
+        meshVar::psup2.resize(meshVar::npoin+1);
+        auxUlti::resize2DIntArray(meshVar::esuel,meshVar::nelem2D,4);
+        auxUlti::resize2DIntArray(meshVar::inpoed,meshVar::nelem2D*3,5);
+        auxUlti::resize2DIntArray(meshVar::inedel,meshVar::nelem2D,4);
+        auxUlti::resize2DIntArray(meshVar::ineled,meshVar::nelem2D*3,5);
     }
 }
