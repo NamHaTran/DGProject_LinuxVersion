@@ -124,7 +124,8 @@ extern std::vector<std::vector<double>> stiffMatrixCoeffs;
 namespace SurfaceBCFields
 {
 	extern std::vector<std::vector<int>>BCPointsInfor;
-    extern std::vector<std::vector<double>> TBc, uBc, vBc;
+	extern std::vector<std::vector<double>> TBc, uBc, vBc;
+	extern std::vector<int>localGlobalBCEdgesMatching;
 }
 
 namespace limitVal {

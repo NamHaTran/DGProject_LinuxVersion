@@ -66,6 +66,8 @@ namespace auxUlti
 	/*Function checks subsonic flow locally*/
 	bool checkSubSonicLocally(double TVal, double uVal, double vVal);
 
+    bool checkTimeVaryingBCAvailable();
+
 	/*Function returns master element and servant element of edge*/
 	std::tuple<int, int> getMasterServantOfEdge(int edge);
 
@@ -92,6 +94,9 @@ namespace auxUlti
 
 	//Function returns location of input edge on BC values array
     int getAdressOfBCEdgesOnBCValsArray(int edge);
+
+    //Function gets globle edge id from local BC edge id
+    int getGlobalEdgeIdFromLocalBCEdgeId(int localBCEdgeId);
 
 	//Function gets centroid coordinates of inputted cell
 	std::tuple<double, double> getCellCentroid(int element);
@@ -158,8 +163,8 @@ namespace auxUlti
 
     std::string receiveString(int source, int tag);
 
-    void sendReceiveMeshData();
-    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer);
+    void sendReceiveMeshData(int vertex, int dir, std::vector<std::vector<double>>&Buffer);
+    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer, int iorder);
     void sendRecvTheta(std::vector<double>&thetaArray,std::vector<double>&Buffer);
     void sendReceiveU();
     void sendReceivedU();

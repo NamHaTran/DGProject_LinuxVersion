@@ -27,7 +27,10 @@ namespace meshParam
 namespace process
 {
 	/*Function sets initial value to all elements*/
-	void setIniValues();
+    void setIniVolumeValues();
+
+    /*Function sets initial value to all Gauss points at BC*/
+    void setIniSurfaceBCValues();
 
 	/*Function distributes initial value to each order of accuracy of element*/
 	std::vector<double> calcIniValues(double iniVal, int element);
@@ -187,6 +190,9 @@ namespace process
 	bool checkRunningCond();
 
 	std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int valType);
+
+    /*Function calculates and updates values of surfaceBCFields*/
+    void updateTimeVaryingBCs();
 }
 
 #endif // DGPROCLIB_H_INCLUDED

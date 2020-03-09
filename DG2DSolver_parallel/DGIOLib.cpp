@@ -341,7 +341,7 @@ namespace IO
 			Fluxinpoed << headerFile << std::endl << "	inpoed array\n" << "\n";
             for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < 5; j++)
 				{
 					Fluxinpoed << meshVar::inpoed[i][j] << " ";
 				}
@@ -455,7 +455,7 @@ namespace IO
         std::string MatLoc;
         if (mode.compare("p")==0)
         {
-            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor"+std::to_string(systemVar::currentProc) + "/Constant";
+            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
         }
         else {
             MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
@@ -497,13 +497,16 @@ namespace IO
         /*Read DGSchemes*/
         fileName=("DGSchemes.txt");
         Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-        std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[1] = {"diffusionTermScheme"};
+        std::string DGSchemeskeyWordsDouble[1] = {"LxFCoeff"}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[1] = {"diffusionTermScheme"};
         double DGSchemesoutDB[1] = {};
         int DGSchemesoutInt[1] = {};
         bool DGSchemesoutBool[1] = {};
         std::string DGSchemesoutStr[1] = {};
 
-        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 1);
+        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 1, 0, 0, 1);
+
+        numericalFlux::LxFCoeff=DGSchemesoutDB[0];
+
         if (DGSchemesoutStr[0].compare("BR1")==0)
         {
             systemVar::auxVariables=1;
@@ -744,6 +747,7 @@ namespace IO
         |	Value u v w		|	Value T			|	Value p			|
         +-------------------+-------------------+-------------------+
         |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+        |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
         |   v_wall u v w    |   T_wall T        |                   |
         +-------------------+-------------------+-------------------+
         U:
@@ -805,24 +809,31 @@ namespace IO
 							if ((str0.compare("noSlip") == 0))  //Type noSlip
 							{
 								bcValues::UBcType[bcGrp - 1] = 2;
-								bcValues::uBC[bcGrp - 1] = 0.0;
-								bcValues::vBC[bcGrp - 1] = 0.0;
-								bcValues::wBC[bcGrp - 1] = 0.0;
+                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
+                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
+                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
 							}
-                            else if ((str0.compare("slip") == 0))  //Type slip
+							else if ((str0.compare("slip") == 0))  //Type slip
 							{
 								//Use Maxwell-Smoluchovsky boundary condition
+                                bcValues::slipBCFlag=true;
 								bcValues::UBcType[bcGrp - 1] = 5;
 								std::getline(FileFlux, line);
-								std::istringstream fixedUStream(line);
-                                fixedUStream >> tempStr >> bcValues::uBC[bcGrp - 1] >> bcValues::vBC[bcGrp - 1] >> bcValues::wBC[bcGrp - 1];
+                                std::istringstream fixedUStream1(line);
+                                //Read sigmaU
+                                fixedUStream1>>tempStr>>bcValues::sigmaU;
+                                std::getline(FileFlux, line);
+                                std::istringstream fixedUStream2(line);
+                                //Read UWall
+                                fixedUStream2 >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
 							}
                             else if ((str0.compare("movingWall") == 0))  //Type movingWall
 							{
 								bcValues::UBcType[bcGrp - 1] = 3;
 								std::getline(FileFlux, line);
 								std::istringstream fixedUStream(line);
-								fixedUStream >> tempStr >> bcValues::uBC[bcGrp - 1] >> bcValues::vBC[bcGrp - 1] >> bcValues::wBC[bcGrp - 1];
+                                fixedUStream >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
+                                std::getline(FileFlux, line);
 							}
 							else
 							{
@@ -836,14 +847,14 @@ namespace IO
 								bcValues::UBcType[bcGrp - 1] = 1;
 								std::getline(FileFlux, line);
 								std::istringstream fixedUStream(line);
-								fixedUStream >> tempStr >> bcValues::uBC[bcGrp - 1] >> bcValues::vBC[bcGrp - 1] >> bcValues::wBC[bcGrp - 1];
+                                fixedUStream >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
 							}
 							else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
 							{
 								bcValues::UBcType[bcGrp - 1] = 4;
 								std::getline(FileFlux, line);
 								std::istringstream fixedUStream(line);
-								fixedUStream >> tempStr >> bcValues::uBC[bcGrp - 1] >> bcValues::vBC[bcGrp - 1] >> bcValues::wBC[bcGrp - 1];
+                                fixedUStream >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
 							}
 							else
 							{
@@ -855,9 +866,9 @@ namespace IO
 							if ((str0.compare("symmetry") == 0))  //Type symmetry
 							{
 								bcValues::UBcType[bcGrp - 1] = 7;
-								bcValues::uBC[bcGrp - 1] = 0.0;
-								bcValues::vBC[bcGrp - 1] = 0.0;
-								bcValues::wBC[bcGrp - 1] = 0.0;
+                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
+                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
+                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
 							}
 							else
 							{
@@ -869,9 +880,9 @@ namespace IO
                             if ((str0.compare("matched") == 0))  //Type matched
                             {
                                 bcValues::UBcType[bcGrp - 1] = 10;
-                                bcValues::uBC[bcGrp - 1] = 0.0;
-                                bcValues::vBC[bcGrp - 1] = 0.0;
-                                bcValues::wBC[bcGrp - 1] = 0.0;
+                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
+                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
+                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
                             }
                             else
                             {
@@ -913,6 +924,7 @@ namespace IO
         |	Value u v w		|	Value T			|	Value p			|
         +-------------------+-------------------+-------------------+
         |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+        |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
         |   v_wall u v w    |   T_wall T        |                   |
         +-------------------+-------------------+-------------------+
         U:
@@ -974,7 +986,7 @@ namespace IO
 								if ((str0.compare("zeroGradient") == 0))
 								{
 									bcValues::pBcType[bcGrp - 1] = 2;
-									bcValues::pBC[bcGrp - 1] = iniValues::pIni;
+                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
 								}
 								else
 								{
@@ -988,19 +1000,19 @@ namespace IO
 									bcValues::pBcType[bcGrp - 1] = 1;
 									std::getline(FileFlux, line);
 									std::istringstream Stream(line);
-									Stream >> tempStr >> bcValues::pBC[bcGrp - 1];
+                                    Stream >> tempStr >> bcValues::pBCFixed[bcGrp - 1];
 								}
 								else if ((str0.compare("zeroGradient") == 0))
 								{
 									bcValues::pBcType[bcGrp - 1] = 2;
-									bcValues::pBC[bcGrp - 1] = iniValues::pIni;
+                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
 								}
 								else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
 								{
 									bcValues::pBcType[bcGrp - 1] = 4;
 									std::getline(FileFlux, line);
 									std::istringstream Stream(line);
-									Stream >> tempStr >> bcValues::pBC[bcGrp - 1];
+                                    Stream >> tempStr >> bcValues::pBCFixed[bcGrp - 1];
 								}
 								else
 								{
@@ -1012,7 +1024,7 @@ namespace IO
 								if ((str0.compare("symmetry") == 0))  //Type symmetry
 								{
 									bcValues::pBcType[bcGrp - 1] = 7;
-									bcValues::pBC[bcGrp - 1] = iniValues::pIni;
+                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
 								}
 								else
 								{
@@ -1024,7 +1036,7 @@ namespace IO
                                 if ((str0.compare("matched") == 0))  //Type matched
                                 {
                                     bcValues::pBcType[bcGrp - 1] = 10;
-                                    bcValues::pBC[bcGrp - 1] = iniValues::pIni;
+                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
                                 }
                                 else
                                 {
@@ -1059,7 +1071,7 @@ namespace IO
 						if (str1.compare("initialValue") == 0)  //initial data
 						{
 							std::istringstream str_val(ptr[1]);
-							str_val >> iniValues::TIni;;
+                            str_val >> iniValues::TIni;
 						}
 						else if (str1.compare("Type") == 0)  //Bc Type
 						{
@@ -1070,21 +1082,27 @@ namespace IO
 								if ((str0.compare("WallAdiabatic") == 0))
 								{
 									bcValues::TBcType[bcGrp - 1] = 3;
-									bcValues::TBC[bcGrp - 1] = iniValues::TIni;
+                                    bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
 								}
 								else if ((str0.compare("WallIsothermal") == 0))
 								{
 									bcValues::TBcType[bcGrp - 1] = 2;
 									std::getline(FileFlux, line);
 									std::istringstream Stream(line);
-									Stream >> tempStr >> bcValues::TBC[bcGrp - 1];
+                                    Stream >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
 								}
                                 else if ((str0.compare("temperatureJump") == 0))  //Type temperatureJump
 								{
+                                    bcValues::temperatureJump=true;
 									bcValues::TBcType[bcGrp - 1] = 6;
+                                    std::getline(FileFlux, line);
+                                    std::istringstream Stream1(line);
+                                    //Read sigmaT
+                                    Stream1>> tempStr >> bcValues::sigmaT;
 									std::getline(FileFlux, line);
-									std::istringstream Stream(line);
-                                    Stream >> tempStr >> bcValues::TBC[bcGrp - 1];
+                                    std::istringstream Stream2(line);
+                                    //Read TWall
+                                    Stream2 >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
 								}
 								else
 								{
@@ -1098,14 +1116,14 @@ namespace IO
 									bcValues::TBcType[bcGrp - 1] = 1;
 									std::getline(FileFlux, line);
 									std::istringstream Stream(line);
-									Stream >> tempStr >> bcValues::TBC[bcGrp - 1];
+                                    Stream >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
 								}
 								else if ((str0.compare("outFlow") == 0))
 								{
 									bcValues::TBcType[bcGrp - 1] = 4;
 									std::getline(FileFlux, line);
 									std::istringstream Stream(line);
-									Stream >> tempStr >> bcValues::TBC[bcGrp - 1];
+                                    Stream >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
 								}
 								else
 								{
@@ -1117,7 +1135,7 @@ namespace IO
 								if ((str0.compare("symmetry") == 0))  //Type symmetry
 								{
 									bcValues::TBcType[bcGrp - 1] = 7;
-									bcValues::TBC[bcGrp - 1] = iniValues::TIni;
+                                    bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
 								}
 								else
 								{
@@ -1129,7 +1147,7 @@ namespace IO
                                 if ((str0.compare("matched") == 0))  //Type matched
                                 {
                                     bcValues::TBcType[bcGrp - 1] = 10;
-                                    bcValues::TBC[bcGrp - 1] = iniValues::TIni;
+                                    bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
                                 }
                                 else
                                 {
@@ -1154,7 +1172,7 @@ namespace IO
 
 		for (int i = 0; i < meshVar::nBc; i++)
 		{
-			if ((bcValues::UBcType[i]!= bcValues::TBcType[i])&&(bcValues::UBcType[i]==5))
+            if (bcValues::TBcType[i]!=6 && (bcValues::UBcType[i]==5))
 			{
                 message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::SlipBcCompatibleError(i+1));
 			}
@@ -1163,7 +1181,7 @@ namespace IO
 
 	void residualOutput(double rhoResGlobal, double rhouResGlobal, double rhovResGlobal, double rhoEResGlobal)
 	{
-		if (systemVar::iterCount==1)
+        if (systemVar::iterCount<5)
 		{
 			systemVar::rhoResNorm = rhoResGlobal;
 			systemVar::rhouResNorm = rhouResGlobal;
@@ -1185,62 +1203,111 @@ namespace IO
         std::cout << "Time step: " << dt << std::endl;
         std::cout << "Residuals: ddt(rho)=" << rhoResGlobal << ", ddt(rhou)=" << rhouResGlobal << ", ddt(rhov)=" << rhovResGlobal << ", ddt(rhoE)=" << rhoEResGlobal << std::endl;
         std::cout << std::endl;
+
+        IO::writeResiduals(systemVar::iterCount,rhoResGlobal,rhouResGlobal,rhovResGlobal,rhoEResGlobal);
 	}
+
+    void readDecomposedMeshInfor()
+    {
+        std::string rankOf2DElemLoc(systemVar::pwd+"/Constant/Mesh/rankOf2DElem.txt"),
+                Elem2DlocalIdWithRankLoc(systemVar::pwd+"/Constant/Mesh/Elem2DlocalIdWithRank.txt");
+
+        std::ifstream File1Flux(rankOf2DElemLoc.c_str());
+        int i(0);
+        if (File1Flux)
+        {
+            File1Flux>>meshVar::rankOf2DElem[i];
+            i++;
+        }
+
+        i=0;
+        std::ifstream File2Flux(Elem2DlocalIdWithRankLoc.c_str());
+        if (File2Flux)
+        {
+            File2Flux>>meshVar::Elem2DlocalIdWithRank[i];
+            i++;
+        }
+    }
+
+    //Ham write cac field roi rac (discreted) xuong file fileName tai folder Loc
+    void writeDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var)
+    {
+        std::string fileLoc(Loc + "/" + fileName);
+        std::ofstream fileFlux(fileLoc.c_str());
+        for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
+        {
+            for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+            {
+                fileFlux << Var[nelem][iorder] << " ";
+            }
+            fileFlux << "\n";
+        }
+    }
+
+    //Ham read cac field roi rac (discreted) xuong file fileName tai folder Loc
+    void readDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var)
+    {
+        std::string fileLoc(Loc + "/" + fileName);
+        std::ifstream FileFlux(fileLoc.c_str());
+        if (FileFlux)
+        {
+            int nelement(0);
+            std::string line;
+            while (std::getline(FileFlux, line))
+            {
+                std::istringstream lineflux(line);
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    lineflux >> Var[nelement][iorder];
+                }
+                nelement++;
+            }
+        }
+        else
+        {
+            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
+        }
+    }
 
     void saveCase()
 	{
 		std::string iter_str = std::to_string(systemVar::iterCount);
-        std::string fileName("rho.txt"), Loc;
+        std::string fileName, Loc, fileLoc;
         Loc = auxUlti::createTimeStepFolder(systemVar::iterCount,"case");
 
 		/*Conservative variables*/
-        std::string fileLoc(Loc + "/" + fileName);
-		std::ofstream fileFluxRho(fileLoc.c_str());
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
-		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-			{
-				fileFluxRho << rho[nelem][iorder] << " ";
-			}
-            fileFluxRho << "\n";
-		}
-
-		fileName = "rhou.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ofstream fileFluxRhou(fileLoc.c_str());
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
-		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-			{
-				fileFluxRhou << rhou[nelem][iorder] << " ";
-			}
-            fileFluxRhou << "\n";
-		}
-
-		fileName = "rhov.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ofstream fileFluxRhov(fileLoc.c_str());
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
-		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-			{
-				fileFluxRhov << rhov[nelem][iorder] << " ";
-			}
-            fileFluxRhov << "\n";
-		}
-
-		fileName = "rhoE.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ofstream fileFluxRhoE(fileLoc.c_str());
-		for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
-		{
-			for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-			{
-				fileFluxRhoE << rhoE[nelem][iorder] << " ";
-			}
-            fileFluxRhoE << "\n";
-		}
+        IO::writeDiscretedFields(Loc,"rho.txt",rho);
+        IO::writeDiscretedFields(Loc,"rhou.txt",rhou);
+        IO::writeDiscretedFields(Loc,"rhov.txt",rhov);
+        IO::writeDiscretedFields(Loc,"rhoE.txt",rhoE);
 		/*end of saving conservative variables*/
+
+        //Save TSurface, USurface
+        fileName = "TSurface.txt";
+        fileLoc = (Loc + "/" + fileName);
+        std::ofstream fileFluxTSurface(fileLoc.c_str());
+        for (int iedge = 0; iedge < meshVar::numBCEdges; iedge++)
+        {
+            double TVar(0.0);
+            for (int nG = 0; nG <= mathVar::nGauss; nG++)
+            {
+                TVar+=SurfaceBCFields::TBc[iedge][nG];
+            }
+            fileFluxTSurface <<TVar/(mathVar::nGauss+1)<< "\n";
+        }
+        fileName = "USurface.txt";
+        fileLoc = (Loc + "/" + fileName);
+        std::ofstream fileFluxUSurface(fileLoc.c_str());
+        for (int iedge = 0; iedge < meshVar::numBCEdges; iedge++)
+        {
+            double uVar(0.0), vVar(0.0);
+            for (int nG = 0; nG <= mathVar::nGauss; nG++)
+            {
+                uVar+=SurfaceBCFields::uBc[iedge][nG];
+                vVar+=SurfaceBCFields::vBc[iedge][nG];
+            }
+            fileFluxUSurface <<uVar/(mathVar::nGauss+1)<< " "<<vVar/(mathVar::nGauss+1)<<"\n";
+        }
 
 		/*Residual normalized coeffs*/
 		fileName = "ResidualNormCoeffs.txt";
@@ -1255,7 +1322,7 @@ namespace IO
             fileName = "time.txt";
             fileLoc = (Loc + "/" + fileName);
             std::ofstream fileFluxTime(fileLoc.c_str());
-            fileFluxTime << systemVar::iterCount << "\n";
+            fileFluxTime << systemVar::iterCount << " "<<runTime<< "\n";
         }
         MPI_Barrier(MPI_COMM_WORLD);
 	}
@@ -1271,7 +1338,7 @@ namespace IO
 			std::string line;
 			std::getline(FileFluxTime, line);
 			std::istringstream lineflux(line);
-			lineflux >> systemVar::iterCount;
+            lineflux >> systemVar::iterCount>>runTime;
 		}
 		else
 		{
@@ -1288,97 +1355,51 @@ namespace IO
             Loc=Loc+"/" +iter_str;
         }
 
-		//Read rho
-		fileName = "rho.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ifstream FileFluxRho(fileLoc.c_str());
-		if (FileFluxRho)
-		{
-			int nelement(0);
-			std::string line;
-			while (std::getline(FileFluxRho, line))
-			{
-				std::istringstream lineflux(line);
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					lineflux >> rho[nelement][iorder];
-				}
-				nelement++;
-			}
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
-		}
+        IO::readDiscretedFields(Loc,"rho.txt",rho);
+        IO::readDiscretedFields(Loc,"rhou.txt",rhou);
+        IO::readDiscretedFields(Loc,"rhov.txt",rhov);
+        IO::readDiscretedFields(Loc,"rhoE.txt",rhoE);
 
-		//Read rhou
-		fileName = "rhou.txt";
+        //Read file TSurface & USurface
+        fileName = "TSurface.txt";
         fileLoc = (Loc + "/" + fileName);
-		std::ifstream FileFluxRhou(fileLoc.c_str());
-		if (FileFluxRhou)
-		{
-			int nelement(0);
-			std::string line;
-			while (std::getline(FileFluxRhou, line))
-			{
-				std::istringstream lineflux(line);
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					lineflux >> rhou[nelement][iorder];
-				}
-				nelement++;
-			}
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
-		}
+        std::ifstream FileFluxTSurface(fileLoc.c_str());
+        fileName = "USurface.txt";
+        fileLoc = (Loc + "/" + fileName);
+        std::ifstream FileFluxUSurface(fileLoc.c_str());
+        if (FileFluxTSurface && FileFluxUSurface)
+        {
+            int nEdge(0);
+            double TVar(0.0), uVar(0.0), vVar(0.0);
+            std::string line_T, line_U;
 
-		//Read rhov
-		fileName = "rhov.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ifstream FileFluxRhov(fileLoc.c_str());
-		if (FileFluxRhov)
-		{
-			int nelement(0);
-			std::string line;
-			while (std::getline(FileFluxRhov, line))
-			{
-				std::istringstream lineflux(line);
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					lineflux >> rhov[nelement][iorder];
-				}
-				nelement++;
-			}
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
-		}
+            //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
+            while (std::getline(FileFluxTSurface, line_T) && std::getline(FileFluxTSurface, line_U))
+            {
+                std::istringstream line_Tflux(line_T), line_Uflux(line_U);
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    line_Tflux>>TVar;
+                    line_Uflux>>uVar>>vVar;
+                    for (int nG=0; nG<=mathVar::nGauss; nG++)
+                    {
+                        SurfaceBCFields::TBc[nEdge][nG]=TVar;
+                        SurfaceBCFields::uBc[nEdge][nG]=uVar;
+                        SurfaceBCFields::vBc[nEdge][nG]=vVar;
+                    }
 
-		//Read rhoE
-		fileName = "rhoE.txt";
-        fileLoc = (Loc + "/" + fileName);
-		std::ifstream FileFluxRhoE(fileLoc.c_str());
-		if (FileFluxRhoE)
-		{
-			int nelement(0);
-			std::string line;
-			while (std::getline(FileFluxRhoE, line))
-			{
-				std::istringstream lineflux(line);
-				for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-				{
-					lineflux >> rhoE[nelement][iorder];
-				}
-				nelement++;
-			}
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
-		}
+                }
+                nEdge++;
+            }
+        }
+        else
+        {
+            if (systemVar::currentProc==0)
+            {
+                std::cout<<"Cannot find file TSurface.txt or USurface.txt or both at folder "<<systemVar::iterCount<<", solver will load surface fields from folder 0\n";
+            }
+            process::setIniSurfaceBCValues();
+        }
 
 		//Read residual norm coeffs
 		fileName = "ResidualNormCoeffs.txt";
@@ -1418,6 +1439,15 @@ namespace IO
 			exit(EXIT_FAILURE);
 		}
 	}
+
+    void writeResiduals(int iter, double rhoRes, double rhouRes, double rhovRes, double rhoERes)
+    {
+        IO::openFileToAppend((systemVar::pwd+"/ResidualOutput.txt"),std::to_string(iter)+" "
+                             +std::to_string(rhoRes)+" "
+                             +std::to_string(rhouRes)+" "
+                             +std::to_string(rhovRes)+" "
+                             +std::to_string(rhoERes)+"\n");
+    }
 
 	void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol)
 	{
@@ -1604,6 +1634,22 @@ namespace IO
     }
 
     void write1DDoubleVectorToFile(std::string location, std::string fileName, std::vector<double> &vector)
+    {
+        std::ofstream FileFlux((location+"/"+fileName).c_str());
+        if (FileFlux)
+        {
+            for (int irow=0; irow<vector.size(); irow++)
+            {
+                FileFlux<<vector[irow]<<"\n";
+            }
+        }
+        else
+        {
+            std::cout<<"Cannot open file at location "<<(location+"/"+fileName)<<" to write.\n";
+        }
+    }
+
+    void write1DIntVectorToFile(std::string location, std::string fileName, std::vector<int> &vector)
     {
         std::ofstream FileFlux((location+"/"+fileName).c_str());
         if (FileFlux)

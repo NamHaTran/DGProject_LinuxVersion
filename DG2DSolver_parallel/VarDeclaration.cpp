@@ -30,6 +30,9 @@ namespace systemVar
     //For parallel computing
     int totalProc(4), currentProc(0);
     bool runDecomposeCaseFnc(false), parallelMode(true);
+
+    //Detect first iteration
+    bool firstIter(true);
 }
 
 namespace meshVar
@@ -43,25 +46,25 @@ namespace meshVar
 	int const nedel(4);  //change nedel value at file .h
 
 	/*Elements surrounding point*/
-    std::vector<int> esup1, esup2;
-	std::vector<std::vector<int>> inpoel(elements2DArrSize,std::vector<int>(5));
+	std::vector<int> esup1, esup2;
+	std::vector<std::vector<int>> inpoel;
 
 	/*Points surrounding point*/
-	std::vector<int> psup1(5 * pointsArrSize), psup2(pointsArrSize + 1);
+	std::vector<int> psup1, psup2;
 
 	/*Elements surrounding element*/
-    std::vector<std::vector<int>> esuel(elements2DArrSize,std::vector<int>(4)); //Default is 4 faces
+    std::vector<std::vector<int>> esuel; //Default is 4 faces
 
 	/*Edges informations*/
-    std::vector<std::vector<int>> inpoed(2*elements2DArrSize,std::vector<int>(5));
+    std::vector<std::vector<int>> inpoed;
 	/*column 3 contents group which edge belongs to (group 0 is internal group),
 	column 4 contents type of boundary (type 0 is internal edge)*/
 
 	/*Edges of element*/
     //column index is element index, each row in column contents index of edge belong to element, number of row is 4 because of default quad element
     //column index is edge index, each row in column contents index of element which edge is belong to, row 3 contents pointer
-    std::vector<std::vector<int>> inedel(elements2DArrSize,std::vector<int>(4)),
-    	ineled(2*elements2DArrSize,std::vector<int>(3));
+    std::vector<std::vector<int>> inedel,
+    	ineled;
 
 	/*Variables help to save mesh data*/
 	int inpoedCount(0);  //can be used for normalVector, MasterElemOfEdge, ineled
@@ -75,6 +78,7 @@ namespace meshVar
 namespace mathVar
 {
     int nGauss(2), orderElem(0), orderOfAccuracy(0);
+    bool solveTFailed(false);
 }
 
 namespace material
@@ -94,19 +98,25 @@ namespace iniValues
 
 namespace bcValues
 {
-	double uBC[bcSize] = { 0.0 },
-		vBC[bcSize] = { 0.0 },
-		wBC[bcSize] = { 0.0 },
-		pBC[bcSize] = { 0.0 },
-		TBC[bcSize] = { 0.0 };
-
-	/*Values for Maxwell-Smoluchovsky condition*/
-	double TWall[bcSize] = {}, uWall[bcSize] = {}, vWall[bcSize] = {}, wWall[bcSize] = {};
+    double uBCFixed[bcSize] = { 0.0 },
+        vBCFixed[bcSize] = { 0.0 },
+        wBCFixed[bcSize] = { 0.0 },
+        pBCFixed[bcSize] = { 0.0 },
+        TBCFixed[bcSize] = { 0.0 };
 
 	/*Variables help identify boundary condition at each group*/
 	int UBcType[bcSize] = {};
 	int pBcType[bcSize] = {};
 	int TBcType[bcSize] = {};
+
+    /*Variables of slip & temperature jump boundary conditions*/
+    double sigmaU(1.0), sigmaT(1.0);
+
+    /*Flags of time varying BCs*/
+    //U
+    bool slipBCFlag(false);
+    //T
+    bool temperatureJump(false);
 }
 
 namespace refValues
@@ -125,7 +135,7 @@ double runTime(0.0);
 
 namespace limitVal
 {
-	double TUp(5000), TDwn(10);
+    double TUp(5000), TDwn(20);
 	double rhoUp(12.5), rhoDwn(0.0001);
 	double rhoEUp(0.0), rhoEDwn(0.0);  //computed at initialValue function
 	bool limitTOrNot(false), limitFlagLocal(false), limitFlagGlobal(false);
@@ -169,4 +179,10 @@ namespace parallel {
 bool checkDGRun(false),
 mapResults(false);
 }
+}
+
+namespace numericalFlux
+{
+//He so LxFCoeff dung de modify advective flux trong truong hop bai toan co mass diffusion
+double LxFCoeff(0.0);
 }

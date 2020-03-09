@@ -1,5 +1,6 @@
 #include "DGMessagesLib.h"
 #include "VarDeclaration.h"
+#include "DGAuxUltilitiesLib.h"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -188,11 +189,20 @@ To convert unv mesh format to DG2D readable format, do following task step by st
 
         if (flowProperties::massDiffusion)
         {
-            std::cout<<"- Mass diffusion is on.\n";
+            std::cout<<"- Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff<<".\n";
         }
         else {
             std::cout<<"- Mass diffusion is off.\n";
         }
+
+        if (auxUlti::checkTimeVaryingBCAvailable())
+        {
+            std::cout<<"- Time varying BCs are set.\n";
+        }
+        else {
+            std::cout<<"- All BCs are not varied with time.\n";
+        }
+
         if (limitVal::limiterName.size() > 0)
         {
             std::cout << "- Selected limiter(s): ";

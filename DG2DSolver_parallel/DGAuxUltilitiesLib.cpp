@@ -635,7 +635,7 @@ namespace auxUlti
 	}
 
 	int getBCType(int edge)
-	{
+    {
         int bcType(meshVar::inpoed[edge][3]);
 		return bcType;
 	}
@@ -648,9 +648,9 @@ namespace auxUlti
 		{
 			if (bcValues::UBcType[i]==1 || bcValues::UBcType[i] == 4)
 			{
-				TInf = bcValues::TBC[i];
-				uInf = bcValues::uBC[i];
-				vInf = bcValues::vBC[i];
+                TInf = bcValues::TBCFixed[i];
+                uInf = bcValues::uBCFixed[i];
+                vInf = bcValues::vBCFixed[i];
 				SpeedOfSound = (sqrt(material::gamma*material::R*TInf));
 				Velocity = (sqrt(uInf*uInf + vInf * vInf));
 				Mach = Velocity / SpeedOfSound;
@@ -697,7 +697,7 @@ namespace auxUlti
 		Array.resize(row);
         for (int i = 0; i < row; ++i)
 		{
-			Array[i].resize(column);
+            Array[i].resize(column, 0.0);
 		}
 	}
 
@@ -706,7 +706,7 @@ namespace auxUlti
 		Array.resize(row);
         for (int i = 0; i < row; ++i)
 		{
-			Array[i].resize(column);
+            Array[i].resize(column, 0);
 		}
 	}
 
@@ -715,10 +715,10 @@ namespace auxUlti
 		Array.resize(direct1);
         for (int i = 0; i < direct1; ++i)
 		{
-			Array[i].resize(direct2);
+            Array[i].resize(direct2);
             for (int j = 0; j < direct2; j++)
 			{
-				Array[i][j].resize(direct3);
+                Array[i][j].resize(direct3, 0.0);
 			}
 		}
 	}
@@ -767,7 +767,7 @@ namespace auxUlti
 				std::tie(xMaster, yMaster) = math::directMapping(masterElem, aMaster, bMaster);
 				meshVar::edgeGaussPoints_a[iedge][nG] = aMaster;
 				meshVar::edgeGaussPoints_b[iedge][nG] = bMaster;
-				if (bcType != 0)
+                if (bcType != 0)
 				{
                     aServant = 0.0;
                     bServant = 0.0;
@@ -850,6 +850,22 @@ namespace auxUlti
             auxUlti::resize2DArray(BR1Vars::rhouY, meshVar::nelem2D, mathVar::orderElem + 1);
             auxUlti::resize2DArray(BR1Vars::rhovY, meshVar::nelem2D, mathVar::orderElem + 1);
             auxUlti::resize2DArray(BR1Vars::rhoEY, meshVar::nelem2D, mathVar::orderElem + 1);
+
+            for (int elem=0; elem<meshVar::nelem2D; elem++)
+            {
+                for (int order=0; order<=mathVar::orderElem; order++)
+                {
+                    BR1Vars::rhoX[elem][order]=0.0;
+                    BR1Vars::rhouX[elem][order]=0.0;
+                    BR1Vars::rhovX[elem][order]=0.0;
+                    BR1Vars::rhoEX[elem][order]=0.0;
+
+                    BR1Vars::rhoY[elem][order]=0.0;
+                    BR1Vars::rhouY[elem][order]=0.0;
+                    BR1Vars::rhovY[elem][order]=0.0;
+                    BR1Vars::rhoEY[elem][order]=0.0;
+                }
+            }
 
         }
         else if (systemVar::auxVariables==2)
@@ -984,6 +1000,11 @@ namespace auxUlti
         return meshVar::inpoed[globalEdgeId][4];
 	}
 
+    int getGlobalEdgeIdFromLocalBCEdgeId(int localBCEdgeId)
+    {
+        return SurfaceBCFields::localGlobalBCEdgesMatching[localBCEdgeId];
+    }
+
 	std::tuple<double, double> getCellCentroid(int element)
 	{
 		double xC(meshVar::geoCenter[element][0]), yC(meshVar::geoCenter[element][1]);
@@ -992,7 +1013,6 @@ namespace auxUlti
 
 	void clear1DIntVector(std::vector<int>&vector)
 	{
-		int vectorLenth(vector.size());
 		//Use erase function to clear vector
 		vector.erase(vector.begin(), vector.end());
 		//Shrink to fit
@@ -1107,7 +1127,7 @@ namespace auxUlti
 	int getNeighborElement(int element, int edge)
 	{
 		int neighbor(0);
-		if (auxUlti::getBCType(edge) == 0)
+        if (auxUlti::getBCType(edge) == 0)
 		{
             if (meshVar::ineled[edge][0] == element)
 			{
@@ -1350,7 +1370,7 @@ namespace auxUlti
         MPI_Comm_rank(MPI_COMM_WORLD, &systemVar::currentProc);
     }
 
-    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer)
+    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer,int order)
     {
         MPI_Barrier(MPI_COMM_WORLD);
         //Declare dynamic array
@@ -1381,10 +1401,8 @@ namespace auxUlti
                 //define tags
                 tag_sent = neighborCellId*coef + destination;
 
-                for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    MPI_Isend(&Var[cellId][iorder], 1, MPI_DOUBLE, destination, tag_sent*1000+100+iorder, MPI_COMM_WORLD, &request_send[sentCount]);
-                    sentCount++;
-                }
+                MPI_Isend(&Var[cellId][order], 1, MPI_DOUBLE, destination, tag_sent*1000+100+order, MPI_COMM_WORLD, &request_send[sentCount]);
+                sentCount++;
             }
         }
 
@@ -1412,17 +1430,15 @@ namespace auxUlti
                 //define tags
                 tag_recv = cellId*coef + systemVar::currentProc;
 
-                for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder) {
-                    //rho
-                    MPI_Irecv(&Buffer[iBCedge][iorder], 1, MPI_DOUBLE, source, tag_recv*1000+100+iorder, MPI_COMM_WORLD, &request_recv[recvCount]);
-                    recvCount++;
-                }
+                MPI_Irecv(&Buffer[iBCedge][order], 1, MPI_DOUBLE, source, tag_recv*1000+100+order, MPI_COMM_WORLD, &request_recv[recvCount]);
+                recvCount++;
             }
         }
 
         //Wait for all request fullfilled
         MPI_Waitall(sentCount,request_send,MPI_STATUSES_IGNORE);
         MPI_Waitall(recvCount,request_recv,MPI_STATUSES_IGNORE);
+        //MPI_Barrier(MPI_COMM_WORLD);
 
         delete [] request_send;
         delete [] request_recv;
@@ -1496,6 +1512,7 @@ namespace auxUlti
         //Wait for all request fullfilled
         MPI_Waitall(sentCount,request_send,MPI_STATUSES_IGNORE);
         MPI_Waitall(recvCount,request_recv,MPI_STATUSES_IGNORE);
+        //MPI_Barrier(MPI_COMM_WORLD);
 
         delete [] request_send;
         delete [] request_recv;
@@ -1503,37 +1520,33 @@ namespace auxUlti
 
     void sendReceiveU()
     {
-        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rho,parallelBuffer::rho);
-        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhou,parallelBuffer::rhou);
-        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhov,parallelBuffer::rhov);
-        auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhoE,parallelBuffer::rhoE);
+        for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder)
+        {
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rho,parallelBuffer::rho,iorder);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhou,parallelBuffer::rhou,iorder);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhov,parallelBuffer::rhov,iorder);
+            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(rhoE,parallelBuffer::rhoE,iorder);
+        }
     }
 
     void sendReceivedU()
     {
-        if (!flowProperties::massDiffusion)
-        {
-            if (systemVar::auxVariables==1)
-            {
-                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoX,parallelBuffer::drhoX);
-                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoY,parallelBuffer::drhoY);
-            }
-            else if (systemVar::auxVariables==2)
-            {
-                //Chua lam cho method BR2
-            }
-        }
-
         if (systemVar::auxVariables==1)
         {
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhouX,parallelBuffer::drhouX);
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhouY,parallelBuffer::drhouY);
+            for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder)
+            {
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoX,parallelBuffer::drhoX,iorder);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoY,parallelBuffer::drhoY,iorder);
 
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhovX,parallelBuffer::drhovX);
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhovY,parallelBuffer::drhovY);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhouX,parallelBuffer::drhouX,iorder);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhouY,parallelBuffer::drhouY,iorder);
 
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoEX,parallelBuffer::drhoEX);
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoEY,parallelBuffer::drhoEY);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhovX,parallelBuffer::drhovX,iorder);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhovY,parallelBuffer::drhovY,iorder);
+
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoEX,parallelBuffer::drhoEX,iorder);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoEY,parallelBuffer::drhoEY,iorder);
+            }
         }
         else if (systemVar::auxVariables==2)
         {
@@ -1545,8 +1558,11 @@ namespace auxUlti
     {
         if (systemVar::auxVariables==1)
         {
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoX,parallelBuffer::drhoX);
-            auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoY,parallelBuffer::drhoY);
+            for (int iorder = 0; iorder <= mathVar::orderElem; ++iorder)
+            {
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoX,parallelBuffer::drhoX,iorder);
+                auxUlti::functionsOfParallelComputing::sendRecvDiscretedVar(BR1Vars::rhoY,parallelBuffer::drhoY,iorder);
+            }
         }
         else if (systemVar::auxVariables==2)
         {
@@ -1554,19 +1570,19 @@ namespace auxUlti
         }
     }
 
-    void sendReceiveMeshData()
+    void sendReceiveMeshData(int vertex, int dir, std::vector<std::vector<double>>&Buffer)
     {
+        //dir = 1: xCoor
+        //dir = 2: yCoor
+
         //MPI_Request request_send, request_recv;
-        MPI_Request *request_send_x = new MPI_Request[meshVar::numBCEdges*4], //Phai nhan 4 vi phan tu nhieu node nhat la quad
-                *request_recv_x = new MPI_Request[meshVar::numBCEdges*4],
-                *request_send_y = new MPI_Request[meshVar::numBCEdges*4],
-                *request_recv_y = new MPI_Request[meshVar::numBCEdges*4];
+        MPI_Request *request_send = new MPI_Request[meshVar::numBCEdges*4], //Phai nhan 4 vi phan tu nhieu node nhat la quad
+                *request_recv = new MPI_Request[meshVar::numBCEdges*4];
 
         MPI_Barrier(MPI_COMM_WORLD);
         int coef(1);
         int destination, source, cellId, neighborCellId, tag_sent, tag_recv, sentCount(0), recvCount(0);
 
-        //Send
         for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {
             destination=meshVar::meshConnection[iBCedge][1];
             cellId=meshVar::meshConnection[iBCedge][0];
@@ -1589,13 +1605,11 @@ namespace auxUlti
 
                 int elemType(auxUlti::checkType(cellId)), ptId(0);
 
-                //send toa do 3 dinh cua cell
-                for (int vertex = 0; vertex < elemType; ++vertex) {
+                //send toa do dinh cua cell
+                if (vertex<elemType)
+                {
                     ptId=meshVar::Elements2D[cellId][vertex];
-                    //tag*10 + 1: gui toa do x
-                    //tag*10 + 2: gui toa do y
-                    MPI_Isend(&meshVar::Points[ptId][0], 1, MPI_DOUBLE, destination, tag_sent*10+1, MPI_COMM_WORLD, &request_send_x[sentCount]);
-                    MPI_Isend(&meshVar::Points[ptId][1], 1, MPI_DOUBLE, destination, tag_sent*10+2, MPI_COMM_WORLD, &request_send_y[sentCount]);
+                    MPI_Isend(&meshVar::Points[ptId][dir-1], 1, MPI_DOUBLE, destination, tag_sent*100+10+vertex, MPI_COMM_WORLD, &request_send[sentCount]);
                     sentCount++;
                 }
             }
@@ -1624,28 +1638,25 @@ namespace auxUlti
 
                 //define tags
                 tag_recv = cellId*coef + systemVar::currentProc;
+
+                //elemType nay la kieu phan tu cua cell neighbor chu k phai cell dang xet (cellId) ---> BUG!!!!!
                 int elemType(auxUlti::checkType(cellId));
 
-                //receive toa do 3 dinh cua cell
-                for (int vertex = 0; vertex < elemType; ++vertex) {
-                    //tag*10 + 1: gui toa do x
-                    //tag*10 + 2: gui toa do y
-                    MPI_Irecv(&parallelBuffer::xCoor[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*10+1, MPI_COMM_WORLD, &request_recv_x[recvCount]);
-                    MPI_Irecv(&parallelBuffer::yCoor[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*10+2, MPI_COMM_WORLD, &request_recv_y[recvCount]);
+                //receive toa do dinh cua cell
+                if (vertex<elemType)
+                {
+                    MPI_Irecv(&Buffer[iBCedge][vertex], 1, MPI_DOUBLE, source, tag_recv*100+10+vertex, MPI_COMM_WORLD, &request_recv[recvCount]);
                     recvCount++;
                 }
             }
         }
-        MPI_Waitall(sentCount,request_send_x,MPI_STATUSES_IGNORE);
-        MPI_Waitall(sentCount,request_send_y,MPI_STATUSES_IGNORE);
-        MPI_Waitall(recvCount,request_recv_x,MPI_STATUSES_IGNORE);
-        MPI_Waitall(recvCount,request_recv_y,MPI_STATUSES_IGNORE);
+
+        MPI_Waitall(sentCount,request_send,MPI_STATUSES_IGNORE);
+        MPI_Waitall(recvCount,request_recv,MPI_STATUSES_IGNORE);
 
         MPI_Barrier(MPI_COMM_WORLD);
-        delete [] request_send_x;
-        delete [] request_send_y;
-        delete [] request_recv_x;
-        delete [] request_recv_y;
+        delete [] request_send;
+        delete [] request_recv;
     }
 
     void sendString(std::string content, int destination, int tag)
@@ -1692,6 +1703,18 @@ namespace auxUlti
         }
     }
 
+    bool checkTimeVaryingBCAvailable()
+    {
+        if (bcValues::slipBCFlag || bcValues::temperatureJump)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void getCommand()
     {
         if (systemVar::currentProc==0)
@@ -1727,31 +1750,31 @@ namespace auxUlti
         /*
         Ham release bo nho sau khi doc va xu luoi
         */
-        meshVar::esup1.clear();
-        meshVar::esup2.clear();
-        meshVar::psup1.clear();
-        meshVar::psup2.clear();
+        //meshVar::esup1.clear();
+        //meshVar::esup2.clear();
+        //meshVar::psup1.clear();
+        //meshVar::psup2.clear();
 
         //shrink vector to fit its size
-        auxUlti::shrink2DIntVector(meshVar::inpoel,meshVar::nelem2D);
-        auxUlti::shrink2DIntVector(meshVar::esuel,meshVar::nelem2D);
+        //auxUlti::shrink2DIntVector(meshVar::inpoel,meshVar::nelem2D);
+        //auxUlti::shrink2DIntVector(meshVar::esuel,meshVar::nelem2D);
         auxUlti::shrink2DIntVector(meshVar::inpoed,meshVar::inpoedCount);
-        auxUlti::shrink2DIntVector(meshVar::inedel,meshVar::nelem2D);
+        //auxUlti::shrink2DIntVector(meshVar::inedel,meshVar::nelem2D);
         auxUlti::shrink2DIntVector(meshVar::ineled,meshVar::inpoedCount);
     }
 
     void resizeTemporaryArrays()
     {
         //Resize array
-        std::cout<<meshVar::npoin<<"/n";
-        meshVar::esup1.resize(5*meshVar::npoin);
+        meshVar::esup1.resize(6*meshVar::npoin);
         meshVar::esup2.resize(meshVar::npoin+1);
         auxUlti::resize2DIntArray(meshVar::inpoel,meshVar::nelem2D,5);
-        meshVar::psup1.resize(meshVar::npoin*5);
+        meshVar::psup1.resize(meshVar::npoin*6);
         meshVar::psup2.resize(meshVar::npoin+1);
         auxUlti::resize2DIntArray(meshVar::esuel,meshVar::nelem2D,4);
-        auxUlti::resize2DIntArray(meshVar::inpoed,meshVar::nelem2D*3,5);
+        auxUlti::resize2DIntArray(meshVar::inpoed,meshVar::nelem2D*4,5);
         auxUlti::resize2DIntArray(meshVar::inedel,meshVar::nelem2D,4);
-        auxUlti::resize2DIntArray(meshVar::ineled,meshVar::nelem2D*3,5);
+        auxUlti::resize2DIntArray(meshVar::ineled,meshVar::nelem2D*4,5);
+        SurfaceBCFields::localGlobalBCEdgesMatching.resize(meshVar::nelem1D);
     }
 }

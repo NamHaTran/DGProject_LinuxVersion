@@ -129,7 +129,7 @@ void Executer()
             /*PROCESS MESH*/
             MshReader::meshProcess();
 
-            decomposeMesh::decomposingMesh();
+            decomposeReconstructPart::decomposingMesh();
 
             controlFlag::sequence::decomposeCase=false;
         }
@@ -193,7 +193,6 @@ void Processing()
     //Giai phong bot bo nho truoc khi tinh toan
     auxUlti::releaseMemory();
     
-    std::cout<<"node "<<systemVar::currentProc<<"\n";
     std::string readWriteMode;
     if (systemVar::parallelMode)
     {
@@ -206,7 +205,9 @@ void Processing()
 	if (systemVar::loadSavedCase)
 	{
 		meshParam::calcStiffMatrixCoeffs();
-		std::cout << "Loading case...\n" << std::endl;
+        if (systemVar::currentProc==0){
+        std::cout << "Loading case...\n" << std::endl;}
+
         IO::loadCase(readWriteMode);
 	}
 	else
@@ -215,11 +216,15 @@ void Processing()
 		if (systemVar::initializedOrNot == false)
 		{
 			meshParam::calcStiffMatrixCoeffs();
-			process::setIniValues();
+            process::setIniVolumeValues();
+            process::setIniSurfaceBCValues();
 		}
 	}
 
-	std::cout << " \n" << "Simulation is started\n";
+    if (systemVar::currentProc==0)
+    {
+        std::cout << " \n" << "Simulation is started\n";
+    }
 
 	//APPLY LIMITER
 	limiter::mathForLimiter::getNeighborElements();
@@ -233,12 +238,14 @@ void Processing()
     }
 
 	int loadConstCount(0);
-    std::cout<<"Processor "<<systemVar::currentProc<<" is running\n";
 	while (process::checkRunningCond())
 	{
 		systemVar::iterCount++;
-        std::cout << "Iteration " << systemVar::iterCount << std::endl
-                  << "Total time = "<<runTime<<std::endl;
+        if (systemVar::currentProc==0)
+        {
+            std::cout << "Iteration " << systemVar::iterCount << std::endl
+                      << "Total time = "<<runTime<<std::endl;
+        }
 
 		//CALCULATE TIME STEP
 		process::timeDiscretization::calcGlobalTimeStep();
@@ -266,6 +273,14 @@ void Processing()
             IO::loadConstants(readWriteMode);
 			loadConstCount = 0;
 		}
+
+        //set lai cac bien flag
+        systemVar::firstIter=false;
+        if (mathVar::solveTFailed)
+        {
+            std::cout<<"Failed to solve T at somewhere!\n";
+            mathVar::solveTFailed=false;
+        }
 	}
 }
 
@@ -298,6 +313,14 @@ void PreProcessing()
 
     /*RESIZE ARRAYS*/
     auxUlti::resizeDGArrays();
+    //initialise theta1 & theta2
+    limiter::Pp::initialiseThetaVector();
+
+    for (int ivertex=0;ivertex<4;ivertex++)
+    {
+        auxUlti::functionsOfParallelComputing::sendReceiveMeshData(ivertex,1,parallelBuffer::xCoor);
+        auxUlti::functionsOfParallelComputing::sendReceiveMeshData(ivertex,2,parallelBuffer::yCoor);
+    }
 
 	/*CALCULATE JACOBIAN, BASIS FUNCTION AND GAUSSIAN*/
 	meshParam::GaussParam();
@@ -310,9 +333,7 @@ void PreProcessing()
 
 	/*CALCULATE COORDINATES DERIVATIVES*/
 	meshParam::derivCoordinates();
-
-    auxUlti::functionsOfParallelComputing::sendReceiveMeshData();
-	auxUlti::mappingEdges();
+    auxUlti::mappingEdges();
 
 	systemVar::runPreProcess = true;
 }

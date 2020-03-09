@@ -115,9 +115,12 @@ namespace limiter
 				{
 					std::cout << "Posivity preserving limiter is applied at " << limitVal::numOfLimitCell << " cell(s)\n";
 					limitVal::numOfLimitCell = 0;
-				}
+                }
+                //send/recv theta
+                auxUlti::functionsOfParallelComputing::sendRecvTheta(theta1Arr,parallelBuffer::theta1);
+                auxUlti::functionsOfParallelComputing::sendRecvTheta(theta2Arr,parallelBuffer::theta2);
 			}
-		}
+        }
 	}
 
 	namespace Pp
@@ -265,10 +268,6 @@ namespace limiter
 					meanRhoe = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(meanRho, meanRhou, meanRhov, meanRhoE);
 					minRhoe = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calcMinRhoeQuad(element, theta1);
 					theta2 = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calcTheta2Coeff(meanRhoe, minRhoe, meanRho);
-
-					//for debugging
-					//debug::minRhoArr[element] = minRho;
-					//debug::minRhoeArr[element] = minRhoe;
 					
 					if ((theta2 < 1))
 					{
@@ -635,10 +634,10 @@ namespace limiter
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
                 {
                     //Ox direction
-                    BR1Vars::rhoX[element][iorder] = rhoRHSTermOxDir[iorder] / stiffMatrixCoeffs[element][iorder];
+                    //BR1Vars::dRhoX[element][iorder] = rhoRHSTermOxDir[iorder] / stiffMatrixCoeffs[element][iorder];
 
                     //Oy direction
-                    BR1Vars::rhoY[element][iorder] = rhoRHSTermOyDir[iorder] / stiffMatrixCoeffs[element][iorder];
+                    //BR1Vars::dRhoY[element][iorder] = rhoRHSTermOyDir[iorder] / stiffMatrixCoeffs[element][iorder];
                 }
 	        }
 
@@ -672,8 +671,8 @@ namespace limiter
                             std::tie(rhoMaster, rhoSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 1);
                             std::tie(rhouMaster, rhouSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 2);
                             std::tie(rhovMaster, rhovSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 3);
-                            std::tie(dRhoXMaster, dRhoXSlave) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, 1, 1);
-                            std::tie(dRhoYMaster, dRhoYSlave) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, 1, 2);
+                            //std::tie(dRhoXMaster, dRhoXSlave) = math::internalSurfaceDerivRhoValue(iedge, masterCell, nG, 1);
+                            //std::tie(dRhoYMaster, dRhoYSlave) = math::internalSurfaceDerivRhoValue(iedge, masterCell, nG, 2);
                             dRhoXMaster*=muMaster;
                             dRhoYMaster*=muMaster;
                             dRhoXSlave*=muSlave;
@@ -818,7 +817,7 @@ namespace limiter
                             std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 1);
 
                             /*Calculate fluxes*/
-                            Flux1[nGauss][nface] = math::numericalFluxes::advectiveFlux(termX1P, termX1M, rhoPlus, rhoMinus, LxFConst[edgeName], nx) + math::numericalFluxes::advectiveFlux(termY1P, termY1M, rhoPlus, rhoMinus, LxFConst[edgeName], ny) +
+                            Flux1[nGauss][nface] = math::numericalFluxes::advectiveFlux(termX1P, termX1M, rhoPlus, rhoMinus, LxFConst[edgeName], nx, true) + math::numericalFluxes::advectiveFlux(termY1P, termY1M, rhoPlus, rhoMinus, LxFConst[edgeName], ny, true) +
                                     math::numericalFluxes::diffusiveFlux(termX1M, termX1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], nx) + math::numericalFluxes::diffusiveFlux(termY1M, termY1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], ny);
                         }
                     }

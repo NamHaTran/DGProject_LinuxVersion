@@ -119,10 +119,11 @@ namespace MshReader
 
 	void PtsSurPt()
 	{
-		int lpoin[pointsArrSize] = {};
+		//int lpoin[pointsArrSize] = {};
+		std::vector<int> lpoin(meshVar::npoin);
 		int istor(0), ielem(0), jpoin(0);
 
-		for (int r = 0; r < pointsArrSize; r++)
+		for (int r = 0; r < meshVar::npoin; r++)
 		{
 			lpoin[r] = -2;  //abitraly non-zero value
 		}
@@ -148,11 +149,12 @@ namespace MshReader
 			}
 			meshVar::psup2[ipoin + 1] = istor;
 		}
+		lpoin.clear();
 	}
 
 	void ElemsSurElem()
 	{
-		int lpoin[pointsArrSize] = {};
+		std::vector<int> lpoin(meshVar::npoin);
 		int nfael(4),
 			lpofa[2][4] = {},
 			lnofa[4] = {};
@@ -198,7 +200,7 @@ namespace MshReader
 		//----------------------------
 
 		//Set initial value of meshVar::esuel
-        for (int row = 0; row < elements2DArrSize; row++)
+        for (int row = 0; row < meshVar::nelem2D; row++)
 		{
             for (int column = 0; column < 4; column++)
 			{
@@ -315,20 +317,21 @@ namespace MshReader
 				}
 			}
 		}
+		lpoin.clear();
 	}
 
 	void EdgesInfor()
 	{
         int helpArrIndexI(0), helpArrIndexJ(0), jpoin(0), ipoinIndex(0), jpoinIndex(0);
-        //int helpArray[20][pointsArrSize] = {};
-        std::vector<std::vector<int>> helpArray(20,std::vector<int>(pointsArrSize,0));
+        std::vector<std::vector<int>> helpArray(20,std::vector<int>(meshVar::npoin));
+        //int helpArray[20][pointsArrSize] = {};      
 		int iHelpArray[20];
         int flag(0), flag2(0);
 
 		//Set initial values for helpArray array
 		for (int row = 0; row < 20; row++)
 		{
-			for (int col = 0; col < pointsArrSize; col++)
+			for (int col = 0; col < meshVar::npoin; col++)
 			{
 				helpArray[row][col] = -1;
 				edgesOfPoint[row][col] = -1;
@@ -421,7 +424,7 @@ namespace MshReader
             meshVar::ineled[c][2] = -1;
 		}
 		int index(-1), pointBase(0);
-		std::vector<int> helpArray(2 * elements2DArrSize,0);
+		std::vector<int> helpArray(5 * meshVar::nelem2D,0);
 
 		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
@@ -485,6 +488,7 @@ namespace MshReader
 				}
 			}
 		}
+		helpArray.clear();
 	}
 
 	void GetNormalVector()
@@ -642,6 +646,7 @@ namespace MshReader
 				{
                     meshVar::inpoed[ninpoed][3] = meshVar::BoundaryType[BcGroup - 1][1];  //Get boundary type
                     meshVar::inpoed[ninpoed][4] = iedge;
+                    SurfaceBCFields::localGlobalBCEdgesMatching[iedge]=ninpoed;
                     //meshVar::adressOfBCVals.push_back(ninpoed);
 					meshVar::numBCEdges++;
                     //Counting number of BC groups
@@ -959,7 +964,7 @@ DT=(SINGLE SINGLE SINGLE)
     }
 }
 
-namespace decomposeMesh {
+namespace decomposeReconstructPart {
     //NOTE!! ALL FUNCTIONS OF THIS NAMESPACE MUST BE EXCUTED AFTER LOADING MESH
 
     std::vector<int> loadPartitionedMesh()
@@ -968,7 +973,7 @@ namespace decomposeMesh {
         meshVar::Elem2DlocalIdWithRank.resize(meshVar::nelem2D);
         std::vector<int> idMarker(systemVar::totalProc,0);
         /*Declare loading locations*/
-        std::string  procIdLoc = systemVar::pwd + "/DGMesh.mesh.epart";
+        std::string  procIdLoc = systemVar::pwd + "/DGMesh.mesh.epart."+std::to_string(systemVar::totalProc);
 
         /*Load process id*/
         std::ifstream procFlux(procIdLoc.c_str());
@@ -992,6 +997,11 @@ namespace decomposeMesh {
             std::cout << "DGSolver will exit after you hit return.\n";
             exit(EXIT_FAILURE);
         }
+
+        //Ghi ra 2 array meshVar::rankOf2DElem va meshVar::Elem2DlocalIdWithRank
+        IO::write1DIntVectorToFile(systemVar::pwd+"/Constant/Mesh","rankOf2DElem.txt",meshVar::rankOf2DElem);
+        IO::write1DIntVectorToFile(systemVar::pwd+"/Constant/Mesh","Elem2DlocalIdWithRank.txt",meshVar::Elem2DlocalIdWithRank);
+
         return idMarker;
     }
 
@@ -1005,7 +1015,7 @@ namespace decomposeMesh {
         //Lap theo so points
         for (int ipoin = 0; ipoin < meshVar::npoin; ipoin++)
         {
-            //Tai moi point tim cac cell co chua point dang xet
+            //Tai moi point tim cac node (process) co chua point dang xet
             for (int iesup = meshVar::esup2[ipoin] + 1; iesup <= meshVar::esup2[ipoin + 1]; iesup++)
             {
                 ielem = meshVar::esup1[iesup];
@@ -1018,7 +1028,7 @@ namespace decomposeMesh {
             }
 
             for (int irank=0;irank<systemVar::totalProc;irank++) {
-                //dem so thu tu xuat hien cua point dang xet trong tung node (tuong ung voi localId)
+                //dem so thu tu xuat hien cua point dang xet trong tung node (process) (tuong ung voi localId)
                 if (helpArray[irank]==1)
                 {
                     meshVar::PointslocalIdWithRank[ipoin][irank]=idMarker[irank];
@@ -1139,8 +1149,8 @@ namespace decomposeMesh {
                         else {
                             Elem1D[irank][id][3]=BCGrp;
                             meshConnection[irank][id][0]=meshVar::Elem2DlocalIdWithRank[irank];
-                            meshConnection[irank][id][0]=-1;
                             meshConnection[irank][id][1]=-1;
+                            meshConnection[irank][id][2]=-1;
                         }
                         idMarker[irank]++;
                     }
@@ -1159,17 +1169,17 @@ namespace decomposeMesh {
 
     	//Load partitioned mesh
     	std::cout<<"	Reading partitioned mesh.\n";
-    	maxElem2DIdOfRanks=decomposeMesh::loadPartitionedMesh();
+        maxElem2DIdOfRanks=decomposeReconstructPart::loadPartitionedMesh();
         maxNumOfElem2D=*std::max_element(maxElem2DIdOfRanks.begin(), maxElem2DIdOfRanks.end());
 
     	//Find local id of points
     	std::cout<<"	Finding local id of points.\n";
-    	maxPtsIdOfRanks=decomposeMesh::findLocalIdOfPts();
+        maxPtsIdOfRanks=decomposeReconstructPart::findLocalIdOfPts();
         maxNumOfPts=*std::max_element(maxPtsIdOfRanks.begin(), maxPtsIdOfRanks.end());
 
     	//Mark BCType "matched"
     	std::cout<<"	Marking BCType <matched>.\n";
-    	decomposeMesh::findEdgeWithBCTypeMatched();
+        decomposeReconstructPart::findEdgeWithBCTypeMatched();
 
         std::vector<std::vector<std::vector<int>>> Elem2D (systemVar::totalProc,std::vector<std::vector<int>>(maxNumOfElem2D,std::vector <int>(5,0))),
         Elem1D (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(4,0))),
@@ -1177,7 +1187,7 @@ namespace decomposeMesh {
     	std::vector<std::vector<std::vector<double>>> Points (systemVar::totalProc,std::vector<std::vector<double>>(maxNumOfPts,std::vector <double>(4,0)));
 
     	std::cout<<"	Decomposing mesh.\n";
-        maxElem1DIdOfRanks=decomposeMesh::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
+        maxElem1DIdOfRanks=decomposeReconstructPart::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
 
     	/*CREATE DECOMPOSED CASE*/
         //Delete previous processor
@@ -1227,9 +1237,9 @@ namespace decomposeMesh {
             //Elements1D
             IO::write2DIntArrayToFile(meshConnection[irank], meshConnectionLoc, maxElem1DIdOfRanks[irank], 3);
 
-            decomposeMesh::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
+            decomposeReconstructPart::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
 
-            decomposeMesh::decomposingTime0(Loc);
+            decomposeReconstructPart::decomposingTime0(Loc);
 
             //Create file boundaryPatch and Material
             auxUlti::copyFile(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant/boundaryPatch.txt",Loc+"/Constant");
@@ -1259,6 +1269,71 @@ namespace decomposeMesh {
         IO::openFileToAppend(pLoc,content1+std::to_string(meshVar::numBCGrp+1)+content2);
         IO::openFileToAppend(TLoc,content1+std::to_string(meshVar::numBCGrp+1)+content2);
         IO::openFileToAppend(ULoc,content1+std::to_string(meshVar::numBCGrp+1)+content2);
+    }
+
+    void decomposingLatestTime()
+    {
+        //Doc ket qua
+        IO::loadCase("s");
+
+        if (!controlFlag::sequence::decomposeCase)
+        {
+            IO::readDecomposedMeshInfor();
+        }
+
+        decomposeReconstructPart::distributingDiscretedVar();
+    }
+
+    void distributingDiscretedVar()
+    {
+        //Dem so cell trong 1 process
+        std::vector<int> numOfElemPerProc(systemVar::totalProc, 0);
+        for (int nelem=0; nelem<meshVar::nelem2D; nelem++)
+        {
+            numOfElemPerProc[meshVar::rankOf2DElem[nelem]]++;
+        }
+
+        //Phan bo discreted vars den cac process
+        int max2DElem(*std::max_element(numOfElemPerProc.begin(), numOfElemPerProc.end()));
+        std::vector<std::vector<std::vector<double>>> distributedRho(systemVar::totalProc,std::vector<std::vector<double>>(max2DElem,std::vector <double>(mathVar::orderElem+1,0.0))),
+                distributedRhou(systemVar::totalProc,std::vector<std::vector<double>>(max2DElem,std::vector <double>(mathVar::orderElem+1,0.0))),
+                distributedRhov(systemVar::totalProc,std::vector<std::vector<double>>(max2DElem,std::vector <double>(mathVar::orderElem+1,0.0))),
+                distributedRhoE(systemVar::totalProc,std::vector<std::vector<double>>(max2DElem,std::vector <double>(mathVar::orderElem+1,0.0)));
+        for (int nelem=0; nelem<meshVar::nelem2D; nelem++)
+        {
+            int irank(meshVar::rankOf2DElem[nelem]), elem2DlocalId(meshVar::Elem2DlocalIdWithRank[nelem]);
+            for (int iorder=0; iorder<mathVar::orderElem; iorder++)
+            {
+                distributedRho[irank][elem2DlocalId][iorder]=rho[nelem][iorder];
+                distributedRhou[irank][elem2DlocalId][iorder]=rhou[nelem][iorder];
+                distributedRhov[irank][elem2DlocalId][iorder]=rhov[nelem][iorder];
+                distributedRhoE[irank][elem2DlocalId][iorder]=rhoE[nelem][iorder];
+            }
+        }
+
+        //Luu discreted vars vao cac folder processor
+        for (int irank=0; irank<systemVar::totalProc; irank++)
+        {
+            std::vector<std::vector<double>> outputRho(numOfElemPerProc[irank],std::vector<double>(mathVar::orderElem+1,0.0)),
+                    outputRhou(numOfElemPerProc[irank],std::vector<double>(mathVar::orderElem+1,0.0)),
+                    outputRhov(numOfElemPerProc[irank],std::vector<double>(mathVar::orderElem+1,0.0)),
+                    outputRhoE(numOfElemPerProc[irank],std::vector<double>(mathVar::orderElem+1,0.0));
+            for (int nelem=0; nelem<numOfElemPerProc[irank]; nelem++)
+            {
+                for (int iorder=0; iorder<mathVar::orderElem; iorder++)
+                {
+                    outputRho[nelem][iorder]=distributedRho[irank][nelem][iorder];
+                    outputRhou[nelem][iorder]=distributedRhou[irank][nelem][iorder];
+                    outputRhov[nelem][iorder]=distributedRhov[irank][nelem][iorder];
+                    outputRhoE[nelem][iorder]=distributedRhoE[irank][nelem][iorder];
+                }
+            }
+
+            IO::write2DDoubleArrayToFile(outputRho,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rho.txt",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile(outputRhou,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhou.txt",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile(outputRhov,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhov.txt",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile(outputRhoE,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhoE.txt",numOfElemPerProc[irank],mathVar::orderElem+1);
+        }
     }
 
     void exportPartitionedMesh(int rank, int npoin, int nelem2D, std::vector<std::vector<double>>&Points, std::vector<std::vector<int>>&Elements2D)

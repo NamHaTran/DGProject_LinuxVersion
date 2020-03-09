@@ -39,6 +39,9 @@ namespace NSFEqBCs
 
         /*Function computes numerical flux at adiabatic wall by using weakRiemann approach*/
         std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
+
+        /*Function computes numerical flux at wall with temperature jump and slip effects by using weakRiemann approach*/
+        std::vector <std::vector<double>> wallSlipWithTemperatureJump(int element, int edge, int nG);
     }
 
     namespace patch
@@ -63,6 +66,9 @@ namespace auxilaryBCs
         std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG);
 
         std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
+
+        /*Function computes numerical flux at wall with temperature jump and slip effects by using weakRiemann approach*/
+        std::vector <std::vector<double>> wallSlipWithTemperatureJump(int element, int edge, int edgeGrp, int nG);
     }
 
     namespace patch {
@@ -97,8 +103,17 @@ namespace BCSupportFncs
     }
 
     namespace parallel {
-    void calcUMinus_total(int edge, int nG, std::vector<double> &UMinus);
+    double calcUMinus_total(int edge, int nG, std::vector<double> &UMinus);
+
+    void calcUMinus_convective(int edge, int nG, std::vector<double> &UMinus);
     }
+}
+
+namespace timeVaryingBCs
+{
+    void temperatureJump(int edge, int edgeGrp, int nG);
+
+    void slipVelocity(int edge, int edgeGrp, int nG);
 }
 
 #endif // DGBCSLIB_H_INCLUDED

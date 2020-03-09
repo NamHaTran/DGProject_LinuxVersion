@@ -20,6 +20,8 @@ namespace DG2Tecplot
 
 	std::vector<double> calcCellCenteredValues(int valType);
 
+    double pointMeanValue(int element, int valType);
+
 	void exportNodeData(int iter);
 
     void exportCellCenteredData(int iter);

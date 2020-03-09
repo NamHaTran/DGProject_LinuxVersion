@@ -210,9 +210,11 @@ namespace SurfaceBCFields
      * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
      * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
     */
-    std::vector<std::vector<double>> TBc(1, std::vector<double>(1, 0.0)),
-        uBc(1, std::vector<double>(1, 0.0)),
-        vBc(1, std::vector<double>(1, 0.0));
+	std::vector<std::vector<double>> TBc(1, std::vector<double>(1, 0.0)),
+		uBc(1, std::vector<double>(1, 0.0)),
+		vBc(1, std::vector<double>(1, 0.0));
+	
+    std::vector<int>localGlobalBCEdgesMatching(1,0);
 }
 
 namespace limitVal {

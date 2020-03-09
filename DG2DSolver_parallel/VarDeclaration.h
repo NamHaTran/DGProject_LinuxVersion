@@ -42,6 +42,9 @@ namespace systemVar
     //For parallel computing
     extern int totalProc, currentProc;
     extern bool runDecomposeCaseFnc, parallelMode;
+
+    //Detect first iteration
+    extern bool firstIter;
 }
 
 namespace meshVar
@@ -84,6 +87,7 @@ namespace meshVar
 namespace mathVar
 {
     extern int nGauss, orderElem, orderOfAccuracy;
+    extern bool solveTFailed;
 }
 
 namespace material
@@ -103,19 +107,25 @@ namespace iniValues
 
 namespace bcValues
 {
-	extern double uBC[bcSize],
-		vBC[bcSize],
-		wBC[bcSize],
-		pBC[bcSize],
-		TBC[bcSize];
-
-	/*Values for Maxwell-Smoluchovsky condition*/
-	extern double TWall[bcSize], uWall[bcSize], vWall[bcSize], wWall[bcSize];
+	extern double uBCFixed[bcSize],
+		vBCFixed[bcSize],
+		wBCFixed[bcSize],
+		pBCFixed[bcSize],
+		TBCFixed[bcSize];
 
 	/*Variables help identify boundary condition at each group*/
 	extern int 	UBcType[bcSize],
 		pBcType[bcSize],
 		TBcType[bcSize];
+
+    /*Variables of slip & temperature jump boundary conditions*/
+    extern double sigmaU, sigmaT;
+
+    /*Flags of time varying BCs*/
+    //U
+    extern bool slipBCFlag;
+    //T
+    extern bool temperatureJump;
 }
 
 namespace refValues
@@ -175,5 +185,11 @@ namespace parallel {
 extern bool checkDGRun,
 mapResults;
 }
+}
+
+namespace numericalFlux
+{
+//He so LxFCoeff dung de modify advective flux trong truong hop bai toan co mass diffusion
+extern double LxFCoeff;
 }
 #endif // VARDECLARATION_H_INCLUDED

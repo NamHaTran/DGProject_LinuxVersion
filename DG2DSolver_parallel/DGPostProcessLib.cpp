@@ -231,15 +231,130 @@ namespace DG2Tecplot
 	std::vector<double> calcCellCenteredValues(int valType)
 	{
 		std::vector<double>cellCenteredValues(meshVar::nelem2D, 0.0);
-		double xC(0.0), yC(0.0), aC(0.0), bC(0.0);
+        //double xC(0.0), yC(0.0), aC(0.0), bC(0.0);
 		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-			std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
-			std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
-			cellCenteredValues[ielem] = math::pointValue(ielem, aC, bC, valType, 1);
+            //std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
+            //std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
+            cellCenteredValues[ielem] = DG2Tecplot::pointMeanValue(ielem, valType);
 		}
 		return cellCenteredValues;
 	}
+
+    double pointMeanValue(int element, int valType)
+    {
+        //Compute primary variables from conservative variables
+        double out(0.0);
+        if (valType == 1)  //rho
+        {
+            out= rho[element][0];
+        }
+        else if (valType == 2)  //u
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]);
+            out = rhouVal / rhoVal;
+        }
+        else if (valType == 3)  //v
+        {
+            double rhoVal(rho[element][0]),
+                rhovVal(rhov[element][0]);
+            out = rhovVal / rhoVal;
+        }
+        else if (valType == 4)  //e
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]),
+                    dRhoX(BR1Vars::rhoX[element][0]),
+                    dRhoY(BR1Vars::rhoY[element][0]);
+            if (flowProperties::massDiffusion)
+            {
+                out = material::Cv*math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+            }
+            else
+            {
+                out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+            }
+        }
+        else if (valType == 5)  //p
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]),
+                    dRhoX(BR1Vars::rhoX[element][0]),
+                    dRhoY(BR1Vars::rhoY[element][0]);
+            if (flowProperties::massDiffusion)
+            {
+                out = math::CalcP(math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
+            }
+            else
+            {
+                out = math::CalcP(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal), rhoVal);
+            }
+        }
+        else if (valType == 6)  //T
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]),
+                    dRhoX(BR1Vars::rhoX[element][0]),
+                    dRhoY(BR1Vars::rhoY[element][0]);
+            if (flowProperties::massDiffusion)
+            {
+                out = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+            }
+            else
+            {
+                out = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+            }
+            if (out < 0)
+            {
+                std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
+                exit(1);
+            }
+        }
+        else if (valType == 7)  //mu
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]),
+                    dRhoX(BR1Vars::rhoX[element][0]),
+                    dRhoY(BR1Vars::rhoY[element][0]);
+            double TVal(0.0);
+            if (flowProperties::massDiffusion)
+            {
+                TVal = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+            }
+            else
+            {
+                TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+            }
+            if ((TVal<0) && fabs(TVal) < 0.001)
+            {
+                TVal = fabs(TVal);
+            }
+            out = math::CalcVisCoef(TVal);
+            if (out < 0 || out != out)
+            {
+                std::cout << "unphysical mu at cell " << element + meshVar::nelem1D + 1 << std::endl;
+                exit(1);
+            }
+        }
+        else if (valType == 10)  //rho
+        {
+            out= BR1Vars::rhoX[element][0];
+        }
+        else if (valType == 11)  //rho
+        {
+            out= BR1Vars::rhoY[element][0];
+        }
+        return out;
+    }
 
 	void exportNodeData(int iter)
 	{
@@ -416,12 +531,16 @@ DATAPACKING=BLOCK)";
 
     void exportCellCenteredData(int iter)
 	{
-		std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0);
+        std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0),
+                nodeRhoX(meshVar::nelem2D, 0.0), nodeRhoY(meshVar::nelem2D, 0.0);
 		nodeRho = DG2Tecplot::calcCellCenteredValues(1);
 		node_u = DG2Tecplot::calcCellCenteredValues(2);
 		node_v = DG2Tecplot::calcCellCenteredValues(3);
 		node_p = DG2Tecplot::calcCellCenteredValues(5);
 		node_T = DG2Tecplot::calcCellCenteredValues(6);
+
+        nodeRhoX = DG2Tecplot::calcCellCenteredValues(10);
+        nodeRhoY = DG2Tecplot::calcCellCenteredValues(11);
 		for (int i = 0; i < meshVar::nelem2D; i++)
 		{
 			node_uMag[i] = sqrt(pow(node_u[i], 2) + pow(node_v[i], 2));
@@ -438,20 +557,22 @@ DATAPACKING=BLOCK)";
 TITLE     = "DG2D to Tecplot"
 VARIABLES = "X"
 "Y"
-"RHO"
-"U"
-"V"
-"VELOCITY_MAG"
+"Rho"
+"u"
+"v"
+"Velocity_mag"
 "P"
 "T"
-"THETA1"
-"THETA2"
+"dRhoX"
+"dRhoY"
+"Theta1"
+"Theta2"
 ZONE T="ZONE 1"
 STRANDID=0
 ZONETYPE=FEQuadrilateral
 DATAPACKING=BLOCK
-VARLOCATION=([3-10]=CELLCENTERED)
-DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
+VARLOCATION=([3-12]=CELLCENTERED)
+DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 )";
 
 		if (fileFlux)
@@ -579,7 +700,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 					fileFlux << std::endl;
 					counter = 0;
 				}
-				fileFlux << theta1Arr[i] << " ";
+                fileFlux << nodeRhoX[i] << " ";
 			}
 			fileFlux << std::endl;
 
@@ -593,9 +714,37 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 					fileFlux << std::endl;
 					counter = 0;
 				}
-				fileFlux << theta2Arr[i] << " ";
+                fileFlux << nodeRhoY[i] << " ";
 			}
 			fileFlux << std::endl;
+
+            //Theta1
+            counter = 0;
+            for (int i = 0; i < meshVar::nelem2D; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << theta1Arr[i] << " ";
+            }
+            fileFlux << std::endl;
+
+            //Theta2
+            counter = 0;
+            for (int i = 0; i < meshVar::nelem2D; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << theta2Arr[i] << " ";
+            }
+            fileFlux << std::endl;
 
 			//CONNECTIVITY
 			for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
@@ -642,10 +791,10 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				}
 
 				//Apply weak Riemann infinite value
-				UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
-				UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
-				UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
-				UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+                UMinus[0] = (bcValues::pBCFixed[edgeGrp - 1] / (material::R*bcValues::TBCFixed[edgeGrp - 1]));
+                UMinus[1] = UMinus[0] * bcValues::uBCFixed[edgeGrp - 1];
+                UMinus[2] = UMinus[0] * bcValues::vBCFixed[edgeGrp - 1];
+                UMinus[3] = UMinus[0] * (bcValues::TBCFixed[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBCFixed[edgeGrp - 1], 2) + pow(bcValues::vBCFixed[edgeGrp - 1], 2)));
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -676,7 +825,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
-						UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+                        UMinus[3] = bcValues::pBCFixed[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
 					}
 					else
 					{
@@ -697,7 +846,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
-						UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+                        UMinus[3] = (2 * bcValues::pBCFixed[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
 					}
 					else
 					{
@@ -736,7 +885,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				UMinus[0] = UPlus[0];
 				UMinus[1] = 0.0;
 				UMinus[2] = 0.0;
-				UMinus[3] = UPlus[0] * material::Cv*bcValues::TBC[edgeGrp - 1];
+                UMinus[3] = UPlus[0] * material::Cv*bcValues::TBCFixed[edgeGrp - 1];
 
 				for (int i = 0; i < 4; i++)
 				{

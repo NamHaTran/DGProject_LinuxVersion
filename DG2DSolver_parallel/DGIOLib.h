@@ -45,8 +45,16 @@ namespace IO
 	- outInt: output array contents int values*/
 	void readDataFile(std::string fileName, std::string direction, std::string keyWordsDbl[], std::string keyWordsInt[], std::string keyWordsBool[], std::string keyWordsStr[], double *outDbl, int *outInt, bool *outBool, std::string *Str, int numParamDbl, int numParamInt, int numParamBool, int numParamStr);
 
+    void readDecomposedMeshInfor();
+
 	/*Function writes residuals on console*/
 	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
+
+    /*Function writes discreted fields to files*/
+    void writeDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var);
+
+    /*Function reads discreted fields to files*/
+    void readDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var);
 
     void saveCase();
 
@@ -61,6 +69,10 @@ namespace IO
     void write2DDoubleVectorToFile(std::string location, std::string fileName, std::vector<std::vector<double>> &vector);
 
     void write1DDoubleVectorToFile(std::string location, std::string fileName, std::vector<double> &vector);
+
+    void write1DIntVectorToFile(std::string location, std::string fileName, std::vector<int> &vector);
+
+    void writeResiduals(int iter, double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
 	namespace importCase {
 

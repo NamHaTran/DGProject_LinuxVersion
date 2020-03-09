@@ -59,6 +59,9 @@ namespace math
     /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion*/
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy);
 
+    /*Calculate mean free path*/
+    double calcMeanFreePath(double mu, double rho, double T);
+
 	/*Function calculates p from T and rho*/
 	double CalcP(double T, double rho);
 
@@ -237,9 +240,6 @@ namespace math
 	//Function returns id of input number in input array
 	int findIndex(int number, std::vector<int> InArray);
 
-	//Function finds product of tensor and vector
-	std::vector<double> tensorVectorDotProduct(std::vector<std::vector<double>> tensor, std::vector<double> vector);
-
 	//Function finds norm of vector
 	double vectorNorm(std::vector<double> vector);
 
@@ -250,11 +250,25 @@ namespace math
     std::vector<double> pointSVars(int edge, int element, double a, double b, int dir, int option);
 
     namespace tensorMath {
+        std::vector<std::vector<double>> unitTensor(int rowNum);
+
         //Function calculates dot product of tensor and vector
         std::vector<double> tensorVectorDotProduct(std::vector<std::vector<double>>&S, std::vector<double>&V);
 
         //Function calculates dot product of vector and tensor
         std::vector<double> vectorTensorDotProduct(std::vector<double>&V, std::vector<std::vector<double>>&S);
+
+        //Function multiplies tensor with number
+        std::vector<std::vector<double>> numberTensorProduct(double num, std::vector<std::vector<double>>&S);
+
+        //Function multiplies vector with number
+        std::vector<double> numberVectorProduct(double num, std::vector<double>&V);
+
+        //Funtion computes sum of 2 tensors
+        std::vector<std::vector<double>> sumOf2Tensor(std::vector<std::vector<double>>&S1, std::vector<std::vector<double>>&S2, int coefOfS1, int coefOfS2);
+
+        //Funtion computes sum of 2 vectors
+        std::vector<double> sumOf2Vector(std::vector<double>&V1, std::vector<double>&V2, int coefOfV1, int coefOfV2);
     }
 
     namespace BR2Fncs {
@@ -277,7 +291,7 @@ namespace math
 		double auxFlux(double MinusVal, double PlusVar, double vectorComp);
 
 		/*Function calculates advective flux*/
-		double advectiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double C, double vectorComp);
+        double advectiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double C, double vectorComp, bool mod);
 
 		/*Function calculates diffusive flux*/
 		double diffusiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double Beta, double vectorComp);
@@ -286,7 +300,7 @@ namespace math
 		double constantC(double uMagP, double uMagM, double aP, double aM);
 
 		/*Function calculates constant Beta for diffusive flux*/
-        double constantBeta(double uMagP, double uMagM, double rhoP, double rhoM, double eP, double eM, double pP, double pM, std::vector<std::vector<double>> stressHeatFluxP, std::vector<std::vector<double>> stressHeatFluxM, std::vector<double> nP);
+        double constantBeta(double rhoP, double rhoM, double eP, double eM, std::vector<std::vector<double>> stressHeatFluxP, std::vector<std::vector<double>> stressHeatFluxM, std::vector<double> nP);
 	}
 
 	namespace inviscidTerms
