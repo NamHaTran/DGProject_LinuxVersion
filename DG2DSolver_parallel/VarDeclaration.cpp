@@ -2,6 +2,7 @@
 #include <string>
 #include "ConstDeclaration.h"
 #include <vector>
+#include "DGMessagesLib.h"
 
 namespace systemVar
 {
@@ -33,6 +34,11 @@ namespace systemVar
 
     //Detect first iteration
     bool firstIter(true);
+	
+	std::string headerFile(message::headerFile());
+
+    //Dung cho truong hop mass diffusion, true neu giai T implicit, false neu giai T explicit
+    bool solveTImplicitly(true);
 }
 
 namespace meshVar
@@ -45,26 +51,12 @@ namespace meshVar
 	//number of edges per element (default is 4)
 	int const nedel(4);  //change nedel value at file .h
 
+    //Cac array o day dung kieu std::vector vi size thay doi trong qua trinh doc luoi
 	/*Elements surrounding point*/
 	std::vector<int> esup1, esup2;
-	std::vector<std::vector<int>> inpoel;
 
 	/*Points surrounding point*/
 	std::vector<int> psup1, psup2;
-
-	/*Elements surrounding element*/
-    std::vector<std::vector<int>> esuel; //Default is 4 faces
-
-	/*Edges informations*/
-    std::vector<std::vector<int>> inpoed;
-	/*column 3 contents group which edge belongs to (group 0 is internal group),
-	column 4 contents type of boundary (type 0 is internal edge)*/
-
-	/*Edges of element*/
-    //column index is element index, each row in column contents index of edge belong to element, number of row is 4 because of default quad element
-    //column index is edge index, each row in column contents index of element which edge is belong to, row 3 contents pointer
-    std::vector<std::vector<int>> inedel,
-    	ineled;
 
 	/*Variables help to save mesh data*/
 	int inpoedCount(0);  //can be used for normalVector, MasterElemOfEdge, ineled
@@ -179,10 +171,4 @@ namespace parallel {
 bool checkDGRun(false),
 mapResults(false);
 }
-}
-
-namespace numericalFlux
-{
-//He so LxFCoeff dung de modify advective flux trong truong hop bai toan co mass diffusion
-double LxFCoeff(0.0);
 }

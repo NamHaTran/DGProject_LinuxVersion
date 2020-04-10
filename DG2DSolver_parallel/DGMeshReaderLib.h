@@ -37,6 +37,8 @@ namespace MshReader
 	std::tuple<double, double> calcNormVector(int point1, int point1Indice, int point2, int point2Indice, int type);
 
 	void sortPointsOfElements();
+
+    void getMidpointOfBCEdge(std::string mode);
 }
 
 namespace MshExporter

@@ -189,7 +189,15 @@ To convert unv mesh format to DG2D readable format, do following task step by st
 
         if (flowProperties::massDiffusion)
         {
-            std::cout<<"- Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff<<".\n";
+            std::cout<<"- Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff;
+            if (systemVar::solveTImplicitly)
+            {
+                std::cout<<". Solving T method is implicitly.\n";
+            }
+            else
+            {
+                std::cout<<". Solving T method is explicitly.\n";
+            }
         }
         else {
             std::cout<<"- Mass diffusion is off.\n";

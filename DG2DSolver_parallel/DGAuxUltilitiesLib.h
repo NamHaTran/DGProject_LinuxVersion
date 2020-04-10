@@ -2,6 +2,9 @@
 #define DGAUXULTILITIESLIB_H_INCLUDED
 #include <tuple>
 #include <vector>
+
+int calcArrId(int id1, int id2, int length);
+
 namespace auxUlti
 {
 	/*Funtion finds order of edge respective to element*/
@@ -74,8 +77,16 @@ namespace auxUlti
 	//Function returns cell centroid coordinates and size (cell area)
 	std::tuple<double, double, double> getCellMetrics(int element);
 
+    //void resize1DArray(double*Array, int row, double initialValue);
+
+    //void resize1DIntArray(int*Array, int row, int initialValue);
+
+    void initialize1DArray(double*Array, int row, double initialValue);
+
+    void initialize1DIntArray(int*Array, int row, int initialValue);
+
 	/*Function resize 2D array type double*/
-    void resize2DArray(std::vector<std::vector<double>> &Array, int row, int column);
+    double** resize2DArray(int row, int column, double initialValue);
 
 	/*Function resize 3D array*/
     void resize3DArray(std::vector<std::vector<std::vector<double>>> &Array, int direct1, int direct2, int direct3);
@@ -84,7 +95,7 @@ namespace auxUlti
 	void resizeDGArrays();
 
 	/*Function resize 2D array type int*/
-    void resize2DIntArray(std::vector<std::vector<int>> &Array, int row, int column);
+     int** resize2DIntArray(int row, int column, int initialValue);
 
 	/*Function computes coordinates of Gauss point on all edges*/
 	void mappingEdges();
@@ -163,9 +174,9 @@ namespace auxUlti
 
     std::string receiveString(int source, int tag);
 
-    void sendReceiveMeshData(int vertex, int dir, std::vector<std::vector<double>>&Buffer);
-    void sendRecvDiscretedVar(std::vector<std::vector<double>>&Var,std::vector<std::vector<double>>&Buffer, int iorder);
-    void sendRecvTheta(std::vector<double>&thetaArray,std::vector<double>&Buffer);
+    void sendReceiveMeshData(int vertex, int dir, double**Buffer);
+    void sendRecvDiscretedVar(double**Var,double**Buffer,int order);
+    void sendRecvTheta(double*thetaArray,double*Buffer);
     void sendReceiveU();
     void sendReceivedU();
     void sendReceivedRho();
@@ -180,5 +191,7 @@ namespace auxUlti
     void releaseMemory();
 
     void resizeTemporaryArrays();
+
+    int lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord);
 }
 #endif // DGAUXULTILITIESLIB_H_INCLUDED

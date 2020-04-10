@@ -30,19 +30,19 @@ namespace DG2Tecplot
 	{
 		namespace patch
 		{
-			std::vector<double> inFlow(int element, int edgeGrp, int a, int b);
+            std::vector<double> inFlow(int element, int edgeGrp, double a, double b);
 
-			std::vector<double> outFlow(int element, int edgeGrp, int a, int b);
+            std::vector<double> outFlow(int element, int edgeGrp, double a, double b);
 		}
 
 		namespace wall
 		{
-			std::vector <double> noSlipIsoThermal(int element, int edgeGrp, int a, int b);
+            std::vector <double> noSlipIsoThermal(int element, int edgeGrp, double a, double b);
 
-			std::vector <double> noSlipAdiabatic(int element, int a, int b);
+            std::vector <double> noSlipAdiabatic(int element, double a, double b);
 		}
 
-		std::vector <double> Symmetry(int element, int edge, int a, int b);
+        std::vector <double> Symmetry(int element, int edge, double a, double b);
 	}
 }
 #endif // DGPOSTPROCESSLIB_H_INCLUDED

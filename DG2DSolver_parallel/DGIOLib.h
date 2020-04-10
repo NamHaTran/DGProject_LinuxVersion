@@ -51,26 +51,26 @@ namespace IO
 	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
     /*Function writes discreted fields to files*/
-    void writeDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var);
+    void writeDiscretedFields(std::string Loc, std::string fileName, double **Var);
 
     /*Function reads discreted fields to files*/
-    void readDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var);
+    void readDiscretedFields(std::string Loc, std::string fileName, double **Var);
 
     void saveCase();
 
     void loadCase(std::string mode);
 
-	void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, int numRow, int numCol);
+    void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol);
 
-    void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol);
+    void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol);
 
     void openFileToAppend(std::string Loc, std::string content);
 
     void write2DDoubleVectorToFile(std::string location, std::string fileName, std::vector<std::vector<double>> &vector);
 
-    void write1DDoubleVectorToFile(std::string location, std::string fileName, std::vector<double> &vector);
+    void write1DDoubleVectorToFile(std::string location, std::string fileName, double *vector, int length);
 
-    void write1DIntVectorToFile(std::string location, std::string fileName, std::vector<int> &vector);
+    void write1DIntVectorToFile(std::string location, std::string fileName, int *vector, int length);
 
     void writeResiduals(int iter, double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 

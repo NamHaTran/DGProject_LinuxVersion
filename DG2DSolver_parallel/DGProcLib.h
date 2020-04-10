@@ -22,6 +22,10 @@ namespace meshParam
     void calcEdgeLength();
 
 	void calcStiffMatrixCoeffs();
+
+    void calcDistanceFromCenterToBCEdge();
+
+    void findNormProjectionOfCenterToBCEdge();
 }
 
 namespace process

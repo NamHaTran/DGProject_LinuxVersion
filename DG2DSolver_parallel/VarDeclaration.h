@@ -3,6 +3,7 @@
 #include <string>
 #include "ConstDeclaration.h"
 #include <vector>
+#include "DGMessagesLib.h"
 
 namespace systemVar
 {
@@ -45,6 +46,10 @@ namespace systemVar
 
     //Detect first iteration
     extern bool firstIter;
+	
+	extern std::string headerFile;
+
+    extern bool solveTImplicitly;
 }
 
 namespace meshVar
@@ -59,21 +64,9 @@ namespace meshVar
 
 	/*Elements surrounding points*/
     extern std::vector<int> esup1, esup2;
-    extern std::vector<std::vector<int>> inpoel;
 
 	/*Points surrounding points*/
 	extern std::vector<int> psup1, psup2;
-
-	/*Elements surrounding element*/
-    extern std::vector<std::vector<int>> esuel;
-
-	/*Edges informations*/
-    extern std::vector<std::vector<int>> inpoed;
-    /*Cot 5 chua edgeId cua edge tai bien ung voi Element1D array*/
-
-	/*Edges of element*/
-    //number of row is 4 because of default quad element
-    extern std::vector<std::vector<int>> inedel, ineled;
 
 	/*Variables help to save mesh data*/
 	extern int inpoedCount;  //can be used for normalVector, MasterElemOfEdge, ineled
@@ -185,11 +178,5 @@ namespace parallel {
 extern bool checkDGRun,
 mapResults;
 }
-}
-
-namespace numericalFlux
-{
-//He so LxFCoeff dung de modify advective flux trong truong hop bai toan co mass diffusion
-extern double LxFCoeff;
 }
 #endif // VARDECLARATION_H_INCLUDED

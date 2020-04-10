@@ -249,6 +249,8 @@ namespace math
 
     std::vector<double> pointSVars(int edge, int element, double a, double b, int dir, int option);
 
+    double calcDivTFromAuxVariable(double dRhoE, double dRho, double rhoE, double rho);
+
     namespace tensorMath {
         std::vector<std::vector<double>> unitTensor(int rowNum);
 
@@ -283,6 +285,8 @@ namespace math
         double Bisection(std::vector<double> &power, std::vector<double> &coefs, double initialValue);
 
         double subValToPolynomial(std::vector<double> &power, std::vector<double> &coefs, double Value);
+
+        std::tuple<bool, double, double> polynominal2d(double A, double B, double C);
     }
 
 	namespace numericalFluxes
@@ -340,6 +344,8 @@ namespace math
 
 	namespace geometricOp
 	{
+        double calcDistanceFromCenterToEdge(int element, int edge);
+
 		//Function computes geometric center of polygon, inputs are coordinates of vertexs of polygon
 		std::tuple<double, double> calcGeoCenter(std::vector<double> &xCoor, std::vector<double> &yCoor, int type);
 
@@ -365,6 +371,8 @@ namespace math
         std::tuple<double, double> calROfInscribedCircleOfTriElement(std::vector<double> &xCoor, std::vector<double> &yCoor);
 
         std::tuple<double, double> calSizeOfQuadElement(std::vector<double> &xCoor, std::vector<double> &yCoor);
+
+        std::tuple<double, double> findNormalProjectionOfPointToEdge(double xA, double yA, double xB, double yB, double xC, double yC);
 	}
 
 	namespace residualManipulation

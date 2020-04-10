@@ -5,41 +5,85 @@
 
 namespace meshVar
 {
-	extern std::vector<std::vector<double>> Points, normalVector;
-	extern std::vector<std::vector<int>> Elements1D,
-		Elements2D,
-		BoundaryType; //BoundaryType: column 0 is boundary group (from 0), column 1 is boundary type (1, 2, 3, 4), column 3 is boundary method
-	extern std::vector<int>  markPointsAtBC, MasterElemOfEdge; //NOTE: boundary point Id (BCPtsId) saved in this vector is (real BCPtsId + 1)
+    /*Edges informations*/
+    extern int **inpoed;
+    /*Cot 5 chua edgeId cua edge tai bien ung voi Element1D array*/
+
+    /*Elements surrounding element*/
+    extern int **esuel;
+
+    extern int **inpoel;
+
+    /*Edges of element*/
+    //number of row is 4 because of default quad element
+    extern int **inedel;
+    extern int **ineled;
+
+    extern double **Points;
+    extern double **normalVector;
+
+    extern int **Elements1D;
+    extern int **Elements2D;
+    extern int **BoundaryType; //BoundaryType: column 0 is boundary group (from 0), column 1 is boundary type (1, 2, 3, 4), column 3 is boundary method
+    extern int *markPointsAtBC;
+    extern int *MasterElemOfEdge;//NOTE: boundary point Id (BCPtsId) saved in this vector is (real BCPtsId + 1)
 	
 	/*Gauss points on edges*/
-	extern std::vector<std::vector<double>> edgeGaussPoints_a, edgeGaussPoints_b;
+    extern double **edgeGaussPoints_a;
+    extern double **edgeGaussPoints_b;
 	
     /*Vector contents BC edges id and location of them on BC values arrays*/
     //extern std::vector<int>adressOfBCVals;
-	extern std::vector<std::vector<int>>neighboringElements;
+    extern int **neighboringElements;
 
-    extern std::vector<std::vector<double>> geoCenter;
-    extern std::vector<double> cellSize, localCellSize, cellArea;
+    extern double **geoCenter;
+    extern double *cellSize;
+    extern double *cellArea;
+    extern double *localCellSize;
 
     /*derivatives dx/da, dx/db, dy/da, dy/db*/
-    extern std::vector<std::vector<std::vector<double>>>dxa, dxb, dya, dyb;
-
+    extern double **dxa;
+    extern double **dxb;
+    extern double **dya;
+    extern double **dyb;
+	
     /*Jacobian*/
-    extern std::vector<std::vector<std::vector<double>>> J2D;
-    extern std::vector<double> J1D;
+    extern double **J2D;
+    extern double *J1D;
 
     /*Arrays for parallel computing*/
-    extern std::vector<int> Elem2DlocalIdWithRank, rankOf2DElem;
-    extern std::vector<std::vector<int>> PointslocalIdWithRank;
+    extern int *Elem2DlocalIdWithRank;
+    extern int *rankOf2DElem;
+    extern int **PointslocalIdWithRank;
 
     /*Mesh connection*/
-    extern std::vector<std::vector<int>> meshConnection;
+    extern int **meshConnection;
+
+    /*For Maxwell-Smoluchowsky BC*/
+    extern double **normProjectionOfCenterToBCEdge_realSysCoor;
+    extern double **normProjectionOfCenterToBCEdge_standardSysCoor;
+    extern double *distanceFromCentroidToBCEdge;
 }
 
 namespace mathVar {
-    extern std::vector<double> wGauss, xGauss, wGaussLobatto, xGaussLobatto, B, dBa, dBb;
-    extern std::vector<std::vector<std::vector<double>>> GaussPts, wGaussPts, GaussLobattoPts, wGaussLobattoPts,
-        BPts_Quad, dBaPts_Quad, dBbPts_Quad, BPts_Tri, dBaPts_Tri, dBbPts_Tri;
+    extern double *wGauss;
+    extern double *xGauss;
+    extern double *wGaussLobatto;
+    extern double *xGaussLobatto;
+    extern double *B;
+    extern double *dBa;
+    extern double *dBb;
+	
+    extern double **GaussPts;
+    extern double **wGaussPts;
+    extern double **GaussLobattoPts;
+    extern double **wGaussLobattoPts;
+    extern double **BPts_Quad;
+    extern double **dBaPts_Quad;
+    extern double **dBbPts_Quad;
+    extern double **BPts_Tri;
+    extern double **dBaPts_Tri;
+    extern double **dBbPts_Tri;
 }
 
 /*Conservative variables declaration
@@ -48,7 +92,25 @@ NOTE: in case of mass diffusion:
 - rhoE is conputed using mass velocity which is defined as um=u+Jd/rho (Jd is mass diffusive flux Jd = -Dm*grad(rho))
 At initial condition i assume that grad(rho) = 0 so (rhoE)initial is conputed using advective velocity.
 */
-extern std::vector<std::vector<double>> rho, rhou, rhov, rhoE, rhoN, rhouN, rhovN, rhoEN, rho0, rhou0, rhov0, rhoE0, rhoResArr, rhouResArr, rhovResArr, rhoEResArr;
+extern double **rho;
+extern double **rhou;
+extern double **rhov;
+extern double **rhoE;
+
+extern double **rhoN;
+extern double **rhouN;
+extern double **rhovN;
+extern double **rhoEN;
+
+extern double **rho0;
+extern double **rhou0;
+extern double **rhov0;
+extern double **rhoE0;
+
+extern double **rhoResArr;
+extern double **rhouResArr;
+extern double **rhovResArr;
+extern double **rhoEResArr;
 
 /*Primary variables declaration
 extern std::vector<std::vector<double>>u, v, e, p, T, mu;*/
@@ -60,76 +122,133 @@ NOTE: in case of mass diffusion:
 */
 namespace BR1Vars {
 //X direction
-extern std::vector<std::vector<double>> rhoX, rhouX, rhovX, rhoEX;
+extern double **rhoX;
+extern double **rhouX;
+extern double **rhovX;
+extern double **rhoEX;
 
 /*Y direction*/
-extern std::vector<std::vector<double>> rhoY, rhouY, rhovY, rhoEY;
+extern double **rhoY;
+extern double **rhouY;
+extern double **rhovY;
+extern double **rhoEY;
 }
 
 namespace BR2Vars {
 //X direction
-extern std::vector<std::vector<double>>rhoXVol,rhouXVol,rhovXVol,rhoEXVol;
+extern double **rhoXVol;
+extern double **rhouXVol;
+extern double **rhovXVol;
+extern double **rhoEXVol;
 
 /*Y direction*/
-extern std::vector<std::vector<double>>rhoYVol,rhouYVol,rhovYVol,rhoEYVol;
+extern double **rhoYVol;;
+extern double **rhouYVol;
+extern double **rhovYVol;
+extern double **rhoEYVol;
 
 //X direction
-extern std::vector<std::vector<double>>rhoXSurMaster,rhouXSurMaster,rhovXSurMaster,rhoEXSurMaster,rhoXSurSlave,rhouXSurSlave,rhovXSurSlave,rhoEXSurSlave;
+extern double **rhoXSurMaster;
+extern double **rhouXSurMaster;
+extern double **rhovXSurMaster;
+extern double **rhoEXSurMaster;
+extern double **rhoXSurSlave;
+extern double **rhouXSurSlave;
+extern double **rhovXSurSlave;
+extern double **rhoEXSurSlave;
 
 /*Y direction*/
-extern std::vector<std::vector<double>>rhoYSurMaster,rhouYSurMaster,rhovYSurMaster,rhoEYSurMaster,rhoYSurSlave,rhouYSurSlave,rhovYSurSlave,rhoEYSurSlave;
+extern double **rhoYSurMaster;
+extern double **rhouYSurMaster;
+extern double **rhovYSurMaster;
+extern double **rhoEYSurMaster;
+extern double **rhoYSurSlave;
+extern double **rhouYSurSlave;
+extern double **rhovYSurSlave;
+extern double **rhoEYSurSlave;
 }
 
 namespace surfaceFields {
     /*Interface values*/
-    //conservative variable
-    extern std::vector<std::vector<double>> rho, rhou, rhov, rhoE;
+    extern double **rho;
+    extern double **rhou;
+    extern double **rhov;
+    extern double **rhoE;
 
-    //auxilary equaiton
-    extern std::vector<std::vector<double>> aux_rho, aux_rhou, aux_rhov, aux_rhoE;
+    /*Interface values*/
+    //Auxilary equation
+    extern double **aux_rho;
+    extern double **aux_rhou;
+    extern double **aux_rhov;
+    extern double **aux_rhoE;
 
-    //X direction*/
-    extern std::vector<std::vector<double>> invis_rhoX, invis_rhouX, invis_rhovX, invis_rhoEX,
-    Vis_rhoX, Vis_rhouX, Vis_rhovX, Vis_rhoEX;
+    //NSF equation
+    //X direction
+    extern double **invis_rhoX;
+    extern double **invis_rhouX;
+    extern double **invis_rhovX;
+    extern double **invis_rhoEX;
 
-    /*Y direction*/
-    extern std::vector<std::vector<double>> invis_rhoY, invis_rhouY, invis_rhovY, invis_rhoEY,
-    Vis_rhoY, Vis_rhouY, Vis_rhovY, Vis_rhoEY;
+    extern double **Vis_rhoX;
+    extern double **Vis_rhouX;
+    extern double **Vis_rhovX;
+    extern double **Vis_rhoEX;
 
-    extern std::vector<std::vector<double>> T;
+    //Y direction
+    extern double **invis_rhoY;
+    extern double **invis_rhouY;
+    extern double **invis_rhovY;
+    extern double **invis_rhoEY;
+
+    extern double **Vis_rhoY;
+    extern double **Vis_rhouY;
+    extern double **Vis_rhovY;
+    extern double **Vis_rhoEY;
+
+    extern double **T;
 }
 
 namespace volumeFields {
     //Volume values
-    extern std::vector<std::vector<std::vector<double>>> rhoVolGauss, rhouVolGauss, rhovVolGauss, rhoEVolGauss, drhoXVolGauss, drhoYVolGauss, T;
+	//Cac array cua volumeFields la 3D array
+    extern double **rhoVolGauss;
+    extern double **rhouVolGauss;
+    extern double **rhovVolGauss;
+    extern double **rhoEVolGauss;
+    extern double **drhoXVolGauss;
+    extern double **drhoYVolGauss;
+    extern double **T;
 }
 
 //Lax-Friedrich constant
-extern std::vector<double> LxFConst;
-
-//Diffusion flux constant
-extern std::vector<double> DiffusiveFluxConst;
-
-//time step
-extern double dt, runTime;
-
-//Limiting coefficients
-extern std::vector<double>
-theta1Arr,
-theta2Arr;
+extern double *LxFConst;
+extern double *DiffusiveFluxConst;
 
 //StiffMatrixCoefficients
-extern std::vector<std::vector<double>> stiffMatrixCoeffs;
+extern double **stiffMatrixCoeffs;
+
+//Limiting coefficients
+extern double *theta1Arr;
+extern double *theta2Arr;
 
 namespace SurfaceBCFields
 {
-	extern std::vector<std::vector<int>>BCPointsInfor;
-	extern std::vector<std::vector<double>> TBc, uBc, vBc;
-	extern std::vector<int>localGlobalBCEdgesMatching;
+    //extern int **BCPointsInfor;
+    extern std::vector<std::vector<int>> BCPointsInfor;
+    /*
+     * - 2 fields SurfaceBCFields::TBC, SurfaceBCFields::uBC va SurfaceBCFields::vBC dung de
+     * luu gia tri TJump, uSlip va vSlip khi dung dieu kien bien temperatureJump va slip.
+     * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
+     * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
+    */
+    extern double **TBc;
+    extern double **uBc;
+    extern double **vBc;
+    extern int *localGlobalBCEdgesMatching;
 }
 
 namespace limitVal {
-    extern std::vector<bool> troubleCellsMarker;
+    extern bool *troubleCellsMarker;
 }
 
 //for debuging
@@ -139,12 +258,28 @@ namespace debug
 }
 
 namespace parallelBuffer {
-    extern std::vector<std::vector<double>> rho,rhou,rhov,rhoE,
-    drhoX,drhouX,drhovX,drhoEX,
-    drhoY,drhouY,drhovY,drhoEY,
-    xCoor, yCoor, aCoor, bCoor;
+    extern double **rho;
+    extern double **rhou;
+    extern double **rhov;
+    extern double **rhoE;
 
-    extern std::vector<double> theta1, theta2;
-    extern std::vector<int> elemType;
+    //Neu div scheme la BR2, cac mang nay chua S_Surface
+    extern double **drhoX;
+    extern double **drhouX;
+    extern double **drhovX;
+    extern double **drhoEX;
+    extern double **drhoY;
+    extern double **drhouY;
+    extern double **drhovY;
+    extern double **drhoEY;
+
+    extern double **xCoor;
+    extern double **yCoor;
+    extern double **aCoor;
+    extern double **bCoor;
+
+    extern double *theta1;
+    extern double *theta2;
+    extern int *elemType;
 }
 #endif // DYNAMICVARDECLARATION_H_INCLUDED

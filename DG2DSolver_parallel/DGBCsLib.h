@@ -6,18 +6,18 @@
 - Method index: 1: weak weak Riemann, 2: weak Prescribed
 
 Boundary conditions compatibility
-		|U					|T					|p					|
-		+-------------------+-------------------+-------------------+
-		|1. inOutFlow		|1. inOutFlow		|1. inOutFlow		|
-		|	Value u v w		|	Value T			|	Value p			|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-		|					|	Value T			|					|
-		+-------------------+-------------------+-------------------+
-		|2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-		+-------------------+-------------------+-------------------+
-		|7.	symmetry		|7. symmetry		|7. symmetry		|
-		+-------------------+-------------------+-------------------+
+        |U					|T					|p					|
+        +-------------------+-------------------+-------------------+
+        |1. inOutFlow		|1. inOutFlow		|1. inOutFlow		|
+        |	Value u v w		|	Value T			|	Value p			|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+        |					|	Value T			|					|
+        +-------------------+-------------------+-------------------+
+        |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+        +-------------------+-------------------+-------------------+
+        |7.	symmetry		|7. symmetry		|7. symmetry		|
+        +-------------------+-------------------+-------------------+
 */
 
 /*Function applies advective and diffusive boundary conditions to edges in NSF equation, it returns values of fluxes at Gauss point*/
@@ -41,7 +41,7 @@ namespace NSFEqBCs
         std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
 
         /*Function computes numerical flux at wall with temperature jump and slip effects by using weakRiemann approach*/
-        std::vector <std::vector<double>> wallSlipWithTemperatureJump(int element, int edge, int nG);
+        std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int nG);
     }
 
     namespace patch
@@ -60,7 +60,7 @@ namespace NSFEqBCs
 }
 
 namespace auxilaryBCs
-{	
+{
     namespace wall
     {
         std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG);
@@ -68,7 +68,7 @@ namespace auxilaryBCs
         std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
 
         /*Function computes numerical flux at wall with temperature jump and slip effects by using weakRiemann approach*/
-        std::vector <std::vector<double>> wallSlipWithTemperatureJump(int element, int edge, int edgeGrp, int nG);
+        std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int edgeGrp, int nG);
     }
 
     namespace patch {
@@ -77,17 +77,17 @@ namespace auxilaryBCs
         std::vector <std::vector<double>> outFlow(int element, int edge, int edgeGrp, int nG);
     }
 
-	/*Function computes numerical flux of auxilary variables at symmetry BC by using weakRiemann approach*/
-	std::vector <std::vector<double>> Symmetry(int element, int edge, int nG);
+    /*Function computes numerical flux of auxilary variables at symmetry BC by using weakRiemann approach*/
+    std::vector <std::vector<double>> Symmetry(int element, int edge, int nG);
 
     std::vector <std::vector<double>> matched(int element, int edge, int nG);
 }
 
 namespace BCSupportFncs
 {
-	/*Function returns true if at considering face (edge), flow is going into computational domain, returns false if flow is going out of computational domain.
-	- nx, ny are surface unit normal vector components.*/
-	bool checkInflow(double u, double v, double nx, double ny);
+    /*Function returns true if at considering face (edge), flow is going into computational domain, returns false if flow is going out of computational domain.
+    - nx, ny are surface unit normal vector components.*/
+    bool checkInflow(double u, double v, double nx, double ny);
 
     namespace auxilaryBCs {
         void calcUPlus(int element, int edge, int nG, std::vector<double> &UPlus);
@@ -111,9 +111,9 @@ namespace BCSupportFncs
 
 namespace timeVaryingBCs
 {
-    void temperatureJump(int edge, int edgeGrp, int nG);
+    void MaxwellSmoluchowski(int edge, int edgeGrp);
 
-    void slipVelocity(int edge, int edgeGrp, int nG);
+    void MaxwellSmoluchowski_implicit2ndOrder(int edge, int edgeGrp);
 }
 
 #endif // DGBCSLIB_H_INCLUDED

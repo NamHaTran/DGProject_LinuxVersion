@@ -518,9 +518,12 @@ namespace math
             {
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
                 {
-                    w1 = mathVar::wGaussPts[na][nb][0];
-                    w2 = mathVar::wGaussPts[na][nb][1];
-                    integral += w1 * w2* mathVar::BPts_Tri[order][na][nb];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1)),
+                            nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                            nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                    w1 = mathVar::wGaussPts[na][nb0];
+                    w2 = mathVar::wGaussPts[na][nb1];
+                    integral += w1 * w2* mathVar::BPts_Tri[order][nanb];
                 }
             }
         }
@@ -531,9 +534,12 @@ namespace math
             {
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
                 {
-                    w1 = mathVar::wGaussPts[na][nb][0];
-                    w2 = mathVar::wGaussPts[na][nb][1];
-                    integral += w1 * w2* mathVar::BPts_Quad[order][na][nb];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1)),
+                            nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                            nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                    w1 = mathVar::wGaussPts[na][nb0];
+                    w2 = mathVar::wGaussPts[na][nb1];
+                    integral += w1 * w2* mathVar::BPts_Quad[order][nanb];
                 }
             }
         }
@@ -551,9 +557,12 @@ namespace math
         {
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
             {
-                w1 = mathVar::wGaussPts[na][nb][0];
-                w2 = mathVar::wGaussPts[na][nb][1];
-                J2D = meshVar::J2D[elem][na][nb];
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1)),
+                        nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                        nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                w1 = mathVar::wGaussPts[na][nb0];
+                w2 = mathVar::wGaussPts[na][nb1];
+                J2D = meshVar::J2D[elem][nanb];
                 integral += w1 * w2*(J2D)*Fvalue[na][nb];
             }
         }
@@ -735,39 +744,55 @@ namespace math
 
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
     {
-        //Em is total energy with total velocity (um), not advective velocity (u)
-
-        double T(0.0), TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
-                u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
-        std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
-        Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
-        Ay=material::massDiffusion::DmCoeff*rhoy/(rho*rho);
-        B1=Ax*Ax+Ay*Ay;
-        B2=2*(u*Ax+v*Ay);
-        B3=u*u+v*v-2*Em;
-        std::vector<double> polynomialCoeffs{
-            B1*pow(material::As,2)+2*material::Cv,
-                    -material::As*B2,
-                    4*material::Cv*material::Ts+B3,
-                    -material::As*B2*material::Ts,
-                    2*material::Cv*pow(material::Ts,2)+2*B3*material::Ts,
-                    B3*pow(material::Ts,2)
-        };
-        //compute initial T
-        TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
-        //Solve T
-        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
-        if (T!=T || T<0)
+        if (systemVar::solveTImplicitly)
         {
-            //std::cout<<"Failed to solve T\n";
-            //exit(1);
-            mathVar::solveTFailed=true;
-            return TIni;
+            //Em is total energy with total velocity (um), not advective velocity (u)
+            double T(0.0), TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
+                    u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
+            std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
+            Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
+            Ay=material::massDiffusion::DmCoeff*rhoy/(rho*rho);
+            B1=Ax*Ax+Ay*Ay;
+            B2=2*(u*Ax+v*Ay);
+            B3=u*u+v*v-2*Em;
+            std::vector<double> polynomialCoeffs{
+                B1*pow(material::As,2)+2*material::Cv,
+                        -material::As*B2,
+                        4*material::Cv*material::Ts+B3,
+                        -material::As*B2*material::Ts,
+                        2*material::Cv*pow(material::Ts,2)+2*B3*material::Ts,
+                        B3*pow(material::Ts,2)
+            };
+            //compute initial T
+            TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+            //Solve T
+            T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
+            if (T!=T || T<0)
+            {
+                //std::cout<<"Failed to solve T\n";
+                //exit(1);
+                mathVar::solveTFailed=true;
+                return TIni;
+            }
+            else {
+                return T;
+            }
         }
-        else {
-            return T;
+        else
+        {
+            double rhou_m(rhou-material::massDiffusion::DmCoeff*rhox/rho),
+                    rhov_m(rhov-material::massDiffusion::DmCoeff*rhoy/rho);
+            double T_m((rhoE-0.5*(rhou_m*rhou_m+rhov_m*rhov_m)/rho)/(material::Cv*rho)),
+                    T((rhoE-0.5*(rhou*rhou+rhov*rhov)/rho)/(material::Cv*rho));
+            if (T_m<0)
+            {
+                return T;
+            }
+            else
+            {
+                return T_m;
+            }
         }
-        //return math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
     }
 
     double CalcP(double T, double rho)
@@ -808,6 +833,7 @@ namespace math
 
     double Calc_dBxdBy(int elem, int order, int na, int nb, int opt)
     {
+        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
         double dB(0.0);
         int elemType(auxUlti::checkType(elem));
         switch (elemType)
@@ -816,11 +842,11 @@ namespace math
         {
             if (opt == 1)  //x direction
             {
-                dB = (1 / meshVar::J2D[elem][na][nb]) * (mathVar::dBaPts_Tri[order][na][nb] * meshVar::dyb[elem][na][nb] - mathVar::dBbPts_Tri[order][na][nb] * meshVar::dya[elem][na][nb]);
+                dB = (1 / meshVar::J2D[elem][nanb]) * (mathVar::dBaPts_Tri[order][nanb] * meshVar::dyb[elem][nanb] - mathVar::dBbPts_Tri[order][nanb] * meshVar::dya[elem][nanb]);
             }
             else if (opt == 2)  //y direction
             {
-                dB = (1 / meshVar::J2D[elem][na][nb]) * (mathVar::dBbPts_Tri[order][na][nb] * meshVar::dxa[elem][na][nb] - mathVar::dBaPts_Tri[order][na][nb] * meshVar::dxb[elem][na][nb]);
+                dB = (1 / meshVar::J2D[elem][nanb]) * (mathVar::dBbPts_Tri[order][nanb] * meshVar::dxa[elem][nanb] - mathVar::dBaPts_Tri[order][nanb] * meshVar::dxb[elem][nanb]);
             }
         }
         break;
@@ -828,11 +854,11 @@ namespace math
         {
             if (opt == 1)  //x direction
             {
-                dB = (1 / meshVar::J2D[elem][na][nb]) * (mathVar::dBaPts_Quad[order][na][nb] * meshVar::dyb[elem][na][nb] - mathVar::dBbPts_Quad[order][na][nb] * meshVar::dya[elem][na][nb]);
+                dB = (1 / meshVar::J2D[elem][nanb]) * (mathVar::dBaPts_Quad[order][nanb] * meshVar::dyb[elem][nanb] - mathVar::dBbPts_Quad[order][nanb] * meshVar::dya[elem][nanb]);
             }
             else if (opt == 2)  //y direction
             {
-                dB = (1 / meshVar::J2D[elem][na][nb]) * (mathVar::dBbPts_Quad[order][na][nb] * meshVar::dxa[elem][na][nb] - mathVar::dBaPts_Quad[order][na][nb] * meshVar::dxb[elem][na][nb]);
+                dB = (1 / meshVar::J2D[elem][nanb]) * (mathVar::dBbPts_Quad[order][nanb] * meshVar::dxa[elem][nanb] - mathVar::dBaPts_Quad[order][nanb] * meshVar::dxb[elem][nanb]);
             }
         }
         break;
@@ -1153,6 +1179,12 @@ namespace math
         double k(0.0);
         k = material::Cp*muVal / material::Pr;
         return k;
+    }
+
+    double calcDivTFromAuxVariable(double dRhoE, double dRho, double rhoE, double rho)
+    {
+        //Dung cach cua Thay, coi u^2 la constant. vi dang tinh cho bien phu la S = mu*div(U) nen gia tri nay ma mu*divT
+        return ((dRhoE-dRho*rhoE/rho)/(rho*material::Cv));
     }
 
     double calcMeanFreePath(double mu, double rho, double T)
@@ -1884,7 +1916,7 @@ namespace math
                 drhovx(0.0), drhovy(0.0),
                 drhoEx(0.0), drhoEy(0.0),
                 dTx(0.0), dTy(0.0);
-            double uVal(0.0), vVal(0.0), Qx(0.0), Qy(0.0), k(0.0);
+            double uVal(0.0), vVal(0.0), Qx(0.0), Qy(0.0), k(0.0), uMag(0.0);
             int index(0);
 
             rhoVal = U[0];
@@ -1901,6 +1933,7 @@ namespace math
 
             uVal = rhouVal / rhoVal;
             vVal = rhovVal / rhoVal;
+            uMag=pow((uVal*uVal+vVal*vVal),0.5);
 
             drhox = dUx[0];
             drhoy = dUy[0];
@@ -1948,6 +1981,8 @@ namespace math
             dTx = math::calcTDeriv(dEx, dux, dvx, uVal, vVal);
             dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
             //k = math::calcThermalConductivity(muVal);
+            //dTx=math::calcDivTFromAuxVariable(drhoEx,drhox,rhoEVal,rhoVal);
+            //dTy=math::calcDivTFromAuxVariable(drhoEy,drhoy,rhoEVal,rhoVal);
             k = material::Cp / material::Pr;
             std::tie(Qx, Qy) = math::viscousTerms::calcHeatFluxTerms(dTx, dTy, k);
 
@@ -2090,6 +2125,25 @@ namespace math
 
     namespace geometricOp
     {
+        double calcDistanceFromCenterToEdge(int element, int edge)
+        {
+            double //Coordinates of centroid
+                    xC=meshVar::geoCenter[element][0],
+                    yC=meshVar::geoCenter[element][1],
+
+                    //Coordinates of 2 vertices of edge
+                    x1=meshVar::Points[meshVar::inpoed[edge][0]][0],
+                    y1=meshVar::Points[meshVar::inpoed[edge][0]][1],
+                    x2=meshVar::Points[meshVar::inpoed[edge][1]][0],
+                    y2=meshVar::Points[meshVar::inpoed[edge][1]][1];
+            //Function of line: y=ax+b <=> ax-y+b=0
+            double a((y1-y2)/(x1-x2)),
+                    b=(-((y1-y2)/(x1-x2))*x2+y2);
+
+            //Distance from centroid to edge
+            return (fabs(a*xC-yC+b)/pow((a*a+1),0.5));
+        }
+
         std::tuple<double, double> calcGeoCenter(std::vector<double> &xCoor, std::vector<double> &yCoor, int type)
         {
             double x(0.0), y(0.0), xCG(0.0), yCG(0.0);
@@ -2263,6 +2317,21 @@ namespace math
             }
             return std::make_tuple(size, cellArea);
         }
+
+        std::tuple<double, double> findNormalProjectionOfPointToEdge(double xA, double yA, double xB, double yB, double xC, double yC)
+        {
+            //Project point A to edge BC
+            double xN, yN;
+            double a((yB-yC)/(xB-xC)),
+                    b=(-((yB-yC)/(xB-xC))*xB+yB);
+            //Phuong trinh duong thang la y=ax+b
+            //Phuong trinh duong thang vuong goc la y=-x/a+bN
+            double bN(yA+xA/a);
+            //Toa do hinh chieu vuong goc cua A len BC
+            xN = (bN-b)/(a+1/a);
+            yN = a*xN+b;
+            return std::make_tuple(xN, yN);
+        }
     }
 
     namespace residualManipulation
@@ -2292,11 +2361,13 @@ namespace math
         {
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
             {
-                aG = mathVar::GaussPts[na][nb][0];
-                bG = mathVar::GaussPts[na][nb][1];
+                int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                        nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                aG = mathVar::GaussPts[na][nb0];
+                bG = mathVar::GaussPts[na][nb1];
 
-                aGL = mathVar::GaussLobattoPts[na][nb][0];
-                bGL = mathVar::GaussLobattoPts[na][nb][1];
+                aGL = mathVar::GaussLobattoPts[na][nb0];
+                bGL = mathVar::GaussLobattoPts[na][nb1];
 
                 vectorT[index] = math::pointValue(element, aG, bGL, 6, 1);
                 index++;
@@ -2534,6 +2605,29 @@ namespace math
                 fValue+=pow(Value,power[polyOrder])*coefs[polyOrder];
             }
             return fValue;
+        }
+
+        std::tuple<bool, double, double> polynominal2d(double A, double B, double C)
+        {
+            double delta(B*B-4*A*C);
+            if (delta>0)
+            {
+                return std::make_tuple(
+                            true,
+                            (-B+pow(delta,0.5))/(2*A),
+                            (-B-pow(delta,0.5))/(2*A));
+            }
+            else if (delta==0.0)
+            {
+                return std::make_tuple(
+                            true,
+                            -B/(2*A),
+                            -B/(2*A));
+            }
+            else
+            {
+                return std::make_tuple(false,0.0,0.0);
+            }
         }
     }
 

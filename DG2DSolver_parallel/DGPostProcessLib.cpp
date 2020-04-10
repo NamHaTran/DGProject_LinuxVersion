@@ -781,7 +781,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 	{
 		namespace patch
 		{
-			std::vector<double> inFlow(int element, int edgeGrp, int a, int b)
+            std::vector<double> inFlow(int element, int edgeGrp, double a, double b)
 			{
 				std::vector<double> U(4, 0.0), UPlus(4, 0.0), UMinus(4, 0.0);
 
@@ -803,7 +803,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 				return U;
 			}
 
-			std::vector<double> outFlow(int element, int edgeGrp, int a, int b)
+            std::vector<double> outFlow(int element, int edgeGrp, double a, double b)
 			{
 				std::vector<double> U(4, 0.0), UPlus(4, 0.0), UMinus(4, 0.0);
 
@@ -871,7 +871,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 
 		namespace wall
 		{
-			std::vector <double> noSlipIsoThermal(int element, int edgeGrp, int a, int b)
+            std::vector <double> noSlipIsoThermal(int element, int edgeGrp, double a, double b)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> U(4, 0.0), UMinus(4, 0.0), UPlus(4, 0.0);
@@ -894,7 +894,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 				return U;
 			}
 
-			std::vector <double> noSlipAdiabatic(int element, int a, int b)
+            std::vector <double> noSlipAdiabatic(int element, double a, double b)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> U(4, 0.0), UMinus(4, 0.0), UPlus(4, 0.0);
@@ -918,7 +918,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 			}
 		}
 
-		std::vector <double> Symmetry(int element, int edge, int a, int b)
+        std::vector <double> Symmetry(int element, int edge, double a, double b)
 		{
 			std::vector<double> U(4, 0.0), UPlus(4, 0.0), UMinus(4, 0.0);
 			double nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));

@@ -101,17 +101,46 @@ namespace IO
 		std::ifstream ptFlux(ptLoc.c_str());
 		if (ptFlux)
 		{
-			std::string line(" ");
+            std::string line(" "), checkStr;
 			double x, y, z;
-			meshVar::npoin = 0;
+            int iPoint(0);
+            bool startToRead(false);
+
+            //Doc so luong points (line dau tien cua file)
+            meshVar::npoin=auxUlti::lookForDataOfKeyword(ptLoc,"NumberOfEntities");
+
+            //Resize mang meshVar::Points
+            meshVar::Points = auxUlti::resize2DArray(meshVar::npoin,3,0.0);
+			
+            int temp;
 			while (std::getline(ptFlux, line))
 			{
-				auxUlti::addRowTo2DDoubleArray(meshVar::Points, 3);
-				std::istringstream ptData(line);
-				ptData >> meshVar::npoin >> x >> y >> z;
-				meshVar::Points[meshVar::npoin - 1][0] = x;
-				meshVar::Points[meshVar::npoin - 1][1] = y;
-				meshVar::Points[meshVar::npoin - 1][2] = z;
+                //auxUlti::addRowTo2DDoubleArray(meshVar::Points, 3);
+                if (startToRead==false)
+                {
+                    std::istringstream ptData(line);
+                    ptData >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+					if (iPoint<meshVar::npoin)
+					{
+						std::istringstream ptData(line);
+                        ptData >> temp >> x >> y >> z;
+						meshVar::Points[iPoint][0] = x;
+						meshVar::Points[iPoint][1] = y;
+						meshVar::Points[iPoint][2] = z;
+						iPoint++;
+                    }
+					else 
+					{
+						break;
+					}
+                }
 			}
 		}
 		else
@@ -123,16 +152,45 @@ namespace IO
 		std::ifstream Elem1DFlux(Elem1DLoc.c_str());
 		if (Elem1DFlux)
 		{
-			int node1(0), node2(0), bcGrp(0);  //nelem1D is number of 1D elements
-			std::string line(" ");
+            int node1(0), node2(0), bcGrp(0), i1D(0);  //nelem1D is number of 1D elements
+            std::string line(" "), checkStr(" ");
+            bool startToRead(false);
+
+            //Doc so luong element 1D
+            meshVar::nelem1D=auxUlti::lookForDataOfKeyword(Elem1DLoc,"NumberOfEntities");
+
+            //Resize mang meshVar::Elements1D
+            meshVar::Elements1D = auxUlti::resize2DIntArray(meshVar::nelem1D,3,-1);
+
+            int temp;
 			while (std::getline(Elem1DFlux, line))
 			{
-				auxUlti::addRowTo2DIntArray(meshVar::Elements1D, 3);
-				std::istringstream elData(line);
-				elData >> meshVar::nelem1D >> node1 >> node2 >> bcGrp;
-				meshVar::Elements1D[meshVar::nelem1D - 1][0] = node1 - 1;
-				meshVar::Elements1D[meshVar::nelem1D - 1][1] = node2 - 1;
-				meshVar::Elements1D[meshVar::nelem1D - 1][2] = bcGrp;
+                //auxUlti::addRowTo2DIntArray(meshVar::Elements1D, 3);
+                if (startToRead==false)
+                {
+                    std::istringstream elData(line);
+                    elData >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+					if (i1D<meshVar::nelem1D)
+					{
+						std::istringstream elData(line);
+                        elData >> temp>> node1 >> node2 >> bcGrp;
+						meshVar::Elements1D[i1D][0] = node1 - 1;
+						meshVar::Elements1D[i1D][1] = node2 - 1;
+						meshVar::Elements1D[i1D][2] = bcGrp;
+						i1D++;
+					}
+					else
+					{
+						break;
+					}
+                }
 			}
 		}
 		else
@@ -144,19 +202,46 @@ namespace IO
 		std::ifstream Elem2DFlux(Elem2DLoc.c_str());
 		if (Elem2DFlux)
 		{
-			int temp(0), node1(0), node2(0), node3(0), node4(0);  //nelem2D is number of 2D elements
-			std::string line(" ");
-			meshVar::nelem2D = 0;
+            int node1(0), node2(0), node3(0), node4(0), i2D(0);  //nelem2D is number of 2D elements
+            std::string line(" "), checkStr;
+            bool startToRead(false);
+
+            //Doc so luong element 2D
+            meshVar::nelem2D=auxUlti::lookForDataOfKeyword(Elem2DLoc,"NumberOfEntities");
+
+            //Resize mang meshVar::Elements2D
+            meshVar::Elements2D = auxUlti::resize2DIntArray(meshVar::nelem2D,4,-1);
+
+            int temp;
 			while (std::getline(Elem2DFlux, line))
 			{
-				auxUlti::addRowTo2DIntArray(meshVar::Elements2D, 4);
-				meshVar::nelem2D++;
-				std::istringstream elData(line);
-				elData >> temp >> node1 >> node2 >> node3 >> node4;
-				meshVar::Elements2D[meshVar::nelem2D - 1][0] = node1 - 1;
-				meshVar::Elements2D[meshVar::nelem2D - 1][1] = node2 - 1;
-				meshVar::Elements2D[meshVar::nelem2D - 1][2] = node3 - 1;
-				meshVar::Elements2D[meshVar::nelem2D - 1][3] = node4 - 1;
+                //auxUlti::addRowTo2DIntArray(meshVar::Elements2D, 4);
+                if (startToRead==false)
+                {
+                    std::istringstream elData(line);
+                    elData >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+					if (i2D<meshVar::nelem2D)
+					{
+						std::istringstream elData(line);
+                        elData >> temp>> node1 >> node2 >> node3 >> node4;
+						meshVar::Elements2D[i2D][0] = node1 - 1;
+						meshVar::Elements2D[i2D][1] = node2 - 1;
+						meshVar::Elements2D[i2D][2] = node3 - 1;
+						meshVar::Elements2D[i2D][3] = node4 - 1;
+						i2D++;
+					}
+					else
+					{
+						break;
+					}
+                }
 			}
 		}
 		else
@@ -170,6 +255,17 @@ namespace IO
 		{
             int boundIndex(0);
 			std::string line(" "), keyWord(" ");
+            //Doc so luong boundary
+            meshVar::nBc=auxUlti::lookForDataOfKeyword(bcLoc,"NumberOfEntities");
+			
+			//bien nBc se tang them 1 (vi them 1 bien matched) khi readingMode parallel
+            if (mode.compare("p")==0)
+            {
+                meshVar::nBc++;
+            }
+			
+            meshVar::BoundaryType = auxUlti::resize2DIntArray(meshVar::nBc,3,0);
+
 			while (std::getline(bcFlux, line))
 			{
 				std::istringstream line2str(line);
@@ -197,7 +293,6 @@ namespace IO
 					{
 						if ((boundIndex <= bcSize))
 						{
-							auxUlti::addRowTo2DIntArray(meshVar::BoundaryType, 3);
 							meshVar::BoundaryType[boundIndex - 1][0] = boundIndex;
 							std::string str2 = ptr[1];
 							if (str1.compare("Type") == 0)
@@ -236,7 +331,7 @@ namespace IO
 						}
 					}
 				}
-				meshVar::nBc = boundIndex;
+                //meshVar::nBc = boundIndex;
 			}
 		}
 		else
@@ -246,18 +341,43 @@ namespace IO
 
         if (mode.compare("p")==0)
         {
-            std::string mshConnect = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/Mesh/meshConnection.txt";
+            int meshConnectionLength(0);
+            bool startToRead(false);
+            std::string mshConnect = systemVar::pwd + "/Processor" + std::to_string(systemVar::currentProc) + "/Constant/Mesh/meshConnection.txt",
+                    checkStr;
             std::ifstream mshConnectFlux(mshConnect.c_str());
             if (mshConnectFlux)
             {
                 std::string line("");
                 int counter = 0;
+                meshConnectionLength=auxUlti::lookForDataOfKeyword(mshConnect,"NumberOfEntities");
+                meshVar::meshConnection = auxUlti::resize2DIntArray(meshConnectionLength,3,0);
+
                 while (std::getline(mshConnectFlux, line))
                 {
-                    auxUlti::addRowTo2DIntArray(meshVar::meshConnection, 3);
-                    std::istringstream Data(line);
-                    Data >> meshVar::meshConnection[counter][0] >> meshVar::meshConnection[counter][1] >> meshVar::meshConnection[counter][2];
-                    counter++;
+                    //auxUlti::addRowTo2DIntArray(meshVar::meshConnection, 3);
+                    if (startToRead==false)
+                    {
+                        std::istringstream Data(line);
+                        Data >> checkStr;
+                        if (checkStr.compare("{") == 0)
+                        {
+                            startToRead=true;
+                        }
+                    }
+                    else
+                    {
+						if (counter<meshConnectionLength)
+						{
+							std::istringstream Data(line);
+							Data >> meshVar::meshConnection[counter][0] >> meshVar::meshConnection[counter][1] >> meshVar::meshConnection[counter][2];
+							counter++;
+						}
+						else
+						{
+							break;
+						}
+                    }
                 }
             }
             else
@@ -276,9 +396,8 @@ namespace IO
 		- normalVector: array contents information of normal vector of edges
 		- MasterElemOfEdge: array content master element of iedge, use it with normalVector to get information of normal vector of edge*/
 
-        std::string headerFile(message::headerFile()), inedelLoc, ineledLoc, inpoedLoc, normVectorLoc, MasterElemOfEdgeLoc;
-
-        std::string  Elem1DLoc, ptLoc, Elem2DLoc, bcLoc;
+        std::string inedelLoc, ineledLoc, inpoedLoc, normVectorLoc, MasterElemOfEdgeLoc, Elem1DLoc, ptLoc, Elem2DLoc, bcLoc;
+		
         /*Declare loading locations*/
         if (mode.compare("p")!=0)
         {
@@ -300,7 +419,7 @@ namespace IO
 		std::ofstream Fluxinedel(inedelLoc.c_str());
 		if (Fluxinedel)
 		{
-			Fluxinedel << headerFile << std::endl << "	inedel array\n" << "\n";
+			Fluxinedel << systemVar::headerFile << std::endl << "	inedel array\n" << "\n";
             for (int i = 0; i < meshVar::nelem2D; i++)
 			{
                 for (int j = 0; j < 4; j++)
@@ -319,7 +438,7 @@ namespace IO
 		std::ofstream Fluxineled(ineledLoc.c_str());
 		if (Fluxineled)
 		{
-			Fluxineled << headerFile << std::endl << "	ineled array\n" << "\n";
+			Fluxineled << systemVar::headerFile << std::endl << "	ineled array\n" << "\n";
             for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
                 for (int j = 0; j < 2; j++)
@@ -338,7 +457,7 @@ namespace IO
 		std::ofstream Fluxinpoed(inpoedLoc.c_str());
 		if (Fluxinpoed)
 		{
-			Fluxinpoed << headerFile << std::endl << "	inpoed array\n" << "\n";
+			Fluxinpoed << systemVar::headerFile << std::endl << "	inpoed array\n" << "\n";
             for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
                 for (int j = 0; j < 5; j++)
@@ -357,7 +476,7 @@ namespace IO
 		std::ofstream FluxnormVector(normVectorLoc.c_str());
 		if (FluxnormVector)
 		{
-			FluxnormVector << headerFile << std::endl << "	normalVector array\n" << "\n";
+			FluxnormVector << systemVar::headerFile << std::endl << "	normalVector array\n" << "\n";
 			for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
 				for (int j = 0; j < 2; j++)
@@ -376,7 +495,7 @@ namespace IO
 		std::ofstream FluxMasterElemOfEdge(MasterElemOfEdgeLoc.c_str());
 		if (FluxMasterElemOfEdge)
 		{
-			FluxMasterElemOfEdge << headerFile << std::endl << "	MasterElemOfEdge array\n" << "\n";
+			FluxMasterElemOfEdge << systemVar::headerFile << std::endl << "	MasterElemOfEdge array\n" << "\n";
 			for (int i = 0; i < meshVar::inpoedCount; i++)
 			{
 				FluxMasterElemOfEdge << meshVar::MasterElemOfEdge[i] << " ";
@@ -497,15 +616,13 @@ namespace IO
         /*Read DGSchemes*/
         fileName=("DGSchemes.txt");
         Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-        std::string DGSchemeskeyWordsDouble[1] = {"LxFCoeff"}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[1] = {"diffusionTermScheme"};
+        std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[2] = {"diffusionTermScheme","solveTMethod"};
         double DGSchemesoutDB[1] = {};
         int DGSchemesoutInt[1] = {};
         bool DGSchemesoutBool[1] = {};
-        std::string DGSchemesoutStr[1] = {};
+        std::string DGSchemesoutStr[2] = {};
 
-        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 1, 0, 0, 1);
-
-        numericalFlux::LxFCoeff=DGSchemesoutDB[0];
+        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 2);
 
         if (DGSchemesoutStr[0].compare("BR1")==0)
         {
@@ -517,6 +634,19 @@ namespace IO
         }
         else {
             std::string str0("diffusionTermScheme '"+DGSchemesoutStr[0]+"' is not a diffusion scheme.");
+            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
+        }
+
+        if (DGSchemesoutStr[1].compare("implicitly")==0)
+        {
+            systemVar::solveTImplicitly=true;
+        }
+        else if (DGSchemesoutStr[1].compare("explicitly")==0)
+        {
+            systemVar::solveTImplicitly=false;
+        }
+        else {
+            std::string str0("solveTMethod '"+DGSchemesoutStr[1]+"' is not available.");
             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
         }
 	}
@@ -822,10 +952,22 @@ namespace IO
                                 std::istringstream fixedUStream1(line);
                                 //Read sigmaU
                                 fixedUStream1>>tempStr>>bcValues::sigmaU;
+                                if ((tempStr.compare("sigmaU") != 0))
+                                {
+                                    std::cout<<"ERROR: Cannot find key word 'sigmaU' in file U/group "<<bcGrp<<", sigmaU is set to 1.0.\n";
+                                    bcValues::sigmaU=1;
+                                }
+
                                 std::getline(FileFlux, line);
                                 std::istringstream fixedUStream2(line);
                                 //Read UWall
                                 fixedUStream2 >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
+                                if ((tempStr.compare("v_wall") != 0))
+                                {
+                                    std::cout<<"ERROR: Cannot find key word 'v_wall' in file U/group "<<bcGrp<<", wall velocity is set to (0 0 0).\n";
+                                    bcValues::uBCFixed[bcGrp - 1]=0;
+                                    bcValues::vBCFixed[bcGrp - 1]=0;
+                                }
 							}
                             else if ((str0.compare("movingWall") == 0))  //Type movingWall
 							{
@@ -975,7 +1117,7 @@ namespace IO
 						if (str1.compare("initialValue") == 0)  //initial data
 						{
 							std::istringstream str_val(ptr[1]);
-							str_val >> iniValues::pIni;;
+                            str_val >> iniValues::pIni;
 						}
 						else if (str1.compare("Type") == 0)  //Bc Type
 						{
@@ -1099,10 +1241,21 @@ namespace IO
                                     std::istringstream Stream1(line);
                                     //Read sigmaT
                                     Stream1>> tempStr >> bcValues::sigmaT;
+                                    if ((tempStr.compare("sigmaT") != 0))
+                                    {
+                                        std::cout<<"ERROR: Cannot find key word 'sigmaT' in file T/group "<<bcGrp<<", sigmaT is set to 1.0.\n";
+                                        bcValues::sigmaT=1;
+                                    }
+
 									std::getline(FileFlux, line);
                                     std::istringstream Stream2(line);
                                     //Read TWall
                                     Stream2 >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
+                                    if ((tempStr.compare("T_wall") != 0))
+                                    {
+                                        std::cout<<"ERROR: Cannot find key word 'T_wall' in file T/group "<<bcGrp<<", This is an fatal error and DGSolver will exit.\n";
+                                        exit(EXIT_FAILURE);
+                                    }
 								}
 								else
 								{
@@ -1230,10 +1383,11 @@ namespace IO
     }
 
     //Ham write cac field roi rac (discreted) xuong file fileName tai folder Loc
-    void writeDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var)
+    void writeDiscretedFields(std::string Loc, std::string fileName, double **Var)
     {
         std::string fileLoc(Loc + "/" + fileName);
         std::ofstream fileFlux(fileLoc.c_str());
+        fileFlux<<systemVar::headerFile<<"numberOfEntities "<<meshVar::nelem2D<<"\n"<<"{\n";
         for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
         {
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
@@ -1242,25 +1396,48 @@ namespace IO
             }
             fileFlux << "\n";
         }
+        fileFlux<<"}/n";
     }
 
     //Ham read cac field roi rac (discreted) xuong file fileName tai folder Loc
-    void readDiscretedFields(std::string Loc, std::string fileName, std::vector<std::vector<double>> &Var)
+    void readDiscretedFields(std::string Loc, std::string fileName, double **Var)
     {
-        std::string fileLoc(Loc + "/" + fileName);
+        std::string fileLoc(Loc + "/" + fileName), checkStr;
         std::ifstream FileFlux(fileLoc.c_str());
+
+        bool startToRead(false);
         if (FileFlux)
         {
             int nelement(0);
             std::string line;
             while (std::getline(FileFlux, line))
             {
-                std::istringstream lineflux(line);
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                //auxUlti::addRowTo2DIntArray(meshVar::Elements1D, 3);
+                if (startToRead==false)
                 {
-                    lineflux >> Var[nelement][iorder];
+                    std::istringstream lineflux(line);
+                    lineflux >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
                 }
-                nelement++;
+                else
+                {
+                    if (nelement<meshVar::nelem2D)
+                    {
+                        std::istringstream lineflux(line);
+                        for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                        {
+                            lineflux >> Var[nelement][iorder];
+                        }
+                        nelement++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
         }
         else
@@ -1364,26 +1541,56 @@ namespace IO
         fileName = "TSurface.txt";
         fileLoc = (Loc + "/" + fileName);
         std::ifstream FileFluxTSurface(fileLoc.c_str());
-        fileName = "USurface.txt";
-        fileLoc = (Loc + "/" + fileName);
-        std::ifstream FileFluxUSurface(fileLoc.c_str());
-        if (FileFluxTSurface && FileFluxUSurface)
+        if (FileFluxTSurface)
         {
             int nEdge(0);
-            double TVar(0.0), uVar(0.0), vVar(0.0);
-            std::string line_T, line_U;
+            double TVar(0.0);
+            std::string line_T;
 
             //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
-            while (std::getline(FileFluxTSurface, line_T) && std::getline(FileFluxTSurface, line_U))
+            while (std::getline(FileFluxTSurface, line_T))
             {
-                std::istringstream line_Tflux(line_T), line_Uflux(line_U);
+                std::istringstream line_Tflux(line_T);
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
                 {
                     line_Tflux>>TVar;
-                    line_Uflux>>uVar>>vVar;
                     for (int nG=0; nG<=mathVar::nGauss; nG++)
                     {
                         SurfaceBCFields::TBc[nEdge][nG]=TVar;
+                    }
+
+                }
+                nEdge++;
+            }
+        }
+        else
+        {
+            if (systemVar::currentProc==0)
+            {
+                std::cout<<"Cannot find file TSurface.txt at folder "<<systemVar::iterCount<<", solver will load surface fields from folder 0\n";
+            }
+            //process::setIniSurfaceBCValues();
+        }
+
+        //Read file TSurface & USurface
+        fileName = "USurface.txt";
+        fileLoc = (Loc + "/" + fileName);
+        std::ifstream FileFluxUSurface(fileLoc.c_str());
+        if (FileFluxUSurface)
+        {
+            int nEdge(0);
+            double uVar(0.0), vVar(0.0);
+            std::string line_U;
+
+            //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
+            while (std::getline(FileFluxTSurface, line_U))
+            {
+                std::istringstream line_Uflux(line_U);
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    line_Uflux>>uVar>>vVar;
+                    for (int nG=0; nG<=mathVar::nGauss; nG++)
+                    {
                         SurfaceBCFields::uBc[nEdge][nG]=uVar;
                         SurfaceBCFields::vBc[nEdge][nG]=vVar;
                     }
@@ -1396,9 +1603,9 @@ namespace IO
         {
             if (systemVar::currentProc==0)
             {
-                std::cout<<"Cannot find file TSurface.txt or USurface.txt or both at folder "<<systemVar::iterCount<<", solver will load surface fields from folder 0\n";
+                std::cout<<"Cannot find file USurface.txt at folder "<<systemVar::iterCount<<", solver will load surface fields from folder 0\n";
             }
-            process::setIniSurfaceBCValues();
+            //process::setIniSurfaceBCValues();
         }
 
 		//Read residual norm coeffs
@@ -1418,11 +1625,12 @@ namespace IO
 		}
 	}
 
-	void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, int numRow, int numCol)
+    void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol)
 	{
 		std::ofstream Flux(loc.c_str());
 		if (Flux)
 		{
+            Flux<<message::headerFile()<<name<<"\n"<<"NumberOfEntities "<<numRow<<"\n"<<"{\n";
             for (int i = 0; i < numRow; i++)
 			{
                 for (int j = 0; j < numCol; j++)
@@ -1431,6 +1639,7 @@ namespace IO
 				}
 				Flux << "\n";
 			}
+            Flux<<"}\n";
 		}
 		else
 		{
@@ -1449,11 +1658,12 @@ namespace IO
                              +std::to_string(rhoERes)+"\n");
     }
 
-	void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, int numRow, int numCol)
+    void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol)
 	{
 		std::ofstream Flux(loc.c_str());
 		if (Flux)
 		{
+            Flux<<message::headerFile()<<name<<"\n"<<"NumberOfEntities "<<numRow<<"\n"<<"{\n";
             for (int i = 0; i < numRow; i++)
 			{
                 for (int j = 0; j < numCol; j++)
@@ -1462,6 +1672,7 @@ namespace IO
 				}
 				Flux << "\n";
 			}
+            Flux<<"}\n";
 		}
 		else
 		{
@@ -1483,6 +1694,7 @@ namespace IO
 
 	namespace importCase
 	{
+    //Phan nay k can
 		void importResultsFromAnotherCase()
 		{
             //SUA TAM THOI
@@ -1548,7 +1760,7 @@ namespace IO
 				//read results from source folder
 				fileName = "rho.txt";
                 fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
-				mappSourceToCurrent(fileLoc, rho);
+                //mappSourceToCurrent(fileLoc, rho);
                 if (systemVar::currentProc==0)
                 {
                     std::cout << "	rho\n";
@@ -1556,7 +1768,7 @@ namespace IO
 
 				fileName = "rhou.txt";
                 fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
-				mappSourceToCurrent(fileLoc, rhou);
+                //mappSourceToCurrent(fileLoc, rhou);
                 if (systemVar::currentProc==0)
                 {
                     std::cout << "	rhou\n";
@@ -1564,7 +1776,7 @@ namespace IO
 
 				fileName = "rhov.txt";
                 fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
-				mappSourceToCurrent(fileLoc, rhov);
+                //mappSourceToCurrent(fileLoc, rhov);
                 if (systemVar::currentProc==0)
                 {
                     std::cout << "	rhov\n";
@@ -1572,7 +1784,7 @@ namespace IO
 
 				fileName = "rhoE.txt";
                 fileLoc = (sourceLoc + "/" + processor + "/" + std::to_string(time) + "/" + fileName);
-				mappSourceToCurrent(fileLoc, rhoE);
+                //mappSourceToCurrent(fileLoc, rhoE);
                 if (systemVar::currentProc==0)
                 {
                     std::cout << "	rhoE\n";
@@ -1618,6 +1830,7 @@ namespace IO
         std::ofstream FileFlux((location+"/"+fileName).c_str());
         if (FileFlux)
         {
+            FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<vector.size()<<"{\n";
             for (int irow=0; irow<vector.size(); irow++)
             {
                 for (int icol=0; icol<vector[irow].size(); icol++)
@@ -1626,6 +1839,7 @@ namespace IO
                 }
                 FileFlux<<"\n";
             }
+            FileFlux<<"}\n";
         }
         else
         {
@@ -1633,15 +1847,17 @@ namespace IO
         }
     }
 
-    void write1DDoubleVectorToFile(std::string location, std::string fileName, std::vector<double> &vector)
+    void write1DDoubleVectorToFile(std::string location, std::string fileName, double *vector, int length)
     {
         std::ofstream FileFlux((location+"/"+fileName).c_str());
+        FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<length<<"{\n";
         if (FileFlux)
         {
-            for (int irow=0; irow<vector.size(); irow++)
+            for (int irow=0; irow<length; irow++)
             {
                 FileFlux<<vector[irow]<<"\n";
             }
+            FileFlux<<"}\n";
         }
         else
         {
@@ -1649,15 +1865,17 @@ namespace IO
         }
     }
 
-    void write1DIntVectorToFile(std::string location, std::string fileName, std::vector<int> &vector)
+    void write1DIntVectorToFile(std::string location, std::string fileName, int *vector, int length)
     {
         std::ofstream FileFlux((location+"/"+fileName).c_str());
         if (FileFlux)
         {
-            for (int irow=0; irow<vector.size(); irow++)
+            FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<length<<"\n"<<"{\n";
+            for (int irow=0; irow<length; irow++)
             {
                 FileFlux<<vector[irow]<<"\n";
             }
+            FileFlux<<"}\n";
         }
         else
         {

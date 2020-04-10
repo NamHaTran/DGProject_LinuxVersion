@@ -22,15 +22,16 @@ namespace meshParam
 		{
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
 			{
-				mathVar::GaussPts[na][nb][0] = mathVar::xGauss[na];
-				mathVar::GaussPts[na][nb][1] = mathVar::xGauss[nb];
-				mathVar::GaussLobattoPts[na][nb][0] = mathVar::xGaussLobatto[na];
-				mathVar::GaussLobattoPts[na][nb][1] = mathVar::xGaussLobatto[nb];
+                int i0(calcArrId(nb,0,mathVar::nGauss+1)), i1(calcArrId(nb,1,mathVar::nGauss+1));
+                mathVar::GaussPts[na][i0] = mathVar::xGauss[na];
+                mathVar::GaussPts[na][i1] = mathVar::xGauss[nb];
+                mathVar::GaussLobattoPts[na][i0] = mathVar::xGaussLobatto[na];
+                mathVar::GaussLobattoPts[na][i1] = mathVar::xGaussLobatto[nb];
 
-				mathVar::wGaussPts[na][nb][0] = mathVar::wGauss[na];
-				mathVar::wGaussPts[na][nb][1] = mathVar::wGauss[nb];
-				mathVar::wGaussLobattoPts[na][nb][0] = mathVar::wGaussLobatto[na];
-				mathVar::wGaussLobattoPts[na][nb][1] = mathVar::wGaussLobatto[nb];
+                mathVar::wGaussPts[na][i0] = mathVar::wGauss[na];
+                mathVar::wGaussPts[na][i1] = mathVar::wGauss[nb];
+                mathVar::wGaussLobattoPts[na][i0] = mathVar::wGaussLobatto[na];
+                mathVar::wGaussLobattoPts[na][i1] = mathVar::wGaussLobatto[nb];
 			}
 		}
 	}
@@ -45,9 +46,12 @@ namespace meshParam
 			{
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
-					a = mathVar::GaussPts[na][nb][0];
-					b = mathVar::GaussPts[na][nb][1];
-					meshVar::J2D[ielem][na][nb] = math::J2DCal(ielem, a, b);
+                    //a = mathVar::GaussPts[na][nb][0];
+                    //b = mathVar::GaussPts[na][nb][1];
+                    a = mathVar::GaussPts[na][calcArrId(nb,0,mathVar::nGauss+1)];
+                    b = mathVar::GaussPts[na][calcArrId(nb,1,mathVar::nGauss+1)];
+                    //meshVar::J2D[ielem][na][nb] = math::J2DCal(ielem, a, b);
+                    meshVar::J2D[ielem][calcArrId(na,nb,mathVar::nGauss+1)] = math::J2DCal(ielem, a, b);
 				}
 			}
 		}
@@ -59,18 +63,19 @@ namespace meshParam
         for (int na = 0; na <= mathVar::nGauss; na++)
 		{
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
-			{
+            {
+                /*
 				//Triangle
-				a = mathVar::GaussPts[na][nb][0];
-				b = mathVar::GaussPts[na][nb][1];
+                a = mathVar::GaussPts[na][nb][0];
+                b = mathVar::GaussPts[na][nb][1];
 				math::basisFc(a, b, 3);
 				math::dBasisFc(a, b, 3);
                 for (int order = 0; order <= mathVar::orderElem; order++)
 				{
-					mathVar::BPts_Tri[order][na][nb] = mathVar::B[order];
+                    mathVar::BPts_Tri[order][na][nb] = mathVar::B[order];
 
-					mathVar::dBaPts_Tri[order][na][nb] = mathVar::dBa[order];
-					mathVar::dBbPts_Tri[order][na][nb] = mathVar::dBb[order];
+                    mathVar::dBaPts_Tri[order][na][nb] = mathVar::dBa[order];
+                    mathVar::dBbPts_Tri[order][na][nb] = mathVar::dBb[order];
 				}
 
 				//Quadrilateral
@@ -83,6 +88,33 @@ namespace meshParam
 					mathVar::dBaPts_Quad[order][na][nb] = mathVar::dBa[order];
 					mathVar::dBbPts_Quad[order][na][nb] = mathVar::dBb[order];
 				}
+                */
+                int nb0(calcArrId(nb,0,mathVar::nGauss+1)), nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
+                //Triangle
+                a = mathVar::GaussPts[na][nb0];
+                b = mathVar::GaussPts[na][nb1];
+                math::basisFc(a, b, 3);
+                math::dBasisFc(a, b, 3);
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    mathVar::BPts_Tri[order][nanb] = mathVar::B[order];
+
+                    mathVar::dBaPts_Tri[order][nanb] = mathVar::dBa[order];
+                    mathVar::dBbPts_Tri[order][nanb] = mathVar::dBb[order];
+                }
+
+                //Quadrilateral
+                math::basisFc(a, b, 4);
+                math::dBasisFc(a, b, 4);
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    mathVar::BPts_Quad[order][nanb] = mathVar::B[order];
+
+                    mathVar::dBaPts_Quad[order][nanb] = mathVar::dBa[order];
+                    mathVar::dBbPts_Quad[order][nanb] = mathVar::dBb[order];
+                }
 			}
 		}
 	}
@@ -97,6 +129,10 @@ namespace meshParam
 			{
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
+                    int nb0(calcArrId(nb,0,mathVar::nGauss+1)), nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
+                    /*
 					a = mathVar::GaussPts[na][nb][0];
 					b = mathVar::GaussPts[na][nb][1];
 					std::tie(dxa, dxb, dya, dyb) = math::Calc_dxydab(ielem, a, b);
@@ -104,6 +140,14 @@ namespace meshParam
 					meshVar::dxb[ielem][na][nb] = dxb;
 					meshVar::dya[ielem][na][nb] = dya;
 					meshVar::dyb[ielem][na][nb] = dyb;
+                    */
+                    a = mathVar::GaussPts[na][nb0];
+                    b = mathVar::GaussPts[na][nb1];
+                    std::tie(dxa, dxb, dya, dyb) = math::Calc_dxydab(ielem, a, b);
+                    meshVar::dxa[ielem][nanb] = dxa;
+                    meshVar::dxb[ielem][nanb] = dxb;
+                    meshVar::dya[ielem][nanb] = dya;
+                    meshVar::dyb[ielem][nanb] = dyb;
 				}
 			}
 		}
@@ -180,6 +224,52 @@ namespace meshParam
 			}
 		}
 	}
+
+    void calcDistanceFromCenterToBCEdge()
+    {
+        int globleEdge(0), element(0), tempE;
+        for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
+        {
+            globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
+            int bcType(meshVar::inpoed[globleEdge][3]);
+            if (bcType==1) //type wall
+            {
+                std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
+                meshVar::distanceFromCentroidToBCEdge[ilocalEdge]=math::geometricOp::calcDistanceFromCenterToEdge(element,globleEdge);
+            }
+        }
+    }
+
+    void findNormProjectionOfCenterToBCEdge()
+    {
+        int globleEdge(0), element(0), tempE;
+        double xC, yC, x1, y1, x2, y2, xN, yN, aN, bN;
+        for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
+        {
+            globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
+            int bcType(meshVar::inpoed[globleEdge][3]);
+            if (bcType==1) //type wall
+            {
+                std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
+
+                xC=meshVar::geoCenter[element][0];
+                yC=meshVar::geoCenter[element][1];
+                //Coordinates of 2 vertices of edge
+                x1=meshVar::Points[meshVar::inpoed[globleEdge][0]][0];
+                y1=meshVar::Points[meshVar::inpoed[globleEdge][0]][1];
+                x2=meshVar::Points[meshVar::inpoed[globleEdge][1]][0];
+                y2=meshVar::Points[meshVar::inpoed[globleEdge][1]][1];
+
+                std::tie(xN,yN)=math::geometricOp::findNormalProjectionOfPointToEdge(xC,yC,x1,y1,x2,y2);
+                std::tie(aN, bN) = math::inverseMapping(element, xN, yN);
+
+                meshVar::normProjectionOfCenterToBCEdge_realSysCoor[globleEdge][0]=xN;
+                meshVar::normProjectionOfCenterToBCEdge_realSysCoor[globleEdge][1]=yN;
+                meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[globleEdge][0]=aN;
+                meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[globleEdge][1]=bN;
+            }
+        }
+    }
 }
 
 namespace process
@@ -251,10 +341,9 @@ namespace process
                 int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
                 if (UType == 5 && TType == 6 && pType == 2)
                 {
-                    for (int nG=1; nG<=mathVar::nGauss; nG++)
+                    for (int nG=0; nG<=mathVar::nGauss; nG++)
                     {
-                        timeVaryingBCs::temperatureJump(globleEdge,edgeGrp,nG);
-                        timeVaryingBCs::slipVelocity(globleEdge,edgeGrp,nG);
+                        timeVaryingBCs::MaxwellSmoluchowski_implicit2ndOrder(globleEdge,edgeGrp);
                     }
                 }
             }
@@ -305,12 +394,20 @@ namespace process
 			{
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
 					std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                     UVol=math::pointUVars(nelem,a,b);
+                    /*
                     volumeFields::rhoVolGauss[nelem][na][nb] = UVol[0];
                     volumeFields::rhouVolGauss[nelem][na][nb] = UVol[1];
                     volumeFields::rhovVolGauss[nelem][na][nb] = UVol[2];
                     volumeFields::rhoEVolGauss[nelem][na][nb] = UVol[3];
+                    */
+                    volumeFields::rhoVolGauss[nelem][nanb] = UVol[0];
+                    volumeFields::rhouVolGauss[nelem][nanb] = UVol[1];
+                    volumeFields::rhovVolGauss[nelem][nanb] = UVol[2];
+                    volumeFields::rhoEVolGauss[nelem][nanb] = UVol[3];
 				}
 			}
 		}
@@ -330,11 +427,13 @@ namespace process
                     {
                         for (int nb = 0; nb <= mathVar::nGauss; nb++)
                         {
+                            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
                             std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                             rhoX=math::pointAuxValue(nelem,a,b,1,1);
                             rhoY=math::pointAuxValue(nelem,a,b,1,2);
 
-                            volumeFields::T[nelem][na][nb]=math::CalcTFromConsvVar_massDiff(volumeFields::rhoVolGauss[nelem][na][nb],volumeFields::rhouVolGauss[nelem][na][nb],volumeFields::rhovVolGauss[nelem][na][nb],volumeFields::rhoEVolGauss[nelem][na][nb],rhoX,rhoY);
+                            volumeFields::T[nelem][nanb]=math::CalcTFromConsvVar_massDiff(volumeFields::rhoVolGauss[nelem][nanb],volumeFields::rhouVolGauss[nelem][nanb],volumeFields::rhovVolGauss[nelem][nanb],volumeFields::rhoEVolGauss[nelem][nanb],rhoX,rhoY);
                         }
                     }
                 }
@@ -392,8 +491,10 @@ namespace process
                 {
                     for (int nb = 0; nb <= mathVar::nGauss; nb++)
                     {
+                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
                         std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
-                        volumeFields::T[nelem][na][nb] = math::pointValue(nelem, a, b, 6, 1);
+                        volumeFields::T[nelem][nanb] = math::pointValue(nelem, a, b, 6, 1);
                     }
                 }
             }
@@ -562,7 +663,8 @@ namespace process
                 {
                     for (int na=0;na<=mathVar::nGauss;na++) {
                         for (int nb=0;nb<=mathVar::nGauss;nb++) {
-                            Bn=mathVar::BPts_Quad[n][na][nb];
+                            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                            Bn=mathVar::BPts_Quad[n][nanb];
                             dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
                             dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
                             gaussMX[na][nb]=Bn*dBmX;
@@ -574,7 +676,8 @@ namespace process
                 {
                     for (int na=0;na<=mathVar::nGauss;na++) {
                         for (int nb=0;nb<=mathVar::nGauss;nb++) {
-                            Bn=mathVar::BPts_Tri[n][na][nb];
+                            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                            Bn=mathVar::BPts_Tri[n][nanb];
                             dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
                             dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
                             gaussMX[na][nb]=Bn*dBmX;
@@ -987,7 +1090,8 @@ namespace process
         {
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
             {
-                mu=math::CalcVisCoef(volumeFields::T[element][na][nb]);
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                mu=math::CalcVisCoef(volumeFields::T[element][nanb]);
                 rhoGsVol[na][nb]=rhoGsVol[na][nb]*mu;
                 rhouGsVol[na][nb]=rhouGsVol[na][nb]*mu;
                 rhovGsVol[na][nb]=rhovGsVol[na][nb]*mu;
@@ -1090,31 +1194,32 @@ namespace process
         {
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
             {
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
                 switch (valType)
                 {
                 case 1:
                 {
-                    GaussMatrix[na][nb] = volumeFields::rhoVolGauss[element][na][nb];
+                    GaussMatrix[na][nb] = volumeFields::rhoVolGauss[element][nanb];
                 }
                 break;
                 case 2:
                 {
-                    GaussMatrix[na][nb] = volumeFields::rhouVolGauss[element][na][nb];
+                    GaussMatrix[na][nb] = volumeFields::rhouVolGauss[element][nanb];
                 }
                 break;
                 case 3:
                 {
-                    GaussMatrix[na][nb] = volumeFields::rhovVolGauss[element][na][nb];
+                    GaussMatrix[na][nb] = volumeFields::rhovVolGauss[element][nanb];
                 }
                 break;
                 case 4:
                 {
                     if (!flowProperties::massDiffusion)
                     {
-                        GaussMatrix[na][nb] = volumeFields::rhoEVolGauss[element][na][nb];
+                        GaussMatrix[na][nb] = volumeFields::rhoEVolGauss[element][nanb];
                     }
                     else {
-                        GaussMatrix[na][nb]=volumeFields::rhoVolGauss[element][na][nb]*material::Cv*volumeFields::T[element][na][nb]+0.5*(pow(volumeFields::rhouVolGauss[element][na][nb],2)+pow(volumeFields::rhovVolGauss[element][na][nb],2))/volumeFields::rhoVolGauss[element][na][nb];
+                        GaussMatrix[na][nb]=volumeFields::rhoVolGauss[element][nanb]*material::Cv*volumeFields::T[element][nanb]+0.5*(pow(volumeFields::rhouVolGauss[element][nanb],2)+pow(volumeFields::rhovVolGauss[element][nanb],2))/volumeFields::rhoVolGauss[element][nanb];
                     }
                 }
                 break;
@@ -1271,7 +1376,8 @@ namespace process
             {
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
                 {
-                    rhoGsVol[na][nb]=volumeFields::rhoVolGauss[element][na][nb];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    rhoGsVol[na][nb]=volumeFields::rhoVolGauss[element][nanb];
                 }
             }
 
@@ -1389,7 +1495,8 @@ namespace process
                     {
                         for (int na=0;na<=mathVar::nGauss;na++) {
                             for (int nb=0;nb<=mathVar::nGauss;nb++) {
-                                Bn=mathVar::BPts_Quad[n][na][nb];
+                                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                                Bn=mathVar::BPts_Quad[n][nanb];
                                 dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
                                 dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
                                 gaussMX[na][nb]=Bn*dBmX;
@@ -1401,7 +1508,8 @@ namespace process
                     {
                         for (int na=0;na<=mathVar::nGauss;na++) {
                             for (int nb=0;nb<=mathVar::nGauss;nb++) {
-                                Bn=mathVar::BPts_Tri[n][na][nb];
+                                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                                Bn=mathVar::BPts_Tri[n][nanb];
                                 dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
                                 dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
                                 gaussMX[na][nb]=Bn*dBmX;
@@ -1757,12 +1865,13 @@ namespace process
 			/*InviscidTerm 2D array has 4 row 2 column:
 			- column 1: Ox direction
 			- column 2: Oy direction*/
+            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
 			std::vector<std::vector<double>> InviscidTerm(4, std::vector<double>(2, 0.0));
 			double
-                rhoVal(volumeFields::rhoVolGauss[element][na][nb]),
-                rhouVal(volumeFields::rhouVolGauss[element][na][nb]),
-                rhovVal(volumeFields::rhovVolGauss[element][na][nb]),
-                rhoEVal(volumeFields::rhoEVolGauss[element][na][nb]),
+                rhoVal(volumeFields::rhoVolGauss[element][nanb]),
+                rhouVal(volumeFields::rhouVolGauss[element][nanb]),
+                rhovVal(volumeFields::rhovVolGauss[element][nanb]),
+                rhoEVal(volumeFields::rhoEVolGauss[element][nanb]),
 				uVal(0.0),
 				vVal(0.0),
 				pVal(0.0),
@@ -1775,8 +1884,8 @@ namespace process
 			uVal = rhouVal / rhoVal;
 			vVal = rhovVal / rhoVal;
             totalE = rhoEVal / rhoVal;
-            pVal = math::CalcP(volumeFields::T[element][na][nb], rhoVal);
-            muVal=math::CalcVisCoef(volumeFields::T[element][na][nb]);
+            pVal = math::CalcP(volumeFields::T[element][nanb], rhoVal);
+            muVal=math::CalcVisCoef(volumeFields::T[element][nanb]);
 
             if (flowProperties::massDiffusion)
             {
@@ -1808,6 +1917,8 @@ namespace process
 		/*Function calculates Viscous terms at Gauss point (a, b)*/
 		std::vector<std::vector<double>> calcGaussViscousTerm(int element, int na, int nb)
 		{
+            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
             double uVal(0.0), vVal(0.0), a(0.0), b(0.0);
 			/*ViscousTerm 2D array has 4 row 2 column:
 			- column 1: Ox direction
@@ -1820,10 +1931,10 @@ namespace process
 			std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 
 			/*calculate conservative and derivative variables*/
-            vectorU[0] = volumeFields::rhoVolGauss[element][na][nb];
-            vectorU[1] = volumeFields::rhouVolGauss[element][na][nb];
-            vectorU[2] = volumeFields::rhovVolGauss[element][na][nb];
-            vectorU[3] = volumeFields::rhoEVolGauss[element][na][nb];
+            vectorU[0] = volumeFields::rhoVolGauss[element][nanb];
+            vectorU[1] = volumeFields::rhouVolGauss[element][nanb];
+            vectorU[2] = volumeFields::rhovVolGauss[element][nanb];
+            vectorU[3] = volumeFields::rhoEVolGauss[element][nanb];
 
             uVal=vectorU[1]/vectorU[0];
             vVal=vectorU[2]/vectorU[0];
@@ -1839,7 +1950,7 @@ namespace process
             vectordUy=math::pointSVars(0,element,a,b,2,1);
 
 			/*calculate stresses and heat fluxes*/
-            StressHeatFlux = math::viscousTerms::calcStressTensorAndHeatFlux(vectorU, vectordUx, vectordUy, volumeFields::T[element][na][nb]);
+            StressHeatFlux = math::viscousTerms::calcStressTensorAndHeatFlux(vectorU, vectordUx, vectordUy, volumeFields::T[element][nanb]);
             std::tie(ViscousTerm[0][0], ViscousTerm[1][0], ViscousTerm[2][0], ViscousTerm[3][0]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, vectordUx[0]/vectorU[0], 1);
             std::tie(ViscousTerm[0][1], ViscousTerm[1][1], ViscousTerm[2][1], ViscousTerm[3][1]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, vectordUy[0]/vectorU[0], 2);
 			return ViscousTerm;
@@ -2488,7 +2599,7 @@ namespace process
 			process::calcVolumeGaussValues();
             process::calcValuesAtInterface();
 
-            if (flowProperties::massDiffusion)
+            if (flowProperties::massDiffusion && systemVar::solveTImplicitly)
             {
                 if (systemVar::auxVariables==1)
                 {
@@ -2526,9 +2637,6 @@ namespace process
             {
                 auxUlti::functionsOfParallelComputing::sendReceiveU();
             }
-
-            //Update surfaceBCFields for time varying BCs
-            process::updateTimeVaryingBCs();
 		}
 
 		void TVDRK3()
@@ -2556,6 +2664,11 @@ namespace process
                     limiter::Pp::initialiseThetaVector();
                 }*/
 			}
+            //Update surfaceBCFields for time varying BCs
+            if (systemVar::iterCount>2000)
+            {
+                process::updateTimeVaryingBCs();
+            }
 		}
 
         namespace parallel {
@@ -2707,8 +2820,9 @@ namespace process
 			{
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
-					B1 = mathVar::BPts_Tri[order1][na][nb];
-					B2 = mathVar::BPts_Tri[order2][na][nb];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    B1 = mathVar::BPts_Tri[order1][nanb];
+                    B2 = mathVar::BPts_Tri[order2][nanb];
 					FMatrix[na][nb] = B1 * B2;
 				}
 			}
@@ -2720,8 +2834,9 @@ namespace process
 			{
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
 				{
-					B1 = mathVar::BPts_Quad[order1][na][nb];
-					B2 = mathVar::BPts_Quad[order2][na][nb];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    B1 = mathVar::BPts_Quad[order1][nanb];
+                    B2 = mathVar::BPts_Quad[order2][nanb];
 					FMatrix[na][nb] = B1 * B2;
 				}
 			}

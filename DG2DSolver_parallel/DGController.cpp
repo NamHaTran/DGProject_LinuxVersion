@@ -38,6 +38,7 @@ void Executer()
         {
             PreProcessing();
         }
+		
         Processing();
         controlFlag::parallel::checkDGRun=false;
     }
@@ -191,7 +192,7 @@ void checkCommandLine(std::string cmd)
 void Processing()
 {
     //Giai phong bot bo nho truoc khi tinh toan
-    auxUlti::releaseMemory();
+    //auxUlti::releaseMemory();
     
     std::string readWriteMode;
     if (systemVar::parallelMode)
@@ -241,6 +242,7 @@ void Processing()
 	while (process::checkRunningCond())
 	{
 		systemVar::iterCount++;
+        systemVar::savingCout++;
         if (systemVar::currentProc==0)
         {
             std::cout << "Iteration " << systemVar::iterCount << std::endl
@@ -256,8 +258,7 @@ void Processing()
 
 		//COMPUTE RESIDUALS
 		process::timeDiscretization::globalErrorEstimate();
-	
-		systemVar::savingCout++;
+
 		if (systemVar::savingCout == systemVar::wrtI)
 		{
 			std::cout << "Saving case...\n" << std::endl;
@@ -313,8 +314,6 @@ void PreProcessing()
 
     /*RESIZE ARRAYS*/
     auxUlti::resizeDGArrays();
-    //initialise theta1 & theta2
-    limiter::Pp::initialiseThetaVector();
 
     for (int ivertex=0;ivertex<4;ivertex++)
     {
@@ -331,9 +330,14 @@ void PreProcessing()
 	meshParam::calcCellMetrics();
     meshParam::calcEdgeLength();
 
+    //Ham nay tinh khoang cach tu centroid cua cell tai BC den BC
+    meshParam::calcDistanceFromCenterToBCEdge();
+
 	/*CALCULATE COORDINATES DERIVATIVES*/
 	meshParam::derivCoordinates();
     auxUlti::mappingEdges();
+
+    meshParam::findNormProjectionOfCenterToBCEdge();
 
 	systemVar::runPreProcess = true;
 }

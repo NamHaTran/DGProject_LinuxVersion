@@ -196,8 +196,10 @@ namespace limiter
 				{
 					for (int nb = 0; nb <= mathVar::nGauss; nb++)
 					{
-						aG = mathVar::GaussPts[na][nb][0];
-						bG = mathVar::GaussPts[na][nb][1];
+                        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                                nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                        aG = mathVar::GaussPts[na][nb0];
+                        bG = mathVar::GaussPts[na][nb1];
 						vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
 						counter++;
 					}
@@ -225,7 +227,7 @@ namespace limiter
 				{
 					aG = mathVar::xGauss[nG];
 					vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
-					counter++;;
+                    counter++;
 				}
 				//Compute t at edge CD
 				bG = 1;
@@ -588,11 +590,12 @@ namespace limiter
                 {
                     for (int nb = 0; nb <= mathVar::nGauss; nb++)
                     {
+                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
                         std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
-                        volumeFields::rhoVolGauss[element][na][nb] = rho[element][0];
+                        volumeFields::rhoVolGauss[element][nanb] = rho[element][0];
                         for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                         {
-                            volumeFields::rhoVolGauss[element][na][nb] += rho[element][iorder]* mathVar::B[iorder];
+                            volumeFields::rhoVolGauss[element][nanb] += rho[element][iorder]* mathVar::B[iorder];
                         }
                     }
                 }
@@ -716,13 +719,14 @@ namespace limiter
 
             std::tuple<double, double, double, double> calcFinvFvisInVolume(int element, int na, int nb)
             {
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
                 double
-                    rhoVal(volumeFields::rhoVolGauss[element][na][nb]),
-                    rhouVal(volumeFields::rhouVolGauss[element][na][nb]),
-                    rhovVal(volumeFields::rhovVolGauss[element][na][nb]),
+                    rhoVal(volumeFields::rhoVolGauss[element][nanb]),
+                    rhouVal(volumeFields::rhouVolGauss[element][nanb]),
+                    rhovVal(volumeFields::rhovVolGauss[element][nanb]),
                     uVal(0.0),
                     vVal(0.0),
-                    a(0.0),b(0.0),muVal(muVal=math::CalcVisCoef(volumeFields::T[element][na][nb])),
+                    a(0.0),b(0.0),muVal(muVal=math::CalcVisCoef(volumeFields::T[element][nanb])),
                     dRhoX(0.0), dRhoY(0.0),
                     invTermX(0.0), visTermX(0.0), invTermY(0.0), visTermY(0.0);
 
@@ -908,11 +912,13 @@ namespace limiter
                 {
                     for (int nb = 0; nb <= mathVar::nGauss; nb++)
                     {
+                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+
                         //std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                         /*A INVISCID TERMS*/
-                        rhoVal=volumeFields::rhoVolGauss[element][na][nb];
-                        rhouVal=volumeFields::rhouVolGauss[element][na][nb];
-                        rhovVal=volumeFields::rhovVolGauss[element][na][nb];
+                        rhoVal=volumeFields::rhoVolGauss[element][nanb];
+                        rhouVal=volumeFields::rhouVolGauss[element][nanb];
+                        rhovVal=volumeFields::rhovVolGauss[element][nanb];
 
                         std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
                         uVal = rhouVal / rhoVal;
@@ -924,7 +930,7 @@ namespace limiter
                         GsVolY1[na][nb] = rhoVal*vVal;
 
                         /*B VISCOUS TERMS*/
-                        muVal=math::CalcVisCoef(volumeFields::T[element][na][nb]);
+                        muVal=math::CalcVisCoef(volumeFields::T[element][nanb]);
                         dRhoX = math::pointAuxValue(element, a, b, 1, 1)*muVal;
                         dRhoY = math::pointAuxValue(element, a, b, 1, 2)*muVal;
 
@@ -974,8 +980,10 @@ namespace limiter
                 {
                     for (int nb = 0; nb <= mathVar::nGauss; nb++)
                     {
-                        aG = mathVar::GaussPts[na][nb][0];
-                        bG = mathVar::GaussPts[na][nb][1];
+                        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                                nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                        aG = mathVar::GaussPts[na][nb0];
+                        bG = mathVar::GaussPts[na][nb1];
                         vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
                         vectorRho0[counter]=(mathForMassDiffLimiter::pointRho0(element, aG, bG));
                         counter++;
@@ -1230,8 +1238,10 @@ namespace limiter
 				{
 					for (int nb = 0; nb <= mathVar::nGauss; nb++)
 					{
-						aG = mathVar::GaussPts[na][nb][0];
-						bG = mathVar::GaussPts[na][nb][1];
+                        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                                nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                        aG = mathVar::GaussPts[na][nb0];
+                        bG = mathVar::GaussPts[na][nb1];
                         vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
                         counter++;
 					}
@@ -1406,8 +1416,10 @@ namespace limiter
 					{
 						for (int nb = 0; nb <= mathVar::nGauss; nb++)
 						{
-							aG = mathVar::GaussPts[na][nb][0];
-							bG = mathVar::GaussPts[na][nb][1];
+                            int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
+                                    nb1(calcArrId(nb,1,mathVar::nGauss+1));
+                            aG = mathVar::GaussPts[na][nb0];
+                            bG = mathVar::GaussPts[na][nb1];
 							rhoMod = limiter::mathForLimiter::quadratureCell::calcRhoModified(element, aG, bG, theta1);
 							rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 							rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
