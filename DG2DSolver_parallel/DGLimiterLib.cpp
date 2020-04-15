@@ -117,8 +117,14 @@ namespace limiter
 					limitVal::numOfLimitCell = 0;
                 }
                 //send/recv theta
-                auxUlti::functionsOfParallelComputing::sendRecvTheta(theta1Arr,parallelBuffer::theta1);
-                auxUlti::functionsOfParallelComputing::sendRecvTheta(theta2Arr,parallelBuffer::theta2);
+                int sendingProc, receivingProc;
+                for (int i=0; i<systemVar::sendRecvOrder_length; i++)
+                {
+                    sendingProc=systemVar::sendRecvOrder[i][0];
+                    receivingProc=systemVar::sendRecvOrder[i][1];
+                    auxUlti::functionsOfParallelComputing::sendRecvTheta(sendingProc,receivingProc,theta1Arr,parallelBuffer::theta1);
+                    auxUlti::functionsOfParallelComputing::sendRecvTheta(sendingProc,receivingProc,theta2Arr,parallelBuffer::theta2);
+                }
 			}
         }
 	}

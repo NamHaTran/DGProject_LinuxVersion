@@ -385,6 +385,53 @@ namespace IO
                 message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("meshConnection.txt", mshConnect));
             }
         }
+
+        //Read sendRecvOrder
+        if (mode.compare("p")==0)
+        {
+            bool startToRead(false);
+            std::string sendRecvOrderLoc = systemVar::pwd + "/Constant/Mesh/sendRecvOrder.txt",
+                    checkStr;
+            std::ifstream sendRecvOrderFlux(sendRecvOrderLoc.c_str());
+            if (sendRecvOrderFlux)
+            {
+                std::string line("");
+                int counter = 0;
+                systemVar::sendRecvOrder_length=auxUlti::lookForDataOfKeyword(sendRecvOrderLoc,"NumberOfEntities");
+                systemVar::sendRecvOrder = auxUlti::resize2DIntArray(systemVar::sendRecvOrder_length,2,0);
+
+                while (std::getline(sendRecvOrderFlux, line))
+                {
+                    //auxUlti::addRowTo2DIntArray(meshVar::meshConnection, 3);
+                    if (startToRead==false)
+                    {
+                        std::istringstream Data(line);
+                        Data >> checkStr;
+                        if (checkStr.compare("{") == 0)
+                        {
+                            startToRead=true;
+                        }
+                    }
+                    else
+                    {
+                        if (counter<systemVar::sendRecvOrder_length)
+                        {
+                            std::istringstream Data(line);
+                            Data >> systemVar::sendRecvOrder[counter][0] >> systemVar::sendRecvOrder[counter][1];
+                            counter++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("sendRecvOrder.txt", sendRecvOrderLoc));
+            }
+        }
 	}
 
     void SaveMeshInfor(std::string mode)

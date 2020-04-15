@@ -175,8 +175,8 @@ namespace auxUlti
     std::string receiveString(int source, int tag);
 
     void sendReceiveMeshData(int vertex, int dir, double**Buffer);
-    void sendRecvDiscretedVar(double**Var,double**Buffer,int order);
-    void sendRecvTheta(double*thetaArray,double*Buffer);
+    void sendRecvDiscretedVar(int sendingProc, int receivingProc, double**Var,double**Buffer,int order);
+    void sendRecvTheta(int sendingProc, int receivingProc, double*thetaArray,double*Buffer);
     void sendReceiveU();
     void sendReceivedU();
     void sendReceivedRho();

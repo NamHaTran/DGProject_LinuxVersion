@@ -50,6 +50,10 @@ namespace systemVar
 	extern std::string headerFile;
 
     extern bool solveTImplicitly;
+
+    extern int **sendRecvOrder;
+
+    extern int sendRecvOrder_length;
 }
 
 namespace meshVar

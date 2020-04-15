@@ -1202,6 +1202,32 @@ namespace decomposeReconstructPart {
                 }
             }
         }
+
+        //Lay thong tin cac cap send/recv
+        int counter(0);
+        std::vector<std::vector<int>> sendRecvOrder;
+        for (int irank = 0; irank < systemVar::totalProc; ++irank)
+        {
+            std::vector<int> marker(systemVar::totalProc,0);
+            for (int i = 0; i < idMarker[irank]; ++i)
+            {
+                int neighborRank(meshConnection[irank][i][1]);
+                if (neighborRank>=0 && marker[neighborRank]==0)
+                {
+                    auxUlti::addRowTo2DIntArray(sendRecvOrder,2);
+                    sendRecvOrder[counter][0]=irank;
+                    sendRecvOrder[counter][1]=neighborRank;
+                    counter++;
+
+                    //Mark vao array marker de danh dau neighbor rank do da duoc tinh la neighbor cua irank roi
+                    marker[neighborRank]=1;
+                }
+            }
+        }
+
+        //Luu thong tin xuong file
+        IO::write2DIntArrayToFile(sendRecvOrder,systemVar::pwd + "/Constant/Mesh/sendRecvOrder.txt","sendRecvOrder",counter,2);
+
         return idMarker;
     }
 
@@ -1237,7 +1263,7 @@ namespace decomposeReconstructPart {
     	/*CREATE DECOMPOSED CASE*/
         //Delete previous processor
         std::string key;
-        std::cout<<"Do you want to delete previous Processor folders! <y/n>: ";
+        std::cout<<"Do you want to delete previous Processor folders? <y/n>: ";
         std::cin>>key;
         if (key.compare("y") == 0)
         {

@@ -39,6 +39,10 @@ namespace systemVar
 
     //Dung cho truong hop mass diffusion, true neu giai T implicit, false neu giai T explicit
     bool solveTImplicitly(true);
+
+    //sendRecvOrder
+    int **sendRecvOrder = new int*[1];
+    int sendRecvOrder_length;
 }
 
 namespace meshVar
