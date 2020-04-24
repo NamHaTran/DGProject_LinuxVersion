@@ -2654,21 +2654,8 @@ namespace process
                 rhov = rhovN;
                 rhoE = rhoEN;
                 limiter::limiter_1Step();
-                /*
-                if (!flowProperties::massDiffusion)
-                {
-                    limiter::limiter_1Step();
-                }
-                else if (flowProperties::massDiffusion && systemVar::firstIter)
-                {
-                    limiter::Pp::initialiseThetaVector();
-                }*/
 			}
-            //Update surfaceBCFields for time varying BCs
-            if (systemVar::iterCount>2000)
-            {
-                process::updateTimeVaryingBCs();
-            }
+            process::updateTimeVaryingBCs();
 		}
 
         namespace parallel {

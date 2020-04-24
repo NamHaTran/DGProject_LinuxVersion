@@ -1183,7 +1183,7 @@ namespace math
 
     double calcDivTFromAuxVariable(double dRhoE, double dRho, double rhoE, double rho)
     {
-        //Dung cach cua Thay, coi u^2 la constant. vi dang tinh cho bien phu la S = mu*div(U) nen gia tri nay ma mu*divT
+        //Dung cach cua Thay, coi u^2 la constant. Vi dang tinh cho bien phu la S = mu*div(U) nen gia tri nay ma mu*divT
         return ((dRhoE-dRho*rhoE/rho)/(rho*material::Cv));
     }
 

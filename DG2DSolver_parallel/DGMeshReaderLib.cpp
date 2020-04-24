@@ -12,6 +12,7 @@
 #include <sstream>
 #include <tuple>  //Include this for returning multiple values in function
 #include "DGMessagesLib.h"
+#include "DGPostProcessLib.h"
 namespace MshReader
 {
 	/*Declare local variables of DGMeshReaderLib, these variables are used throughout library*/
@@ -1005,7 +1006,7 @@ DT=(SINGLE SINGLE SINGLE)
     }
 }
 
-namespace decomposeReconstructPart {
+namespace decomposePart {
     //NOTE!! ALL FUNCTIONS OF THIS NAMESPACE MUST BE EXCUTED AFTER LOADING MESH
 
     std::vector<int> loadPartitionedMesh()
@@ -1240,17 +1241,17 @@ namespace decomposeReconstructPart {
 
     	//Load partitioned mesh
     	std::cout<<"	Reading partitioned mesh.\n";
-        maxElem2DIdOfRanks=decomposeReconstructPart::loadPartitionedMesh();
+        maxElem2DIdOfRanks=decomposePart::loadPartitionedMesh();
         maxNumOfElem2D=*std::max_element(maxElem2DIdOfRanks.begin(), maxElem2DIdOfRanks.end());
 
     	//Find local id of points
     	std::cout<<"	Finding local id of points.\n";
-        maxPtsIdOfRanks=decomposeReconstructPart::findLocalIdOfPts();
+        maxPtsIdOfRanks=decomposePart::findLocalIdOfPts();
         maxNumOfPts=*std::max_element(maxPtsIdOfRanks.begin(), maxPtsIdOfRanks.end());
 
     	//Mark BCType "matched"
     	std::cout<<"	Marking BCType <matched>.\n";
-        decomposeReconstructPart::findEdgeWithBCTypeMatched();
+        decomposePart::findEdgeWithBCTypeMatched();
 
         std::vector<std::vector<std::vector<int>>> Elem2D (systemVar::totalProc,std::vector<std::vector<int>>(maxNumOfElem2D,std::vector <int>(5,0))),
         Elem1D (systemVar::totalProc,std::vector<std::vector<int>>(systemVar::totalProc*meshVar::inpoedCount,std::vector <int>(4,0))),
@@ -1258,7 +1259,7 @@ namespace decomposeReconstructPart {
     	std::vector<std::vector<std::vector<double>>> Points (systemVar::totalProc,std::vector<std::vector<double>>(maxNumOfPts,std::vector <double>(4,0)));
 
     	std::cout<<"	Decomposing mesh.\n";
-        maxElem1DIdOfRanks=decomposeReconstructPart::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
+        maxElem1DIdOfRanks=decomposePart::getMeshInforOfRanks(Points,Elem1D,Elem2D,meshConnection);
 
     	/*CREATE DECOMPOSED CASE*/
         //Delete previous processor
@@ -1308,9 +1309,9 @@ namespace decomposeReconstructPart {
             //Elements1D
             IO::write2DIntArrayToFile(meshConnection[irank], meshConnectionLoc, "MeshConnection", maxElem1DIdOfRanks[irank], 3);
 
-            decomposeReconstructPart::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
+            decomposePart::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
 
-            decomposeReconstructPart::decomposingTime0(Loc);
+            decomposePart::decomposingTime0(Loc);
 
             //Create file boundaryPatch and Material
             auxUlti::copyFile(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant/boundaryPatch.txt",Loc+"/Constant");
@@ -1352,7 +1353,7 @@ namespace decomposeReconstructPart {
             IO::readDecomposedMeshInfor();
         }
 
-        decomposeReconstructPart::distributingDiscretedVar();
+        decomposePart::distributingDiscretedVar();
     }
 
     void distributingDiscretedVar()
@@ -1505,4 +1506,182 @@ DT=(SINGLE SINGLE SINGLE)
             message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(systemVar::caseName + ".dat", fileLoc));
         }
     }
+
+    void fixPartitionedMesh()
+    {
+        /* Khi dung Metis de decompose mesh, se xuat hien cac cell thuoc proc_a, ma BI BAO QUANH boi cac proc khac
+         * khong phai proc_a (cell nay khong ket noi voi mesh cua proc_a), ham nay co tac dung fix loi nay.
+        */
+
+        std::vector<int> maxElem2DIdOfRanks(systemVar::totalProc,0);
+        //Doc file epart
+        maxElem2DIdOfRanks=decomposePart::loadPartitionedMesh();
+
+        int neighborRank[4]={-1, -1, -1, -1}, numberOfIsolatedCells(0);
+        int neighborCell, pRank;
+        for (int ielem=0; ielem<meshVar::nelem2D; ielem++)
+        {
+            int nRank(1000000);
+            bool isolatedCell(false);
+            int elemType(auxUlti::checkType(ielem));
+            pRank=meshVar::rankOf2DElem[ielem];
+            for (int iNeighbor=0; iNeighbor<elemType; iNeighbor++)
+            {
+                neighborCell=meshVar::esuel[ielem][iNeighbor];
+                neighborRank[iNeighbor]=meshVar::rankOf2DElem[neighborCell];
+                if (neighborRank[iNeighbor]<nRank)
+                {
+                    nRank=neighborRank[iNeighbor];
+                }
+            }
+
+            if (elemType==3)
+            {
+                if (neighborRank[0]!=pRank &&
+                        neighborRank[1]!=pRank &&
+                        neighborRank[2]!=pRank)
+                {
+                    isolatedCell=true;
+                    numberOfIsolatedCells++;
+                }
+            }
+            else if (elemType==4)
+            {
+                if (neighborRank[0]!=pRank &&
+                        neighborRank[1]!=pRank &&
+                        neighborRank[2]!=pRank &&
+                        neighborRank[3]!=pRank)
+                {
+                    isolatedCell=true;
+                    numberOfIsolatedCells++;
+                }
+            }
+
+            if (isolatedCell)
+            {
+                meshVar::rankOf2DElem[ielem]=nRank;
+            }
+        }
+
+        if (numberOfIsolatedCells>0)
+        {
+            std::cout<<"    Found "<<numberOfIsolatedCells<<" isolated cell(s) to fix.\n";
+            //Luu lai file DGMesh.mesh.epart da fixed
+            std::cout<<"    Saving fixed partitioned mesh...\n";
+            std::ofstream FileFlux((systemVar::pwd + "/DGMesh.mesh.epart."+std::to_string(systemVar::totalProc)).c_str());
+            if (FileFlux)
+            {
+                for (int irow=0; irow<meshVar::nelem2D; irow++)
+                {
+                    FileFlux<<meshVar::rankOf2DElem[irow]<<"\n";
+                }
+            }
+            else
+            {
+                std::cout<<"Cannot open file at location "<<(systemVar::pwd + "/DGMesh.mesh.epart."+std::to_string(systemVar::totalProc))<<" to write.\n";
+            }
+        }
+        else
+        {
+            std::cout<<"    Partioned mesh is OK.\n";
+        }
+    }
+
+    /*
+    void readLocalIdAndRankOf2DElem(int *rankOf2DElem,int *Elem2DlocalIdWithRank)
+    {
+        std::string rankOf2DElemLoc = systemVar::pwd + "/Constant/Mesh/rankOf2DElem.txt",
+                Elem2DlocalIdWithRankLoc = systemVar::pwd + "/Constant/Mesh/Elem2DlocalIdWithRank.txt";
+        int length;
+
+        //Read rankOf2DElem
+        std::ifstream rankOf2DElemFlux(rankOf2DElemLoc.c_str());
+        if (rankOf2DElemFlux)
+        {
+            std::string line(" "), checkStr;
+            int iElem(0);
+            bool startToRead(false);
+
+            length=auxUlti::lookForDataOfKeyword(rankOf2DElemLoc,"NumberOfEntities");
+
+            //Resize
+            rankOf2DElem = new int [length];
+            auxUlti::initialize1DIntArray(rankOf2DElem, length, -1);
+
+            while (std::getline(rankOf2DElemFlux, line))
+            {
+                if (startToRead==false)
+                {
+                    std::istringstream data(line);
+                    data >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+                    if (iElem<length)
+                    {
+                        std::istringstream data(line);
+                        data >> rankOf2DElem[iElem];
+                        iElem++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("rankOf2DElem.txt", rankOf2DElemLoc));
+        }
+
+        //Read Elem2DlocalIdWithRank
+        std::ifstream Elem2DlocalIdWithRankFlux(Elem2DlocalIdWithRankLoc.c_str());
+        if (Elem2DlocalIdWithRankFlux)
+        {
+            std::string line(" "), checkStr;
+            int iElem(0);
+            bool startToRead(false);
+
+            length=auxUlti::lookForDataOfKeyword(Elem2DlocalIdWithRankLoc,"NumberOfEntities");
+
+            //Resize
+            Elem2DlocalIdWithRank = new int [length];
+            auxUlti::initialize1DIntArray(Elem2DlocalIdWithRank, length, -1);
+
+            while (std::getline(Elem2DlocalIdWithRankFlux, line))
+            {
+                if (startToRead==false)
+                {
+                    std::istringstream data(line);
+                    data >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+                    if (iElem<length)
+                    {
+                        std::istringstream data(line);
+                        data >> Elem2DlocalIdWithRank[iElem];
+                        iElem++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError("Elem2DlocalIdWithRank.txt", Elem2DlocalIdWithRankLoc));
+        }
+    }*/
 }

@@ -30,6 +30,10 @@ namespace preProcessKey
 
     bool decomposeCase(std::string cmd);
 
+    bool reconstructLatestTime(std::string cmd);
+
+    bool checkPartitionedMesh(std::string cmd);
+
 	namespace debug
 	{
 		bool checkElement(std::string cmd);

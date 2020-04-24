@@ -47,6 +47,14 @@ namespace IO
 
     void readDecomposedMeshInfor();
 
+    std::tuple<double**,int> read2DArray(int column, std::string location, std::string fileName);
+
+    std::tuple<int**,int> read2DIntArray(int column, std::string location, std::string fileName);
+
+    std::tuple<double*,int> read1DArray(std::string location, std::string fileName);
+
+    std::tuple<int*,int> read1DIntArray(std::string location, std::string fileName);
+
 	/*Function writes residuals on console*/
 	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
@@ -58,7 +66,11 @@ namespace IO
 
     void saveCase();
 
+    void saveCase_reconstruct();
+
     void loadCase(std::string mode);
+
+    void loadTime();
 
     void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol);
 

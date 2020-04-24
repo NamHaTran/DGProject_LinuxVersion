@@ -959,23 +959,6 @@ namespace auxUlti
             BR1Vars::rhouY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
             BR1Vars::rhovY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
             BR1Vars::rhoEY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-
-            for (int elem=0; elem<meshVar::nelem2D; elem++)
-            {
-                for (int order=0; order<=mathVar::orderElem; order++)
-                {
-                    BR1Vars::rhoX[elem][order]=0.0;
-                    BR1Vars::rhouX[elem][order]=0.0;
-                    BR1Vars::rhovX[elem][order]=0.0;
-                    BR1Vars::rhoEX[elem][order]=0.0;
-
-                    BR1Vars::rhoY[elem][order]=0.0;
-                    BR1Vars::rhouY[elem][order]=0.0;
-                    BR1Vars::rhovY[elem][order]=0.0;
-                    BR1Vars::rhoEY[elem][order]=0.0;
-                }
-            }
-
         }
         else if (systemVar::auxVariables==2)
         {

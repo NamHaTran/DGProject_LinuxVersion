@@ -99,6 +99,26 @@ namespace preProcessKey
         return trigger;
     }
 
+    bool reconstructLatestTime(std::string cmd)
+    {
+        bool trigger(false);
+        if ((cmd.compare("reconstructCase") == 0) || (cmd.compare("reconstructcase") == 0))
+        {
+            trigger = true;
+        }
+        return trigger;
+    }
+
+    bool checkPartitionedMesh(std::string cmd)
+    {
+        bool trigger(false);
+        if ((cmd.compare("checkParMesh") == 0) || (cmd.compare("checkparmesh") == 0))
+        {
+            trigger = true;
+        }
+        return trigger;
+    }
+
 	namespace debug
 	{
 		bool checkElement(std::string cmd)

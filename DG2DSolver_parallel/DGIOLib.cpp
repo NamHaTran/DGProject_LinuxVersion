@@ -1379,6 +1379,196 @@ namespace IO
 		}
 	}
 
+    std::tuple<double**, int> read2DArray(int column, std::string location, std::string fileName)
+    {
+        int length(0);
+        double**array;
+        std::ifstream Flux(location.c_str());
+        if (Flux)
+        {
+            std::string line(" "), checkStr;
+            int iElem(0);
+            bool startToRead(false);
+            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            array=auxUlti::resize2DArray(length,column,0.0);
+
+            while (std::getline(Flux, line))
+            {
+                if (startToRead==false)
+                {
+                    std::istringstream data(line);
+                    data >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+                    if (iElem<length)
+                    {
+                        std::istringstream data(line);
+                        for (int i=0; i<column; i++)
+                        {
+                            data >> array[iElem][i];
+                        }
+                        iElem++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+        }
+        return std::make_tuple(array,length);
+    }
+
+    std::tuple<int**, int> read2DIntArray(int column, std::string location, std::string fileName)
+    {
+        int length(0);
+        int**array;
+        std::ifstream Flux(location.c_str());
+        if (Flux)
+        {
+            std::string line(" "), checkStr;
+            int iElem(0);
+            bool startToRead(false);
+            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            array=auxUlti::resize2DIntArray(length,column,0);
+
+            while (std::getline(Flux, line))
+            {
+                if (startToRead==false)
+                {
+                    std::istringstream data(line);
+                    data >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+                    if (iElem<length)
+                    {
+                        std::istringstream data(line);
+                        for (int i=0; i<column; i++)
+                        {
+                            data >> array[iElem][i];
+                        }
+                        iElem++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+        }
+        return std::make_tuple(array,length);
+    }
+
+    std::tuple<double*, int> read1DArray(std::string location, std::string fileName)
+    {
+        int length(0);
+        double*array;
+        std::ifstream Flux(location.c_str());
+        if (Flux)
+        {
+            std::string line(" "), checkStr;
+            int iElem(0);
+            bool startToRead(false);
+            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            array = new double [length];
+
+            while (std::getline(Flux, line))
+            {
+                if (startToRead==false)
+                {
+                    std::istringstream data(line);
+                    data >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+                    if (iElem<length)
+                    {
+                        std::istringstream data(line);
+                        data >> array[iElem];
+                        iElem++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+        }
+        return std::make_tuple(array,length);
+    }
+
+    std::tuple<int*, int> read1DIntArray(std::string location, std::string fileName)
+    {
+        int length(0);
+        int*array;
+        std::ifstream Flux(location.c_str());
+        if (Flux)
+        {
+            std::string line(" "), checkStr;
+            int iElem(0);
+            bool startToRead(false);
+            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            array = new int [length];
+
+            while (std::getline(Flux, line))
+            {
+                if (startToRead==false)
+                {
+                    std::istringstream data(line);
+                    data >> checkStr;
+                    if (checkStr.compare("{") == 0)
+                    {
+                        startToRead=true;
+                    }
+                }
+                else
+                {
+                    if (iElem<length)
+                    {
+                        std::istringstream data(line);
+                        data >> array[iElem];
+                        iElem++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+        }
+        return std::make_tuple(array,length);
+    }
+
 	void residualOutput(double rhoResGlobal, double rhouResGlobal, double rhovResGlobal, double rhoEResGlobal)
 	{
         if (systemVar::iterCount<5)
@@ -1434,7 +1624,7 @@ namespace IO
     {
         std::string fileLoc(Loc + "/" + fileName);
         std::ofstream fileFlux(fileLoc.c_str());
-        fileFlux<<systemVar::headerFile<<"numberOfEntities "<<meshVar::nelem2D<<"\n"<<"{\n";
+        fileFlux<<systemVar::headerFile<<"NumberOfEntities "<<meshVar::nelem2D<<"\n"<<"{\n";
         for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
         {
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
@@ -1443,7 +1633,7 @@ namespace IO
             }
             fileFlux << "\n";
         }
-        fileFlux<<"}/n";
+        fileFlux<<"}";
     }
 
     //Ham read cac field roi rac (discreted) xuong file fileName tai folder Loc
@@ -1550,6 +1740,20 @@ namespace IO
         }
         MPI_Barrier(MPI_COMM_WORLD);
 	}
+
+    void saveCase_reconstruct()
+    {
+        std::string iter_str = std::to_string(systemVar::iterCount);
+        std::string fileName, Loc, fileLoc;
+        Loc = auxUlti::createTimeStepFolder(systemVar::iterCount,"case");
+
+        /*Conservative variables*/
+        IO::writeDiscretedFields(Loc,"rho.txt",rho);
+        IO::writeDiscretedFields(Loc,"rhou.txt",rhou);
+        IO::writeDiscretedFields(Loc,"rhov.txt",rhov);
+        IO::writeDiscretedFields(Loc,"rhoE.txt",rhoE);
+        /*end of saving conservative variables*/
+    }
 
     void loadCase(std::string mode)
 	{
@@ -1671,6 +1875,25 @@ namespace IO
             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
 		}
 	}
+
+    void loadTime()
+    {
+        //Read file time.txt
+        std::string fileName("time.txt"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName);
+        std::string fileLoc(Loc + "/" + fileName);
+        std::ifstream FileFluxTime(fileLoc.c_str());
+        if (FileFluxTime)
+        {
+            std::string line;
+            std::getline(FileFluxTime, line);
+            std::istringstream lineflux(line);
+            lineflux >> systemVar::iterCount>>runTime;
+        }
+        else
+        {
+            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
+        }
+    }
 
     void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol)
 	{

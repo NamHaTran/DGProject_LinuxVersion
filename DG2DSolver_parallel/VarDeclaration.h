@@ -175,7 +175,9 @@ reSubmit,
 exportMeshToMetis,
 testMeshPartitionResult,
 debug_checkElement,
-decomposeCase;
+decomposeCase,
+reconstructLatestTime,
+checkPartitionedMesh;
 }
 
 namespace parallel {

@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "DGIOLib.h"
 
 namespace debugTool
 {
@@ -110,6 +111,140 @@ namespace debugTool
 			<< "- T: " << TVal << std::endl << std::endl;
 			//<< "- mu: " << muVal << std::endl << std::endl;
 	}
+}
+
+void reconstructLatestTime()
+{
+    /* Chu y!!!:
+     * - Chi reconstruct duoc cac fields rho, rhou, rhov, rhoE.
+     * - Chua reconstruct duoc surfaceBCFields
+     * - Khi chay lenh reconstructcase, phai setup cac dieu kien trong file DGOption
+     * ve time dang muon reconstruct, bao gom:
+     *  + totalProcess
+     *  + orderOfAccuracy
+     * - Set time trong file time ve time muon reconstruct
+     * - Chua su dung duoc cho truong hop mass diffusion -> khi mass diffusion on, can save
+     * data div(U) xuong file.
+    */
+
+    //Resize array
+    rho = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    rhou = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    rhov = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    rhoE = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
+    SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
+    SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
+    auxUlti::initialize1DArray(theta1Arr, meshVar::nelem2D, 1.0);
+    theta2Arr=new double[meshVar::nelem2D];
+    auxUlti::initialize1DArray(theta2Arr, meshVar::nelem2D, 1.0);
+    BR1Vars::rhoX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhouX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhovX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhoEX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+
+    BR1Vars::rhoY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhouY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhovY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhoEY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    //-------------------------------------------
+
+    int *rankOf2DElem;
+    int *Elem2DlocalIdWithRank;
+    int startId, endId, a, temp;
+
+    std::vector<std::vector<double>> rhoTemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0)),
+            rhouTemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0)),
+            rhovTemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0)),
+            rhoETemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0));
+
+    std::string rankOf2DElemLoc = systemVar::pwd + "/Constant/Mesh/rankOf2DElem.txt",
+            Elem2DlocalIdWithRankLoc = systemVar::pwd + "/Constant/Mesh/Elem2DlocalIdWithRank.txt";
+    std::tie(rankOf2DElem,temp)=IO::read1DIntArray(rankOf2DElemLoc,"rankOf2DElem.txt");
+    std::tie(Elem2DlocalIdWithRank,temp)=IO::read1DIntArray(Elem2DlocalIdWithRankLoc,"Elem2DlocalIdWithRank.txt");
+
+    std::vector<int> endIdList(systemVar::totalProc,0);
+    std::string rhoLoc, rhouLoc, rhovLoc, rhoELoc;
+
+    //Doc ket qua tu tat ca cac processor va luu vao cac array *temp
+    for (int iproc=0; iproc<systemVar::totalProc; iproc++)
+    {
+        //Doc cac file ket qua tu cac processor
+        double **rhoProc = new double *[1];
+        double **rhouProc = new double *[1];
+        double **rhovProc = new double *[1];
+        double **rhoEProc = new double *[1];
+
+        rhoLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rho.txt";
+        rhouLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhou.txt";
+        rhovLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhov.txt";
+        rhoELoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhoE.txt";
+
+        std::tie(rhoProc,a) = IO::read2DArray(mathVar::orderElem+1,rhoLoc,"rho.txt");
+        if (iproc==0)
+        {
+            endIdList[iproc]=a;
+        }
+        else
+        {
+            endIdList[iproc]=endIdList[iproc-1]+a;
+        }
+        std::tie(rhouProc,a)=IO::read2DArray(mathVar::orderElem+1,rhouLoc,"rhou.txt");
+        std::tie(rhovProc,a)=IO::read2DArray(mathVar::orderElem+1,rhovLoc,"rhov.txt");
+        std::tie(rhoEProc,a)=IO::read2DArray(mathVar::orderElem+1,rhoELoc,"rhoE.txt");
+
+        if (iproc==0)
+        {
+            startId=0;
+            endId=endIdList[0]-1;
+        }
+        else
+        {
+            startId=endIdList[iproc-1];
+            endId=endIdList[iproc]-1;
+        }
+        for (int i=startId; i<=endId; i++)
+        {
+            for (int iorder=0; iorder<mathVar::orderElem+1; iorder++)
+            {
+                rhoTemp[i][iorder]=rhoProc[i-startId][iorder];
+                rhouTemp[i][iorder]=rhouProc[i-startId][iorder];
+                rhovTemp[i][iorder]=rhovProc[i-startId][iorder];
+                rhoETemp[i][iorder]=rhoEProc[i-startId][iorder];
+            }
+        }
+    }
+
+    //Reconstruct cac field
+    std::cout<<"Reconstructing fields...\n" << std::endl;
+    int localId, IdOnTempArr, proc;
+    for (int ielem=0; ielem<meshVar::nelem2D; ielem++)
+    {
+        proc=rankOf2DElem[ielem];
+        if (proc==0)
+        {
+            startId=0;
+        }
+        else
+        {
+            startId=endIdList[proc-1];
+        }
+        localId=Elem2DlocalIdWithRank[ielem];
+        IdOnTempArr=startId+localId;
+        for (int iorder=0; iorder<mathVar::orderElem+1; iorder++)
+        {
+            rho[ielem][iorder]=rhoTemp[IdOnTempArr][iorder];
+            rhou[ielem][iorder]=rhouTemp[IdOnTempArr][iorder];
+            rhov[ielem][iorder]=rhovTemp[IdOnTempArr][iorder];
+            rhoE[ielem][iorder]=rhoETemp[IdOnTempArr][iorder];
+        }
+    }
+
+    systemVar::parallelMode=false;
+    std::cout << "Saving case...\n" << std::endl;
+    IO::saveCase_reconstruct();
+    std::cout << "Exporting data to Tecplot...\n" << std::endl;
+    DG2Tecplot::exportCellCenteredData(systemVar::iterCount);
 }
 
 namespace DG2Tecplot
@@ -266,11 +401,11 @@ namespace DG2Tecplot
             double rhoVal(rho[element][0]),
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
-                rhoEVal(rhoE[element][0]),
-                    dRhoX(BR1Vars::rhoX[element][0]),
-                    dRhoY(BR1Vars::rhoY[element][0]);
+                rhoEVal(rhoE[element][0]);
             if (flowProperties::massDiffusion)
             {
+                double dRhoX(BR1Vars::rhoX[element][0]),
+                        dRhoY(BR1Vars::rhoY[element][0]);
                 out = material::Cv*math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
             }
             else
@@ -283,11 +418,11 @@ namespace DG2Tecplot
             double rhoVal(rho[element][0]),
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
-                rhoEVal(rhoE[element][0]),
-                    dRhoX(BR1Vars::rhoX[element][0]),
-                    dRhoY(BR1Vars::rhoY[element][0]);
+                rhoEVal(rhoE[element][0]);
             if (flowProperties::massDiffusion)
             {
+                double dRhoX(BR1Vars::rhoX[element][0]),
+                        dRhoY(BR1Vars::rhoY[element][0]);
                 out = math::CalcP(math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
             }
             else
@@ -300,11 +435,11 @@ namespace DG2Tecplot
             double rhoVal(rho[element][0]),
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
-                rhoEVal(rhoE[element][0]),
-                    dRhoX(BR1Vars::rhoX[element][0]),
-                    dRhoY(BR1Vars::rhoY[element][0]);
+                rhoEVal(rhoE[element][0]);
             if (flowProperties::massDiffusion)
             {
+                double dRhoX(BR1Vars::rhoX[element][0]),
+                        dRhoY(BR1Vars::rhoY[element][0]);
                 out = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
             }
             else
@@ -322,12 +457,12 @@ namespace DG2Tecplot
             double rhoVal(rho[element][0]),
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
-                rhoEVal(rhoE[element][0]),
-                    dRhoX(BR1Vars::rhoX[element][0]),
-                    dRhoY(BR1Vars::rhoY[element][0]);
+                rhoEVal(rhoE[element][0]);
             double TVal(0.0);
             if (flowProperties::massDiffusion)
             {
+                double dRhoX(BR1Vars::rhoX[element][0]),
+                        dRhoY(BR1Vars::rhoY[element][0]);
                 TVal = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
             }
             else
@@ -533,6 +668,7 @@ DATAPACKING=BLOCK)";
 	{
         std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0),
                 nodeRhoX(meshVar::nelem2D, 0.0), nodeRhoY(meshVar::nelem2D, 0.0);
+
 		nodeRho = DG2Tecplot::calcCellCenteredValues(1);
 		node_u = DG2Tecplot::calcCellCenteredValues(2);
 		node_v = DG2Tecplot::calcCellCenteredValues(3);

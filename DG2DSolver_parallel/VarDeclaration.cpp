@@ -168,7 +168,9 @@ reSubmit(false),
 exportMeshToMetis(false),
 testMeshPartitionResult(false),
 debug_checkElement(false),
-decomposeCase(false);
+decomposeCase(false),
+reconstructLatestTime(false),
+checkPartitionedMesh(false);
 }
 
 namespace parallel {

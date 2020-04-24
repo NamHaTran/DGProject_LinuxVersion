@@ -563,6 +563,7 @@ namespace NSFEqBCs
             return Fluxes;
         }
 
+        /*
         std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int nG)
         {
             int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
@@ -587,6 +588,40 @@ namespace NSFEqBCs
                 std::tie(UPlus[i],UMinus[i])=auxUlti::getUAtInterfaces(edge,element,nG,i+1);
             }
             TPlus=surfaceFields::T[edge][nG];
+
+            //Compute dU+
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            dUXMinus=dUXPlus;
+            dUYMinus=dUYPlus;
+
+            Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, 1, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
+            return Fluxes;
+        }
+        */
+
+        std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int nG)
+        {
+            int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+            std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+            std::vector<double> UMinus(4, 0.0),
+                UPlus(4, 0.0),
+                dUXPlus(4, 0.0),
+                dUYPlus(4, 0.0),
+                dUXMinus(4, 0.0),
+                dUYMinus(4, 0.0),
+                norm(2, 0.0);
+
+            //Ham nay chi khac ham wallIsothermal o cho TMinus = SurfaceBCFields::TBc[loc][nG]
+            double a(0.0), b(0.0), TPlus(SurfaceBCFields::TBc[loc][nG]),TMinus(SurfaceBCFields::TBc[loc][nG]), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+            std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+            norm[0] = nx;
+            norm[1] = ny;
+
+            //Compute U+
+            for (int i = 0; i < 4; i++)
+            {
+                std::tie(UPlus[i],UMinus[i])=auxUlti::getUAtInterfaces(edge,element,nG,i+1);
+            }
 
             //Compute dU+
             BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
@@ -950,8 +985,8 @@ namespace timeVaryingBCs
         //Giai slip velocity
         double c=(2-bcValues::sigmaU)/bcValues::sigmaU;
         double
-                uSlip=uWall-c*lambda*SdotndotPImc[0]/muVal-(3/4)*SdotDivT[0]/(rhoBC)-c*lambda*div_n_Sdotu[0],
-                vSlip=vWall-c*lambda*SdotndotPImc[1]/muVal-(3/4)*SdotDivT[1]/(rhoBC)-c*lambda*div_n_Sdotu[1];
+                uSlip=uWall-c*lambda*SdotndotPImc[0]/muVal-(3/4)*SdotDivT[0]/(rhoBC*TJump)-c*lambda*div_n_Sdotu[0],
+                vSlip=vWall-c*lambda*SdotndotPImc[1]/muVal-(3/4)*SdotDivT[1]/(rhoBC*TJump)-c*lambda*div_n_Sdotu[1];
 
         //Update
         for (int i=0; i<mathVar::nGauss+1; i++)
@@ -1206,15 +1241,16 @@ namespace auxilaryBCs
             return Fluxes;
         }
 
+        /*
         std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int edgeGrp, int nG)
         {
-            /*
+            /
              * Dieu kien bien temperature jump:
              * - vi co thanh phan uslip tai be mat, rhou va rhov cua UMinus se khac 0:
              * rhou=rhoPlus*uSlip
              * rhov=rhoPlus*vSlip
              * rhoMinus = rhoPlus
-            */
+            /
 
             //columns 0, 1 are plus, minus values
             std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
@@ -1253,6 +1289,54 @@ namespace auxilaryBCs
                 UPlus[3]=math::pointValue(element,a,b,4,2);
             }
             //UMinus[3]=UPlus[3];
+            auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
+            return Fluxes;
+        }
+        */
+
+        std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int edgeGrp, int nG)
+        {
+            /*
+             * Dieu kien bien temperature jump:
+             * - vi co thanh phan uslip tai be mat, rhou va rhov cua UMinus se khac 0:
+             * rhou=rhoPlus*uSlip
+             * rhov=rhoPlus*vSlip
+             * rhoMinus = rhoPlus
+            */
+
+            //columns 0, 1 are plus, minus values
+            std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
+            std::vector<double>
+                UPlus(4, 0.0),
+                UMinus(4, 0.0);
+            double a(0.0), b(0.0), muPlus, muMinus, rhoPlus;
+            std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+            //Lay local id cua edge tren BC
+            int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
+
+            //Compute plus values--------------------------------------------------------
+            rhoPlus=math::pointValue(element,a,b,1,2);
+
+            //Compute minus values--------------------------------------------------------
+            UMinus[0] = rhoPlus;
+            UMinus[1] = SurfaceBCFields::uBc[loc][nG]*UMinus[0];
+            UMinus[2] = SurfaceBCFields::vBc[loc][nG]*UMinus[0];
+            UMinus[3] = UMinus[0]*material::Cv*SurfaceBCFields::TBc[loc][nG]+0.5*(pow(UMinus[1],2)+pow(UMinus[2],2))/UMinus[0];
+            //-----------------------------------------------------------------------------
+            UPlus=UMinus;
+            surfaceFields::T[edge][nG]=SurfaceBCFields::TBc[loc][nG];
+
+            muMinus=math::CalcVisCoef(SurfaceBCFields::TBc[loc][nG]);
+            muPlus=muMinus;
+
+            //Nhan mu vao vector flux truoc khi return
+            for (int i = 0; i < 4; i++)
+            {
+                Fluxes[i][0] = UPlus[i]*muPlus;
+                Fluxes[i][1] = UMinus[i]*muMinus;
+            }
+
+            //Save U+ and U- at boundary to arrays
             auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
             return Fluxes;
         }

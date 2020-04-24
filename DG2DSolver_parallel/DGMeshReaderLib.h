@@ -48,7 +48,7 @@ namespace MshExporter
     void testMeshPartitionResult();
 }
 
-namespace decomposeReconstructPart {
+namespace decomposePart {
     std::vector<int> loadPartitionedMesh();
 
     std::vector<int> findLocalIdOfPts();
@@ -66,6 +66,10 @@ namespace decomposeReconstructPart {
     void decomposingLatestTime();
 
     void distributingDiscretedVar();
+
+    void fixPartitionedMesh();
+
+    //void readLocalIdAndRankOf2DElem(int *rankOf2DElem,int *Elem2DlocalIdWithRank);
 }
 
 #endif // DGMESHREADERLIB_H_INCLUDED

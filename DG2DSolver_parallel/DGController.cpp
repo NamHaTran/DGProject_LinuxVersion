@@ -130,9 +130,50 @@ void Executer()
             /*PROCESS MESH*/
             MshReader::meshProcess();
 
-            decomposeReconstructPart::decomposingMesh();
+            decomposePart::decomposingMesh();
 
             controlFlag::sequence::decomposeCase=false;
+        }
+    }
+    else if (controlFlag::sequence::reconstructLatestTime)
+    {
+        if (systemVar::currentProc==0)
+        {
+            /*LOAD TOTAL PROCESSES*/
+            //IO::readNumberOfCores();
+
+            /*LOAD MESH*/
+            IO::loadMesh("s");
+
+            /*PROCESS MESH*/
+            MshReader::meshProcess();
+
+            //Load time
+            IO::loadTime();
+
+            reconstructLatestTime();
+
+            controlFlag::sequence::reconstructLatestTime=false;
+        }
+    }
+
+    else if (controlFlag::sequence::checkPartitionedMesh)
+    {
+        if (systemVar::currentProc==0)
+        {
+            /*LOAD TOTAL PROCESSES*/
+            //IO::readNumberOfCores();
+
+            /*LOAD MESH*/
+            IO::loadMesh("s");
+
+            /*PROCESS MESH*/
+            MshReader::meshProcess();
+
+            std::cout<<"    Checking partitioned mesh...\n";
+            decomposePart::fixPartitionedMesh();
+
+            controlFlag::sequence::checkPartitionedMesh=false;
         }
     }
 }
@@ -182,6 +223,14 @@ void checkCommandLine(std::string cmd)
     else if (preProcessKey::decomposeCase(cmd))
     {
         controlFlag::sequence::decomposeCase=true;
+    }
+    else if (preProcessKey::reconstructLatestTime(cmd))
+    {
+        controlFlag::sequence::reconstructLatestTime=true;
+    }
+    else if (preProcessKey::checkPartitionedMesh(cmd))
+    {
+        controlFlag::sequence::checkPartitionedMesh=true;
     }
     else
     {

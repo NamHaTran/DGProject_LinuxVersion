@@ -2,6 +2,9 @@
 #define DGPOSTPROCESSLIB_H_INCLUDED
 #include <vector>
 #include <string>
+
+void reconstructLatestTime();
+
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin);
