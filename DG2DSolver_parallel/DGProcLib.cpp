@@ -433,7 +433,7 @@ namespace process
                             rhoX=math::pointAuxValue(nelem,a,b,1,1);
                             rhoY=math::pointAuxValue(nelem,a,b,1,2);
 
-                            volumeFields::T[nelem][nanb]=math::CalcTFromConsvVar_massDiff(volumeFields::rhoVolGauss[nelem][nanb],volumeFields::rhouVolGauss[nelem][nanb],volumeFields::rhovVolGauss[nelem][nanb],volumeFields::rhoEVolGauss[nelem][nanb],rhoX,rhoY);
+                            volumeFields::T[nelem][nanb]=math::CalcTFromConsvVar_massDiff(volumeFields::rhoVolGauss[nelem][nanb],volumeFields::rhouVolGauss[nelem][nanb],volumeFields::rhovVolGauss[nelem][nanb],volumeFields::rhoEVolGauss[nelem][nanb],rhoX,rhoY,volumeFields::T[nelem][nanb]);
                         }
                     }
                 }
@@ -476,8 +476,8 @@ namespace process
                         van la gia tri divRho vi buoc tinh T nay chay truoc buoc giai pt phu*/
                         std::tie(rhoXMaster,rhoXSlave)=math::internalSurfaceDerivativeValue(iedge,masterCell,nG,1,1);
                         std::tie(rhoYMaster,rhoYSlave)=math::internalSurfaceDerivativeValue(iedge,masterCell,nG,1,2);
-                        surfaceFields::T[iedge][nG]=math::CalcTFromConsvVar_massDiff(rhoMaster,rhouMaster,rhovMaster,rhoEMaster,rhoXMaster,rhoYMaster);
-                        surfaceFields::T[iedge][nG + mathVar::nGauss + 1]=math::CalcTFromConsvVar_massDiff(rhoSlave,rhouSlave,rhovSlave,rhoESlave,rhoXSlave,rhoYSlave);
+                        surfaceFields::T[iedge][nG]=math::CalcTFromConsvVar_massDiff(rhoMaster,rhouMaster,rhovMaster,rhoEMaster,rhoXMaster,rhoYMaster,surfaceFields::T[iedge][nG]);
+                        surfaceFields::T[iedge][nG + mathVar::nGauss + 1]=math::CalcTFromConsvVar_massDiff(rhoSlave,rhouSlave,rhovSlave,rhoESlave,rhoXSlave,rhoYSlave,surfaceFields::T[iedge][nG + mathVar::nGauss + 1]);
                     }
                 }
             }
@@ -618,6 +618,10 @@ namespace process
             }
         }
 
+        if (systemVar::parallelMode)
+        {
+            auxUlti::functionsOfParallelComputing::sendReceivedU();
+        }
     }
     namespace BR2 {
     void calcVolDivU(int element)
@@ -1340,6 +1344,10 @@ namespace process
                     BR1Vars::rhoY[nelement][iorder] = rhoRHSTermOyDir[iorder] / stiffMatrixCoeffs[nelement][iorder];
                 }
             }
+            if (systemVar::parallelMode)
+            {
+                auxUlti::functionsOfParallelComputing::sendReceivedRho();
+            }
         }
 
         void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy)
@@ -1820,6 +1828,11 @@ namespace process
 					rhoEN[nelement][order] = rhoEVectorN[order];
 				}
 			}
+
+            if (systemVar::parallelMode)
+            {
+                auxUlti::functionsOfParallelComputing::sendReceiveU();
+            }
 		}
 
 		void updateVariables()
@@ -2478,7 +2491,7 @@ namespace process
             if (flowProperties::massDiffusion)
             {
                 //tai firstIter da dat dt=0
-                TVal = math::CalcTFromConsvVar_massDiff(rho[element][0], rhou[element][0], rhov[element][0], rhoE[element][0],BR1Vars::rhoX[element][0],BR1Vars::rhoY[element][0]);
+                TVal = math::CalcTFromConsvVar_massDiff_implicit(rho[element][0], rhou[element][0], rhov[element][0], rhoE[element][0],BR1Vars::rhoX[element][0],BR1Vars::rhoY[element][0]);
                 muVal = math::CalcVisCoef(TVal);
                 uVal=math::massDiffusionFncs::calcTotalVelocity(rho[element][0],uVal,BR1Vars::rhoX[element][0]);
                 vVal=math::massDiffusionFncs::calcTotalVelocity(rho[element][0],vVal,BR1Vars::rhoY[element][0]);
@@ -2599,16 +2612,12 @@ namespace process
 			process::calcVolumeGaussValues();
             process::calcValuesAtInterface();
 
-            if (flowProperties::massDiffusion && systemVar::solveTImplicitly)
+            if (flowProperties::massDiffusion)
             {
                 if (systemVar::auxVariables==1)
                 {
                     //Khi giai mass diffusion, giai divRho de tinh T
                     process::auxEq::massDiffusion::BR1::solveDivRho();
-                    if (systemVar::parallelMode)
-                    {
-                        auxUlti::functionsOfParallelComputing::sendReceivedRho();
-                    }
                 }
                 else if (systemVar::auxVariables==2)
                 {
@@ -2625,18 +2634,10 @@ namespace process
 
             //SOLVE AUXILARY EQUATION
 			process::auxEq::solveAuxEquation();
-            if (systemVar::parallelMode)
-            {
-                auxUlti::functionsOfParallelComputing::sendReceivedU();
-            }
 
 			//SOLVE NSF EQUATION
             process::NSFEq::calcFinvFvisAtInterface();
             process::NSFEq::solveNSFEquation(RKOrder);
-            if (systemVar::parallelMode)
-            {
-                auxUlti::functionsOfParallelComputing::sendReceiveU();
-            }
 		}
 
 		void TVDRK3()

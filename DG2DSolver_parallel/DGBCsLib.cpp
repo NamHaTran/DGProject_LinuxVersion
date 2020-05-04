@@ -228,7 +228,7 @@ namespace BCSupportFncs
                     rhoYP=math::BR2Fncs::pointAuxValue_sur(edge,element,a,b,1,2);
                 }
 
-                TP=math::CalcTFromConsvVar_massDiff(UPlus[0],UPlus[1],UPlus[2],UPlus[3],rhoXP,rhoYP);
+                TP=math::CalcTFromConsvVar_massDiff(UPlus[0],UPlus[1],UPlus[2],UPlus[3],rhoXP,rhoYP,surfaceFields::T[edge][nG]);
 
                 UPlus[3]=UPlus[0]*material::Cv*TP+0.5*(UPlus[1]*UPlus[1]+UPlus[2]*UPlus[2])/UPlus[0];
             }
@@ -432,7 +432,7 @@ namespace BCSupportFncs
 
         rhoETotal=UMinus[3]; //gia tri nay la rhoE total, tra ve de su dung cho phan giai pt NSF
 
-        TM=math::CalcTFromConsvVar_massDiff(UMinus[0],UMinus[1],UMinus[2],UMinus[3],dRhoX,dRhoY);
+        TM=math::CalcTFromConsvVar_massDiff_implicit(UMinus[0],UMinus[1],UMinus[2],UMinus[3],dRhoX,dRhoY);
         UMinus[3]=UMinus[0]*material::Cv*TM+0.5*(UMinus[1]*UMinus[1]+UMinus[2]*UMinus[2])/UMinus[0];
         surfaceFields::T[edge][nG+mathVar::nGauss+1]=TM;
 
@@ -563,7 +563,7 @@ namespace NSFEqBCs
             return Fluxes;
         }
 
-        /*
+
         std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int nG)
         {
             int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
@@ -597,8 +597,8 @@ namespace NSFEqBCs
             Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, 1, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
             return Fluxes;
         }
-        */
 
+        /*
         std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int nG)
         {
             int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
@@ -630,7 +630,7 @@ namespace NSFEqBCs
 
             Fluxes = BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, 1, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
             return Fluxes;
-        }
+        }*/
     }
 
     namespace patch
@@ -898,7 +898,7 @@ namespace timeVaryingBCs
 
         //Tinh cac gia tri can thiet-----------------------------------------------------
         //Lay cac gia tri da luu
-        double aConst(0.0), dux(0.0), duy(0.0), dvx(0.0), dvy(0.0), lambda(0.0),
+        double aConst(0.0), dux(0.0), duy(0.0), dvx(0.0), dvy(0.0), lambda(0.0), dEx, dEy,
                 TVal(SurfaceBCFields::TBc[localEdgeId][nG]),
                 muVal(0.0), nx, ny, dTx, dTy,dTn;
 
@@ -924,14 +924,20 @@ namespace timeVaryingBCs
                 dRhoEBCy(math::pointAuxValue(element,a,b,4,2));
 
         //Tinh cac thanh phan dao ham theo 2 phuong
-        dTx=math::calcDivTFromAuxVariable(dRhoEBCx,dRhoBCx,rhoEBC,rhoBC);
-        dTy=math::calcDivTFromAuxVariable(dRhoEBCy,dRhoBCy,rhoEBC,rhoBC);
+        //dTx=math::calcDivTFromAuxVariable(dRhoEBCx,dRhoBCx,rhoEBC,rhoBC);
+        //dTy=math::calcDivTFromAuxVariable(dRhoEBCy,dRhoBCy,rhoEBC,rhoBC);
 
         dux=math::calcRhouvEDeriv(dRhouBCx,dRhoBCx,rhouBC,rhoBC);
         duy=math::calcRhouvEDeriv(dRhouBCy,dRhoBCy,rhouBC,rhoBC);
 
         dvx=math::calcRhouvEDeriv(dRhovBCx,dRhoBCx,rhovBC,rhoBC);
         dvy=math::calcRhouvEDeriv(dRhovBCy,dRhoBCy,rhovBC,rhoBC);
+
+        dEx=math::calcRhouvEDeriv(dRhoEBCx,dRhoBCx,rhoEBC,rhoBC);
+        dEy=math::calcRhouvEDeriv(dRhoEBCy,dRhoBCy,rhoEBC,rhoBC);
+
+        dTx=math::calcTDeriv(dEx,dux,dvx,rhouBC/rhoBC,rhovBC/rhoBC);
+        dTy=math::calcTDeriv(dEy,duy,dvy,rhouBC/rhoBC,rhovBC/rhoBC);
 
         //1. Smoluchowski temperature jump-----------------------------------------------------------------------------
         dTn=dTx*nx+dTy*ny;
@@ -956,7 +962,7 @@ namespace timeVaryingBCs
         muVal=math::CalcVisCoef(TJump);
         lambda=math::calcMeanFreePath(muVal,rhoBC,TJump)/muVal;
 
-        //Trasnformation tensor components
+        //Transformation tensor components
         double S11(1-nx*nx),
                 S12(-nx*ny),
                 S21(-nx*ny),
@@ -1241,16 +1247,16 @@ namespace auxilaryBCs
             return Fluxes;
         }
 
-        /*
+
         std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int edgeGrp, int nG)
         {
-            /
+            /*
              * Dieu kien bien temperature jump:
              * - vi co thanh phan uslip tai be mat, rhou va rhov cua UMinus se khac 0:
              * rhou=rhoPlus*uSlip
              * rhov=rhoPlus*vSlip
              * rhoMinus = rhoPlus
-            /
+            */
 
             //columns 0, 1 are plus, minus values
             std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
@@ -1267,8 +1273,8 @@ namespace auxilaryBCs
 
             //Compute minus values--------------------------------------------------------
             UMinus[0] = UPlus[0];
-            UMinus[1] = (bcValues::uBCFixed[edgeGrp - 1]+SurfaceBCFields::uBc[loc][nG])*UMinus[0];
-            UMinus[2] = (bcValues::vBCFixed[edgeGrp - 1]+SurfaceBCFields::vBc[loc][nG])*UMinus[0];
+            UMinus[1] = 2*SurfaceBCFields::uBc[loc][nG]*UMinus[0]-UPlus[1];
+            UMinus[2] = 2*SurfaceBCFields::vBc[loc][nG]*UMinus[0]-UPlus[2];
             UMinus[3] = UMinus[0]*material::Cv*SurfaceBCFields::TBc[loc][nG]+0.5*(pow(UMinus[1],2)+pow(UMinus[2],2))/UMinus[0];
             //-----------------------------------------------------------------------------
 
@@ -1292,17 +1298,17 @@ namespace auxilaryBCs
             auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
             return Fluxes;
         }
-        */
 
+        /*
         std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int edgeGrp, int nG)
         {
-            /*
+            /
              * Dieu kien bien temperature jump:
              * - vi co thanh phan uslip tai be mat, rhou va rhov cua UMinus se khac 0:
              * rhou=rhoPlus*uSlip
              * rhov=rhoPlus*vSlip
              * rhoMinus = rhoPlus
-            */
+            /
 
             //columns 0, 1 are plus, minus values
             std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
@@ -1339,7 +1345,7 @@ namespace auxilaryBCs
             //Save U+ and U- at boundary to arrays
             auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
             return Fluxes;
-        }
+        }*/
     }
 
     namespace patch

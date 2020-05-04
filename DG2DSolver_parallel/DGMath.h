@@ -56,8 +56,11 @@ namespace math
 	/*Function calculates T from rho, rhou, rhov, rhoE (ver 2)*/
 	double CalcTFromConsvVar(double rho, double rhou, double rhov, double rhoE);
 
-    /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion*/
-    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy);
+    /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion using option setup in file DGSchemes*/
+    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy, double T_old);
+
+    /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion implicitly*/
+    double CalcTFromConsvVar_massDiff_implicit(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy);
 
     /*Calculate mean free path*/
     double calcMeanFreePath(double mu, double rho, double T);

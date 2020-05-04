@@ -684,11 +684,11 @@ namespace IO
             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
         }
 
-        if (DGSchemesoutStr[1].compare("implicitly")==0)
+        if (DGSchemesoutStr[1].compare("implicit")==0)
         {
             systemVar::solveTImplicitly=true;
         }
-        else if (DGSchemesoutStr[1].compare("explicitly")==0)
+        else if (DGSchemesoutStr[1].compare("explicit")==0)
         {
             systemVar::solveTImplicitly=false;
         }

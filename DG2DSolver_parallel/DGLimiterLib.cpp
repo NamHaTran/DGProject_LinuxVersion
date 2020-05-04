@@ -267,13 +267,23 @@ namespace limiter
 					meanRhou = rhou[element][0];
 					meanRhov = rhov[element][0];
 					meanRhoE = rhoE[element][0];
-					//std::cout << "Cell " << element << ": minRho=" << minRho << std::endl;
 
 					//Compute theta1
 					theta1 = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calcTheta1Coeff(minRho, meanRho);
 
 					//Find theta2
-					meanRhoe = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(meanRho, meanRhou, meanRhov, meanRhoE);
+                    /* Neu co mass diffusion, phai modify lai rhou va rhov thanh rhou_m va rhov_m.
+                     * Chu y, ham limiter apply sau khi hoan thanh tinh toan 1 step, vi vay bien dao ham S(rho)
+                     * luc nay la mu*d(rho) chu k con la d(rho).
+                    */
+                    if (flowProperties::massDiffusion)
+                    {
+                        double meanRhoX(BR1Vars::rhoX[element][0]), meanRhoY(BR1Vars::rhoY[element][0]);
+                        meanRhou=meanRhou-material::massDiffusion::DmCoeff*meanRhoX/meanRho;
+                        meanRhou=meanRhov-material::massDiffusion::DmCoeff*meanRhoY/meanRho;
+                    }
+
+                    meanRhoe = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(meanRho, meanRhou, meanRhov, meanRhoE);
 					minRhoe = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calcMinRhoeQuad(element, theta1);
 					theta2 = limiter::mathForLimiter::quadratureCell::simplifiedVersion::calcTheta2Coeff(meanRhoe, minRhoe, meanRho);
 					
@@ -1430,6 +1440,13 @@ namespace limiter
 							rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 							rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 							rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
+
+                            if (flowProperties::massDiffusion)
+                            {
+                                double rhoX(math::pointAuxValue(element,aG,bG,1,1)), rhoY(math::pointAuxValue(element,aG,bG,1,2));
+                                rhouOrg=rhouOrg-material::massDiffusion::DmCoeff*rhoX/rhoMod;
+                                rhovOrg=rhovOrg-material::massDiffusion::DmCoeff*rhoY/rhoMod;
+                            }
 							vectorRhoe[counter]=limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod,rhouOrg,rhovOrg,rhoEOrg);
 							counter++;
 						}
@@ -1444,6 +1461,13 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
+
+                        if (flowProperties::massDiffusion)
+                        {
+                            double rhoX(math::pointAuxValue(element,aG,bG,1,1)), rhoY(math::pointAuxValue(element,aG,bG,1,2));
+                            rhouOrg=rhouOrg-material::massDiffusion::DmCoeff*rhoX/rhoMod;
+                            rhovOrg=rhovOrg-material::massDiffusion::DmCoeff*rhoY/rhoMod;
+                        }
 						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
 						counter++;
 					}
@@ -1456,6 +1480,13 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
+
+                        if (flowProperties::massDiffusion)
+                        {
+                            double rhoX(math::pointAuxValue(element,aG,bG,1,1)), rhoY(math::pointAuxValue(element,aG,bG,1,2));
+                            rhouOrg=rhouOrg-material::massDiffusion::DmCoeff*rhoX/rhoMod;
+                            rhovOrg=rhovOrg-material::massDiffusion::DmCoeff*rhoY/rhoMod;
+                        }
 						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
 						counter++;
 					}
@@ -1468,6 +1499,13 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
+
+                        if (flowProperties::massDiffusion)
+                        {
+                            double rhoX(math::pointAuxValue(element,aG,bG,1,1)), rhoY(math::pointAuxValue(element,aG,bG,1,2));
+                            rhouOrg=rhouOrg-material::massDiffusion::DmCoeff*rhoX/rhoMod;
+                            rhovOrg=rhovOrg-material::massDiffusion::DmCoeff*rhoY/rhoMod;
+                        }
 						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
                         counter++;
 					}
@@ -1480,6 +1518,13 @@ namespace limiter
 						rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 						rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);
 						rhoEOrg = math::pointValueNoLimiter(element, aG, bG, 4);
+
+                        if (flowProperties::massDiffusion)
+                        {
+                            double rhoX(math::pointAuxValue(element,aG,bG,1,1)), rhoY(math::pointAuxValue(element,aG,bG,1,2));
+                            rhouOrg=rhouOrg-material::massDiffusion::DmCoeff*rhoX/rhoMod;
+                            rhovOrg=rhovOrg-material::massDiffusion::DmCoeff*rhoY/rhoMod;
+                        }
 						vectorRhoe[counter]=(limiter::mathForLimiter::quadratureCell::simplifiedVersion::calRhoeFromConserVars(rhoMod, rhouOrg, rhovOrg, rhoEOrg));
 						counter++;
 					}

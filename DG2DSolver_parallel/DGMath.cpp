@@ -742,8 +742,10 @@ namespace math
         return out;
     }
 
-    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
+    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy, double T_old)
     {
+        //Ham nay giai T theo option duoc setup o file DGSchemes
+        //Bien T_old can khi giai T bang pp explicit
         if (systemVar::solveTImplicitly)
         {
             //Em is total energy with total velocity (um), not advective velocity (u)
@@ -780,18 +782,58 @@ namespace math
         }
         else
         {
-            double rhou_m(rhou-material::massDiffusion::DmCoeff*rhox/rho),
-                    rhov_m(rhov-material::massDiffusion::DmCoeff*rhoy/rho);
+            double mu(math::CalcVisCoef(T_old));
+            double rhou_m(rhou-material::massDiffusion::DmCoeff*rhox*mu/rho),
+                    rhov_m(rhov-material::massDiffusion::DmCoeff*rhoy*mu/rho);
             double T_m((rhoE-0.5*(rhou_m*rhou_m+rhov_m*rhov_m)/rho)/(material::Cv*rho)),
                     T((rhoE-0.5*(rhou*rhou+rhov*rhov)/rho)/(material::Cv*rho));
             if (T_m<0)
             {
-                return T;
+                if (T<0)
+                    return limitVal::TDwn;
+                else
+                    return T;
             }
             else
             {
                 return T_m;
             }
+        }
+    }
+
+    double CalcTFromConsvVar_massDiff_implicit(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
+    {
+        //Ham nay chi giai T bang pp implicit
+        //Em is total energy with total velocity (um), not advective velocity (u)
+        double T(0.0), TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
+                u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
+        std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
+        Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
+        Ay=material::massDiffusion::DmCoeff*rhoy/(rho*rho);
+        B1=Ax*Ax+Ay*Ay;
+        B2=2*(u*Ax+v*Ay);
+        B3=u*u+v*v-2*Em;
+        std::vector<double> polynomialCoeffs{
+            B1*pow(material::As,2)+2*material::Cv,
+                    -material::As*B2,
+                    4*material::Cv*material::Ts+B3,
+                    -material::As*B2*material::Ts,
+                    2*material::Cv*pow(material::Ts,2)+2*B3*material::Ts,
+                    B3*pow(material::Ts,2)
+        };
+        //compute initial T
+        TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+        //Solve T
+        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
+        if (T!=T || T<0)
+        {
+            //std::cout<<"Failed to solve T\n";
+            //exit(1);
+            mathVar::solveTFailed=true;
+            return TIni;
+        }
+        else {
+            return T;
         }
     }
 
@@ -911,7 +953,7 @@ namespace math
                         dRhoY(math::pointAuxValue(element,a,b,1,2));
                 if (flowProperties::massDiffusion)
                 {
-                    out = material::Cv*math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+                    out = material::Cv*math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
                 {
@@ -928,7 +970,7 @@ namespace math
                         dRhoY(math::pointAuxValue(element,a,b,1,2));
                 if (flowProperties::massDiffusion)
                 {
-                    out = math::CalcP(CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
+                    out = math::CalcP(CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
                 }
                 else
                 {
@@ -945,7 +987,7 @@ namespace math
                         dRhoY(math::pointAuxValue(element,a,b,1,2));
                 if (flowProperties::massDiffusion)
                 {
-                    out = CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+                    out = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
                 {
@@ -968,7 +1010,7 @@ namespace math
                 double TVal(0.0);
                 if (flowProperties::massDiffusion)
                 {
-                    TVal = CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+                    TVal = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
                 {
@@ -2528,7 +2570,7 @@ namespace math
             double initialValue_org(initialValue);
             initialValue=initialValue*5.0;
 
-            int polySize(static_cast<int>(power.size())), maxIter(200);
+            int polySize(static_cast<int>(power.size())), maxIter(100);
             std::vector<double> power_deriv(polySize, 0.0),
                     coefs_deriv(polySize, 0.0);
             double error(1), convergence_cri(1e-6), output(0.0), fValue(0.0), derivfValue(0.0);
