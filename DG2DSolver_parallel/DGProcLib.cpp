@@ -263,10 +263,10 @@ namespace meshParam
                 std::tie(xN,yN)=math::geometricOp::findNormalProjectionOfPointToEdge(xC,yC,x1,y1,x2,y2);
                 std::tie(aN, bN) = math::inverseMapping(element, xN, yN);
 
-                meshVar::normProjectionOfCenterToBCEdge_realSysCoor[globleEdge][0]=xN;
-                meshVar::normProjectionOfCenterToBCEdge_realSysCoor[globleEdge][1]=yN;
-                meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[globleEdge][0]=aN;
-                meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[globleEdge][1]=bN;
+                meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][0]=xN;
+                meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][1]=yN;
+                meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][0]=aN;
+                meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][1]=bN;
             }
         }
     }
