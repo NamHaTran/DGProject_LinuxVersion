@@ -1702,25 +1702,14 @@ namespace IO
         std::ofstream fileFluxTSurface(fileLoc.c_str());
         for (int iedge = 0; iedge < meshVar::numBCEdges; iedge++)
         {
-            double TVar(0.0);
-            for (int nG = 0; nG <= mathVar::nGauss; nG++)
-            {
-                TVar+=SurfaceBCFields::TBc[iedge][nG];
-            }
-            fileFluxTSurface <<TVar/(mathVar::nGauss+1)<< "\n";
+            fileFluxTSurface <<SurfaceBCFields::TBc[iedge]<< "\n";
         }
         fileName = "USurface.txt";
         fileLoc = (Loc + "/" + fileName);
         std::ofstream fileFluxUSurface(fileLoc.c_str());
         for (int iedge = 0; iedge < meshVar::numBCEdges; iedge++)
         {
-            double uVar(0.0), vVar(0.0);
-            for (int nG = 0; nG <= mathVar::nGauss; nG++)
-            {
-                uVar+=SurfaceBCFields::uBc[iedge][nG];
-                vVar+=SurfaceBCFields::vBc[iedge][nG];
-            }
-            fileFluxUSurface <<uVar/(mathVar::nGauss+1)<< " "<<vVar/(mathVar::nGauss+1)<<"\n";
+            fileFluxUSurface <<SurfaceBCFields::uBc[iedge]<< " "<<SurfaceBCFields::vBc[iedge]<<"\n";
         }
 
 		/*Residual normalized coeffs*/
@@ -1795,7 +1784,6 @@ namespace IO
         if (FileFluxTSurface)
         {
             int nEdge(0);
-            double TVar(0.0);
             std::string line_T;
 
             //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
@@ -1804,12 +1792,7 @@ namespace IO
                 std::istringstream line_Tflux(line_T);
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
                 {
-                    line_Tflux>>TVar;
-                    for (int nG=0; nG<=mathVar::nGauss; nG++)
-                    {
-                        SurfaceBCFields::TBc[nEdge][nG]=TVar;
-                    }
-
+                    line_Tflux>>SurfaceBCFields::TBc[nEdge];
                 }
                 nEdge++;
             }
@@ -1830,7 +1813,6 @@ namespace IO
         if (FileFluxUSurface)
         {
             int nEdge(0);
-            double uVar(0.0), vVar(0.0);
             std::string line_U;
 
             //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
@@ -1839,13 +1821,7 @@ namespace IO
                 std::istringstream line_Uflux(line_U);
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
                 {
-                    line_Uflux>>uVar>>vVar;
-                    for (int nG=0; nG<=mathVar::nGauss; nG++)
-                    {
-                        SurfaceBCFields::uBc[nEdge][nG]=uVar;
-                        SurfaceBCFields::vBc[nEdge][nG]=vVar;
-                    }
-
+                    line_Uflux>>SurfaceBCFields::uBc[nEdge]>>SurfaceBCFields::vBc[nEdge];
                 }
                 nEdge++;
             }

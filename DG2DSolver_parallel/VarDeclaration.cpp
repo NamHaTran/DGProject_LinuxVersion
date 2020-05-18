@@ -178,3 +178,7 @@ bool checkDGRun(false),
 mapResults(false);
 }
 }
+
+namespace warningFlag {
+bool reversedFlowOccur(false);
+}

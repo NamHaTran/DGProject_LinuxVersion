@@ -43,6 +43,8 @@ namespace message
 
     /*Function prints out case's informations and asks user whether to continue or not*/
     void showCaseInformations();
+
+    void showWarning();
 }
 
 /*Function displays error message and exit program*/

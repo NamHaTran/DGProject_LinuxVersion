@@ -192,11 +192,11 @@ To convert unv mesh format to DG2D readable format, do following task step by st
             std::cout<<"- Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff;
             if (systemVar::solveTImplicitly)
             {
-                std::cout<<". Solving T method is implicitly.\n";
+                std::cout<<". Solving T method is implicit.\n";
             }
             else
             {
-                std::cout<<". Solving T method is explicitly.\n";
+                std::cout<<". Solving T method is explicit.\n";
             }
         }
         else {
@@ -219,6 +219,16 @@ To convert unv mesh format to DG2D readable format, do following task step by st
                 std::cout << limitVal::limiterName[i] << " ";
             }
             std::cout << "\n";
+        }
+    }
+
+    void showWarning()
+    {
+        //Reversed flow
+        if (warningFlag::reversedFlowOccur)
+        {
+            std::cout<<"Warning! Reversed flow is occured at outlet.\n";
+            warningFlag::reversedFlowOccur=false;
         }
     }
 }

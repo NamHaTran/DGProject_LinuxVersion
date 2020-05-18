@@ -194,9 +194,6 @@ namespace process
 	bool checkRunningCond();
 
 	std::tuple<double, double> getInternalValuesFromCalculatedArrays(int edge, int element, int nG, int valType);
-
-    /*Function calculates and updates values of surfaceBCFields*/
-    void updateTimeVaryingBCs();
 }
 
 #endif // DGPROCLIB_H_INCLUDED

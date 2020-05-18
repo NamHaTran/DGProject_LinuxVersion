@@ -247,10 +247,11 @@ namespace SurfaceBCFields
      * luu gia tri TJump, uSlip va vSlip khi dung dieu kien bien temperatureJump va slip.
      * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
      * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
+     * - Cac gia tri nay deu la gia tri tai diem hinh chieu vuong goc cua cell center xuong BC edge
     */
-    double **TBc = new double*[1];
-    double **uBc = new double*[1];
-    double **vBc = new double*[1];
+    double *TBc = new double[1];
+    double *uBc = new double[1];
+    double *vBc = new double[1];
     int *localGlobalBCEdgesMatching = new int[1];
 }
 

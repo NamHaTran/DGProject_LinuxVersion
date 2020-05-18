@@ -38,10 +38,10 @@ namespace NSFEqBCs
         std::vector <std::vector<double>> wallIsoThermal(int element, int edge, int edgeGrp, int nG);
 
         /*Function computes numerical flux at adiabatic wall by using weakRiemann approach*/
-        std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
+        std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int nG);
 
         /*Function computes numerical flux at wall with temperature jump and slip effects by using weakRiemann approach*/
-        std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int nG);
+        std::vector <std::vector<double>> wall_NonEquilibrium(int element, int edge, int nG);
     }
 
     namespace patch
@@ -68,7 +68,7 @@ namespace auxilaryBCs
         std::vector <std::vector<double>> wallAdiabatic(int element, int edge, int edgeGrp, int nG);
 
         /*Function computes numerical flux at wall with temperature jump and slip effects by using weakRiemann approach*/
-        std::vector <std::vector<double>> wall_MaxwellSmoluchowski(int element, int edge, int edgeGrp, int nG);
+        std::vector <std::vector<double>> wall_NonEquilibrium(int element, int edge, int nG);
     }
 
     namespace patch {
@@ -107,13 +107,6 @@ namespace BCSupportFncs
 
     void calcUMinus_convective(int edge, int nG, std::vector<double> &UMinus);
     }
-}
-
-namespace timeVaryingBCs
-{
-    void MaxwellSmoluchowski(int edge, int edgeGrp);
-
-    void MaxwellSmoluchowski_implicit2ndOrder(int edge, int edgeGrp);
 }
 
 #endif // DGBCSLIB_H_INCLUDED

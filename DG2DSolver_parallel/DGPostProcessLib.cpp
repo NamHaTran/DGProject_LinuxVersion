@@ -132,9 +132,12 @@ void reconstructLatestTime()
     rhou = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhov = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhoE = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-    SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
-    SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
-    SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
+    SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
+    auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
+    SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
+    auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
+    SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
+    auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
     auxUlti::initialize1DArray(theta1Arr, meshVar::nelem2D, 1.0);
     theta2Arr=new double[meshVar::nelem2D];
     auxUlti::initialize1DArray(theta2Arr, meshVar::nelem2D, 1.0);

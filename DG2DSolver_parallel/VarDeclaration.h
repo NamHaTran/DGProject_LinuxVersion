@@ -185,4 +185,8 @@ extern bool checkDGRun,
 mapResults;
 }
 }
+
+namespace warningFlag {
+extern bool reversedFlowOccur;
+}
 #endif // VARDECLARATION_H_INCLUDED

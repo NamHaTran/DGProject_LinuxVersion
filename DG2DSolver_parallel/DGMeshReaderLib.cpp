@@ -1583,7 +1583,7 @@ DT=(SINGLE SINGLE SINGLE)
         }
         else
         {
-            std::cout<<"    Partioned mesh is OK.\n";
+            std::cout<<"    Partitioned mesh is OK.\n";
         }
     }
 

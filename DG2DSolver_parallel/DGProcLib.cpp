@@ -11,6 +11,7 @@
 #include "DGLimiterLib.h"
 #include <math.h>
 #include <mpi.h>
+#include "NonEquilibriumBCsLib.h"
 
 namespace meshParam
 {
@@ -311,42 +312,9 @@ namespace process
         {
             globleEdgeId=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
             BCGrp=auxUlti::getGrpOfEdge(globleEdgeId);
-            for (int nG=0; nG<=mathVar::nGauss; nG++)
-            {
-                SurfaceBCFields::TBc[ilocalEdge][nG]=bcValues::TBCFixed[BCGrp-1];
-                SurfaceBCFields::uBc[ilocalEdge][nG]=bcValues::uBCFixed[BCGrp-1];
-                SurfaceBCFields::vBc[ilocalEdge][nG]=bcValues::vBCFixed[BCGrp-1];
-            }
-        }
-    }
-
-    void updateTimeVaryingBCs()
-    {
-        /*
-         * Ham update gia tri tren cac field cua surfaceBCFields, chi dung cho cac BC bien thien theo thoi gian.
-         * Hien tai, ham su dung cho temperatureJump va slip conditions
-        */
-        if (auxUlti::checkTimeVaryingBCAvailable())
-        {
-            if (systemVar::currentProc==0)
-            {
-                std::cout<<"Updating time varying BCs.\n";
-            }
-            
-            int globleEdge(0);
-            for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
-            {
-                globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-                int edgeGrp(auxUlti::getGrpOfEdge(globleEdge));
-                int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
-                if (UType == 5 && TType == 6 && pType == 2)
-                {
-                    for (int nG=0; nG<=mathVar::nGauss; nG++)
-                    {
-                        timeVaryingBCs::MaxwellSmoluchowski_implicit2ndOrder(globleEdge,edgeGrp);
-                    }
-                }
-            }
+            SurfaceBCFields::TBc[ilocalEdge]=bcValues::TBCFixed[BCGrp-1];
+            SurfaceBCFields::uBc[ilocalEdge]=bcValues::uBCFixed[BCGrp-1];
+            SurfaceBCFields::vBc[ilocalEdge]=bcValues::vBCFixed[BCGrp-1];
         }
     }
 
@@ -2633,7 +2601,10 @@ namespace process
             process::calcTGauss();
 
             //SOLVE AUXILARY EQUATION
-			process::auxEq::solveAuxEquation();
+            process::auxEq::solveAuxEquation();
+
+            //Show warning
+            message::showWarning();
 
 			//SOLVE NSF EQUATION
             process::NSFEq::calcFinvFvisAtInterface();
@@ -2656,7 +2627,8 @@ namespace process
                 rhoE = rhoEN;
                 limiter::limiter_1Step();
 			}
-            process::updateTimeVaryingBCs();
+            //UPDATE TIME VARYING BC
+            updateTimeVaryingBCs();
 		}
 
         namespace parallel {

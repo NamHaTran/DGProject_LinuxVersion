@@ -927,9 +927,12 @@ namespace auxUlti
         rhovResArr = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
         rhoEResArr = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-        SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
-        SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
-        SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);
+        SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
+        SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
+        SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
         meshVar::distanceFromCentroidToBCEdge = new double [meshVar::numBCEdges];
         auxUlti::initialize1DArray(meshVar::distanceFromCentroidToBCEdge, meshVar::numBCEdges, 0.0);
 

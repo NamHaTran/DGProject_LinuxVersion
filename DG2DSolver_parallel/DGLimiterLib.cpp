@@ -11,6 +11,7 @@
 #include <math.h>
 #include "DGProcLib.h"
 #include "DGBCsLib.h"
+#include <mpi.h>
 
 namespace limiter
 {
@@ -111,11 +112,31 @@ namespace limiter
 						}
 					}
 				}
+
+                /*
 				if (limitVal::numOfLimitCell > 0)
 				{
 					std::cout << "Posivity preserving limiter is applied at " << limitVal::numOfLimitCell << " cell(s)\n";
 					limitVal::numOfLimitCell = 0;
+                }*/
+
+                if (systemVar::currentProc==0)
+                {
+                    int numOfTotalLimitedCell(limitVal::numOfLimitCell), recvNum;
+                    for (int irank=1;irank<systemVar::totalProc;irank++) {
+                        MPI_Recv(&recvNum, 1, MPI_INT, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                        numOfTotalLimitedCell+=recvNum;
+                    }
+                    if (numOfTotalLimitedCell > 0)
+                    {
+                        std::cout << "Posivity preserving limiter is applied at " << numOfTotalLimitedCell << " cell(s)\n";
+                    }
                 }
+                else {
+                    MPI_Send(&limitVal::numOfLimitCell, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+                }
+                limitVal::numOfLimitCell = 0;
+
                 //send/recv theta
                 int sendingProc, receivingProc;
                 for (int i=0; i<systemVar::sendRecvOrder_length; i++)

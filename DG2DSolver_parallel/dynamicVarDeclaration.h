@@ -241,9 +241,9 @@ namespace SurfaceBCFields
      * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
      * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
     */
-    extern double **TBc;
-    extern double **uBc;
-    extern double **vBc;
+    extern double *TBc;
+    extern double *uBc;
+    extern double *vBc;
     extern int *localGlobalBCEdgesMatching;
 }
 
