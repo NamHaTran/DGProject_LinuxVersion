@@ -16,17 +16,8 @@ namespace IO
 	/*Function saves mesh data to files*/
     void SaveMeshInfor(std::string mode);
 
-	/*Function reads constants from folder constant*/
-    void loadConstants(std::string mode);
-
 	/*Function reads u, v, p, U values from folder 0*/
     void loadpTU(std::string mode);
-
-	/*Function reads non scalar values from file*/
-    void readNonScalar(std::string mode);
-
-	/*Function reads scalar values from file*/
-    void readScalar(std::string fileName, std::string mode);
 
     /*Function reads number of total processes in DGOPtions*/
     void readNumberOfCores();
@@ -47,13 +38,13 @@ namespace IO
 
     void readDecomposedMeshInfor();
 
-    std::tuple<double**,int> read2DArray(int column, std::string location, std::string fileName);
+    std::tuple<bool,double**,int> read2DArray(int column, std::string location, std::string fileName, bool exitWhenFileNotFound);
 
-    std::tuple<int**,int> read2DIntArray(int column, std::string location, std::string fileName);
+    std::tuple<bool,int**,int> read2DIntArray(int column, std::string location, std::string fileName, bool exitWhenFileNotFound);
 
-    std::tuple<double*,int> read1DArray(std::string location, std::string fileName);
+    std::tuple<bool,double*,int> read1DArray(std::string location, std::string fileName, bool exitWhenFileNotFound);
 
-    std::tuple<int*,int> read1DIntArray(std::string location, std::string fileName);
+    std::tuple<bool,int*,int> read1DIntArray(std::string location, std::string fileName, bool exitWhenFileNotFound);
 
 	/*Function writes residuals on console*/
 	void residualOutput(double rhoRes, double rhouRes, double rhovRes, double rhoERes);
@@ -92,5 +83,33 @@ namespace IO
 
 		void mappSourceToCurrent(std::string fileLoc, std::vector<std::vector<double>> &currentResult);
 	}
+
+    namespace loadSettingFiles
+    {
+        void loadConstants();
+
+        void loadConstantsWhileRunning();
+
+        void DGOptions();
+
+        void Material();
+
+        void FlowProperties();
+
+        void DGSchemes();
+
+        void LimiterSettings();
+
+        void TBounds();
+    }
+
+    namespace readVectorBC {
+        void u(std::string mode);
+    }
+
+    namespace readScalarBC {
+        void p(std::string mode);
+        void T(std::string mode);
+    }
 }
 #endif // DGIOLIB_H_INCLUDED

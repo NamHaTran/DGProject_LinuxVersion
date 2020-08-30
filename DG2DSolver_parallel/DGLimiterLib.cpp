@@ -223,10 +223,7 @@ namespace limiter
 				{
 					for (int nb = 0; nb <= mathVar::nGauss; nb++)
 					{
-                        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                                nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                        aG = mathVar::GaussPts[na][nb0];
-                        bG = mathVar::GaussPts[na][nb1];
+                        std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
 						vectort[counter]=(limiter::mathForLimiter::quadratureCell::calcTheta2Coeff(element, aG, bG, theta1, omega, meanRho, meanRhou, meanRhov, meanRhoE));
 						counter++;
 					}
@@ -737,16 +734,16 @@ namespace limiter
                             CArray[nG] = math::numericalFluxes::constantC(uMagP, uMagM, aP, aM);
 
                             /*calculate inviscid terms*/
-                            surfaceFields::invis_rhoX[iedge][nG] = rhoMaster * uMaster;
-                            surfaceFields::invis_rhoX[iedge][nG + mathVar::nGauss + 1] = rhoSlave * uSlave;
-                            surfaceFields::invis_rhoY[iedge][nG] = rhoMaster * vMaster;
-                            surfaceFields::invis_rhoY[iedge][nG + mathVar::nGauss + 1] = rhoSlave * vSlave;
+                            //surfaceFields::invis_rhoX[iedge][nG] = rhoMaster * uMaster;
+                            //surfaceFields::invis_rhoX[iedge][nG + mathVar::nGauss + 1] = rhoSlave * uSlave;
+                            //surfaceFields::invis_rhoY[iedge][nG] = rhoMaster * vMaster;
+                            //surfaceFields::invis_rhoY[iedge][nG + mathVar::nGauss + 1] = rhoSlave * vSlave;
 
                             /*calculate viscous terms*/
-                            surfaceFields::Vis_rhoX[iedge][nG]=-material::massDiffusion::DmCoeff*dRhoXMaster/rhoMaster;
-                            surfaceFields::Vis_rhoX[iedge][nG + mathVar::nGauss + 1]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
-                            surfaceFields::Vis_rhoY[iedge][nG]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
-                            surfaceFields::Vis_rhoY[iedge][nG + mathVar::nGauss + 1]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
+                            //surfaceFields::Vis_rhoX[iedge][nG]=-material::massDiffusion::DmCoeff*dRhoXMaster/rhoMaster;
+                            //surfaceFields::Vis_rhoX[iedge][nG + mathVar::nGauss + 1]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
+                            //surfaceFields::Vis_rhoY[iedge][nG]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
+                            //surfaceFields::Vis_rhoY[iedge][nG + mathVar::nGauss + 1]=-material::massDiffusion::DmCoeff*dRhoYMaster/rhoMaster;
                         }
                         LxFConst[iedge] = *std::max_element(CArray.begin(), CArray.end());
                         //DiffusiveFluxConst[iedge] = *std::max_element(BetaArray.begin(), BetaArray.end());
@@ -848,25 +845,25 @@ namespace limiter
 
                             /*INVISCID TERM*/
                             //Get value
-                            std::tie(termX1P, termX1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 1, 1);
-                            std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 2, 1);
-                            std::tie(rhoPlus, rhoMinus) = process::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1);
+                            //std::tie(termX1P, termX1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 1, 1);
+                            //std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 1, 2, 1);
+                            //std::tie(rhoPlus, rhoMinus) = process::getInternalValuesFromCalculatedArrays(edgeName, element, nGauss, 1);
 
                             /*VISCOUS TERM*/
                             //Get value
-                            std::tie(termX1P, termX1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 1, 1);
-                            std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 1);
+                            //std::tie(termX1P, termX1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 1, 1);
+                            //std::tie(termY1P, termY1M) = process::NSFEq::getFinvFvisAtInterfaces(edgeName, element, nGauss, 2, 2, 1);
 
                             /*Calculate fluxes*/
-                            Flux1[nGauss][nface] = math::numericalFluxes::advectiveFlux(termX1P, termX1M, rhoPlus, rhoMinus, LxFConst[edgeName], nx, true) + math::numericalFluxes::advectiveFlux(termY1P, termY1M, rhoPlus, rhoMinus, LxFConst[edgeName], ny, true) +
-                                    math::numericalFluxes::diffusiveFlux(termX1M, termX1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], nx) + math::numericalFluxes::diffusiveFlux(termY1M, termY1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], ny);
+                            //Flux1[nGauss][nface] = math::numericalFluxes::advectiveFlux(termX1P, termX1M, rhoPlus, rhoMinus, LxFConst[edgeName], nx, true) + math::numericalFluxes::advectiveFlux(termY1P, termY1M, rhoPlus, rhoMinus, LxFConst[edgeName], ny, true) +
+                                    //math::numericalFluxes::diffusiveFlux(termX1M, termX1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], nx) + math::numericalFluxes::diffusiveFlux(termY1M, termY1P, rhoPlus, rhoMinus, DiffusiveFluxConst[edgeName], ny);
                         }
                     }
                     else  //boundary edge
                     {
                         for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
                         {
-                            Fluxes = NSFEqBCsImplement(element, edgeName, nGauss);
+                            //Fluxes = NSFEqBCsImplement(element, edgeName, nGauss);
                             Flux1[nGauss][nface] = Fluxes[0][0] + Fluxes[0][1];
                         }
                     }
@@ -1017,10 +1014,7 @@ namespace limiter
                 {
                     for (int nb = 0; nb <= mathVar::nGauss; nb++)
                     {
-                        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                                nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                        aG = mathVar::GaussPts[na][nb0];
-                        bG = mathVar::GaussPts[na][nb1];
+                        std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
                         vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
                         vectorRho0[counter]=(mathForMassDiffLimiter::pointRho0(element, aG, bG));
                         counter++;
@@ -1275,10 +1269,7 @@ namespace limiter
 				{
 					for (int nb = 0; nb <= mathVar::nGauss; nb++)
 					{
-                        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                                nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                        aG = mathVar::GaussPts[na][nb0];
-                        bG = mathVar::GaussPts[na][nb1];
+                        std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
                         vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
                         counter++;
 					}
@@ -1453,10 +1444,7 @@ namespace limiter
 					{
 						for (int nb = 0; nb <= mathVar::nGauss; nb++)
 						{
-                            int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                                    nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                            aG = mathVar::GaussPts[na][nb0];
-                            bG = mathVar::GaussPts[na][nb1];
+                            std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
 							rhoMod = limiter::mathForLimiter::quadratureCell::calcRhoModified(element, aG, bG, theta1);
 							rhouOrg = math::pointValueNoLimiter(element, aG, bG, 2);
 							rhovOrg = math::pointValueNoLimiter(element, aG, bG, 3);

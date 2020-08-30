@@ -14,6 +14,7 @@
 #include <vector>
 #include <cstdlib> //include this library to create folder in linux
 #include <mpi.h>
+#include "DGPostProcessLib.h"
 
 namespace IO
 {
@@ -571,234 +572,7 @@ namespace IO
         systemVar::totalProc = DGOptoutInt[0];
     }
 
-    void loadConstants(std::string mode)
-	{
-		/*Read DGOptions*/
-		std::string DGOptfileName("DGOptions.txt");
-        std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-        std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[4] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval","totalProcess"}, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[2] = {"ddtScheme", "runningMode"};
-        double DGOptoutDB[2] = {};
-        int DGOptoutInt[4] = {};
-		bool DGOptoutBool[2] = {};
-		std::string DGOptoutStr[2] = {};
 
-        readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 4, 2, 2);
-		
-		systemVar::CFL = DGOptoutDB[0];
-		systemVar::Ttime = DGOptoutDB[1];
-        mathVar::nGauss = DGOptoutInt[0];
-        mathVar::orderElem = DGOptoutInt[1];
-        systemVar::wrtI = DGOptoutInt[2];
-        systemVar::totalProc = DGOptoutInt[3];
-		systemVar::wrtLog = DGOptoutBool[0];
-		systemVar::loadSavedCase = DGOptoutBool[1];
-
-		if (DGOptoutStr[0].compare("Euler") == 0)
-		{
-			systemVar::ddtScheme = 1;
-		}
-		else if (DGOptoutStr[0].compare("TVDRK2") == 0)
-		{
-			systemVar::ddtScheme = 2;
-		}
-		else if (DGOptoutStr[0].compare("TVDRK3") == 0)
-		{
-			systemVar::ddtScheme = 3;
-		}
-
-        if (DGOptoutStr[1].compare("parallel") == 0)
-        {
-            systemVar::parallelMode = true;
-        }
-        else if (DGOptoutStr[1].compare("sequence") == 0)
-        {
-            systemVar::parallelMode = false;
-            systemVar::totalProc=1;
-        }
-		
-		/*Read Material*/
-		std::string MatfileName("Material.txt");
-        std::string MatLoc;
-        if (mode.compare("p")==0)
-        {
-            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
-        }
-        else {
-            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
-        }
-        std::string MatkeyWordsDouble[6] = { "gammaRatio", "gasConstant", "PrandtlNumber", "SutherlandAs", "SutherlandTs" , "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {};
-        double MatoutDB[6] = {};
-		int MatoutInt[1] = {};
-		bool MatoutBool[1] = {};
-		std::string MatoutStr[1] = {};
-
-        readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 6, 0, 0, 0);
-		material::gamma = MatoutDB[0];
-		material::R = MatoutDB[1];
-		material::Pr = MatoutDB[2];
-		material::As = MatoutDB[3];
-		material::Ts = MatoutDB[4];
-        material::massDiffusion::DmCoeff = MatoutDB[5];
-
-		material::Cp = material::R*material::gamma / (material::gamma - 1);
-		material::Cv = material::Cp - material::R;
-
-        /*Read FlowProperties*/
-        std::string fileName("FlowProperties.txt");
-        std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-        std::string keyWordsDouble[1] = {}, keyWordsInt[1] = {}, keyWordsBool[2] = {"Viscosity", "MassDiffusion"}, keyWordsStr[1] = {};
-        double outDB[1] = {};
-        int outInt[1] = {};
-        bool outBool[2] = {};
-        std::string outStr[1] = {};
-
-        readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, 0, 0, 2, 0);
-        flowProperties::viscous=outBool[0];
-        flowProperties::massDiffusion=outBool[1];
-        if (!flowProperties::massDiffusion)
-        {
-            material::massDiffusion::DmCoeff=0.0;
-        }
-
-        /*Read DGSchemes*/
-        fileName=("DGSchemes.txt");
-        Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-        std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[2] = {"diffusionTermScheme","solveTMethod"};
-        double DGSchemesoutDB[1] = {};
-        int DGSchemesoutInt[1] = {};
-        bool DGSchemesoutBool[1] = {};
-        std::string DGSchemesoutStr[2] = {};
-
-        readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 2);
-
-        if (DGSchemesoutStr[0].compare("BR1")==0)
-        {
-            systemVar::auxVariables=1;
-        }
-        else if (DGSchemesoutStr[0].compare("BR2")==0)
-        {
-            systemVar::auxVariables=2;
-        }
-        else {
-            std::string str0("diffusionTermScheme '"+DGSchemesoutStr[0]+"' is not a diffusion scheme.");
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
-        }
-
-        if (DGSchemesoutStr[1].compare("implicit")==0)
-        {
-            systemVar::solveTImplicitly=true;
-        }
-        else if (DGSchemesoutStr[1].compare("explicit")==0)
-        {
-            systemVar::solveTImplicitly=false;
-        }
-        else {
-            std::string str0("solveTMethod '"+DGSchemesoutStr[1]+"' is not available.");
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
-        }
-	}
-
-	void loadLimiterSettings()
-	{
-        std::string FileDir(systemVar::wD + "/CASES/" + systemVar::caseName + "/System"), fileName("LimiterSettings.txt");
-        std::string FileLoc(FileDir + "/" + fileName);
-		std::ifstream FileFlux(FileLoc.c_str());
-		if (FileFlux)
-		{
-			std::string line, Word;
-			while (std::getline(FileFlux, line))
-			{
-			label:
-				std::istringstream line2str(line);
-				std::vector<std::string> ptr;
-				//Split <line2str> stringstream into array of words
-				while ((line2str >> Word))
-				{
-					ptr.push_back(Word);
-				}
-
-                int numWrd = static_cast<int>(ptr.size());
-				if (numWrd >= 2)
-				{
-					std::istringstream strdata(ptr[1]);
-
-					if (ptr[0].compare("limiter") == 0) //get selected limiter(s)
-					{
-						for (int i = 0; i < numWrd - 1; i++)
-						{
-							limitVal::limiterName.push_back(ptr[i + 1]);
-						}
-					}
-
-					if (limitVal::limiterName.size() > 0)
-					{
-                        for (int ilimiter = 0; ilimiter < static_cast<int>(limitVal::limiterName.size()); ilimiter++)
-						{
-							if (limitVal::limiterName[ilimiter].compare("PositivityPreserving") == 0) //PositivityPreserving settings
-							{
-								limitVal::PositivityPreserving = true;
-								std::getline(FileFlux, line); //jump
-								while (std::getline(FileFlux, line))
-								{
-									std::istringstream line2str(line);
-									while ((line2str >> Word))
-									{
-										if (Word.compare("version") == 0)
-										{
-											line2str >> Word;
-											if (Word.compare("simplified") == 0)
-											{
-												limitVal::PositivityPreservingSettings::version = 2;
-											}
-											else if (Word.compare("full") == 0)
-											{
-												limitVal::PositivityPreservingSettings::version = 1;
-											}
-											else
-											{
-												std::cout << Word << " is not available version of Positivity Preserving limiter, version will be set to Simplified as a default\n";
-												limitVal::PositivityPreservingSettings::version = 2;
-											}
-											line2str >> Word;
-											goto label;
-										}
-									}
-								}
-							}
-							if ((limitVal::limiterName[ilimiter].compare("PAdaptive") == 0) || (limitVal::limiterName[ilimiter].compare("pAdaptive") == 0)) //PositivityPreserving settings
-							{
-								limitVal::PAdaptive = true;
-								std::getline(FileFlux, line); //jump
-								goto label;
-							}
-							if ((limitVal::limiterName[ilimiter].compare("massDiffusion") == 0) || (limitVal::limiterName[ilimiter].compare("massdiffusion") == 0)) //PositivityPreserving settings
-                            {
-                                limitVal::massDiffusion = true;
-                                std::getline(FileFlux, line); //jump
-                                goto label;
-                            }
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
-		}
-	}
-
-    void loadpTU(std::string mode)
-	{
-		/*Read U*/  //U must be read first of all
-        readNonScalar(mode);
-
-		/*Read T*/
-        readScalar("T", mode);
-
-		/*Read p*/
-        readScalar("p", mode);
-	}
 
 	void readDataFile(std::string fileName, std::string direction, std::string keyWordsDbl[], std::string keyWordsInt[], std::string keyWordsBool[], std::string keyWordsStr[], double *outDbl, int *outInt, bool *outBool, std::string *outStr, int numParamDbl, int numParamInt, int numParamBool, int numParamStr)  //Declaration of funciton which returns pointer of 1D array
 	{
@@ -813,7 +587,22 @@ namespace IO
 		- keyWordsStr: array contents keyWords of string values listed in file
 		- outDbl: output array contents double values
 		- outInt: output array contents int values
-		- numParamDbl, numParamInt, numParamBool, numParamStr: number of double, int, bool, string parameters*/
+        - numParamDbl, numParamInt, numParamBool, numParamStr: number of double, int, bool, string parameters
+
+        To write comment, use the following syntax
+        // comment... */
+
+        //Modify number of parameters
+        if (numParamDbl<0) numParamDbl=0;
+        if (numParamInt<0) numParamInt=0;
+        if (numParamBool<0) numParamBool=0;
+        if (numParamStr<0) numParamStr=0;
+
+        //Checking array
+        std::vector<bool> check_double(numParamDbl,false),
+                check_int(numParamInt,false),
+                check_bool(numParamBool,false),
+                check_str(numParamStr,false);
 
 		double dataDbl(0.0);
         int dataInt(0);
@@ -841,57 +630,99 @@ namespace IO
 
                 int numWrd = static_cast<int>(ptr.size());
 
-				if (numWrd >= 2)
+                if (numWrd >= 2 && ptr[0].compare("//"))
 				{
 					std::string str1(ptr[0]), str2(" "), str3(" "), str4(" "), str5(" ");
 					std::istringstream strdata(ptr[1]);
-					if (indexDbl<numParamDbl)
-					{
-						str2 = keyWordsDbl[indexDbl];
-					}
-					if (indexInt<numParamInt)
-					{
-						str3 = keyWordsInt[indexInt];
-					}
-					if (indexBool<numParamBool)
-					{
-						str4 = keyWordsBool[indexBool];
-					}
-					if (indexStr<numParamStr)
-					{
-						str5 = keyWordsStr[indexStr];
-					}
 
-					if (str1.compare(str2) == 0)  //double value
-					{
-						strdata >> dataDbl;
-						outDbl[indexDbl]=dataDbl;
-						indexDbl++;
-					}
-					else if ((str1.compare(str3) == 0))  //int value
-					{
-						strdata >> dataInt;
-						outInt[indexInt] = dataInt;
-						indexInt++;
-					}
-					else if ((str1.compare(str4) == 0))  //bool value
-					{
-						if ((ptr[1].compare("true") == 0) || (ptr[1].compare("yes") == 0))
-						{
-							outBool[indexBool] = true;
-						}
-						else if ((ptr[1].compare("false") == 0) || (ptr[1].compare("no") == 0))
-						{
-							outBool[indexBool] = false;
-						}
-						indexBool++;
-					}
-					else if ((str1.compare(str5) == 0))  //string value
-					{
-						outStr[indexStr] = ptr[1];
-						indexStr++;
-					}
-				}
+                    //Doc rieng tung loai data
+                    //double
+                    if (indexDbl<numParamDbl)
+                    {
+                        for (int i=0; i<numParamDbl; i++)
+                        {
+                            if (!check_double[i])
+                            {
+                                str2 = keyWordsDbl[i];
+                                if (str1.compare(str2) == 0)
+                                {
+                                    strdata >> dataDbl;
+                                    outDbl[i]=dataDbl;
+                                    indexDbl++;
+                                    check_double[i]=true;
+                                    goto label;
+                                }
+                            }
+                        }
+                    }
+
+                    //int
+                    if (indexInt<numParamInt)
+                    {
+                        for (int i=0; i<numParamInt; i++)
+                        {
+                            if (!check_int[i])
+                            {
+                                str2 = keyWordsInt[i];
+                                if (str1.compare(str2) == 0)
+                                {
+                                    strdata >> dataInt;
+                                    outInt[i]=dataInt;
+                                    indexInt++;
+                                    check_int[i]=true;
+                                    goto label;
+                                }
+                            }
+                        }
+                    }
+
+                    //string
+                    if (indexStr<numParamStr)
+                    {
+                        for (int i=0; i<numParamStr; i++)
+                        {
+                            if (!check_str[i])
+                            {
+                                str2 = keyWordsStr[i];
+                                if (str1.compare(str2) == 0)
+                                {
+                                    strdata >> dataStr;
+                                    outStr[i]=dataStr;
+                                    indexStr++;
+                                    check_str[i]=true;
+                                    goto label;
+                                }
+                            }
+                        }
+                    }
+
+                    //bool
+                    if (indexBool<numParamBool)
+                    {
+                        for (int i=0; i<numParamBool; i++)
+                        {
+                            if (!check_bool[i])
+                            {
+                                str2 = keyWordsBool[i];
+                                if (str1.compare(str2) == 0)
+                                {
+                                    if ((ptr[1].compare("true") == 0) || (ptr[1].compare("yes") == 0))
+                                    {
+                                        outBool[i] = true;
+                                    }
+                                    else if ((ptr[1].compare("false") == 0) || (ptr[1].compare("no") == 0))
+                                    {
+                                        outBool[i] = false;
+                                    }
+                                    indexBool++;
+                                    check_bool[i]=true;
+                                    goto label;
+                                }
+                            }
+                        }
+                    }
+                }
+                label:
 				if ((indexDbl>=numParamDbl) && (indexInt>=numParamInt) && (indexBool >= numParamBool) && (indexStr >= numParamStr))
 				{
 					break;
@@ -904,488 +735,15 @@ namespace IO
 		}
 	}
 
-    void readNonScalar(std::string mode)
-	{
-		/*NOTES:
-        Boundary conditions compatibility
-        |U					|T					|p					|
-        +-------------------+-------------------+-------------------+
-        |1. inFlow			|1. inFlow			|1. inFlow			|
-        |	Value u v w		|	Value T			|	Value p			|
-        +-------------------+-------------------+-------------------+
-        |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-        |					|	Value T			|					|
-        +-------------------+-------------------+-------------------+
-        |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-        +-------------------+-------------------+-------------------+
-        |7.	symmetry		|7. symmetry		|7. symmetry		|
-        +-------------------+-------------------+-------------------+
-        |4. outFlow			|4. outFlow			|4. outFlow			|
-        |	Value u v w		|	Value T			|	Value p			|
-        +-------------------+-------------------+-------------------+
-        |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
-        |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
-        |   v_wall u v w    |   T_wall T        |                   |
-        +-------------------+-------------------+-------------------+
-        U:
-        + 3:
-        movingWall
-        velocity        u v w
-		*/
-
-        std::string fileName("U.txt"), tempStr(""), Loc;
-        if (mode.compare("p")==0)
-        {
-            Loc = (systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0");
-        }
-        else {
-            Loc = (systemVar::wD + "/CASES/" + systemVar::caseName + "/0");
-        }
-
-        if (systemVar::currentProc==0)
-        {
-            std::cout << "	Reading " << fileName << "\n";
-        }
-
-        std::string FileLoc(Loc + "/" + fileName);
-		std::ifstream FileFlux(FileLoc.c_str());
-        int bcGrp(0);
-
-		if (FileFlux)
-		{
-			std::string line, keyWord;
-			while (std::getline(FileFlux, line))
-			{
-				std::istringstream line2str(line);
-				std::vector<std::string> ptr;
-				//Split <line2str> stringstream into array of words
-				while ((line2str >> keyWord))
-				{
-					ptr.push_back(keyWord);
-				}
-
-                int numWrd = static_cast<int>(ptr.size());
-				if (numWrd != 0)
-				{
-					std::string str1(ptr[0]);
-					if (str1.compare("initialValue") == 0)  //initial data
-					{
-						std::istringstream str_u(ptr[1]);
-						std::istringstream str_v(ptr[2]);
-						std::istringstream str_w(ptr[3]);
-						str_u >> iniValues::uIni;
-						str_v >> iniValues::vIni;
-						str_w >> iniValues::wIni;
-					}
-					else if (str1.compare("Type") == 0)  //Bc Type
-					{
-						std::string str0(ptr[1]);
-
-						if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
-						{
-							if ((str0.compare("noSlip") == 0))  //Type noSlip
-							{
-								bcValues::UBcType[bcGrp - 1] = 2;
-                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
-                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
-                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
-							}
-							else if ((str0.compare("slip") == 0))  //Type slip
-							{
-								//Use Maxwell-Smoluchovsky boundary condition
-                                bcValues::slipBCFlag=true;
-								bcValues::UBcType[bcGrp - 1] = 5;
-								std::getline(FileFlux, line);
-                                std::istringstream fixedUStream1(line);
-                                //Read sigmaU
-                                fixedUStream1>>tempStr>>bcValues::sigmaU;
-                                if ((tempStr.compare("sigmaU") != 0))
-                                {
-                                    std::cout<<"ERROR: Cannot find key word 'sigmaU' in file U/group "<<bcGrp<<", sigmaU is set to 1.0.\n";
-                                    bcValues::sigmaU=1;
-                                }
-
-                                std::getline(FileFlux, line);
-                                std::istringstream fixedUStream2(line);
-                                //Read UWall
-                                fixedUStream2 >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-                                if ((tempStr.compare("v_wall") != 0))
-                                {
-                                    std::cout<<"ERROR: Cannot find key word 'v_wall' in file U/group "<<bcGrp<<", wall velocity is set to (0 0 0).\n";
-                                    bcValues::uBCFixed[bcGrp - 1]=0;
-                                    bcValues::vBCFixed[bcGrp - 1]=0;
-                                }
-							}
-                            else if ((str0.compare("movingWall") == 0))  //Type movingWall
-							{
-								bcValues::UBcType[bcGrp - 1] = 3;
-								std::getline(FileFlux, line);
-								std::istringstream fixedUStream(line);
-                                fixedUStream >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-                                std::getline(FileFlux, line);
-							}
-							else
-							{
-                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "wall"));
-							}
-						}
-						else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
-						{
-							if ((str0.compare("inFlow") == 0))  //Type inletOutlet
-							{
-								bcValues::UBcType[bcGrp - 1] = 1;
-								std::getline(FileFlux, line);
-								std::istringstream fixedUStream(line);
-                                fixedUStream >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-							}
-							else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
-							{
-								bcValues::UBcType[bcGrp - 1] = 4;
-								std::getline(FileFlux, line);
-								std::istringstream fixedUStream(line);
-                                fixedUStream >> tempStr >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-							}
-							else
-							{
-                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "patch"));
-							}
-						}
-						else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)  //SYMMETRY
-						{
-							if ((str0.compare("symmetry") == 0))  //Type symmetry
-							{
-								bcValues::UBcType[bcGrp - 1] = 7;
-                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
-                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
-                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
-							}
-							else
-							{
-                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "symmetry"));
-							}
-						}
-                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)  //MATCHED
-                        {
-                            if ((str0.compare("matched") == 0))  //Type matched
-                            {
-                                bcValues::UBcType[bcGrp - 1] = 10;
-                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
-                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
-                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
-                            }
-                            else
-                            {
-                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "matched"));
-                            }
-                        }
-					}
-					else if ((str1.compare("Group") == 0))  //Group
-					{
-						std::istringstream str_bcGrp(ptr[1]);
-						str_bcGrp >> bcGrp;
-					}
-				}
-			}
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
-		}
-	}
-
-    void readScalar(std::string fileName, std::string mode)
-	{
-		/*NOTES:
-        Boundary conditions compatibility
-        |U					|T					|p					|
-        +-------------------+-------------------+-------------------+
-        |1. inFlow			|1. inFlow			|1. inFlow			|
-        |	Value u v w		|	Value T			|	Value p			|
-        +-------------------+-------------------+-------------------+
-        |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-        |					|	Value T			|					|
-        +-------------------+-------------------+-------------------+
-        |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-        +-------------------+-------------------+-------------------+
-        |7.	symmetry		|7. symmetry		|7. symmetry		|
-        +-------------------+-------------------+-------------------+
-        |4. outFlow			|4. outFlow			|4. outFlow			|
-        |	Value u v w		|	Value T			|	Value p			|
-        +-------------------+-------------------+-------------------+
-        |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
-        |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
-        |   v_wall u v w    |   T_wall T        |                   |
-        +-------------------+-------------------+-------------------+
-        U:
-        + 3:
-        movingWall
-        velocity        u v w
-		*/
-
-		fileName = fileName + ".txt";
-		std::string tempStr("");
-        std::string Loc;
-        if (mode.compare("p")==0)
-        {
-            Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0";
-        }
-        else {
-            Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/0";
-        }
-
-        if (systemVar::currentProc==0)
-        {
-            std::cout << "	Reading " << fileName << "\n";
-        }
-        std::string FileLoc(Loc + "/" + fileName);
-		std::ifstream FileFlux(FileLoc.c_str());
-		
-        int bcGrp(0);
-
-		if (FileFlux)
-		{
-			std::string line, keyWord;
-			if (fileName.compare("p.txt") == 0)
-			{
-				while (std::getline(FileFlux, line))
-				{
-					std::istringstream line2str(line);
-					std::vector<std::string> ptr;
-					//Split <line2str> stringstream into array of words
-					while ((line2str >> keyWord))
-					{
-						ptr.push_back(keyWord);
-					}
-
-                    int numWrd = static_cast<int>(ptr.size());
-					if (numWrd != 0)
-					{
-						std::string str1(ptr[0]);
-						if (str1.compare("initialValue") == 0)  //initial data
-						{
-							std::istringstream str_val(ptr[1]);
-                            str_val >> iniValues::pIni;
-						}
-						else if (str1.compare("Type") == 0)  //Bc Type
-						{
-							std::string str0(ptr[1]);
-
-							if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
-							{
-								if ((str0.compare("zeroGradient") == 0))
-								{
-									bcValues::pBcType[bcGrp - 1] = 2;
-                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
-								}
-								else
-								{
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "wall"));
-								}
-							}
-							else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
-							{
-								if ((str0.compare("inFlow") == 0))  //Type inletOutlet
-								{
-									bcValues::pBcType[bcGrp - 1] = 1;
-									std::getline(FileFlux, line);
-									std::istringstream Stream(line);
-                                    Stream >> tempStr >> bcValues::pBCFixed[bcGrp - 1];
-								}
-								else if ((str0.compare("zeroGradient") == 0))
-								{
-									bcValues::pBcType[bcGrp - 1] = 2;
-                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
-								}
-								else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
-								{
-									bcValues::pBcType[bcGrp - 1] = 4;
-									std::getline(FileFlux, line);
-									std::istringstream Stream(line);
-                                    Stream >> tempStr >> bcValues::pBCFixed[bcGrp - 1];
-								}
-								else
-								{
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "patch"));
-								}
-							}
-							else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
-							{
-								if ((str0.compare("symmetry") == 0))  //Type symmetry
-								{
-									bcValues::pBcType[bcGrp - 1] = 7;
-                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
-								}
-								else
-								{
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "symmetry"));
-								}
-							}
-                            else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)
-                            {
-                                if ((str0.compare("matched") == 0))  //Type matched
-                                {
-                                    bcValues::pBcType[bcGrp - 1] = 10;
-                                    bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
-                                }
-                                else
-                                {
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "matched"));
-                                }
-                            }
-						}
-						else if ((str1.compare("Group") == 0))  //Group
-						{
-							std::istringstream str_bcGrp(ptr[1]);
-							str_bcGrp >> bcGrp;
-						}
-					}
-				}
-			}
-			else if (fileName.compare("T.txt") == 0)
-			{
-				while (std::getline(FileFlux, line))
-				{
-					std::istringstream line2str(line);
-					std::vector<std::string> ptr;
-					//Split <line2str> stringstream into array of words
-					while ((line2str >> keyWord))
-					{
-						ptr.push_back(keyWord);
-					}
-
-                    int numWrd = static_cast<int>(ptr.size());
-					if (numWrd != 0)
-					{
-						std::string str1(ptr[0]);
-						if (str1.compare("initialValue") == 0)  //initial data
-						{
-							std::istringstream str_val(ptr[1]);
-                            str_val >> iniValues::TIni;
-						}
-						else if (str1.compare("Type") == 0)  //Bc Type
-						{
-							std::string str0(ptr[1]);
-
-							if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
-							{
-								if ((str0.compare("WallAdiabatic") == 0))
-								{
-									bcValues::TBcType[bcGrp - 1] = 3;
-                                    bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
-								}
-								else if ((str0.compare("WallIsothermal") == 0))
-								{
-									bcValues::TBcType[bcGrp - 1] = 2;
-									std::getline(FileFlux, line);
-									std::istringstream Stream(line);
-                                    Stream >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
-								}
-                                else if ((str0.compare("temperatureJump") == 0))  //Type temperatureJump
-								{
-                                    bcValues::temperatureJump=true;
-									bcValues::TBcType[bcGrp - 1] = 6;
-                                    std::getline(FileFlux, line);
-                                    std::istringstream Stream1(line);
-                                    //Read sigmaT
-                                    Stream1>> tempStr >> bcValues::sigmaT;
-                                    if ((tempStr.compare("sigmaT") != 0))
-                                    {
-                                        std::cout<<"ERROR: Cannot find key word 'sigmaT' in file T/group "<<bcGrp<<", sigmaT is set to 1.0.\n";
-                                        bcValues::sigmaT=1;
-                                    }
-
-									std::getline(FileFlux, line);
-                                    std::istringstream Stream2(line);
-                                    //Read TWall
-                                    Stream2 >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
-                                    if ((tempStr.compare("T_wall") != 0))
-                                    {
-                                        std::cout<<"ERROR: Cannot find key word 'T_wall' in file T/group "<<bcGrp<<", This is an fatal error and DGSolver will exit.\n";
-                                        exit(EXIT_FAILURE);
-                                    }
-								}
-								else
-								{
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "wall"));
-								}
-							}
-							else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
-							{
-								if ((str0.compare("inFlow") == 0))
-								{
-									bcValues::TBcType[bcGrp - 1] = 1;
-									std::getline(FileFlux, line);
-									std::istringstream Stream(line);
-                                    Stream >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
-								}
-								else if ((str0.compare("outFlow") == 0))
-								{
-									bcValues::TBcType[bcGrp - 1] = 4;
-									std::getline(FileFlux, line);
-									std::istringstream Stream(line);
-                                    Stream >> tempStr >> bcValues::TBCFixed[bcGrp - 1];
-								}
-								else
-								{
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "patch"));
-								}
-							}
-							else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
-							{
-								if ((str0.compare("symmetry") == 0))  //Type symmetry
-								{
-									bcValues::TBcType[bcGrp - 1] = 7;
-                                    bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
-								}
-								else
-								{
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "symmetry"));
-								}
-							}
-                            else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)
-                            {
-                                if ((str0.compare("matched") == 0))  //Type matched
-                                {
-                                    bcValues::TBcType[bcGrp - 1] = 10;
-                                    bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
-                                }
-                                else
-                                {
-                                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "matched"));
-                                }
-                            }
-						}
-						else if ((str1.compare("Group") == 0))  //Group
-						{
-							std::istringstream str_bcGrp(ptr[1]);
-							str_bcGrp >> bcGrp;
-						}
-					}
-				}
-			}
-
-		}
-		else
-		{
-            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
-		}
-
-		for (int i = 0; i < meshVar::nBc; i++)
-		{
-            if (bcValues::TBcType[i]!=6 && (bcValues::UBcType[i]==5))
-			{
-                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::SlipBcCompatibleError(i+1));
-			}
-		}
-	}
-
-    std::tuple<double**, int> read2DArray(int column, std::string location, std::string fileName)
+    std::tuple<bool, double**, int> read2DArray(int column, std::string location, std::string fileName, bool exitWhenFileNotFound)
     {
         int length(0);
         double**array;
+        bool isFileAvailable;
         std::ifstream Flux(location.c_str());
         if (Flux)
         {
+            isFileAvailable=true;
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
@@ -1423,18 +781,25 @@ namespace IO
         }
         else
         {
-            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            isFileAvailable=false;
+            if (exitWhenFileNotFound)
+            {
+                message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            }
         }
-        return std::make_tuple(array,length);
+        return std::make_tuple(isFileAvailable,array,length);
     }
 
-    std::tuple<int**, int> read2DIntArray(int column, std::string location, std::string fileName)
+    std::tuple<bool, int**, int> read2DIntArray(int column, std::string location, std::string fileName, bool exitWhenFileNotFound)
     {
         int length(0);
         int**array;
+        bool isFileAvailable;
         std::ifstream Flux(location.c_str());
         if (Flux)
         {
+            isFileAvailable=true;
+
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
@@ -1472,18 +837,25 @@ namespace IO
         }
         else
         {
-            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            isFileAvailable=false;
+            if (exitWhenFileNotFound)
+            {
+                message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            }
         }
-        return std::make_tuple(array,length);
+        return std::make_tuple(isFileAvailable,array,length);
     }
 
-    std::tuple<double*, int> read1DArray(std::string location, std::string fileName)
+    std::tuple<bool, double*, int> read1DArray(std::string location, std::string fileName, bool exitWhenFileNotFound)
     {
         int length(0);
         double*array;
+        bool isFileAvailable;
         std::ifstream Flux(location.c_str());
         if (Flux)
         {
+            isFileAvailable=true;
+
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
@@ -1518,18 +890,25 @@ namespace IO
         }
         else
         {
-            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            isFileAvailable=false;
+            if (exitWhenFileNotFound)
+            {
+                message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            }
         }
-        return std::make_tuple(array,length);
+        return std::make_tuple(isFileAvailable,array,length);
     }
 
-    std::tuple<int*, int> read1DIntArray(std::string location, std::string fileName)
+    std::tuple<bool,int*, int> read1DIntArray(std::string location, std::string fileName, bool exitWhenFileNotFound)
     {
         int length(0);
         int*array;
+        bool isFileAvailable;
         std::ifstream Flux(location.c_str());
         if (Flux)
         {
+            isFileAvailable=true;
+
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
@@ -1564,9 +943,13 @@ namespace IO
         }
         else
         {
-            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            isFileAvailable=false;
+            if (exitWhenFileNotFound)
+            {
+                message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, location));
+            }
         }
-        return std::make_tuple(array,length);
+        return std::make_tuple(isFileAvailable,array,length);
     }
 
 	void residualOutput(double rhoResGlobal, double rhouResGlobal, double rhovResGlobal, double rhoEResGlobal)
@@ -1696,21 +1079,19 @@ namespace IO
         IO::writeDiscretedFields(Loc,"rhoE.txt",rhoE);
 		/*end of saving conservative variables*/
 
-        //Save TSurface, USurface
-        fileName = "TSurface.txt";
-        fileLoc = (Loc + "/" + fileName);
-        std::ofstream fileFluxTSurface(fileLoc.c_str());
-        for (int iedge = 0; iedge < meshVar::numBCEdges; iedge++)
+        if (auxUlti::checkTimeVaryingBCAvailable())
         {
-            fileFluxTSurface <<SurfaceBCFields::TBc[iedge]<< "\n";
+            //Save TSurface, USurface
+            fileName = "TSurface.txt";
+            IO::write1DDoubleVectorToFile(Loc,fileName,SurfaceBCFields::TBc,meshVar::numBCEdges);
+            fileName = "uSurface.txt";
+            IO::write1DDoubleVectorToFile(Loc,fileName,SurfaceBCFields::uBc,meshVar::numBCEdges);
+            fileName = "vSurface.txt";
+            IO::write1DDoubleVectorToFile(Loc,fileName,SurfaceBCFields::vBc,meshVar::numBCEdges);
         }
-        fileName = "USurface.txt";
-        fileLoc = (Loc + "/" + fileName);
-        std::ofstream fileFluxUSurface(fileLoc.c_str());
-        for (int iedge = 0; iedge < meshVar::numBCEdges; iedge++)
-        {
-            fileFluxUSurface <<SurfaceBCFields::uBc[iedge]<< " "<<SurfaceBCFields::vBc[iedge]<<"\n";
-        }
+
+        //Write variables on wall
+        postProcessing_Surface::writeVarsAtWall(Loc);
 
 		/*Residual normalized coeffs*/
 		fileName = "ResidualNormCoeffs.txt";
@@ -1727,6 +1108,7 @@ namespace IO
             std::ofstream fileFluxTime(fileLoc.c_str());
             fileFluxTime << systemVar::iterCount << " "<<runTime<< "\n";
         }
+
         MPI_Barrier(MPI_COMM_WORLD);
 	}
 
@@ -1777,62 +1159,18 @@ namespace IO
         IO::readDiscretedFields(Loc,"rhov.txt",rhov);
         IO::readDiscretedFields(Loc,"rhoE.txt",rhoE);
 
-        //Read file TSurface & USurface
-        fileName = "TSurface.txt";
-        fileLoc = (Loc + "/" + fileName);
-        std::ifstream FileFluxTSurface(fileLoc.c_str());
-        if (FileFluxTSurface)
+        if (auxUlti::checkTimeVaryingBCAvailable())
         {
-            int nEdge(0);
-            std::string line_T;
-
-            //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
-            while (std::getline(FileFluxTSurface, line_T))
-            {
-                std::istringstream line_Tflux(line_T);
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-                {
-                    line_Tflux>>SurfaceBCFields::TBc[nEdge];
-                }
-                nEdge++;
-            }
-        }
-        else
-        {
-            if (systemVar::currentProc==0)
-            {
-                std::cout<<"Cannot find file TSurface.txt at folder "<<systemVar::iterCount<<", solver will load surface fields from folder 0\n";
-            }
-            //process::setIniSurfaceBCValues();
-        }
-
-        //Read file TSurface & USurface
-        fileName = "USurface.txt";
-        fileLoc = (Loc + "/" + fileName);
-        std::ifstream FileFluxUSurface(fileLoc.c_str());
-        if (FileFluxUSurface)
-        {
-            int nEdge(0);
-            std::string line_U;
-
-            //Gia tri doc vao cua Surface fields la gia tri trung binh tren toan edge
-            while (std::getline(FileFluxTSurface, line_U))
-            {
-                std::istringstream line_Uflux(line_U);
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-                {
-                    line_Uflux>>SurfaceBCFields::uBc[nEdge]>>SurfaceBCFields::vBc[nEdge];
-                }
-                nEdge++;
-            }
-        }
-        else
-        {
-            if (systemVar::currentProc==0)
-            {
-                std::cout<<"Cannot find file USurface.txt at folder "<<systemVar::iterCount<<", solver will load surface fields from folder 0\n";
-            }
-            //process::setIniSurfaceBCValues();
+            //Read file TSurface & USurface
+            fileName = "TSurface.txt";
+            fileLoc = (Loc + "/" + fileName);
+            std::tie(controlFlag::fileAvailFlags::fileTSurface,SurfaceBCFields::TBc,std::ignore)=IO::read1DArray(fileLoc,fileName,false);
+            fileName = "uSurface.txt";
+            fileLoc = (Loc + "/" + fileName);
+            std::tie(controlFlag::fileAvailFlags::fileuSurface,SurfaceBCFields::uBc,std::ignore)=IO::read1DArray(fileLoc,fileName,false);
+            fileName = "vSurface.txt";
+            fileLoc = (Loc + "/" + fileName);
+            std::tie(controlFlag::fileAvailFlags::filevSurface,SurfaceBCFields::vBc,std::ignore)=IO::read1DArray(fileLoc,fileName,false);
         }
 
 		//Read residual norm coeffs
@@ -1852,6 +1190,18 @@ namespace IO
 		}
 	}
 
+    void loadpTU(std::string mode)
+    {
+        /*Read U*/  //U must be read first of all
+        readVectorBC::u(mode);
+
+        /*Read T*/
+        readScalarBC::p(mode);
+
+        /*Read p*/
+        readScalarBC::T(mode);
+    }
+
     void loadTime()
     {
         //Read file time.txt
@@ -1868,6 +1218,96 @@ namespace IO
         else
         {
             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, Loc));
+        }
+    }
+
+    void loadLimiterSettings()
+    {
+        std::string FileDir(systemVar::wD + "/CASES/" + systemVar::caseName + "/System"), fileName("LimiterSettings.txt");
+        std::string FileLoc(FileDir + "/" + fileName);
+        std::ifstream FileFlux(FileLoc.c_str());
+        if (FileFlux)
+        {
+            std::string line, Word;
+            while (std::getline(FileFlux, line))
+            {
+            label:
+                std::istringstream line2str(line);
+                std::vector<std::string> ptr;
+                //Split <line2str> stringstream into array of words
+                while ((line2str >> Word))
+                {
+                    ptr.push_back(Word);
+                }
+
+                int numWrd = static_cast<int>(ptr.size());
+                if (numWrd >= 2)
+                {
+                    std::istringstream strdata(ptr[1]);
+
+                    if (ptr[0].compare("limiter") == 0) //get selected limiter(s)
+                    {
+                        for (int i = 0; i < numWrd - 1; i++)
+                        {
+                            limitVal::limiterName.push_back(ptr[i + 1]);
+                        }
+                    }
+
+                    if (limitVal::limiterName.size() > 0)
+                    {
+                        for (int ilimiter = 0; ilimiter < static_cast<int>(limitVal::limiterName.size()); ilimiter++)
+                        {
+                            if (limitVal::limiterName[ilimiter].compare("PositivityPreserving") == 0) //PositivityPreserving settings
+                            {
+                                limitVal::PositivityPreserving = true;
+                                std::getline(FileFlux, line); //jump
+                                while (std::getline(FileFlux, line))
+                                {
+                                    std::istringstream line2str(line);
+                                    while ((line2str >> Word))
+                                    {
+                                        if (Word.compare("version") == 0)
+                                        {
+                                            line2str >> Word;
+                                            if (Word.compare("simplified") == 0)
+                                            {
+                                                limitVal::PositivityPreservingSettings::version = 2;
+                                            }
+                                            else if (Word.compare("full") == 0)
+                                            {
+                                                limitVal::PositivityPreservingSettings::version = 1;
+                                            }
+                                            else
+                                            {
+                                                std::cout << Word << " is not available version of Positivity Preserving limiter, version will be set to Simplified as a default\n";
+                                                limitVal::PositivityPreservingSettings::version = 2;
+                                            }
+                                            line2str >> Word;
+                                            goto label;
+                                        }
+                                    }
+                                }
+                            }
+                            if ((limitVal::limiterName[ilimiter].compare("PAdaptive") == 0) || (limitVal::limiterName[ilimiter].compare("pAdaptive") == 0)) //PositivityPreserving settings
+                            {
+                                limitVal::PAdaptive = true;
+                                std::getline(FileFlux, line); //jump
+                                goto label;
+                            }
+                            if ((limitVal::limiterName[ilimiter].compare("massDiffusion") == 0) || (limitVal::limiterName[ilimiter].compare("massdiffusion") == 0)) //PositivityPreserving settings
+                            {
+                                limitVal::massDiffusion = true;
+                                std::getline(FileFlux, line); //jump
+                                goto label;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
         }
     }
 
@@ -2076,7 +1516,7 @@ namespace IO
         std::ofstream FileFlux((location+"/"+fileName).c_str());
         if (FileFlux)
         {
-            FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<vector.size()<<"{\n";
+            FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<vector.size()<<"\n"<<"{\n";
             for (int irow=0; irow<vector.size(); irow++)
             {
                 for (int icol=0; icol<vector[irow].size(); icol++)
@@ -2096,7 +1536,7 @@ namespace IO
     void write1DDoubleVectorToFile(std::string location, std::string fileName, double *vector, int length)
     {
         std::ofstream FileFlux((location+"/"+fileName).c_str());
-        FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<length<<"{\n";
+        FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<length<<"\n"<<"{\n";
         if (FileFlux)
         {
             for (int irow=0; irow<length; irow++)
@@ -2126,6 +1566,936 @@ namespace IO
         else
         {
             std::cout<<"Cannot open file at location "<<(location+"/"+fileName)<<" to write.\n";
+        }
+    }
+
+    namespace loadSettingFiles
+    {
+        void loadConstants()
+        {
+            IO::loadSettingFiles::DGOptions();
+            IO::loadSettingFiles::Material();
+            IO::loadSettingFiles::DGSchemes();
+            IO::loadSettingFiles::FlowProperties();
+            IO::loadLimiterSettings();
+            IO::loadSettingFiles::TBounds();
+        }
+
+        void loadConstantsWhileRunning()
+        {
+            IO::loadSettingFiles::DGOptions();
+            IO::loadSettingFiles::DGSchemes();
+            IO::loadLimiterSettings();
+            IO::loadSettingFiles::TBounds();
+        }
+
+        void DGOptions()
+        {
+            /*Read DGOptions*/
+            std::string DGOptfileName("DGOptions.txt");
+            std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+            std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[4] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval","totalProcess"}, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[2] = {"ddtScheme", "runningMode"};
+            double DGOptoutDB[2] = {};
+            int DGOptoutInt[4] = {};
+            bool DGOptoutBool[2] = {};
+            std::string DGOptoutStr[2] = {};
+
+            readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 4, 2, 2);
+
+            systemVar::CFL = DGOptoutDB[0];
+            systemVar::Ttime = DGOptoutDB[1];
+            mathVar::nGauss = DGOptoutInt[0];
+            mathVar::orderElem = DGOptoutInt[1];
+            systemVar::wrtI = DGOptoutInt[2];
+            systemVar::totalProc = DGOptoutInt[3];
+            systemVar::wrtLog = DGOptoutBool[0];
+            systemVar::loadSavedCase = DGOptoutBool[1];
+
+            if (DGOptoutStr[0].compare("Euler") == 0)
+            {
+                systemVar::ddtScheme = 1;
+            }
+            else if (DGOptoutStr[0].compare("TVDRK2") == 0)
+            {
+                systemVar::ddtScheme = 2;
+            }
+            else if (DGOptoutStr[0].compare("TVDRK3") == 0)
+            {
+                systemVar::ddtScheme = 3;
+            }
+
+            if (DGOptoutStr[1].compare("parallel") == 0)
+            {
+                systemVar::parallelMode = true;
+                systemVar::readWriteMode = "p";
+            }
+            else if (DGOptoutStr[1].compare("sequence") == 0)
+            {
+                systemVar::parallelMode = false;
+                systemVar::readWriteMode = "s";
+                systemVar::totalProc=1;
+            }
+        }
+
+        void Material()
+        {
+            /*Read Material*/
+            std::string MatfileName("Material.txt");
+            std::string MatLoc;
+            MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
+            std::string MatkeyWordsDouble[6] = { "gammaRatio", "gasConstant", "PrandtlNumber", "SutherlandAs", "SutherlandTs" , "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {};
+            double MatoutDB[6] = {};
+            int MatoutInt[1] = {};
+            bool MatoutBool[1] = {};
+            std::string MatoutStr[1] = {};
+
+            readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 6, 0, 0, 0);
+            material::gamma = MatoutDB[0];
+            material::R = MatoutDB[1];
+            material::Pr = MatoutDB[2];
+            material::As = MatoutDB[3];
+            material::Ts = MatoutDB[4];
+            material::massDiffusion::DmCoeff = MatoutDB[5];
+
+            material::Cp = material::R*material::gamma / (material::gamma - 1);
+            material::Cv = material::Cp - material::R;
+        }
+
+        void FlowProperties()
+        {
+            /*Read FlowProperties*/
+            std::string fileName("FlowProperties.txt");
+            std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+            std::string keyWordsDouble[1] = {}, keyWordsInt[1] = {}, keyWordsBool[2] = {"Viscosity", "MassDiffusion"}, keyWordsStr[1] = {};
+            double outDB[1] = {};
+            int outInt[1] = {};
+            bool outBool[2] = {};
+            std::string outStr[1] = {};
+
+            readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, 0, 0, 2, 0);
+            flowProperties::viscous=outBool[0];
+            flowProperties::massDiffusion=outBool[1];
+            if (!flowProperties::massDiffusion)
+            {
+                material::massDiffusion::DmCoeff=0.0;
+            }
+        }
+
+        void DGSchemes()
+        {
+            //Reset flags
+            DGSchemes::fluxControl::LxF=false;
+            DGSchemes::fluxControl::Roe=false;
+            DGSchemes::fluxControl::HLL=false;
+            DGSchemes::fluxControl::HLLC=false;
+            DGSchemes::fluxControl::central=false;
+
+            /*Read DGSchemes*/
+            std::string fileName=("DGSchemes.txt");
+            std::string Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+            std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[3] = {"convectiveFlux","diffusiveTermScheme","solveTMethod"};
+            double DGSchemesoutDB[1] = {};
+            int DGSchemesoutInt[1] = {};
+            bool DGSchemesoutBool[1] = {};
+            std::string DGSchemesoutStr[3] = {};
+
+            readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 3);
+
+            //Convective Term
+            //Khong su dung central flux cho convective term!!!
+            if (DGSchemesoutStr[0].compare("LxF")==0)
+            {
+                DGSchemes::fluxControl::LxF=true;
+            }
+            else if (DGSchemesoutStr[0].compare("Roe")==0)
+            {
+                DGSchemes::fluxControl::Roe=true;
+            }
+            else if (DGSchemesoutStr[0].compare("HLLE")==0)
+            {
+                DGSchemes::fluxControl::HLL=true;
+            }
+            else if (DGSchemesoutStr[0].compare("HLLC")==0) //Hien tai chua cap nhat flux nay
+            {
+                DGSchemes::fluxControl::HLLC=true;
+            }
+            else {
+                std::string str0("convectiveFlux type "+DGSchemesoutStr[0]+"' is not available.");
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
+            }
+
+            //Diffusive term
+            if (DGSchemesoutStr[1].compare("BR1")==0)
+            {
+                systemVar::auxVariables=1;
+            }
+            else if (DGSchemesoutStr[1].compare("BR2")==0)
+            {
+                systemVar::auxVariables=2;
+            }
+            else {
+                std::string str0("diffusiveTermScheme '"+DGSchemesoutStr[1]+"' is not a diffusion scheme.");
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
+            }
+
+            //Solve T method
+            if (DGSchemesoutStr[2].compare("implicit")==0)
+            {
+                DGSchemes::solveTImplicitly=true;
+            }
+            else if (DGSchemesoutStr[2].compare("explicit")==0)
+            {
+                DGSchemes::solveTImplicitly=false;
+            }
+            else {
+                std::string str0("solveTMethod '"+DGSchemesoutStr[2]+"' is not available.");
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
+            }
+        }
+
+        void TBounds()
+        {
+            //Input do dai cua cac array o day
+            const int numOfInt(1),
+                    numOfDouble(2),
+                    numOfBool(1),
+                    numOfStr(1);
+
+            /*Read TBounds*/
+            std::string fileName("TBounds.txt");
+            std::string loc;
+            loc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
+            std::string keyWordsDouble[numOfDouble] = { "upperBound", "lowerBound"}, keyWordsInt[numOfInt] = {}, keyWordsBool[numOfBool] = {}, keyWordsStr[numOfStr] = {};
+            double outDB[numOfDouble] = {};
+            int outInt[numOfInt] = {};
+            bool outBool[numOfBool] = {};
+            std::string outStr[numOfStr] = {};
+
+            /*NOTE: trong ham readDataFile, 4 argument cuoi cung la so luong variable trong file can phai doc tuong ung voi kieu du lieu:
+             * double, int, bool, string.
+             * Neu kieu du lieu nao khong co data can doc, them dau '-' vao phia truoc ten bien, vi du:
+             * readDataFile(..., numOfDouble, -numOfInt, -numOfBool, -numOfStr) ----> chi doc bien co kieu du lieu double
+            */
+            readDataFile(fileName, loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, numOfDouble, -numOfInt, -numOfBool, -numOfStr);
+            limitVal::TUp = outDB[0];
+            limitVal::TDwn = outDB[1];
+        }
+    }
+
+    namespace readVectorBC {
+        void u(std::string mode)
+        {
+            /*NOTES:
+            Boundary conditions compatibility
+            |U					|T					|p					|
+            +-------------------+-------------------+-------------------+
+            |1. inFlow			|1. inFlow			|1. inFlow			|
+            |	Value u v w		|	Value T			|	Value p			|
+            +-------------------+-------------------+-------------------+
+            |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+            |					|	Value T			|					|
+            +-------------------+-------------------+-------------------+
+            |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+            +-------------------+-------------------+-------------------+
+            |7.	symmetry		|7. symmetry		|7. symmetry		|
+            +-------------------+-------------------+-------------------+
+            |4. outFlow			|4. outFlow			|4. outFlow			|
+            |	Value u v w		|	Value T			|	Value p			|
+            +-------------------+-------------------+-------------------+
+            |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+            |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
+            |   v_wall u v w    |   T_wall T        |                   |
+            +-------------------+-------------------+-------------------+
+            U:
+            + 3:
+            movingWall
+            velocity        u v w
+            */
+
+            std::string fileName("U.txt"), tempStr(""), Loc;
+            if (mode.compare("p")==0)
+            {
+                Loc = (systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0");
+            }
+            else {
+                Loc = (systemVar::wD + "/CASES/" + systemVar::caseName + "/0");
+            }
+
+            if (systemVar::currentProc==0)
+            {
+                std::cout << "	Reading " << fileName << "\n";
+            }
+
+            std::string FileLoc(Loc + "/" + fileName);
+            std::ifstream FileFlux(FileLoc.c_str());
+            int bcGrp(0), bcIndex(0);
+            std::vector<bool> check_bc(meshVar::nBc,false);
+
+            if (FileFlux)
+            {
+                std::string line, keyWord;
+                while (std::getline(FileFlux, line))
+                {
+                    std::istringstream line2str(line);
+                    std::vector<std::string> ptr;
+                    //Split <line2str> stringstream into array of words
+                    while ((line2str >> keyWord))
+                    {
+                        ptr.push_back(keyWord);
+                    }
+
+                    int numWrd = static_cast<int>(ptr.size());
+                    if (numWrd >= 2 && ptr[0].compare("//"))
+                    {
+                        std::string str1(ptr[0]);
+
+                        if (bcIndex<meshVar::nBc)
+                        {
+                            for (int i=0; i<meshVar::nBc; i++)
+                            {
+                                if (!check_bc[i])
+                                {
+                                    if (str1.compare("initialValue") == 0)  //initial data
+                                    {
+                                        std::istringstream str_u(ptr[1]);
+                                        std::istringstream str_v(ptr[2]);
+                                        std::istringstream str_w(ptr[3]);
+                                        str_u >> iniValues::uIni;
+                                        str_v >> iniValues::vIni;
+                                        str_w >> iniValues::wIni;
+                                        goto label;
+                                    }
+                                    else if (str1.compare("Type") == 0)  //Bc Type
+                                    {
+                                        std::string str0(ptr[1]);
+
+                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
+                                        {
+                                            if ((str0.compare("noSlip") == 0))  //Type noSlip
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = 2;
+                                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("slip") == 0))  //Type slip
+                                            {
+                                                //Use Maxwell-Smoluchovsky boundary condition
+                                                bcValues::slipBCFlag=true;
+                                                bcValues::UBcType[bcGrp - 1] = 5;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream fixedUStream1(line);
+                                                //Read sigmaU
+                                                fixedUStream1>>tempStr;
+                                                if ((tempStr.compare("sigmaU") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'sigmaU' in file U/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    fixedUStream1>>bcValues::sigmaU;
+                                                }
+
+                                                std::getline(FileFlux, line);
+                                                std::istringstream fixedUStream2(line);
+                                                //Read UWall
+                                                fixedUStream2 >> tempStr;
+                                                if ((tempStr.compare("wallU") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'wallU' in file U/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    fixedUStream2 >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("movingWall") == 0))  //Type movingWall
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = 3;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream fixedUStream(line);
+                                                fixedUStream >> tempStr;
+                                                if ((tempStr.compare("uWall") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'uWall' in file U/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    fixedUStream >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
+                                                }
+                                                std::getline(FileFlux, line);
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "wall"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
+                                        {
+                                            if ((str0.compare("inFlow") == 0))  //Type inletOutlet
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = 1;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream fixedUStream(line);
+                                                fixedUStream >> tempStr;
+                                                if ((tempStr.compare("value") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file U/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    fixedUStream >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = 4;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream fixedUStream(line);
+                                                fixedUStream >> tempStr;
+                                                if ((tempStr.compare("backFlowValue") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'backFlowValue' in file U/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    fixedUStream >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "patch"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)  //SYMMETRY
+                                        {
+                                            if ((str0.compare("symmetry") == 0))  //Type symmetry
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = 7;
+                                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "symmetry"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)  //MATCHED
+                                        {
+                                            if ((str0.compare("matched") == 0))  //Type matched
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = 10;
+                                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "matched"));
+                                            }
+                                        }
+                                    }
+                                    else if ((str1.compare("Group") == 0))  //Group
+                                    {
+                                        std::istringstream str_bcGrp(ptr[1]);
+                                        str_bcGrp >> bcGrp;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    label:
+                    if ((bcIndex>=meshVar::nBc))
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
+            }
+        }
+    }
+
+    namespace readScalarBC {
+        void p(std::string mode)
+        {
+            /*NOTES:
+            Boundary conditions compatibility
+            |U					|T					|p					|
+            +-------------------+-------------------+-------------------+
+            |1. inFlow			|1. inFlow			|1. inFlow			|
+            |	Value u v w		|	Value T			|	Value p			|
+            +-------------------+-------------------+-------------------+
+            |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+            |					|	Value T			|					|
+            +-------------------+-------------------+-------------------+
+            |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+            +-------------------+-------------------+-------------------+
+            |7.	symmetry		|7. symmetry		|7. symmetry		|
+            +-------------------+-------------------+-------------------+
+            |4. outFlow			|4. outFlow			|4. outFlow			|
+            |	Value u v w		|	Value T			|	Value p			|
+            +-------------------+-------------------+-------------------+
+            |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+            |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
+            |   v_wall u v w    |   T_wall T        |                   |
+            +-------------------+-------------------+-------------------+
+            U:
+            + 3:
+            movingWall
+            velocity        u v w
+            */
+
+            std::string fileName = "p.txt";
+            std::string tempStr("");
+            std::string Loc;
+            int bcIndex(0);
+            std::vector<bool> check_bc(meshVar::nBc,false);
+            if (mode.compare("p")==0)
+            {
+                Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0";
+            }
+            else {
+                Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/0";
+            }
+
+            if (systemVar::currentProc==0)
+            {
+                std::cout << "	Reading " << fileName << "\n";
+            }
+            std::string FileLoc(Loc + "/" + fileName);
+            std::ifstream FileFlux(FileLoc.c_str());
+
+            int bcGrp(0);
+
+            if (FileFlux)
+            {
+                std::string line, keyWord;
+                while (std::getline(FileFlux, line))
+                {
+                    std::istringstream line2str(line);
+                    std::vector<std::string> ptr;
+                    //Split <line2str> stringstream into array of words
+                    while ((line2str >> keyWord))
+                    {
+                        ptr.push_back(keyWord);
+                    }
+
+                    int numWrd = static_cast<int>(ptr.size());
+                    if (numWrd >= 2 && ptr[0].compare("//"))
+                    {
+                        std::string str1(ptr[0]);
+                        if (bcIndex<meshVar::nBc)
+                        {
+                            for (int i=0; i<meshVar::nBc; i++)
+                            {
+                                if (!check_bc[i])
+                                {
+                                    if (str1.compare("initialValue") == 0)  //initial data
+                                    {
+                                        std::istringstream str_val(ptr[1]);
+                                        str_val >> iniValues::pIni;
+                                        goto label;
+                                    }
+                                    else if (str1.compare("Type") == 0)  //Bc Type
+                                    {
+                                        std::string str0(ptr[1]);
+
+                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
+                                        {
+                                            if ((str0.compare("zeroGradient") == 0))
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = 2;
+                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "wall"));
+                                            }
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
+                                        {
+                                            if ((str0.compare("inFlow") == 0))  //Type inletOutlet
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = 1;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream(line);
+                                                Stream >> tempStr;
+                                                if ((tempStr.compare("value") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file p/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream >> bcValues::pBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("zeroGradient") == 0))
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = 2;
+                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = 4;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream(line);
+                                                Stream >> tempStr;
+                                                if ((tempStr.compare("backFlowValue") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'backFlowValue' in file p/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream >> bcValues::pBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "patch"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
+                                        {
+                                            if ((str0.compare("symmetry") == 0))  //Type symmetry
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = 7;
+                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "symmetry"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)
+                                        {
+                                            if ((str0.compare("matched") == 0))  //Type matched
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = 10;
+                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "matched"));
+                                            }
+                                        }
+                                    }
+                                    else if ((str1.compare("Group") == 0))  //Group
+                                    {
+                                        std::istringstream str_bcGrp(ptr[1]);
+                                        str_bcGrp >> bcGrp;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    label:
+                    if ((bcIndex>=meshVar::nBc))
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
+            }
+        }
+
+        void T(std::string mode)
+        {
+            /*NOTES:
+            Boundary conditions compatibility
+            |U					|T					|p					|
+            +-------------------+-------------------+-------------------+
+            |1. inFlow			|1. inFlow			|1. inFlow			|
+            |	Value u v w		|	Value T			|	Value p			|
+            +-------------------+-------------------+-------------------+
+            |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
+            |					|	Value T			|					|
+            +-------------------+-------------------+-------------------+
+            |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
+            +-------------------+-------------------+-------------------+
+            |7.	symmetry		|7. symmetry		|7. symmetry		|
+            +-------------------+-------------------+-------------------+
+            |4. outFlow			|4. outFlow			|4. outFlow			|
+            |	Value u v w		|	Value T			|	Value p			|
+            +-------------------+-------------------+-------------------+
+            |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
+            |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
+            |   v_wall u v w    |   T_wall T        |                   |
+            +-------------------+-------------------+-------------------+
+            U:
+            + 3:
+            movingWall
+            velocity        u v w
+            */
+
+            std::string fileName = "T.txt";
+            std::string tempStr("");
+            std::string Loc;
+            if (mode.compare("p")==0)
+            {
+                Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/Processor" + std::to_string(systemVar::currentProc) + "/0";
+            }
+            else {
+                Loc=systemVar::wD + "/CASES/" + systemVar::caseName + "/0";
+            }
+
+            if (systemVar::currentProc==0)
+            {
+                std::cout << "	Reading " << fileName << "\n";
+            }
+            std::string FileLoc(Loc + "/" + fileName);
+            std::ifstream FileFlux(FileLoc.c_str());
+            int bcIndex(0);
+            std::vector<bool> check_bc(meshVar::nBc,false);
+
+            int bcGrp(0);
+
+            if (FileFlux)
+            {
+                std::string line, keyWord;
+                while (std::getline(FileFlux, line))
+                {
+                    std::istringstream line2str(line);
+                    std::vector<std::string> ptr;
+                    //Split <line2str> stringstream into array of words
+                    while ((line2str >> keyWord))
+                    {
+                        ptr.push_back(keyWord);
+                    }
+
+                    int numWrd = static_cast<int>(ptr.size());
+                    if (numWrd >= 2 && ptr[0].compare("//"))
+                    {
+                        std::string str1(ptr[0]);
+                        if (bcIndex<meshVar::nBc)
+                        {
+                            for (int i=0; i<meshVar::nBc; i++)
+                            {
+                                if (!check_bc[i])
+                                {
+                                    if (str1.compare("initialValue") == 0)  //initial data
+                                    {
+                                        std::istringstream str_val(ptr[1]);
+                                        str_val >> iniValues::TIni;
+                                        goto label;
+                                    }
+                                    else if (str1.compare("Type") == 0)  //Bc Type
+                                    {
+                                        std::string str0(ptr[1]);
+
+                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
+                                        {
+                                            if ((str0.compare("WallAdiabatic") == 0))
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = 3;
+                                                bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("WallIsothermal") == 0))
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = 2;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream(line);
+                                                Stream >> tempStr;
+                                                if ((tempStr.compare("value") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file T/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream >> bcValues::TBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("temperatureJump") == 0))  //Type temperatureJump
+                                            {
+                                                bcValues::temperatureJump=true;
+                                                bcValues::TBcType[bcGrp - 1] = 6;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream1(line);
+                                                //Read sigmaT
+                                                Stream1>> tempStr;
+                                                if ((tempStr.compare("sigmaT") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'sigmaT' in file T/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream1>> bcValues::sigmaT;
+                                                }
+
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream2(line);
+                                                //Read TWall
+                                                Stream2 >> tempStr;
+                                                if ((tempStr.compare("Twall") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'Twall' in file T/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream2 >> bcValues::TBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "wall"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
+                                        {
+                                            if ((str0.compare("inFlow") == 0))
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = 1;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream(line);
+                                                Stream >> tempStr;
+                                                if ((tempStr.compare("value") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file T/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream >> bcValues::TBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("outFlow") == 0))
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = 4;
+                                                std::getline(FileFlux, line);
+                                                std::istringstream Stream(line);
+                                                Stream >> tempStr;
+                                                if ((tempStr.compare("backFlowValue") != 0))
+                                                {
+                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'backFlowValue' in file T/group " + std::to_string(bcGrp) + ".\n");
+                                                }
+                                                else
+                                                {
+                                                    Stream >> bcValues::TBCFixed[bcGrp - 1];
+                                                }
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "patch"));
+                                            }
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
+                                        {
+                                            if ((str0.compare("symmetry") == 0))  //Type symmetry
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = 7;
+                                                bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "symmetry"));
+                                            }
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 4)
+                                        {
+                                            if ((str0.compare("matched") == 0))  //Type matched
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = 10;
+                                                bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
+                                            }
+                                            else
+                                            {
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "matched"));
+                                            }
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                    }
+                                    else if ((str1.compare("Group") == 0))  //Group
+                                    {
+                                        std::istringstream str_bcGrp(ptr[1]);
+                                        str_bcGrp >> bcGrp;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    label:
+                    if ((bcIndex>=meshVar::nBc))
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::opFError(fileName, FileLoc));
+            }
+
+            for (int i = 0; i < meshVar::nBc; i++)
+            {
+                if (bcValues::TBcType[i]!=6 && (bcValues::UBcType[i]==5))
+                {
+                    message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::SlipBcCompatibleError(i+1));
+                }
+            }
         }
     }
 }

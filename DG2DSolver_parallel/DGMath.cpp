@@ -518,11 +518,9 @@ namespace math
             {
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
                 {
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1)),
-                            nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                            nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                    w1 = mathVar::wGaussPts[na][nb0];
-                    w2 = mathVar::wGaussPts[na][nb1];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    w1 = mathVar::wGaussPts[nanb][0];
+                    w2 = mathVar::wGaussPts[nanb][1];
                     integral += w1 * w2* mathVar::BPts_Tri[order][nanb];
                 }
             }
@@ -534,11 +532,9 @@ namespace math
             {
                 for (int nb = 0; nb <= mathVar::nGauss; nb++)
                 {
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1)),
-                            nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                            nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                    w1 = mathVar::wGaussPts[na][nb0];
-                    w2 = mathVar::wGaussPts[na][nb1];
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    w1 = mathVar::wGaussPts[nanb][0];
+                    w2 = mathVar::wGaussPts[nanb][1];
                     integral += w1 * w2* mathVar::BPts_Quad[order][nanb];
                 }
             }
@@ -557,11 +553,9 @@ namespace math
         {
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
             {
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1)),
-                        nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                        nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                w1 = mathVar::wGaussPts[na][nb0];
-                w2 = mathVar::wGaussPts[na][nb1];
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                w1 = mathVar::wGaussPts[nanb][0];
+                w2 = mathVar::wGaussPts[nanb][1];
                 J2D = meshVar::J2D[elem][nanb];
                 integral += w1 * w2*(J2D)*Fvalue[na][nb];
             }
@@ -732,12 +726,16 @@ namespace math
     double CalcTFromConsvVar(double rho, double rhou, double rhov, double rhoE)
     {
         double out((material::gamma - 1)*(rhoE - 0.5*(pow(rhou, 2) + pow(rhov, 2)) / rho) / (material::R*rho));
-        if (out < 0)
+        if (out < limitVal::TDwn)
         {
             //std::cout<<rho<<", "<<rhou<<", "<<rhov<<", "<<rhoE<< std::endl;
             //std::cout << "Negative T=" << out<< std::endl;
             //exit(1);
             out=limitVal::TDwn;
+        }
+        else if (out > limitVal::TUp)
+        {
+            out=limitVal::TUp;
         }
         return out;
     }
@@ -746,7 +744,8 @@ namespace math
     {
         //Ham nay giai T theo option duoc setup o file DGSchemes
         //Bien T_old can khi giai T bang pp explicit
-        if (systemVar::solveTImplicitly)
+        double TFinal;
+        if (DGSchemes::solveTImplicitly)
         {
             //Em is total energy with total velocity (um), not advective velocity (u)
             double T(0.0), TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
@@ -773,11 +772,11 @@ namespace math
             {
                 //std::cout<<"Failed to solve T\n";
                 //exit(1);
-                mathVar::solveTFailed=true;
-                return TIni;
+                //mathVar::solveTFailed=true;
+                TFinal=TIni;
             }
             else {
-                return T;
+                TFinal=T;
             }
         }
         else
@@ -789,15 +788,26 @@ namespace math
                     T((rhoE-0.5*(rhou*rhou+rhov*rhov)/rho)/(material::Cv*rho));
             if (T_m<0)
             {
-                if (T<0)
-                    return limitVal::TDwn;
-                else
-                    return T;
+                TFinal=T;
             }
             else
             {
-                return T_m;
+                TFinal=T_m;
             }
+        }
+
+        //Bound T
+        if (TFinal < limitVal::TDwn)
+        {
+            return limitVal::TDwn;
+        }
+        else if (TFinal > limitVal::TUp)
+        {
+            return limitVal::TUp;
+        }
+        else
+        {
+            return TFinal;
         }
     }
 
@@ -805,7 +815,7 @@ namespace math
     {
         //Ham nay chi giai T bang pp implicit
         //Em is total energy with total velocity (um), not advective velocity (u)
-        double T(0.0), TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
+        double T(0.0), TFinal, TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
                 u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
         std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
         Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
@@ -827,13 +837,25 @@ namespace math
         T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
         if (T!=T || T<0)
         {
-            //std::cout<<"Failed to solve T\n";
-            //exit(1);
-            mathVar::solveTFailed=true;
-            return TIni;
+            //mathVar::solveTFailed=true;
+            TFinal=TIni;
         }
         else {
-            return T;
+            TFinal=T;
+        }
+
+        //Bound T
+        if (TFinal < limitVal::TDwn)
+        {
+            return limitVal::TDwn;
+        }
+        else if (TFinal > limitVal::TUp)
+        {
+            return limitVal::TUp;
+        }
+        else
+        {
+            return TFinal;
         }
     }
 
@@ -1830,26 +1852,322 @@ namespace math
 
     namespace numericalFluxes
     {
+        void calConvectiveFluxes(int edgeId, std::vector<double>&flux, std::vector<double> &fxP, std::vector<double> &fxM, std::vector<double> &fyP, std::vector<double> &fyM, std::vector<double> &UP, std::vector<double> &UM, double TP, double TM, std::vector<double> &vectorn)
+        {
+            /* Ham kiem soat buoc tinh convective flux
+             * - P la phia ben trong, M la phia ben ngoai phan tu dang xet.
+             * - Neu flux type la LxF va central, cac bien su dung duoc de o he toa do global:
+             *      + flux          : output flux o he toa do global
+             *      + fxP, fxM      : inviscid flux theo phuong Ox global
+             *      + fyP, fyM      : inviscid flux theo phuong Oy global
+             *      + UP, UM        : vector bien conservative o he toa do global
+             *      + TP, TM        : nhiet do
+             *      + vectorn       : vector phap tuyen theo he toa do global
+             *
+             * - Neu flux type la Roe hoac HLL, cac bien su dung duoc de o he toa do local:
+             *      + flux          : output flux o he toa do global
+             *      + fxP, fxM      : inviscid flux theo phuong Ox local (phuong normal)
+             *      + fyP, fyM      : --------
+             *      + UP, UM        : vector bien conservative o he toa do local
+             *      + TP, TM        : nhiet do
+             *      + vectorn       : vector phap tuyen theo he toa do global
+             *
+            */
+
+            if (DGSchemes::fluxControl::LxF)
+                numericalFluxes::LxFFlux(edgeId,flux,fxP,fxM,fyP,fyM,UP,UM,vectorn);
+            else if (DGSchemes::fluxControl::central)
+                numericalFluxes::centralFlux(flux,fxP,fxM,fyP,fyM,vectorn);
+            else if (DGSchemes::fluxControl::Roe)
+                numericalFluxes::RoeAverageFlux(flux,fxP,fxM,UP,UM,TP,TM,vectorn);
+            else if (DGSchemes::fluxControl::HLL)
+                numericalFluxes::HLLFlux(flux,fxP,fxM,UP,UM,TP,TM,vectorn);
+        }
+
+        void LxFFlux(int edgeId, std::vector<double>&flux, std::vector<double> &fxP, std::vector<double> &fxM, std::vector<double> &fyP, std::vector<double> &fyM, std::vector<double> &UGP, std::vector<double> &UGM, std::vector<double> &vectorn)
+        {
+            /* Note: Cac bien su dung trong ham nay la o he toa do Global vi khi su dung LxF flux,
+             * khong can xoay ve he toa to Local.
+             * Trong ham nay, M la phia ben ngoai, P la phia ben trong phan tu
+            */
+            double C(LxFConst[edgeId]), nx(vectorn[0]), ny(vectorn[1]);
+
+            for (int i=0; i<4; i++)
+            {
+                flux[i]=0.5*(nx*(fxP[i]+fxM[i]) + ny*(fyP[i]+fyM[i]) - //chu y dau -
+                             C*(UGM[i]-UGP[i]));
+            }
+        }
+
+        void centralFlux(std::vector<double>&flux, std::vector<double> &fxP, std::vector<double> &fxM, std::vector<double> &fyP, std::vector<double> &fyM, std::vector<double> &vectorn)
+        {
+            /* Note: Cac bien su dung trong ham nay la o he toa do Global vi khi su dung central flux,
+             * khong can xoay ve he toa to Local.
+             * Trong ham nay, M la phia ben ngoai, P la phia ben trong phan tu
+            */
+
+            double nx(vectorn[0]), ny(vectorn[1]);
+
+            for (int i=0; i<4; i++)
+            {
+                flux[i]=0.5*(nx*(fxP[i]+fxM[i]) +
+                             ny*(fyP[i]+fyM[i]));
+            }
+        }
+
+        void RoeAverageFlux(std::vector<double>&flux, std::vector<double> &fxPlus, std::vector<double> &fxMinus, std::vector<double> &ULPlus, std::vector<double> &ULMinus, double TPlus, double TMinus, std::vector<double> &vectorn)
+        {
+            /* Note: Ham nay lay tu sach Nodal Discontinuous Galerkin Methods
+             * Trong do quy dinh phia - (Minus, M) la phia ben trong phan tu,
+             * phia + (Plus, P) la phia ben ngoai phan tu.
+             * Tuy nhien trong code DG quy dinh nguoc lai (+ la ben trong, - la ben ngoai).
+             *
+             * Vi vay trong ham nay, o phan argument f_Minus la flux cua phia ben
+             * ngoai cua phan tu, f_Plus la flux ben trong phan tu.
+             * Sau khi truyen vao ham, phai dao nguoc lai de dung voi cong thuc
+             * trong sach.
+            */
+            //Chi tinh flux theo phuong x local vi phuong nay vuong goc voi surface, phuong
+            //con lai la tiep tuyen
+
+            //Phai dao nguoc de dung voi cong thuc trong tai lieu
+            std::vector<double> ULM(ULPlus), ULP(ULMinus), fxQM(fxPlus), fxQP(fxMinus);
+
+            double uM(ULM[1]/ULM[0]),vM(ULM[2]/ULM[0]),
+                    uP(ULP[1]/ULP[0]),vP(ULP[2]/ULP[0]),
+                    TM(TPlus),TP(TMinus),
+                    rhoM(ULM[0]),rhoP(ULP[0]);
+
+            /*Doan code nay hoan toan tham khao trong sach------------------------------------------------*/
+            //Tinh enthalpy: H = totalE + p/rho
+            double pM(math::CalcP(TM,rhoM)), pP(math::CalcP(TP,rhoP));
+
+            double HM(material::Cv*TM+0.5*(uM*uM+vM*vM)+pM/rhoM),
+                    HP(material::Cv*TP+0.5*(uP*uP+vP*vP)+pP/rhoP);
+
+            //Tinh Roe average variables
+            double rhoMs(pow(rhoM,0.5)), rhoPs(pow(rhoP,0.5));
+
+            double
+                    rho = rhoMs*rhoPs,
+                    u   = (rhoMs*uM + rhoPs*uP)/(rhoMs + rhoPs),
+                    v   = (rhoMs*vM + rhoPs*vP)/(rhoMs + rhoPs),
+                    H   = (rhoMs*HM + rhoPs*HP)/(rhoMs + rhoPs),
+
+                    c2  = (material::gamma-1)*(H - 0.5*(u*u + v*v)),
+                    c   = pow(c2,0.5);
+
+            //Riemann fluxes
+            double
+                    dW1 = -0.5*rho*(uP-uM)/c + 0.5*(pP-pM)/c2,
+                    dW2 = (rhoP-rhoM) - (pP-pM)/c2,
+                    dW3 = rho*(vP-vM),
+                    dW4 = 0.5*rho*(uP-uM)/c + 0.5*(pP-pM)/c2;
+
+            dW1 = fabs(u-c)*dW1;
+            dW2 = fabs(u)*dW2;
+            dW3 = fabs(u)*dW3;
+            dW4 = fabs(u+c)*dW4;
+
+            //Form Roe fluxes
+            std::vector<double> fx(4,0.0);
+            for (int i=0; i<4;i++)
+            {
+                fx[i]=0.5*(fxQP[i]+fxQM[i]);
+            }
+
+            fx[0] =fx[0]-(dW1*1       +dW2*1            +dW3*0+dW4*1       )/2;
+            fx[1] =fx[1]-(dW1*(u-c)   +dW2*u            +dW3*0+dW4*(u+c)   )/2;
+            fx[2] =fx[2]-(dW1*v       +dW2*v            +dW3*1+dW4*v       )/2;
+            fx[3] =fx[3]-(dW1*(H-u*c)+dW2*(u*u+v*v)/2+dW3*v+dW4*(H+u*c))/2;
+
+            //rotate back to Cartesian
+            flux = fx;
+            double nx(vectorn[0]), ny(vectorn[1]);
+            flux[1] = nx*fx[1] - ny*fx[2];
+            flux[2] = ny*fx[1] + nx*fx[2];
+            /*Doan code nay hoan toan tham khao trong sach------------------------------------------------*/
+        }
+
+        void HLLFlux(std::vector<double>&flux, std::vector<double> &fxPlus, std::vector<double> &fxMinus, std::vector<double> &ULPlus, std::vector<double> &ULMinus, double TPlus, double TMinus, std::vector<double> &vectorn)
+        {
+            /* Note: Ham nay lay tu sach Nodal Discontinuous Galerkin Methods
+             * Trong do quy dinh phia - (Minus, M) la phia ben trong phan tu,
+             * phia + (Plus, P) la phia ben ngoai phan tu.
+             * Tuy nhien trong code DG quy dinh nguoc lai (+ la ben trong, - la ben ngoai).
+             *
+             * Vi vay trong ham nay, o phan argument f_Minus la flux cua phia ben
+             * ngoai cua phan tu, f_Plus la flux ben trong phan tu.
+             * Sau khi truyen vao ham, phai dao nguoc lai de dung voi cong thuc
+             * trong sach.
+            */
+            //Chi tinh flux theo phuong x local vi phuong nay vuong goc voi surface, phuong
+            //con lai la tiep tuyen
+
+            //Phai dao nguoc de dung voi cong thuc trong tai lieu
+            std::vector<double> ULM(ULPlus), ULP(ULMinus), fxQM(fxPlus), fxQP(fxMinus);
+
+            double uM(ULM[1]/ULM[0]),vM(ULM[2]/ULM[0]),
+                    uP(ULP[1]/ULP[0]),vP(ULP[2]/ULP[0]),
+                    TM(TPlus),TP(TMinus),
+                    rhoM(ULM[0]),rhoP(ULP[0]);
+
+            /*Doan code nay hoan toan tham khao trong sach------------------------------------------------*/
+            //Tinh enthalpy: H = totalE + p/rho
+            double pM(math::CalcP(TM,rhoM)), pP(math::CalcP(TP,rhoP));
+
+            double HM(material::Cv*TM+0.5*(uM*uM+vM*vM)+pM/rhoM),
+                    HP(material::Cv*TP+0.5*(uP*uP+vP*vP)+pP/rhoP);
+            double cM(math::CalcSpeedOfSound(TM)),
+                    cP(math::CalcSpeedOfSound(TP));
+
+            //Tinh Roe average variables
+            double rhoMs(pow(rhoM,0.5)), rhoPs(pow(rhoP,0.5));
+
+            double
+                    rho = rhoMs*rhoPs,
+                    u   = (rhoMs*uM + rhoPs*uP)/(rhoMs + rhoPs),
+                    v   = (rhoMs*vM + rhoPs*vP)/(rhoMs + rhoPs),
+                    H   = (rhoMs*HM + rhoPs*HP)/(rhoMs + rhoPs),
+
+                    c2  = (material::gamma-1)*(H - 0.5*(u*u + v*v)),
+                    c   = pow(c2,0.5);
+
+            //Compute estimate of waves speeds
+            double SL = std::min(uM-cM, u-c), SR = std::max(uP+cP, u+c);
+
+            //Riemann fluxes
+            /*
+            double t1, t2, t3;
+            t1 = (std::min(SR,0.0)-std::min(0.0,SL))/(SR-SL);
+            t2 = 1-t1;
+            t3 = (SR*fabs(SL)-SL*fabs(SR))/(2*(SR-SL));
+
+            //Compute HLL flux
+            std::vector<double> fx(4,0.0); //fx means flux
+            for (int i=0; i<4;i++)
+            {
+                fx[i]=t1*fxQP[i] + t2*fxQM[i] - t3*(ULP[i]-ULM[i]);
+            }
+            */
+
+            std::vector<double> fx(4,0.0); //fx means flux
+            if (SL>=0)
+            {
+                fx=fxQM;
+            }
+            else if (SR<=0)
+            {
+                fx=fxQP;
+            }
+            else
+            {
+                for (int i=0; i<4;i++)
+                {
+                    fx[i]=(SR*fxQM[i] - SL*fxQP[i] + SL*SR*(ULP[i]-ULM[i]))/(SR-SL);
+                }
+            }
+
+            //rotate back to Cartesian
+            flux = fx;
+            double nx(vectorn[0]), ny(vectorn[1]);
+            flux[1] = nx*fx[1] - ny*fx[2];
+            flux[2] = ny*fx[1] + nx*fx[2];
+            /*Doan code nay hoan toan tham khao trong sach------------------------------------------------*/
+        }
+
+        void HLLCFlux(std::vector<double>&flux, std::vector<double> &fxPlus, std::vector<double> &fxMinus, std::vector<double> &ULPlus, std::vector<double> &ULMinus, double TPlus, double TMinus, std::vector<double> &vectorn)
+        {
+            /* Note: Ham nay chinh sua tu ham HLLFlux lay tu sach Nodal Discontinuous Galerkin Methods
+             * Trong do quy dinh phia - (Minus, M) la phia ben trong phan tu,
+             * phia + (Plus, P) la phia ben ngoai phan tu.
+             * Tuy nhien trong code DG quy dinh nguoc lai (+ la ben trong, - la ben ngoai).
+             *
+             * Vi vay trong ham nay, o phan argument f_Minus la flux cua phia ben
+             * ngoai cua phan tu, f_Plus la flux ben trong phan tu.
+             * Sau khi truyen vao ham, phai dao nguoc lai de dung voi cong thuc
+             * trong sach.
+            */
+            //Chi tinh flux theo phuong x local vi phuong nay vuong goc voi surface, phuong
+            //con lai la tiep tuyen
+
+            //Phai dao nguoc de dung voi cong thuc trong tai lieu
+            std::vector<double> ULM(ULPlus), ULP(ULMinus), fxQM(fxPlus), fxQP(fxMinus);
+
+            double uM(ULM[1]/ULM[0]),vM(ULM[2]/ULM[0]),
+                    uP(ULP[1]/ULP[0]),vP(ULP[2]/ULP[0]),
+                    TM(TPlus),TP(TMinus),
+                    rhoM(ULM[0]),rhoP(ULP[0]);
+
+            /*Doan code nay hoan toan tham khao trong sach------------------------------------------------*/
+            //Tinh enthalpy: H = totalE + p/rho
+            double pM(math::CalcP(TM,rhoM)), pP(math::CalcP(TP,rhoM));
+
+            double HM(material::Cv*TM+0.5*(uM*uM+vM*vM)+pM/rhoM),
+                    HP(material::Cv*TP+0.5*(uP*uP+vP*vP)+pP/rhoM);
+            double cM(math::CalcSpeedOfSound(TM)),
+                    cP(math::CalcSpeedOfSound(TP));
+
+            //Tinh Roe average variables
+            double rhoMs(pow(rhoM,0.5)), rhoPs(pow(rhoP,0.5));
+
+            double
+                    rho = rhoMs*rhoPs,
+                    u   = (rhoMs*uM + rhoPs*uP)/(rhoMs + rhoPs),
+                    v   = (rhoMs*vM + rhoPs*vP)/(rhoMs + rhoPs),
+                    H   = (rhoMs*HM + rhoPs*HP)/(rhoMs + rhoPs),
+
+                    c2  = (material::gamma-1)*(H - 0.5*(u*u + v*v)),
+                    c   = pow(c2,0.5);
+
+            //Compute estimate of waves speeds
+            double SL = std::min(uM-cM, u-c), SR = std::max(uP+cP, u+c);
+
+            //Riemann fluxes
+            /*
+            double t1, t2, t3;
+            t1 = (std::min(SR,0.0)-std::min(0.0,SL))/(SR-SL);
+            t2 = 1-t1;
+            t3 = (SR*fabs(SL)-SL*fabs(SR))/(2*(SR-SL));
+
+            //Compute HLL flux
+            std::vector<double> fx(4,0.0); //fx means flux
+            for (int i=0; i<4;i++)
+            {
+                fx[i]=t1*fxQP[i] + t2*fxQM[i] - t3*(ULP[i]-ULM[i]);
+            }
+            */
+
+            std::vector<double> fx(4,0.0); //fx means flux
+            if (SL>=0)
+            {
+                fx=fxQM;
+            }
+            else if (SR<=0)
+            {
+                fx=fxQP;
+            }
+            else
+            {
+                for (int i=0; i<4;i++)
+                {
+                    fx[i]=(SR*fxQM[i] - SL*fxQP[i] + SL*SR*(ULP[i]-ULM[i]))/(SR-SL);
+                }
+            }
+
+            //rotate back to Cartesian
+            flux = fx;
+            double nx(vectorn[0]), ny(vectorn[1]);
+            flux[1] = nx*fx[1] - ny*fx[2];
+            flux[2] = ny*fx[1] + nx*fx[2];
+            /*Doan code nay hoan toan tham khao trong sach------------------------------------------------*/
+        }
+
+        //Dung de tinh flux cho phuong trinh phu, tuong duong central flux
         double auxFlux(double MinusVal, double PlusVar, double vectorComp)
         {
             /*use central numerical flux*/
             double flux(0.5*(MinusVal + PlusVar)*vectorComp);
-            return flux;
-        }
-
-        double advectiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double C, double vectorComp, bool mod)
-        {
-            /*use Lax - Friedrich numerical flux*/
-            /*Plus is inside, minus is outside*/
-            double flux(0.5*((FPlus + FMinus)*vectorComp - C * (UMinus - UPlus)));
-            return flux;
-        }
-
-        double diffusiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double Beta, double vectorComp)
-        {
-            /*use central numerical flux*/
-            Beta = 0.0;
-            double flux(0.5*((FPlus + FMinus)*vectorComp + Beta * (UMinus - UPlus)));
             return flux;
         }
 
@@ -1863,58 +2181,31 @@ namespace math
             return C;
         }
 
-        double constantBeta(double uMagP, double uMagM, double rhoP, double rhoM, double eP, double eM, double pP, double pM, std::vector<std::vector<double>> stressHeatFluxP, std::vector<std::vector<double>> stressHeatFluxM, std::vector<double> nP)
+        void findMaxLxFConstantOnEdge(int iedge, int masterCell)
         {
-            std::vector<std::vector<double>> stressP(2, std::vector<double>(2, 0.0)), stressM(2, std::vector<double>(2, 0.0));
-            std::vector<double> heatP(2, 0.0), heatM(2, 0.0),
-                productStressNP(2, 0.0), productStressNM(2, 0.0), nM(2, 0.0), pMultiN_P(2, 0.0) , pMultiN_M(2, 0.0);
-            double productHeatNP(0.0), productStressNP2(0.0), productHeatNM(0.0), productStressNM2(0.0), BM(0.0), BP(0.0), BOut(0.0);
-            //update variables
-            heatP[0] = stressHeatFluxP[0][2];
-            heatP[1] = stressHeatFluxP[1][2];
-            heatM[0] = stressHeatFluxM[0][2];
-            heatM[1] = stressHeatFluxM[1][2];
-            for (int i = 0; i < 2; i++)
+            /* Ham tinh he so C tren 1 edge trong truong hop Flux type la LxF,
+             * cell id input vao ham la master cell cua edge
+            */
+            double TMaster, TSlave;
+            std::vector<double> UMaster(4), USlave(4);
+            std::vector<double> CArray(mathVar::nGauss+1);
+            for (int nG = 0; nG <= mathVar::nGauss; nG++)
             {
-                for (int j = 0; j < 2; j++)
+                std::tie(TMaster,TSlave)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
+                for (int i = 0; i < 4; i++)
                 {
-                    stressP[i][j] = stressHeatFluxP[i][j];
-                    stressM[i][j] = stressHeatFluxM[i][j];
+                    //std::tie(UMaster[i], USlave[i]) = math::internalSurfaceValue(iedge, masterCell, nG, i + 1, 2);
+                    std::tie(UMaster[i], USlave[i]) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, i + 1);
                 }
+                double uMagMaster(sqrt(pow(UMaster[1]/UMaster[0],2)+pow(UMaster[2]/UMaster[0],2))),
+                        uMagSlave(sqrt(pow(USlave[1]/USlave[0],2)+pow(USlave[2]/USlave[0],2))),
+                        aMaster(math::CalcSpeedOfSound(TMaster)),
+                        aSlave(math::CalcSpeedOfSound(TSlave));
+
+                CArray[nG]=(math::numericalFluxes::constantC(uMagMaster,uMagSlave,aMaster,aSlave));
             }
-            nM[0] = -nP[0];
-            nM[1] = -nP[1];
-
-            pMultiN_P[0] = -pP * nP[0];
-            pMultiN_P[1] = -pP * nP[1];
-
-            pMultiN_M[0] = -pM * nM[0];
-            pMultiN_M[1] = -pM * nM[1];
-
-            //calculating
-            productHeatNP = math::vectorDotProduct(heatP, nP);
-            productHeatNM = math::vectorDotProduct(heatM, nM);
-
-            productStressNP = math::tensorMath::tensorVectorDotProduct(stressP, nP);
-            //productStressNP = math::vectorSum(productStressNP, pMultiN_P);
-
-            productStressNM = math::tensorMath::tensorVectorDotProduct(stressM, nM);
-            //productStressNM = math::vectorSum(productStressNM, pMultiN_M);
-
-            productStressNP2 = math::vectorNorm(productStressNP);
-            productStressNM2 = math::vectorNorm(productStressNM);
-
-            BP = (pow(pow(rhoP*productHeatNP, 2) + 2 * rhoP*rhoP*eP*pow(productStressNP2, 2), 0.5) + rhoP * fabs(productHeatNP)) / (2 * rhoP*rhoP*eP);
-            BM = (pow(pow(rhoP*productHeatNM, 2) + 2 * rhoM*rhoM*eM*pow(productStressNM2, 2), 0.5) + rhoM * fabs(productHeatNM)) / (2 * rhoM*rhoM*eM);
-            if (BP > BM)
-            {
-                BOut = BP;
-            }
-            else
-            {
-                BOut = BM;
-            }
-            return BOut;
+            LxFConst[iedge]=*max_element(CArray.begin(), CArray.end());
+            //-----------------------------------------------
         }
     }//end of namespace numericalFluxes
 
@@ -2374,6 +2665,59 @@ namespace math
             yN = a*xN+b;
             return std::make_tuple(xN, yN);
         }
+
+        std::vector<int> sortVerticesCCW(std::vector<int> verticesId, std::vector<double> angle)
+        {
+            /* Ham sap xep cac vertex cua 1 cell theo chieu counter clockwise.
+             * Argument la verticesId cu, goc tao boi vertex, tam cua hinh poly va
+             * truc Ox cua tung vertex. Ham se sap xep cac vertex theo chieu goc
+             * tang dan
+            */
+            int nV(static_cast<int>(verticesId.size())), id;
+            std::vector<int> newOrder(nV,0),
+                    sortVector(nV,0);
+            double m;
+
+            for (int i=0; i<nV; i++)
+            {
+                m=*max_element(angle.begin(), angle.end());
+                id=math::findIndex_double(m,angle);
+                sortVector[i]=id;
+                angle[id]=370.0;
+            }
+
+            for (int i=0; i<nV; i++)
+            {
+                id=sortVector[i];
+                newOrder[i]=verticesId[id];
+            }
+            return newOrder;
+        }
+
+        double calcAngleOfPoint(double xOrig,double yOrig,double xPoint,double yPoint)
+        {
+            /* Ham tinh goc tao boi 1 dinh cua poly, tam poly va chieu + truc Ox
+            */
+            double A[2]={fabs(1.5*(xOrig+0.1)), yOrig},
+                    O[2]={xOrig,yOrig},
+                    B[2]={xPoint,yPoint};
+
+            double OA[2]={A[0]-O[0],A[1]-O[1]},
+                    OB[2]={B[0]-O[0],B[1]-O[1]};
+
+            double lOA(sqrt(OA[0]*OA[0]+OA[1]*OA[1])),
+                    lOB(sqrt(OB[0]*OB[0]+OB[1]*OB[1])),
+
+                    dotProduct=OA[0]*OB[0]+OA[1]*OB[1],
+                    det=OA[0]*OB[1]-OA[1]*OB[0];
+
+            double cosx=dotProduct/(lOA*lOB), rad, angle;
+            rad=acos(cosx);
+            angle=rad*180/3.1416;
+
+            if (det>0) return angle;
+            else return (360-angle);
+        }
     }
 
     namespace residualManipulation
@@ -2403,13 +2747,11 @@ namespace math
         {
             for (int nb = 0; nb <= mathVar::nGauss; nb++)
             {
-                int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                        nb1(calcArrId(nb,1,mathVar::nGauss+1));
-                aG = mathVar::GaussPts[na][nb0];
-                bG = mathVar::GaussPts[na][nb1];
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
 
-                aGL = mathVar::GaussLobattoPts[na][nb0];
-                bGL = mathVar::GaussLobattoPts[na][nb1];
+                aGL = mathVar::GaussLobattoPts[nanb][0];
+                bGL = mathVar::GaussLobattoPts[nanb][1];
 
                 vectorT[index] = math::pointValue(element, aG, bGL, 6, 1);
                 index++;
@@ -2427,6 +2769,24 @@ namespace math
         for (int i = 0; i < size; i++)
         {
             if (number == InArray[i])
+            {
+                index = i;
+                break;
+            }
+            else
+            {
+                index = -1;
+            }
+        }
+        return index;
+    }
+
+    int findIndex_double(double number, std::vector<double> InArray)
+    {
+        int index(0), size(InArray.size());
+        for (int i = 0; i < size; i++)
+        {
+            if (fabs(InArray[i]-number)<1e-10)
             {
                 index = i;
                 break;
@@ -2563,17 +2923,37 @@ namespace math
         return dU;
     }
 
+    std::tuple<double, double> rotateToLocalCoordinateSystem(double xComp, double yComp, double nx, double ny)
+    {
+        /* localXComp tuong duong Ox
+         * localYComp tuong duong Oy
+        */
+        double localXComp(nx*xComp+ny*yComp);
+        double localYComp(-ny*xComp+nx*yComp);
+        return std::make_tuple(localXComp,localYComp);
+    }
+
+    std::tuple<double, double> rotateToGlobalCoordinateSystem(double localXComp, double localYComp, double nx, double ny)
+    {
+        /* normalComp tuong duong Ox
+         * tangentialComp tuong duong Oy
+        */
+        double xComp(nx*localXComp-ny*localYComp);
+        double yComp(ny*localXComp+nx*localYComp);
+        return std::make_tuple(xComp,yComp);
+    }
+
     namespace solvePolynomialsEq {
     double NewtonRaphson(std::vector<double> &power, std::vector<double> &coefs, double initialValue)
         {
             //tang initial value len
             double initialValue_org(initialValue);
-            initialValue=initialValue*5.0;
+            initialValue=initialValue*2.0;
 
             int polySize(static_cast<int>(power.size())), maxIter(100);
             std::vector<double> power_deriv(polySize, 0.0),
                     coefs_deriv(polySize, 0.0);
-            double error(1), convergence_cri(1e-6), output(0.0), fValue(0.0), derivfValue(0.0);
+            double error(1), convergence_cri(1e-8), output(0.0), fValue(0.0), derivfValue(0.0);
 
             //find 1st derivative of input polynomial
             for (int polyOrder = 0; polyOrder < polySize; polyOrder++) {

@@ -242,6 +242,7 @@ namespace math
 
 	//Function returns id of input number in input array
 	int findIndex(int number, std::vector<int> InArray);
+    int findIndex_double(double number, std::vector<double> InArray);
 
 	//Function finds norm of vector
 	double vectorNorm(std::vector<double> vector);
@@ -253,6 +254,10 @@ namespace math
     std::vector<double> pointSVars(int edge, int element, double a, double b, int dir, int option);
 
     double calcDivTFromAuxVariable(double dRhoE, double dRho, double rhoE, double rho);
+
+    std::tuple<double, double> rotateToLocalCoordinateSystem(double xComp, double yComp, double nx, double ny);
+
+    std::tuple<double, double> rotateToGlobalCoordinateSystem(double normComp, double tangComp, double nx, double ny);
 
     namespace tensorMath {
         std::vector<std::vector<double>> unitTensor(int rowNum);
@@ -294,20 +299,25 @@ namespace math
 
 	namespace numericalFluxes
 	{
-		/*Function calculates auxilary flux at Gauss point*/
-		double auxFlux(double MinusVal, double PlusVar, double vectorComp);
+        void calConvectiveFluxes(int edgeId, std::vector<double>&flux, std::vector<double> &fxP, std::vector<double> &fxM, std::vector<double> &fyP, std::vector<double> &fyM, std::vector<double> &UP, std::vector<double> &UM, double TP, double TM, std::vector<double> &vectorn);
 
-		/*Function calculates advective flux*/
-        double advectiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double C, double vectorComp, bool mod);
+        void LxFFlux(int edgeId, std::vector<double>&flux, std::vector<double> &fxP, std::vector<double> &fxM, std::vector<double> &fyP, std::vector<double> &fyM, std::vector<double> &UGP, std::vector<double> &UGM, std::vector<double> &vectorn);
 
-		/*Function calculates diffusive flux*/
-		double diffusiveFlux(double FPlus, double FMinus, double UPlus, double UMinus, double Beta, double vectorComp);
+        void centralFlux(std::vector<double>&flux, std::vector<double> &fxP, std::vector<double> &fxM, std::vector<double> &fyP, std::vector<double> &fyM, std::vector<double> &vectorn);
 
-		/*Function calculates constant C for advective flux*/
+        void RoeAverageFlux(std::vector<double>&flux, std::vector<double> &fxPlus, std::vector<double> &fxMinus, std::vector<double> &ULPlus, std::vector<double> &ULMinus, double TPlus, double TMinus, std::vector<double> &vectorn);
+
+        void HLLFlux(std::vector<double>&flux, std::vector<double> &fxPlus, std::vector<double> &fxMinus, std::vector<double> &ULPlus, std::vector<double> &ULMinus, double TPlus, double TMinus, std::vector<double> &vectorn);
+
+        double auxFlux(double MinusVal, double PlusVar, double vectorComp);
+
+        /*Function calculates constant C for advective flux*/
 		double constantC(double uMagP, double uMagM, double aP, double aM);
 
 		/*Function calculates constant Beta for diffusive flux*/
         double constantBeta(double rhoP, double rhoM, double eP, double eM, std::vector<std::vector<double>> stressHeatFluxP, std::vector<std::vector<double>> stressHeatFluxM, std::vector<double> nP);
+
+        void findMaxLxFConstantOnEdge(int iedge, int masterCell);
 	}
 
 	namespace inviscidTerms
@@ -376,6 +386,10 @@ namespace math
         std::tuple<double, double> calSizeOfQuadElement(std::vector<double> &xCoor, std::vector<double> &yCoor);
 
         std::tuple<double, double> findNormalProjectionOfPointToEdge(double xA, double yA, double xB, double yB, double xC, double yC);
+
+        std::vector<int> sortVerticesCCW(std::vector<int> verticesId, std::vector<double> angle);
+
+        double calcAngleOfPoint(double xOrig,double yOrig,double xPoint,double yPoint);
 	}
 
 	namespace residualManipulation

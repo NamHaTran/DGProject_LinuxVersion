@@ -139,6 +139,9 @@ namespace auxUlti
 
     std::string createTimeStepFolder(int iter, std::string option);
 
+    //Ham lay gia tri UMean (U order 0) cua 1 cell
+    void getVectorUMeanOfCell(int element, std::vector<double> &U);
+
     std::tuple<double, double> getUAtInterfaces(int edge, int element, int nG, int valType);
     double getUPlusAtBC(int edge, int nG, int valType);
 

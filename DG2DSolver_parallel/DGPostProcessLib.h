@@ -48,4 +48,8 @@ namespace DG2Tecplot
         std::vector <double> Symmetry(int element, int edge, double a, double b);
 	}
 }
+
+namespace postProcessing_Surface {
+    void writeVarsAtWall(std::string Loc);
+}
 #endif // DGPOSTPROCESSLIB_H_INCLUDED

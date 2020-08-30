@@ -14,13 +14,13 @@ namespace systemVar
 
 	double CFL(0.5); //Courant number
 	double Ttime(0.0); //Total time
-	int wrtI(0); //write interval
+    int wrtI(0); //write interval
     bool wrtLog(true), loadSavedCase(false);
 
     int ddtScheme(1);
     double epsilon(1e-13);
 
-	int iterCount(0), savingCout(0);
+    int iterCount(0), savingCout(0), loadConstCount(0);
 	double rhoResNorm(1.0), rhouResNorm(1.0), rhovResNorm(1.0), rhoEResNorm(1.0);
 
 	bool initializedOrNot(false), runPreProcess(false);
@@ -30,19 +30,19 @@ namespace systemVar
 
     //For parallel computing
     int totalProc(4), currentProc(0);
-    bool runDecomposeCaseFnc(false), parallelMode(true);
+    bool runDecomposeCaseFnc(false), parallelMode(true), runCheckParMesh(false);
 
     //Detect first iteration
     bool firstIter(true);
 	
 	std::string headerFile(message::headerFile());
 
-    //Dung cho truong hop mass diffusion, true neu giai T implicit, false neu giai T explicit
-    bool solveTImplicitly(true);
-
     //sendRecvOrder
     int **sendRecvOrder = new int*[1];
     int sendRecvOrder_length;
+
+    //Read/write mode
+    std::string readWriteMode(" ");
 }
 
 namespace meshVar
@@ -160,25 +160,45 @@ namespace limitVal
 }
 
 namespace controlFlag {
-namespace sequence {
-bool checkUnvReader(false),
-checkBCsHelper(false),
-checkUnvHelper(false),
-reSubmit(false),
-exportMeshToMetis(false),
-testMeshPartitionResult(false),
-debug_checkElement(false),
-decomposeCase(false),
-reconstructLatestTime(false),
-checkPartitionedMesh(false);
-}
+    namespace sequence {
+    bool checkUnvReader(false),
+    checkBCsHelper(false),
+    checkUnvHelper(false),
+    reSubmit(false),
+    exportMeshToMetis(false),
+    testMeshPartitionResult(false),
+    debug_checkElement(false),
+    decomposeCase(false),
+    reconstructLatestTime(false),
+    checkPartitionedMesh(false);
+    }
 
-namespace parallel {
-bool checkDGRun(false),
-mapResults(false);
-}
+    namespace parallel {
+    bool checkDGRun(false),
+    mapResults(false);
+    }
+
+    /* Cac flag trong namespace nay check xem folder chua kq co file TSurface, uSurface ... hay khong
+     * Neu khong co, cac gia tri cua cac field nay set ve gia tri mac dinh o dieu kien bien
+    */
+    namespace fileAvailFlags {
+    bool fileTSurface(false),
+        fileuSurface(false),
+        filevSurface(false);
+    }
 }
 
 namespace warningFlag {
-bool reversedFlowOccur(false);
+    bool reversedFlowOccur(false);
+}
+
+namespace DGSchemes {
+    //Dung cho truong hop mass diffusion, true neu giai T implicit, false neu giai T explicit
+    bool solveTImplicitly(true);
+
+    namespace fluxControl {
+        //Tai version hien tai, flux cua bien phu va viscous flux la central flux, flux control chi apply cho
+        //convective flux
+        bool LxF(false), Roe(false), HLL(false), HLLC(false), central(false);
+    }
 }

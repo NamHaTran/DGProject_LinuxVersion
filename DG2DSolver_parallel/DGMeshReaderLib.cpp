@@ -44,10 +44,17 @@ namespace MshReader
 		/*Get points at boundary (for postProcessing)*/
 		getBoundaryPoints();
 
-        if (!systemVar::runDecomposeCaseFnc)
+        if (systemVar::runDecomposeCaseFnc || systemVar::runCheckParMesh)
         {
             /*Save mesh data*/
-            IO::SaveMeshInfor("p");
+            //IO::SaveMeshInfor("s");
+
+            MshReader::getMidpointOfBCEdge("s");
+        }
+        else
+        {
+            /*Save mesh data*/
+            //IO::SaveMeshInfor("p");
 
             MshReader::getMidpointOfBCEdge("p");
         }
@@ -872,6 +879,51 @@ namespace MshReader
             midY=0.5*(meshVar::Points[pt1][1]+meshVar::Points[pt2][1]);
             FluxBcEdgeMidPoints <<midX<<" "<<midY<< "\n";
         }
+    }
+
+    void fixCellVerticesOrder()
+    {
+        int numOfErrorCell(0);
+        for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+        {
+            int elemType(auxUlti::checkType(nelement));
+            std::vector<int> pointIdOfElem(elemType,0), newOrder(elemType);
+            double xOrig(0.0), yOrig(0.0);
+            std::vector<double> vectorAngle(elemType, 0.0);
+
+            //Lay id cac vertex cua cell va tinh toa do tam cua cell
+            for (int iPoint=0; iPoint<elemType; iPoint++)
+            {
+                pointIdOfElem[iPoint]=meshVar::Elements2D[nelement][iPoint];
+                xOrig+=meshVar::Points[pointIdOfElem[iPoint]][0];
+                yOrig+=meshVar::Points[pointIdOfElem[iPoint]][1];
+            }
+            xOrig/=elemType;
+            yOrig/=elemType;
+
+            //Tinh goc va sap xet thu tu cua vertex theo chieu CCW
+            int pointId;
+            double xP, yP;
+            for (int i=0; i<elemType; i++)
+            {
+                pointId=pointIdOfElem[i];
+                xP=meshVar::Points[pointId][0];
+                yP=meshVar::Points[pointId][1];
+                vectorAngle[i]=math::geometricOp::calcAngleOfPoint(xOrig,yOrig,xP,yP);
+            }
+
+            newOrder=math::geometricOp::sortVerticesCCW(pointIdOfElem,vectorAngle);
+            if (newOrder!=pointIdOfElem)
+            {
+                numOfErrorCell++;
+                //Cap nhat order moi cho mesh
+                for (int i=0; i<elemType; i++)
+                    meshVar::Elements2D[nelement][i]=newOrder[i];
+            }
+        }
+
+        if (numOfErrorCell>0)
+            std::cout<<"Found "<<numOfErrorCell<<" cells which have error of inversed vertex order.\n";
     }
 }
 

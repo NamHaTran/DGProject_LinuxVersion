@@ -660,10 +660,9 @@ namespace auxUlti
 	std::tuple<double, double> getGaussCoor(int na, int nb)
 	{
 		double a(0.0), b(0.0);
-        int nb0(calcArrId(nb,0,mathVar::nGauss+1)),
-                nb1(calcArrId(nb,1,mathVar::nGauss+1));
-        a = mathVar::GaussPts[na][nb0];
-        b= mathVar::GaussPts[na][nb1];
+        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+        a = mathVar::GaussPts[nanb][0];
+        b= mathVar::GaussPts[nanb][1];
 		return std::make_tuple(a, b);
 	}
 
@@ -934,6 +933,7 @@ namespace auxUlti
         SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
         auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
         meshVar::distanceFromCentroidToBCEdge = new double [meshVar::numBCEdges];
+
         auxUlti::initialize1DArray(meshVar::distanceFromCentroidToBCEdge, meshVar::numBCEdges, 0.0);
 
         rhoN = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
@@ -968,25 +968,15 @@ namespace auxUlti
             //Bo BR2
         }
 
-        surfaceFields::invis_rhoX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhouX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhovX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhoEX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::invis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::invis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::invis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::invis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
 
-        surfaceFields::invis_rhoY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhouY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhovY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhoEY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-
-        surfaceFields::Vis_rhoX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhouX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhovX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhoEX = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-
-        surfaceFields::Vis_rhoY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhouY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhovY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhoEY = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::Vis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::Vis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::Vis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::Vis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
 
         surfaceFields::T = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
 
@@ -1021,9 +1011,9 @@ namespace auxUlti
         mathVar::xGauss=new double [mathVar::nGauss+1];
         mathVar::wGaussLobatto=new double [mathVar::nGauss+1];
         mathVar::xGaussLobatto=new double [mathVar::nGauss+1];
-        mathVar::B=new double [mathVar::nGauss+1];
-        mathVar::dBa=new double [mathVar::nGauss+1];
-        mathVar::dBb=new double [mathVar::nGauss+1];
+        mathVar::B=new double [mathVar::orderElem+1];
+        mathVar::dBa=new double [mathVar::orderElem+1];
+        mathVar::dBb=new double [mathVar::orderElem+1];
 
         mathVar::BPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
         mathVar::dBaPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
@@ -1031,10 +1021,10 @@ namespace auxUlti
         mathVar::BPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
         mathVar::dBaPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
         mathVar::dBbPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::GaussPts = auxUlti::resize2DArray(mathVar::nGauss + 1, (mathVar::nGauss + 1)*2,0.0);
-        mathVar::wGaussPts = auxUlti::resize2DArray(mathVar::nGauss + 1, (mathVar::nGauss + 1)*2,0.0);
-        mathVar::GaussLobattoPts = auxUlti::resize2DArray(mathVar::nGauss + 1, (mathVar::nGauss + 1)*2,0.0);
-        mathVar::wGaussLobattoPts = auxUlti::resize2DArray(mathVar::nGauss + 1, (mathVar::nGauss + 1)*2,0.0);
+        mathVar::GaussPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
+        mathVar::wGaussPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
+        mathVar::GaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
+        mathVar::wGaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
 
         //Buffer (parallel computing)
         //Conservative variables
@@ -1312,6 +1302,14 @@ namespace auxUlti
             printf("Error of copying file\n");
             exit(1);
         }
+    }
+
+    void getVectorUMeanOfCell(int element, std::vector<double> &U)
+    {
+        U[0]=rho[element][0];
+        U[1]=rhou[element][0];
+        U[2]=rhov[element][0];
+        U[3]=rhoE[element][0];
     }
 
     std::tuple<double, double> getUAtInterfaces(int edge, int element, int nG, int valType)
@@ -1829,7 +1827,7 @@ namespace auxUlti
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
-        //*Chi receive khi nao toan bo cac processor send data xong
+        //Chi receive khi nao toan bo cac processor send data xong
 
         //Receive
         for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; ++iBCedge) {

@@ -183,27 +183,16 @@ namespace surfaceFields {
     extern double **aux_rhoE;
 
     //NSF equation
-    //X direction
-    extern double **invis_rhoX;
-    extern double **invis_rhouX;
-    extern double **invis_rhovX;
-    extern double **invis_rhoEX;
+    //inviscid/viscous flux
+    extern double **invis_rho;
+    extern double **invis_rhou;
+    extern double **invis_rhov;
+    extern double **invis_rhoE;
 
-    extern double **Vis_rhoX;
-    extern double **Vis_rhouX;
-    extern double **Vis_rhovX;
-    extern double **Vis_rhoEX;
-
-    //Y direction
-    extern double **invis_rhoY;
-    extern double **invis_rhouY;
-    extern double **invis_rhovY;
-    extern double **invis_rhoEY;
-
-    extern double **Vis_rhoY;
-    extern double **Vis_rhouY;
-    extern double **Vis_rhovY;
-    extern double **Vis_rhoEY;
+    extern double **Vis_rho;
+    extern double **Vis_rhou;
+    extern double **Vis_rhov;
+    extern double **Vis_rhoE;
 
     extern double **T;
 }

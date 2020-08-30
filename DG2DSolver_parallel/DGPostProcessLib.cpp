@@ -163,8 +163,8 @@ void reconstructLatestTime()
 
     std::string rankOf2DElemLoc = systemVar::pwd + "/Constant/Mesh/rankOf2DElem.txt",
             Elem2DlocalIdWithRankLoc = systemVar::pwd + "/Constant/Mesh/Elem2DlocalIdWithRank.txt";
-    std::tie(rankOf2DElem,temp)=IO::read1DIntArray(rankOf2DElemLoc,"rankOf2DElem.txt");
-    std::tie(Elem2DlocalIdWithRank,temp)=IO::read1DIntArray(Elem2DlocalIdWithRankLoc,"Elem2DlocalIdWithRank.txt");
+    std::tie(std::ignore,rankOf2DElem,temp)=IO::read1DIntArray(rankOf2DElemLoc,"rankOf2DElem.txt",true);
+    std::tie(std::ignore,Elem2DlocalIdWithRank,temp)=IO::read1DIntArray(Elem2DlocalIdWithRankLoc,"Elem2DlocalIdWithRank.txt",true);
 
     std::vector<int> endIdList(systemVar::totalProc,0);
     std::string rhoLoc, rhouLoc, rhovLoc, rhoELoc;
@@ -183,7 +183,7 @@ void reconstructLatestTime()
         rhovLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhov.txt";
         rhoELoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhoE.txt";
 
-        std::tie(rhoProc,a) = IO::read2DArray(mathVar::orderElem+1,rhoLoc,"rho.txt");
+        std::tie(std::ignore,rhoProc,a) = IO::read2DArray(mathVar::orderElem+1,rhoLoc,"rho.txt",true);
         if (iproc==0)
         {
             endIdList[iproc]=a;
@@ -192,9 +192,9 @@ void reconstructLatestTime()
         {
             endIdList[iproc]=endIdList[iproc-1]+a;
         }
-        std::tie(rhouProc,a)=IO::read2DArray(mathVar::orderElem+1,rhouLoc,"rhou.txt");
-        std::tie(rhovProc,a)=IO::read2DArray(mathVar::orderElem+1,rhovLoc,"rhov.txt");
-        std::tie(rhoEProc,a)=IO::read2DArray(mathVar::orderElem+1,rhoELoc,"rhoE.txt");
+        std::tie(std::ignore,rhouProc,a)=IO::read2DArray(mathVar::orderElem+1,rhouLoc,"rhou.txt",true);
+        std::tie(std::ignore,rhovProc,a)=IO::read2DArray(mathVar::orderElem+1,rhovLoc,"rhov.txt",true);
+        std::tie(std::ignore,rhoEProc,a)=IO::read2DArray(mathVar::orderElem+1,rhoELoc,"rhoE.txt",true);
 
         if (iproc==0)
         {
@@ -1076,4 +1076,48 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 			return U;
 		}
 	}
+}
+
+namespace postProcessing_Surface {
+    void writeVarsAtWall(std::string Loc)
+    {
+        int globleEdge(-1), element;
+        double a, b, rhoBC;
+        std::string fileName("surfaceVariables_proc");
+        fileName=fileName+std::to_string(systemVar::currentProc)+".txt";
+        std::ofstream FileFlux((Loc+"/"+fileName).c_str());
+
+        if (FileFlux)
+        {
+            FileFlux<<message::headerFile()<<"\n"
+                   <<"xCoor yCoor p T u v\n";
+
+            for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
+            {
+                globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
+                int bcType(meshVar::inpoed[globleEdge][3]);
+                if (bcType==1) //type wall
+                {
+                    //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
+                    std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
+                    a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][0];
+                    b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][1];
+                    rhoBC=math::pointValue(element,a,b,1,2);
+
+                    FileFlux
+                              <<meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][0]<<" "
+                              <<meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][1]<<" "
+                              <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge],rhoBC)<<" "
+                              <<SurfaceBCFields::TBc[ilocalEdge]<<" "
+                              <<SurfaceBCFields::uBc[ilocalEdge]<<" "
+                              <<SurfaceBCFields::vBc[ilocalEdge]<<" "
+                              <<"\n";
+                }
+            }
+        }
+        else
+        {
+            std::cout<<"Cannot open file at location "<<(Loc+"/"+fileName)<<" to write.\n";
+        }
+    }
 }

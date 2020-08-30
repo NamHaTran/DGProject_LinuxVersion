@@ -190,27 +190,16 @@ namespace surfaceFields {
     double **aux_rhoE = new double*[1];
 
     //NSF equation
-    //X direction
-    double **invis_rhoX = new double*[1];
-    double **invis_rhouX = new double*[1];
-    double **invis_rhovX = new double*[1];
-    double **invis_rhoEX = new double*[1];
+    //inviscid/viscous flux
+    double **invis_rho = new double*[1];
+    double **invis_rhou = new double*[1];
+    double **invis_rhov = new double*[1];
+    double **invis_rhoE = new double*[1];
 
-    double **Vis_rhoX = new double*[1];
-    double **Vis_rhouX = new double*[1];
-    double **Vis_rhovX = new double*[1];
-    double **Vis_rhoEX = new double*[1];
-
-    //Y direction
-    double **invis_rhoY = new double*[1];
-    double **invis_rhouY = new double*[1];
-    double **invis_rhovY = new double*[1];
-    double **invis_rhoEY = new double*[1];
-
-    double **Vis_rhoY = new double*[1];
-    double **Vis_rhouY = new double*[1];
-    double **Vis_rhovY = new double*[1];
-    double **Vis_rhoEY = new double*[1];
+    double **Vis_rho = new double*[1];
+    double **Vis_rhou = new double*[1];
+    double **Vis_rhov = new double*[1];
+    double **Vis_rhoE = new double*[1];
 
     double **T = new double*[1];
 }

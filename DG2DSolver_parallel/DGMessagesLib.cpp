@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <mpi.h>
 
 //include chrono and ctime to get time data
 #include <chrono>
@@ -169,28 +170,31 @@ To convert unv mesh format to DG2D readable format, do following task step by st
     void showCaseInformations()
     {
         std::string runOrNot(" ");
-        std::cout<<"\nCase's informations:\n";
-        std::cout<<"- Order of accuracy "<<mathVar::orderElem<<".\n";
+        std::cout<<"\nCase settings:\n";
+        std::cout<<"    - Order of accuracy "<<mathVar::orderElem<<".\n";
+        std::cout<<"    - Number of Gauss points "<<mathVar::nGauss<<".\n";
+
+        std::cout<<"\nFlow properties:\n";
         if (refValues::subsonic)
         {
-            std::cout<<"- Flow is subsonic.\n";
+            std::cout<<"    - Flow is subsonic.\n";
         }
         else {
-            std::cout<<"- Flow is supersonic.\n";
+            std::cout<<"    - Flow is supersonic.\n";
         }
 
         if (flowProperties::viscous)
         {
-            std::cout<<"- Viscosity is on.\n";
+            std::cout<<"    - Viscosity is on.\n";
         }
         else {
-            std::cout<<"- Viscosity is off.\n";
+            std::cout<<"    - Viscosity is off.\n";
         }
 
         if (flowProperties::massDiffusion)
         {
-            std::cout<<"- Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff;
-            if (systemVar::solveTImplicitly)
+            std::cout<<"    - Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff;
+            if (DGSchemes::solveTImplicitly)
             {
                 std::cout<<". Solving T method is implicit.\n";
             }
@@ -200,36 +204,87 @@ To convert unv mesh format to DG2D readable format, do following task step by st
             }
         }
         else {
-            std::cout<<"- Mass diffusion is off.\n";
+            std::cout<<"    - Mass diffusion is off.\n";
         }
 
+        std::cout<<"\nBoundary conditions settings:\n";
         if (auxUlti::checkTimeVaryingBCAvailable())
         {
-            std::cout<<"- Time varying BCs are set.\n";
+            std::cout<<"    - Time varying BCs are set.\n";
         }
         else {
-            std::cout<<"- All BCs are not varied with time.\n";
+            std::cout<<"    - All BCs are not varied with time.\n";
         }
 
-        if (limitVal::limiterName.size() > 0)
+        //Show flux type
+        std::cout<<"\nDG scheme settings:\n";
+        std::cout<<"    - Flux type for auxilarity flux: Central flux.\n";
+        std::cout<<"    - Flux type for convective flux: ";
+        if (DGSchemes::fluxControl::LxF)
         {
-            std::cout << "- Selected limiter(s): ";
-            for (int i = 0; i < static_cast<int>(limitVal::limiterName.size()); i++)
+            std::cout<<"Lax-Friedrichs flux.\n";
+        }
+        else if (DGSchemes::fluxControl::Roe)
+        {
+            std::cout<<"Roe Average flux.\n";
+        }
+        else if (DGSchemes::fluxControl::HLL)
+        {
+            std::cout<<"Harten-Lax-van Leer-Einfeldt (HLLE) flux.\n";
+        }
+        else if (DGSchemes::fluxControl::HLLC) //Hien tai chua cap nhat flux nay
+        {
+            std::cout<<"Harten-Lax-van Leer-Contact (HLLC) flux.\n";
+        }
+        else if (DGSchemes::fluxControl::central)
+        {
+            std::cout<<"Central flux.\n";
+        }
+        std::cout<<"    - Flux type for diffusive flux: Central flux.\n";
+
+        if (mathVar::orderElem!=0)
+        {
+            std::cout<<"\nLimiter settings:\n";
+            if (limitVal::limiterName.size() > 0)
             {
-                std::cout << limitVal::limiterName[i] << " ";
+                std::cout << "  - Selected limiter(s): ";
+                for (int i = 0; i < static_cast<int>(limitVal::limiterName.size()); i++)
+                {
+                    std::cout << limitVal::limiterName[i] << " ";
+                }
+                std::cout << "\n";
             }
-            std::cout << "\n";
         }
     }
 
     void showWarning()
     {
         //Reversed flow
-        if (warningFlag::reversedFlowOccur)
+        bool showWarning(false);
+        int temp;
+        if (systemVar::currentProc==0)
         {
-            std::cout<<"Warning! Reversed flow is occured at outlet.\n";
-            warningFlag::reversedFlowOccur=false;
+            //Check o processor 0
+            if (warningFlag::reversedFlowOccur)
+                showWarning=true;
+
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&temp, 1, MPI_INT, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                if (!showWarning && temp==1)
+                {
+                    showWarning=true;
+                }
+            }
+            if (showWarning)
+            {
+                std::cout<<"Warning! Reversed flow is occured at outlet.\n";
+            }
         }
+        else {
+            if (warningFlag::reversedFlowOccur) temp=1;
+            MPI_Send(&temp, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        }
+        warningFlag::reversedFlowOccur=false;
     }
 }
 

@@ -161,6 +161,8 @@ void Executer()
     {
         if (systemVar::currentProc==0)
         {
+            systemVar::runCheckParMesh=true;
+
             /*LOAD TOTAL PROCESSES*/
             //IO::readNumberOfCores();
 
@@ -242,52 +244,10 @@ void Processing()
 {
     //Giai phong bot bo nho truoc khi tinh toan
     //auxUlti::releaseMemory();
-    
-    std::string readWriteMode;
-    if (systemVar::parallelMode)
-    {
-        readWriteMode="p";
-    }
-    else {
-        readWriteMode="s";
-    }
 
-	if (systemVar::loadSavedCase)
-	{
-		meshParam::calcStiffMatrixCoeffs();
-        if (systemVar::currentProc==0){
-        std::cout << "Loading case...\n" << std::endl;}
+    //Setup case san sang de chay
+    process::prepareCaseForRunning();
 
-        IO::loadCase(readWriteMode);
-	}
-	else
-	{
-		/*SET INITIAL VALUES*/
-		if (systemVar::initializedOrNot == false)
-		{
-			meshParam::calcStiffMatrixCoeffs();
-            process::setIniVolumeValues();
-            process::setIniSurfaceBCValues();
-		}
-	}
-
-    if (systemVar::currentProc==0)
-    {
-        std::cout << " \n" << "Simulation is started\n";
-    }
-
-	//APPLY LIMITER
-	limiter::mathForLimiter::getNeighborElements();
-	limitVal::numOfLimitCell = 0;
-    limiter::limiter_1Step();
-
-    //SEND/RECEIVE INITIAL CONDITIONS
-    if (systemVar::parallelMode)
-    {
-        auxUlti::functionsOfParallelComputing::sendReceiveU();
-    }
-
-	int loadConstCount(0);
 	while (process::checkRunningCond())
 	{
 		systemVar::iterCount++;
@@ -308,36 +268,15 @@ void Processing()
 		//COMPUTE RESIDUALS
 		process::timeDiscretization::globalErrorEstimate();
 
-		if (systemVar::savingCout == systemVar::wrtI)
-		{
-			std::cout << "Saving case...\n" << std::endl;
-            IO::saveCase();
-			std::cout << "Exporting data to Tecplot...\n" << std::endl;
-            DG2Tecplot::exportCellCenteredData(systemVar::iterCount);
-			systemVar::savingCout = 0;
-		}
-
-		loadConstCount++;
-		if (loadConstCount == 10)
-		{
-            IO::loadConstants(readWriteMode);
-			loadConstCount = 0;
-		}
-
-        //set lai cac bien flag
-        systemVar::firstIter=false;
-        if (mathVar::solveTFailed)
-        {
-            std::cout<<"Failed to solve T at somewhere!\n";
-            mathVar::solveTFailed=false;
-        }
+        //Ham ket thuc 1 iteration
+        process::finalizeIteration();
 	}
 }
 
 void PreProcessing()
 {
     /*LOAD CONSTANTS*/
-    IO::loadConstants("s");
+    IO::loadSettingFiles::loadConstants();
     IO::loadLimiterSettings();
 
     std::string readWriteMode;
@@ -351,6 +290,8 @@ void PreProcessing()
 
 	/*LOAD MESH*/
     IO::loadMesh(readWriteMode);
+    //Check and fix inversed vertex order cell
+    //MshReader::fixCellVerticesOrder();
 
 	/*LOAD p T U*/
     IO::loadpTU(readWriteMode);
@@ -386,6 +327,7 @@ void PreProcessing()
 	meshParam::derivCoordinates();
     auxUlti::mappingEdges();
 
+    /*Ham tim hinh chieu vuong goc cua center den BCEdge*/
     meshParam::findNormProjectionOfCenterToBCEdge();
 
 	systemVar::runPreProcess = true;

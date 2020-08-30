@@ -34,7 +34,7 @@ namespace systemVar
 	//constant for limiter
 	extern double epsilon;
 
-	extern int iterCount, savingCout;
+    extern int iterCount, savingCout, loadConstCount;
 	extern double rhoResNorm, rhouResNorm, rhovResNorm, rhoEResNorm;
 
     //1: BR1, 2: BR2
@@ -42,18 +42,19 @@ namespace systemVar
 
     //For parallel computing
     extern int totalProc, currentProc;
-    extern bool runDecomposeCaseFnc, parallelMode;
+    extern bool runDecomposeCaseFnc, parallelMode, runCheckParMesh;
 
     //Detect first iteration
     extern bool firstIter;
 	
 	extern std::string headerFile;
 
-    extern bool solveTImplicitly;
-
     extern int **sendRecvOrder;
 
     extern int sendRecvOrder_length;
+
+    //Read/write mode
+    extern std::string readWriteMode;
 }
 
 namespace meshVar
@@ -184,9 +185,29 @@ namespace parallel {
 extern bool checkDGRun,
 mapResults;
 }
+
+/* Cac flag trong namespace nay check xem folder chua kq co file TSurface, uSurface ... hay khong
+ * Neu khong co, cac gia tri cua cac field nay set ve gia tri mac dinh o dieu kien bien
+*/
+namespace fileAvailFlags {
+extern bool fileTSurface,
+    fileuSurface,
+    filevSurface;
+}
 }
 
 namespace warningFlag {
 extern bool reversedFlowOccur;
+}
+
+namespace DGSchemes {
+    //Dung cho truong hop mass diffusion, true neu giai T implicit, false neu giai T explicit
+    extern bool solveTImplicitly;
+
+    namespace fluxControl {
+        //Tai version hien tai, flux cua bien phu va viscous flux la central flux, flux control chi apply cho
+        //convective flux
+        extern bool LxF, Roe, HLL, HLLC, central;
+    }
 }
 #endif // VARDECLARATION_H_INCLUDED

@@ -120,7 +120,7 @@ namespace nonequilibriumBCs
             };
 
             //- Term S.(n.PI_mc)
-            double PImc_n1(nx*(dux-(2/3)*(dux+dvy))+ny*duy), PImc_n2(nx*dvx+ny*(dvy-(2/3)*(dux+dvy)));
+            double PImc_n1(muVal*(nx*(dux-(2/3)*(dux+dvy))+ny*duy)), PImc_n2(muVal*(nx*dvx+ny*(dvy-(2/3)*(dux+dvy))));
             std::vector<double> SdotndotPImc={
                 S11*PImc_n1 + S12*PImc_n2,
                 S21*PImc_n1 + S22*PImc_n2
@@ -135,15 +135,14 @@ namespace nonequilibriumBCs
             //Giai slip velocity
             double c=(2-bcValues::sigmaU)/bcValues::sigmaU;
             double
-                    uSlip=uWall-c*lambda*SdotndotPImc[0]/muVal-(3/4)*SdotDivT[0]/(rhoBC*TJump)-c*lambda*div_n_Sdotu[0],
-                    vSlip=vWall-c*lambda*SdotndotPImc[1]/muVal-(3/4)*SdotDivT[1]/(rhoBC*TJump)-c*lambda*div_n_Sdotu[1];
+                    uSlip=uWall-c*lambda*SdotndotPImc[0]/muVal-(3/4)*SdotDivT[0]*muVal/(rhoBC*TJump)-c*lambda*div_n_Sdotu[0],
+                    vSlip=vWall-c*lambda*SdotndotPImc[1]/muVal-(3/4)*SdotDivT[1]*muVal/(rhoBC*TJump)-c*lambda*div_n_Sdotu[1];
 
             //Update
             SurfaceBCFields::uBc[localEdgeId]=uSlip;
             SurfaceBCFields::vBc[localEdgeId]=vSlip;
         }
 
-        /*
         void explicitMethod_DGType(int edge, int edgeGrp)
         {
             //Dieu kien bien Maxwell-Smoluchowski
@@ -249,8 +248,9 @@ namespace nonequilibriumBCs
             //Update
             SurfaceBCFields::uBc[localEdgeId]=uSlip;
             SurfaceBCFields::vBc[localEdgeId]=vSlip;
-        }*/
+        }
 
+        /*
         void explicitMethod_DGType(int edge, int edgeGrp)
         {
             //Dieu kien bien Maxwell-Smoluchowski
@@ -389,7 +389,7 @@ namespace nonequilibriumBCs
             //Update
             SurfaceBCFields::uBc[localEdgeId]=uSlip;
             SurfaceBCFields::vBc[localEdgeId]=vSlip;
-        }
+        }*/
 
         void implicit2ndOrderMethod(int edge, int edgeGrp)
         {

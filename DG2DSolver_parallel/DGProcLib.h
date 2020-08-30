@@ -30,6 +30,12 @@ namespace meshParam
 
 namespace process
 {
+    /*Ham chuan bi case truoc khi chay*/
+    void prepareCaseForRunning();
+
+    /*Ham lam cac thu tuc truoc khi ket thuc 1 iteration*/
+    void finalizeIteration();
+
 	/*Function sets initial value to all elements*/
     void setIniVolumeValues();
 
@@ -71,7 +77,7 @@ namespace process
 
         /*Function returns matrix content Gauss values of <valType> conservative variable at all Gauss points in element volume,
         use only for auxilary equation*/
-        std::vector<std::vector<double>> getGaussMatrixOfConserVar(int element, int valType);
+        void getGaussMatrixOfConserVar(std::vector<std::vector<double>> &UGauss, int element, int valType);
 
         /*Function returns vector of flux of all conservative variables at all faces of element*/
         void getGaussVectorOfConserVar(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhouFluxX, std::vector<std::vector<double>> &rhovFluxX, std::vector<std::vector<double>> &rhoEFluxX, std::vector<std::vector<double>> &rhoFluxY, std::vector<std::vector<double>> &rhouFluxY, std::vector<std::vector<double>> &rhovFluxY, std::vector<std::vector<double>> &rhoEFluxY);
@@ -111,9 +117,7 @@ namespace process
 
 	namespace NSFEq
 	{
-        void calcFinvFvisAtInterface();
-
-        std::tuple<double, double> getFinvFvisAtInterfaces(int edge, int element, int nG, int mod, int direction, int valType);
+        std::tuple<double, double> getInterfacesFluxes(int edge, int element, int nG, int mod, int valType);
 
 		/*Function solves NSEF equation at all elements for conservative variables*/
 		void solveNSFEquation(int RKOrder);
@@ -140,10 +144,16 @@ namespace process
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4);
 
 		/*Function calculates flux at nGauss point of all conservative variables at internal egde*/
-		std::vector<std::vector<double>> getGaussVectorOfConserVarFluxesAtInternal(int edgeName, int element, int nGauss);
+        std::vector<double> getGaussVectorOfConserVarFluxesAtInternal(int edgeName, int element, int nGauss);
 
 		/*Function applies input ddtSchemme to solve time marching*/
 		std::vector<double> solveTimeMarching(int element, std::vector<double> &ddtArr, std::vector<double> &UnArr, int RKOrder, int varType);
+
+        void calcLocalInviscidFlux(std::vector<double> &UG, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &UL, std::vector<double> &n, double drhoX, double drhoY, double T);
+
+        void calcLocalViscousFlux(std::vector<double> &UG, std::vector<double> &dUX, std::vector<double> &dUY, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &n, double T);
+
+        void calcSurfaceFlux();
 	}
 
 	namespace timeDiscretization

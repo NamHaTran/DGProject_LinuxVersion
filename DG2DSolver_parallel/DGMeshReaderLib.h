@@ -39,6 +39,8 @@ namespace MshReader
 	void sortPointsOfElements();
 
     void getMidpointOfBCEdge(std::string mode);
+
+    void fixCellVerticesOrder();
 }
 
 namespace MshExporter
