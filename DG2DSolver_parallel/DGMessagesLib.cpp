@@ -177,18 +177,18 @@ To convert unv mesh format to DG2D readable format, do following task step by st
         std::cout<<"\nFlow properties:\n";
         if (refValues::subsonic)
         {
-            std::cout<<"    - Flow is subsonic.\n";
+            std::cout<<"    - Flow is subsonic, Mach number is "<<flowProperties::Mach<<".\n";
         }
         else {
-            std::cout<<"    - Flow is supersonic.\n";
+            std::cout<<"    - Flow is supersonic, Mach number is "<<flowProperties::Mach<<".\n";
         }
 
         if (flowProperties::viscous)
         {
-            std::cout<<"    - Viscosity is on.\n";
+            std::cout<<"    - Flow is viscous.\n";
         }
         else {
-            std::cout<<"    - Viscosity is off.\n";
+            std::cout<<"    - Flow is inviscid.\n";
         }
 
         if (flowProperties::massDiffusion)

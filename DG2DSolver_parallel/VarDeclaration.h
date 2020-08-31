@@ -134,6 +134,7 @@ namespace refValues
 namespace flowProperties
 {
     extern bool viscous, massDiffusion;
+    extern double Mach;
 }
 
 //time step

@@ -665,6 +665,31 @@ namespace process
 
 	namespace auxEq
     {
+
+    void updateSurfaceFieldsAtBC()
+    {
+        //Ham su dung khi flow la inviscid, co chuc nang update surface fields tai cac BC edge de su dung cho phan giai phuong trinh chinh
+        for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+        {
+            int elemType(auxUlti::checkType(nelement)), edgeName(0);
+            int faceBcType(0);
+
+            for (int nface = 0; nface < elemType; nface++)
+            {
+                edgeName = meshVar::inedel[nelement][nface];
+                faceBcType = auxUlti::getBCType(edgeName);
+                if (faceBcType != 0)  //boundary edge
+                {
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    {
+                        //Chi chay ham auxEqBCsImplement de tinh toan va cap nhat U trong surfaceFields tai BC
+                        auxEqBCsImplement(nelement, edgeName, nGauss);
+                    }
+                }
+            }
+        }
+    }
+
     void solveAuxEquation()
     {
         if (systemVar::auxVariables==1)
@@ -1875,8 +1900,11 @@ namespace process
                             //std::tie(UMaster[i], USlave[i]) = math::internalSurfaceValue(iedge, masterCell, nG, i + 1, 2);
                             std::tie(UMaster[i], USlave[i]) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, i + 1);
                             //d(U)/dx, d(U)/dy
-                            std::tie(dUXMaster[i], dUXSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i+1, 1);
-                            std::tie(dUYMaster[i], dUYSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i+1, 2);
+                            if (flowProperties::viscous)
+                            {
+                                std::tie(dUXMaster[i], dUXSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i+1, 1);
+                                std::tie(dUYMaster[i], dUYSlave[i]) = math::internalSurfaceDerivativeValue(iedge, masterCell, nG, i+1, 2);
+                            }
                         }
 
                         /* Voi ham calcLocalInviscidFlux, neu flux type la LxF hoac central, cac bien
@@ -1889,8 +1917,11 @@ namespace process
                         /* Voi ham calcLocalViscousFlux, vi flux type luon la central, cac bien
                          * invisFluxLocalXMaster,.., ULMaster,.. deu luu gia tri tai he toa do global.
                         */
-                        process::NSFEq::calcLocalViscousFlux(UMaster,dUXMaster,dUYMaster,visFluxLocalXMaster,visFluxLocalYMaster,vectorn,TMaster);
-                        process::NSFEq::calcLocalViscousFlux(USlave,dUXSlave,dUYSlave,visFluxLocalXSlave,visFluxLocalYSlave,vectorn,TSlave);
+                        if (flowProperties::viscous)
+                        {
+                            process::NSFEq::calcLocalViscousFlux(UMaster,dUXMaster,dUYMaster,visFluxLocalXMaster,visFluxLocalYMaster,vectorn,TMaster);
+                            process::NSFEq::calcLocalViscousFlux(USlave,dUXSlave,dUYSlave,visFluxLocalXSlave,visFluxLocalYSlave,vectorn,TSlave);
+                        }
 
                         //Tinh flux
                         //Vi dang tinh cho cell master cua edge nen phia trong (phia +) la cua cell master
@@ -1901,10 +1932,13 @@ namespace process
                                                                    TMaster, TSlave,
                                                                    vectorn);
                         //Viscous flux tinh bang central flux
-                        math::numericalFluxes::centralFlux(visFluxGlobal,
-                                                           visFluxLocalXMaster, visFluxLocalXSlave,
-                                                           visFluxLocalYMaster, visFluxLocalYSlave,
-                                                           vectorn);
+                        if (flowProperties::viscous)
+                        {
+                            math::numericalFluxes::centralFlux(visFluxGlobal,
+                                                               visFluxLocalXMaster, visFluxLocalXSlave,
+                                                               visFluxLocalYMaster, visFluxLocalYSlave,
+                                                               vectorn);
+                        }
 
                         //Luu flux vao vector
                         /* Flux tren 1 mat co tinh bao toan (conservative) nen fluxMaster = -fluxSlave
@@ -1919,15 +1953,18 @@ namespace process
                         surfaceFields::invis_rhov[iedge][nG + mathVar::nGauss + 1]=-invisFluxGlobal[2];
                         surfaceFields::invis_rhoE[iedge][nG + mathVar::nGauss + 1]=-invisFluxGlobal[3];
 
-                        surfaceFields::Vis_rho[iedge][nG]=visFluxGlobal[0];
-                        surfaceFields::Vis_rhou[iedge][nG]=visFluxGlobal[1];
-                        surfaceFields::Vis_rhov[iedge][nG]=visFluxGlobal[2];
-                        surfaceFields::Vis_rhoE[iedge][nG]=visFluxGlobal[3];
+                        if (flowProperties::viscous)
+                        {
+                            surfaceFields::Vis_rho[iedge][nG]=visFluxGlobal[0];
+                            surfaceFields::Vis_rhou[iedge][nG]=visFluxGlobal[1];
+                            surfaceFields::Vis_rhov[iedge][nG]=visFluxGlobal[2];
+                            surfaceFields::Vis_rhoE[iedge][nG]=visFluxGlobal[3];
 
-                        surfaceFields::Vis_rho[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[0];
-                        surfaceFields::Vis_rhou[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[1];
-                        surfaceFields::Vis_rhov[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[2];
-                        surfaceFields::Vis_rhoE[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[3];
+                            surfaceFields::Vis_rho[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[0];
+                            surfaceFields::Vis_rhou[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[1];
+                            surfaceFields::Vis_rhov[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[2];
+                            surfaceFields::Vis_rhoE[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[3];
+                        }
                     }
                 }
             }
@@ -2318,18 +2355,21 @@ namespace process
                     GsVolY3[na][nb] = InviscidTerms[2][1];
                     GsVolY4[na][nb] = InviscidTerms[3][1];
 
-					/*B VISCOUS TERMS*/
-					ViscousTerms = NSFEq::calcGaussViscousTerm(element, na, nb);
-					/*B1. Viscous term on Ox direction*/
-                    GsVolX1[na][nb] += ViscousTerms[0][0];
-                    GsVolX2[na][nb] += ViscousTerms[1][0];
-                    GsVolX3[na][nb] += ViscousTerms[2][0];
-                    GsVolX4[na][nb] += ViscousTerms[3][0];
-					/*B2. Viscous term on Oy direction*/
-                    GsVolY1[na][nb] += ViscousTerms[0][1];
-                    GsVolY2[na][nb] += ViscousTerms[1][1];
-                    GsVolY3[na][nb] += ViscousTerms[2][1];
-                    GsVolY4[na][nb] += ViscousTerms[3][1];
+                    if (flowProperties::viscous)
+                    {
+                        /*B VISCOUS TERMS*/
+                        ViscousTerms = NSFEq::calcGaussViscousTerm(element, na, nb);
+                        /*B1. Viscous term on Ox direction*/
+                        GsVolX1[na][nb] += ViscousTerms[0][0];
+                        GsVolX2[na][nb] += ViscousTerms[1][0];
+                        GsVolX3[na][nb] += ViscousTerms[2][0];
+                        GsVolX4[na][nb] += ViscousTerms[3][0];
+                        /*B2. Viscous term on Oy direction*/
+                        GsVolY1[na][nb] += ViscousTerms[0][1];
+                        GsVolY2[na][nb] += ViscousTerms[1][1];
+                        GsVolY3[na][nb] += ViscousTerms[2][1];
+                        GsVolY4[na][nb] += ViscousTerms[3][1];
+                    }
 				}
 			}
 
@@ -2460,10 +2500,13 @@ namespace process
 			
 			/*VISCOUS TERM*/
 			//Get value
-            std::tie(visTerm1P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 1);
-            std::tie(visTerm2P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 2);
-            std::tie(visTerm3P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 3);
-            std::tie(visTerm4P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 4);
+            if (flowProperties::viscous)
+            {
+                std::tie(visTerm1P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 1);
+                std::tie(visTerm2P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 2);
+                std::tie(visTerm3P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 3);
+                std::tie(visTerm4P, std::ignore) = process::NSFEq::getInterfacesFluxes(edgeName, element, nGauss, 2, 4);
+            }
 
 			/*Calculate fluxes*/
             Fluxes[0] = invisTerm1P+visTerm1P;
@@ -2728,7 +2771,7 @@ namespace process
 			process::calcVolumeGaussValues();
             process::calcValuesAtInterface();
 
-            if (flowProperties::massDiffusion)
+            if (flowProperties::massDiffusion && flowProperties::viscous)
             {
                 if (systemVar::auxVariables==1)
                 {
@@ -2738,7 +2781,7 @@ namespace process
                 else if (systemVar::auxVariables==2)
                 {
                     process::auxEq::massDiffusion::BR2::solveDivRho();
-                    //Chua sua cho BR2
+                    //Khong dung BR2
                 }
             }
 
@@ -2749,7 +2792,15 @@ namespace process
             process::calcTGauss();
 
             //SOLVE AUXILARY EQUATION
-            process::auxEq::solveAuxEquation();
+            if (flowProperties::viscous)
+            {
+                process::auxEq::solveAuxEquation();
+            }
+            else
+            {
+                //Chay ham nay de update gia tri U tai surfaceBCFields
+                process::auxEq::updateSurfaceFieldsAtBC();
+            }
 
             //Show warning
             message::showWarning();

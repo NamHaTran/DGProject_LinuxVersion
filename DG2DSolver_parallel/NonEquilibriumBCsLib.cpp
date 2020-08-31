@@ -12,7 +12,7 @@ void updateTimeVaryingBCs()
      * Ham update gia tri tren cac field cua surfaceBCFields, chi dung cho cac BC bien thien theo thoi gian.
      * Hien tai, ham su dung cho temperatureJump va slip conditions
     */
-    if (auxUlti::checkTimeVaryingBCAvailable())
+    if (auxUlti::checkTimeVaryingBCAvailable() && flowProperties::viscous)
     {
         if (systemVar::currentProc==0)
         {

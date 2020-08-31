@@ -535,8 +535,11 @@ namespace BCSupportFncs
         /* Voi ham calcLocalViscousFlux, vi flux type luon la central, cac bien
          * invisFluxLocalXMaster,.., ULMaster,.. deu luu gia tri tai he toa do global.
         */
-        process::NSFEq::calcLocalViscousFlux(UPlus,dUXPlus,dUYPlus,visFluxLocalXPlus,visFluxLocalYPlus,normVector,TPlus);
-        process::NSFEq::calcLocalViscousFlux(UMinus,dUXMinus,dUYMinus,visFluxLocalXMinus,visFluxLocalYMinus,normVector,TMinus);
+        if (flowProperties::viscous)
+        {
+            process::NSFEq::calcLocalViscousFlux(UPlus,dUXPlus,dUYPlus,visFluxLocalXPlus,visFluxLocalYPlus,normVector,TPlus);
+            process::NSFEq::calcLocalViscousFlux(UMinus,dUXMinus,dUYMinus,visFluxLocalXMinus,visFluxLocalYMinus,normVector,TMinus);
+        }
 
         //Tinh flux
         //Vi dang tinh cho cell master cua edge nen phia trong (phia +) la cua cell master
@@ -547,10 +550,13 @@ namespace BCSupportFncs
                                                    TPlus, TMinus,
                                                    normVector);
         //Viscous flux tinh bang central flux
-        math::numericalFluxes::centralFlux(visFluxGlobal,
-                                           visFluxLocalXPlus, visFluxLocalXMinus,
-                                           visFluxLocalYPlus, visFluxLocalYMinus,
-                                           normVector);
+        if (flowProperties::viscous)
+        {
+            math::numericalFluxes::centralFlux(visFluxGlobal,
+                                               visFluxLocalXPlus, visFluxLocalXMinus,
+                                               visFluxLocalYPlus, visFluxLocalYMinus,
+                                               normVector);
+        }
 
         //Luu flux vao vector
         for (int i=0; i<4; i++)
@@ -671,7 +677,8 @@ namespace NSFEqBCs
             }
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            if (flowProperties::viscous)
+                BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
 
@@ -698,7 +705,8 @@ namespace NSFEqBCs
             }
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            if (flowProperties::viscous)
+                BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
 
             //zero normal temperature gradient (sua lai theo cach tong quat)
             dUXMinus = dUXPlus;
@@ -736,7 +744,8 @@ namespace NSFEqBCs
             TMinus=SurfaceBCFields::TBc[loc];
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            if (flowProperties::viscous)
+                BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
 
@@ -803,7 +812,9 @@ namespace NSFEqBCs
             TPlus=surfaceFields::T[edge][nG];
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            if (flowProperties::viscous)
+                BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
 
@@ -840,7 +851,8 @@ namespace NSFEqBCs
             }
 
             //Compute dU+
-            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            if (flowProperties::viscous)
+                BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             //BCSupportFncs::NSFEqBCs::calcdUMean(edge,element,dUXPlus,dUYPlus);
             dUXMinus=dUXPlus;
             dUYMinus=dUYPlus;
@@ -872,7 +884,8 @@ namespace NSFEqBCs
         TPlus=surfaceFields::T[edge][nG];
 
         //Compute dU+/-
-        BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+        if (flowProperties::viscous)
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
         //BCSupportFncs::NSFEqBCs::calcdUMean(edge,element,dUXPlus,dUYPlus);
         for (int i = 0; i < 4; i++)
         {
@@ -905,9 +918,12 @@ namespace NSFEqBCs
         }
 
         //Compute dU+/-
-        BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
-        BCSupportFncs::parallel::calcdUMinus(edge,nG,dUXMinus,1);
-        BCSupportFncs::parallel::calcdUMinus(edge,nG,dUYMinus,2);
+        if (flowProperties::viscous)
+        {
+            BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
+            BCSupportFncs::parallel::calcdUMinus(edge,nG,dUXMinus,1);
+            BCSupportFncs::parallel::calcdUMinus(edge,nG,dUYMinus,2);
+        }
 
         BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, 4, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
     }

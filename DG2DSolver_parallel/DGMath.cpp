@@ -970,11 +970,11 @@ namespace math
                 double rhoVal(math::calcConsvVarWthLimiter(element, a, b, 1)),
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
-                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4)),
-                        dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                        dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 if (flowProperties::massDiffusion)
                 {
+                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,1,2));
                     out = material::Cv*math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
@@ -987,11 +987,11 @@ namespace math
                 double rhoVal(math::calcConsvVarWthLimiter(element, a, b, 1)),
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
-                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4)),
-                        dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                        dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 if (flowProperties::massDiffusion)
                 {
+                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,1,2));
                     out = math::CalcP(CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
                 }
                 else
@@ -1004,11 +1004,11 @@ namespace math
                 double rhoVal(math::calcConsvVarWthLimiter(element, a, b, 1)),
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
-                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4)),
-                        dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                        dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 if (flowProperties::massDiffusion)
                 {
+                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,1,2));
                     out = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
@@ -1026,12 +1026,12 @@ namespace math
                 double rhoVal(math::calcConsvVarWthLimiter(element, a, b, 1)),
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
-                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4)),
-                        dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                        dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 double TVal(0.0);
                 if (flowProperties::massDiffusion)
                 {
+                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,1,2));
                     TVal = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else

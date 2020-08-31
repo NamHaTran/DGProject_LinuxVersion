@@ -485,11 +485,17 @@ namespace DG2Tecplot
         }
         else if (valType == 10)  //rho
         {
-            out= BR1Vars::rhoX[element][0];
+            if (flowProperties::viscous)
+                out= BR1Vars::rhoX[element][0];
+            else
+                out=0;
         }
         else if (valType == 11)  //rho
         {
-            out= BR1Vars::rhoY[element][0];
+            if (flowProperties::viscous)
+                out= BR1Vars::rhoY[element][0];
+            else
+                out=0;
         }
         return out;
     }

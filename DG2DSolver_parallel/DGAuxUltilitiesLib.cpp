@@ -941,31 +941,38 @@ namespace auxUlti
         rhovN = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
         rhoEN = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-        surfaceFields::aux_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::aux_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::aux_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::aux_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        /*Khong giai phuong trinh phu khi dong inviscid*/
+        if (flowProperties::viscous)
+        {
+            surfaceFields::aux_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::aux_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::aux_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::aux_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        }
 
         surfaceFields::rho= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
         surfaceFields::rhou= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
         surfaceFields::rhov= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
         surfaceFields::rhoE= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
 
-        if (systemVar::auxVariables==1)
+        if (flowProperties::viscous)
         {
-            BR1Vars::rhoX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-            BR1Vars::rhouX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-            BR1Vars::rhovX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-            BR1Vars::rhoEX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+            if (systemVar::auxVariables==1)
+            {
+                BR1Vars::rhoX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+                BR1Vars::rhouX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+                BR1Vars::rhovX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+                BR1Vars::rhoEX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-            BR1Vars::rhoY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-            BR1Vars::rhouY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-            BR1Vars::rhovY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-            BR1Vars::rhoEY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-        }
-        else if (systemVar::auxVariables==2)
-        {
-            //Bo BR2
+                BR1Vars::rhoY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+                BR1Vars::rhouY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+                BR1Vars::rhovY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+                BR1Vars::rhoEY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+            }
+            else if (systemVar::auxVariables==2)
+            {
+                //Bo BR2
+            }
         }
 
         surfaceFields::invis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
@@ -973,10 +980,13 @@ namespace auxUlti
         surfaceFields::invis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
         surfaceFields::invis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
 
-        surfaceFields::Vis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::Vis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        if (flowProperties::viscous)
+        {
+            surfaceFields::Vis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::Vis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::Vis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::Vis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        }
 
         surfaceFields::T = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
 
@@ -1034,14 +1044,17 @@ namespace auxUlti
         parallelBuffer::rhoE= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
 
         //Auxilary variables
-        parallelBuffer::drhoX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhouX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhovX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhoEX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhoY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhouY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhovY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
-        parallelBuffer::drhoEY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+        if (flowProperties::viscous)
+        {
+            parallelBuffer::drhoX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhouX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhovX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhoEX= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhoY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhouY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhovY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+            parallelBuffer::drhoEY= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::orderElem + 1,0.0);
+        }
 
         //Surface Gauss point coordinates
         parallelBuffer::aCoor= auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss + 1,0.0);

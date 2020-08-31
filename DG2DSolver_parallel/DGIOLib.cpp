@@ -1200,6 +1200,9 @@ namespace IO
 
         /*Read p*/
         readScalarBC::T(mode);
+
+        /*Tinh so Mach*/
+        flowProperties::Mach=pow(pow(iniValues::uIni,2)+pow(iniValues::vIni,2)+pow(iniValues::wIni,2),0.5)/math::CalcSpeedOfSound(iniValues::TIni);
     }
 
     void loadTime()
@@ -1673,8 +1676,24 @@ namespace IO
             std::string outStr[1] = {};
 
             readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, 0, 0, 2, 0);
+
             flowProperties::viscous=outBool[0];
             flowProperties::massDiffusion=outBool[1];
+
+            /*Neu set dong la inviscid, modify As va Ts bang 0*/
+            if (!flowProperties::viscous)
+            {
+                material::As=0.0;
+                material::Ts=0.0;
+                /*Khong turn on massDiffusion cho dong inviscid*/
+                if (flowProperties::massDiffusion)
+                {
+                    flowProperties::massDiffusion=false;
+                    if (systemVar::currentProc==0)
+                        std::cout<<"Warning! DGSolver detected that flow properties are set to inviscid and mass diffusion ON. This is unphysical and DGSolver will turn off mass diffusion.\n";
+                }
+            }
+
             if (!flowProperties::massDiffusion)
             {
                 material::massDiffusion::DmCoeff=0.0;

@@ -123,6 +123,7 @@ namespace refValues
 namespace flowProperties
 {
     bool viscous(true), massDiffusion(false);
+    double Mach(0.0);
 }
 
 //time step

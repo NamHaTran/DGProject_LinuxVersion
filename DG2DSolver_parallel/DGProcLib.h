@@ -61,6 +61,9 @@ namespace process
         /*Function solves auxilary equation at all elements for auxilary variables*/
         void solveAuxEquation();
 
+        /*Ham nay su dung khi flow inviscid, de tinh toan cac gia tri U tai surfaceFields*/
+        void updateSurfaceFieldsAtBC();
+
         namespace BR1 {
         void calcValuesAtInterface();
 
