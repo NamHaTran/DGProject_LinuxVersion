@@ -666,6 +666,25 @@ namespace process
 	namespace auxEq
     {
 
+    void solveDivRho()
+    {
+        /* Giai bien phu S = div(rho) de phuc vu cho viec giai T khi mass diffusion on.
+         * version hien tai khong support BR2
+        */
+        if (flowProperties::massDiffusion)
+        {
+            if (systemVar::auxVariables==1)
+            {
+                process::auxEq::massDiffusion::BR1::solveDivRho();
+            }
+            else if (systemVar::auxVariables==2)
+            {
+                process::auxEq::massDiffusion::BR2::solveDivRho();
+                //Khong dung BR2
+            }
+        }
+    }
+
     void updateSurfaceFieldsAtBC()
     {
         //Ham su dung khi flow la inviscid, co chuc nang update surface fields tai cac BC edge de su dung cho phan giai phuong trinh chinh
@@ -1486,7 +1505,8 @@ namespace process
                 rhoSurfIntOy(mathVar::orderElem + 1, 0.0);
 
             /*1. Calculate volume integral term*/
-            process::auxEq::massDiffusion::BR1::calcVolumeIntegralTerms(element, rhoVolIntOx, rhoVolIntOy);
+            if (mathVar::orderElem>0)
+                process::auxEq::massDiffusion::BR1::calcVolumeIntegralTerms(element, rhoVolIntOx, rhoVolIntOy);
 
             /*2. Calculate surface integral term*/
             process::auxEq::massDiffusion::BR1::calcSurfaceIntegralTerms(element, rhoSurfIntOx, rhoSurfIntOy);
@@ -2771,19 +2791,8 @@ namespace process
 			process::calcVolumeGaussValues();
             process::calcValuesAtInterface();
 
-            if (flowProperties::massDiffusion && flowProperties::viscous)
-            {
-                if (systemVar::auxVariables==1)
-                {
-                    //Khi giai mass diffusion, giai divRho de tinh T
-                    process::auxEq::massDiffusion::BR1::solveDivRho();
-                }
-                else if (systemVar::auxVariables==2)
-                {
-                    process::auxEq::massDiffusion::BR2::solveDivRho();
-                    //Khong dung BR2
-                }
-            }
+            //SOLVE DIV(RHO)
+            process::auxEq::solveDivRho();
 
             //CALCULATE T
             /*Khi giai T, bien BR1Vars::rhoX, BR1Vars::rhoY chua gia tri divRho. Sau buoc giai T,

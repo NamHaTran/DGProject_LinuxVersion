@@ -108,6 +108,8 @@ namespace BCSupportFncs
         void calcdUPlus(int edge, int element, double a, double b, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus);
 
         void calcdUMean(int edge, int element, std::vector<double> &dUXPlus, std::vector<double> &dUYPlus);
+		
+		std::tuple<double, double> zeroNormGradient(double gradXP, double gradYP, const std::vector<double> &n);
 
         /*Function calculates fluxes of all advective and diffusive terms of NSF equation from conservative variables*/
         void NSFEqFluxes(int edgeId, std::vector<double> &Fluxes,int BCType, double TPlus, double TMinus, std::vector<double> &UPlus, std::vector<double> &UMinus, std::vector<double> &dUXPlus, std::vector<double> &dUXMinus, std::vector<double> &dUYPlus, std::vector<double> &dUYMinus, std::vector<double> &normVector);

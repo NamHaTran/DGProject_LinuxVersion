@@ -58,6 +58,9 @@ namespace process
 
 	namespace auxEq
 	{
+        /*Function solve div(rho) in case of mass diffusion*/
+        void solveDivRho();
+
         /*Function solves auxilary equation at all elements for auxilary variables*/
         void solveAuxEquation();
 

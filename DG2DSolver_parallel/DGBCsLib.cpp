@@ -564,6 +564,18 @@ namespace BCSupportFncs
             Fluxes[i]=invisFluxGlobal[i]+visFluxGlobal[i];
         }
     }
+	
+	std::tuple<double, double> zeroNormGradient(double gradXP, double gradYP, const std::vector<double> &n)
+    {
+        /* Nguyen tac: normal grad minus = 0
+         *             tangential grad minus = tangential grad plus
+        */
+        double tangGrad(gradXP*n[1]+gradYP*n[0]);
+        double gradXM=-tangGrad*n[1];
+        double gradYM=tangGrad*n[0];
+
+        return std::make_tuple(gradXM,gradYM);
+    }
     }
 
     namespace parallel {
@@ -854,8 +866,12 @@ namespace NSFEqBCs
             if (flowProperties::viscous)
                 BCSupportFncs::NSFEqBCs::calcdUPlus(edge,element,a,b,dUXPlus,dUYPlus);
             //BCSupportFncs::NSFEqBCs::calcdUMean(edge,element,dUXPlus,dUYPlus);
-            dUXMinus=dUXPlus;
-            dUYMinus=dUYPlus;
+            //dUXMinus=dUXPlus;
+            //dUYMinus=dUYPlus;
+            for (int i = 0; i < 4; i++)
+            {
+                std::tie(dUXMinus[i],dUYMinus[i])=BCSupportFncs::NSFEqBCs::zeroNormGradient(dUXPlus[i],dUYPlus[i],norm);
+            }
 
             BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, 2, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXPlus, dUYPlus, dUYPlus, norm);
         }
