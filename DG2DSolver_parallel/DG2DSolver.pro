@@ -19,7 +19,6 @@ SOURCES += \
     ConstDeclaration.cpp \
     DG2D.cpp \
     DGAuxUltilitiesLib.cpp \
-    DGBCsLib.cpp \
     DGController.cpp \
     DGIOLib.cpp \
     DGLimiterLib.cpp \
@@ -28,8 +27,31 @@ SOURCES += \
     DGMessagesLib.cpp \
     DGPostProcessLib.cpp \
     DGProcLib.cpp \
+    NonEquilibriumBCsLib.cpp \
+    boundaryConditions/BCSupportFncs.cpp \
+    boundaryConditions/DGBCsLib.cpp \
+    boundaryConditions/bcVariables.cpp \
+    boundaryConditions/fixedValue.cpp \
+    boundaryConditions/matched.cpp \
+    boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.cpp \
+    boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.cpp \
+    boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.cpp \
+    boundaryConditions/readBCInfor/readSymmetryBC.cpp \
+    boundaryConditions/readBCInfor/supportReadingBCFuncs.cpp \
+    boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.cpp \
+    boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.cpp \
+    boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.cpp \
+    boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.cpp \
+    boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.cpp \
+    boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.cpp \
+    boundaryConditions/symmetry.cpp \
+    boundaryConditions/zeroGradient.cpp \
     dynamicVarDeclaration.cpp \
-    VarDeclaration.cpp
+    VarDeclaration.cpp \
+    parallelFunctions/cellData.cpp \
+    parallelFunctions/generalParallelFuncs.cpp \
+	parallelFunctions/GaussPointData.cpp \
+    parallelFunctions/parallelVariables.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -40,7 +62,6 @@ HEADERS += \
     CommandCheck.h \
     ConstDeclaration.h \
     DGAuxUltilitiesLib.h \
-    DGBCsLib.h \
     DGController.h \
     DGIOLib.h \
     DGLimiterLib.h \
@@ -49,8 +70,31 @@ HEADERS += \
     DGMessagesLib.h \
     DGPostProcessLib.h \
     DGProcLib.h \
+    NonEquilibriumBCsLib.h \
+    boundaryConditions/BCSupportFncs.h \
+    boundaryConditions/DGBCsLib.h \
+    boundaryConditions/bcVariables.h \
+    boundaryConditions/fixedValue.h \
+    boundaryConditions/matched.h \
+    boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h \
+    boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.h \
+    boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.h \
+    boundaryConditions/readBCInfor/readSymmetryBC.h \
+    boundaryConditions/readBCInfor/supportReadingBCFuncs.h \
+    boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.h \
+    boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.h \
+    boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.h \
+    boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.h \
+    boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.h \
+    boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.h \
+    boundaryConditions/symmetry.h \
+    boundaryConditions/zeroGradient.h \
     dynamicVarDeclaration.h \
-    VarDeclaration.h
+    VarDeclaration.h \
+    parallelFunctions/cellData.h \
+    parallelFunctions/generalParallelFuncs.h \
+	parallelFunctions/GaussPointData.h \
+    parallelFunctions/parallelVariables.h
 
 # MPI Settings
 QMAKE_CXX = mpicxx

@@ -4,6 +4,8 @@
 
 namespace meshParam
 {
+    void genBasedGaussPtsVectors();
+
 	/*Function calculate Gaussian constants*/
 	void GaussParam();
 
@@ -52,6 +54,10 @@ namespace process
     void calcValuesAtInterface();
 
 	void calcVolumeGaussValues();
+
+    void calcVolumeGaussRho();
+
+    void calcRhoAtInterface();
 
     /*Function computes T at all Gauss points of element (surface and volume)*/
     void calcTGauss();

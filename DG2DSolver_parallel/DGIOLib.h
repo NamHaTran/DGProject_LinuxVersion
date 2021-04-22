@@ -63,9 +63,13 @@ namespace IO
 
     void loadTime();
 
-    void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol);
+    void write2DDoubleArrayToFile_typeArray(double **array, std::string loc, std::string name, int numRow, int numCol);
 
-    void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol);
+    void write2DIntArrayToFile_typeVector(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol);
+
+    void write2DIntArrayToFile_typeArray(int **array, std::string loc, std::string name, int numRow, int numCol);
+
+    void write2DDoubleArrayToFile_typeVector(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol);
 
     void openFileToAppend(std::string Loc, std::string content);
 

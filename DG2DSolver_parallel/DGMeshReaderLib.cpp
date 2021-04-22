@@ -1279,7 +1279,7 @@ namespace decomposePart {
         }
 
         //Luu thong tin xuong file
-        IO::write2DIntArrayToFile(sendRecvOrder,systemVar::pwd + "/Constant/Mesh/sendRecvOrder.txt","sendRecvOrder",counter,2);
+        IO::write2DIntArrayToFile_typeVector(sendRecvOrder,systemVar::pwd + "/Constant/Mesh/sendRecvOrder.txt","sendRecvOrder",counter,2);
 
         return idMarker;
     }
@@ -1350,16 +1350,16 @@ namespace decomposePart {
             meshConnectionLoc = systemVar::pwd + "/Processor" + rank + "/Constant/Mesh/meshConnection.txt";
 
 			//Elements2D
-            IO::write2DIntArrayToFile(Elem2D[irank], elems2DLoc, "Elements2D", maxElem2DIdOfRanks[irank], 5);
+            IO::write2DIntArrayToFile_typeVector(Elem2D[irank], elems2DLoc, "Elements2D", maxElem2DIdOfRanks[irank], 5);
 
 			//Points
-            IO::write2DDoubleArrayToFile(Points[irank], pointsLoc, "Points", maxPtsIdOfRanks[irank], 4);
+            IO::write2DDoubleArrayToFile_typeVector(Points[irank], pointsLoc, "Points", maxPtsIdOfRanks[irank], 4);
 
             //Elements1D
-            IO::write2DIntArrayToFile(Elem1D[irank], elems1DLoc, "Elements1D", maxElem1DIdOfRanks[irank], 4);
+            IO::write2DIntArrayToFile_typeVector(Elem1D[irank], elems1DLoc, "Elements1D", maxElem1DIdOfRanks[irank], 4);
 
             //Elements1D
-            IO::write2DIntArrayToFile(meshConnection[irank], meshConnectionLoc, "MeshConnection", maxElem1DIdOfRanks[irank], 3);
+            IO::write2DIntArrayToFile_typeVector(meshConnection[irank], meshConnectionLoc, "MeshConnection", maxElem1DIdOfRanks[irank], 3);
 
             decomposePart::exportPartitionedMesh(irank,maxPtsIdOfRanks[irank],maxElem2DIdOfRanks[irank],Points[irank],Elem2D[irank]);
 
@@ -1368,7 +1368,8 @@ namespace decomposePart {
             //Create file boundaryPatch and Material
             auxUlti::copyFile(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant/boundaryPatch.txt",Loc+"/Constant");
             auxUlti::copyFile(systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant/Material.txt",Loc+"/Constant");
-            std::string content1 = R"(matchedBoundary
+            std::string content1 = R"(
+matchedBoundary
 {
         Group )", content2 = R"(
         Type				matched
@@ -1384,7 +1385,8 @@ namespace decomposePart {
         std::string  pLoc = Loc + "/0/p.txt",
         TLoc = Loc + "/0/T.txt", ULoc = Loc + "/0/U.txt";
 
-        std::string content1 = R"(matchedBoundary
+        std::string content1 = R"(
+matchedBoundary
 {
         Group )", content2 = R"(
         Type				matched
@@ -1453,10 +1455,10 @@ namespace decomposePart {
                 }
             }
 
-            IO::write2DDoubleArrayToFile(outputRho,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rho.txt","rho",numOfElemPerProc[irank],mathVar::orderElem+1);
-            IO::write2DDoubleArrayToFile(outputRhou,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhou.txt","rhou",numOfElemPerProc[irank],mathVar::orderElem+1);
-            IO::write2DDoubleArrayToFile(outputRhov,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhov.txt","rhov",numOfElemPerProc[irank],mathVar::orderElem+1);
-            IO::write2DDoubleArrayToFile(outputRhoE,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhoE.txt","rhoE",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile_typeVector(outputRho,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rho.txt","rho",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile_typeVector(outputRhou,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhou.txt","rhou",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile_typeVector(outputRhov,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhov.txt","rhov",numOfElemPerProc[irank],mathVar::orderElem+1);
+            IO::write2DDoubleArrayToFile_typeVector(outputRhoE,systemVar::pwd+"/Processor"+std::to_string(systemVar::currentProc) + "/" + std::to_string(systemVar::iterCount) + "/rhoE.txt","rhoE",numOfElemPerProc[irank],mathVar::orderElem+1);
         }
     }
 

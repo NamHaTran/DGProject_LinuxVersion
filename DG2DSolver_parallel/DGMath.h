@@ -5,11 +5,13 @@
 
 namespace math
 {
-	/*Function calculates Gauss values*/
-	void Gauss(int nGauss);
+    /*Function calculates Gauss values*/
+    void volumeGauss(int nGauss);
+    void surfaceGauss(int nGauss);
 
-	/*Function calculates Gauss-Lobatto values*/
-	void GaussLobatto(int nGauss);
+    /*Function calculates Gauss-Lobatto values*/
+    void volumeGaussLobatto(int nGauss);
+    void surfaceGaussLobatto(int nGauss);
 
 	/*Function calculates basis function*/
 	void basisFc(double a, double b, int elemType);
@@ -41,6 +43,9 @@ namespace math
 	/*Function calculates 1D jacobian for 1 edge of tri elements*/
 	double jacobian1DTri(int edgeIndex, double xA, double xB, double xC, double yA, double yB, double yC);
 
+    /*Ham tinh gia tri trung binh cua bien primary tren cell*/
+    double calcMeanPriVar(int element, int varId);
+
 	/*Function solves system of linear equations by using Gauss-Seidel algorithm*/
 	std::vector<double> SolveSysEqs(std::vector< std::vector<double> > &a, std::vector<double> &b);
 
@@ -58,6 +63,9 @@ namespace math
 
     /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion using option setup in file DGSchemes*/
     double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy, double T_old);
+
+    /*Function calculates T from rho, rhou, rhov, rhoE, muRhoX, muRhoY in case of mass diffusion explicitly*/
+    double CalcTFromConsvVar_massDiff_explicit(double rho, double rhou, double rhov, double rhoE, double muRhox, double muRhoy);
 
     /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion implicitly*/
     double CalcTFromConsvVar_massDiff_implicit(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy);
@@ -403,6 +411,28 @@ namespace math
     namespace massDiffusionFncs {
     double calcTotalVelocity(double rho, double advecV, double mudRho);
     }
+
+    /**
+     * @brief Function calculates value at surface Gauss point on (+) side (side of input element Id).
+     * @param edge: edge Id.
+     * @param element: element Id.
+     * @param nG: Gauss point Id.
+     * @param valType: type of outlet value. More detail at math::pointValue function.
+     * @param valKind: kind of outlet value. More detail at math::pointValue function.
+     * @return values at Gauss point on (+) side.
+     */
+    double plusSideSurfaceValue(int edge, int element, int nG, int valType, int valKind);
+
+    /**
+     * @brief Function calculates derivative value at surface Gauss point on (+) side (side of input element Id).
+     * @param edge: edge Id.
+     * @param element: element Id.
+     * @param nG: Gauss point Id.
+     * @param valType: type of value.
+     * @param dir: direction, 1 for Ox, 2 for Oy.
+     * @return derivative value.
+     */
+    double plusSideSurfaceDerivativeValue(int edge, int element, int nG, int valType, int dir);
 }
 
 #endif // DGMATH_H_INCLUDED

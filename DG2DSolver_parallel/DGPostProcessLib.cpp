@@ -407,8 +407,8 @@ namespace DG2Tecplot
                 rhoEVal(rhoE[element][0]);
             if (flowProperties::massDiffusion)
             {
-                double dRhoX(BR1Vars::rhoX[element][0]),
-                        dRhoY(BR1Vars::rhoY[element][0]);
+                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
+                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
                 out = material::Cv*math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
             }
             else
@@ -424,8 +424,8 @@ namespace DG2Tecplot
                 rhoEVal(rhoE[element][0]);
             if (flowProperties::massDiffusion)
             {
-                double dRhoX(BR1Vars::rhoX[element][0]),
-                        dRhoY(BR1Vars::rhoY[element][0]);
+                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
+                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
                 out = math::CalcP(math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
             }
             else
@@ -441,8 +441,8 @@ namespace DG2Tecplot
                 rhoEVal(rhoE[element][0]);
             if (flowProperties::massDiffusion)
             {
-                double dRhoX(BR1Vars::rhoX[element][0]),
-                        dRhoY(BR1Vars::rhoY[element][0]);
+                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
+                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
                 out = math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
             }
             else
@@ -464,8 +464,8 @@ namespace DG2Tecplot
             double TVal(0.0);
             if (flowProperties::massDiffusion)
             {
-                double dRhoX(BR1Vars::rhoX[element][0]),
-                        dRhoY(BR1Vars::rhoY[element][0]);
+                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
+                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
                 TVal = math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
             }
             else
@@ -485,14 +485,18 @@ namespace DG2Tecplot
         }
         else if (valType == 10)  //rho
         {
-            if (flowProperties::viscous)
+            if (flowProperties::viscous && flowProperties::massDiffusion)
+                out= BR1Vars::massDiffusion::rhoX[element][0];
+            else if (flowProperties::viscous && !flowProperties::massDiffusion)
                 out= BR1Vars::rhoX[element][0];
             else
                 out=0;
         }
         else if (valType == 11)  //rho
         {
-            if (flowProperties::viscous)
+            if (flowProperties::viscous && flowProperties::massDiffusion)
+                out= BR1Vars::massDiffusion::rhoY[element][0];
+            else if (flowProperties::viscous && !flowProperties::massDiffusion)
                 out= BR1Vars::rhoY[element][0];
             else
                 out=0;
@@ -965,7 +969,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 				{
 				case 1: //R
 				{
-					if (refValues::subsonic)
+                    if (flowProperties::subsonic)
 					{
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];
@@ -986,7 +990,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE
 					double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
 					double pInternal(0);
 					pInternal = UPlus[0] * material::R*TInternal;
-					if (refValues::subsonic)
+                    if (flowProperties::subsonic)
 					{
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];

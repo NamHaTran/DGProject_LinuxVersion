@@ -12,7 +12,7 @@ namespace systemVar
 	std::string cmd;
 	bool endKey(false);
 
-	double CFL(0.5); //Courant number
+    double CFL(0.5); //Courant number
 	double Ttime(0.0); //Total time
     int wrtI(0); //write interval
     bool wrtLog(true), loadSavedCase(false);
@@ -51,7 +51,7 @@ namespace meshVar
 
 	/*Default value*/
 	//number of nodes per element
-	int const nnode(4);
+    int const nnode(4);
 	//number of edges per element (default is 4)
 	int const nedel(4);  //change nedel value at file .h
 
@@ -73,8 +73,10 @@ namespace meshVar
 
 namespace mathVar
 {
-    int nGauss(2), orderElem(0), orderOfAccuracy(0);
+    int orderElem(0), orderOfAccuracy(0);
     bool solveTFailed(false);
+
+    int nGauss(0);
 }
 
 namespace material
@@ -115,15 +117,11 @@ namespace bcValues
     bool temperatureJump(false);
 }
 
-namespace refValues
-{
-	bool subsonic(true);
-}
-
 namespace flowProperties
 {
     bool viscous(true), massDiffusion(false);
     double Mach(0.0);
+    bool subsonic(true);
 }
 
 //time step
@@ -202,4 +200,8 @@ namespace DGSchemes {
         //convective flux
         bool LxF(false), Roe(false), HLL(false), HLLC(false), central(false);
     }
+}
+
+namespace debugVars {
+int element(0);
 }

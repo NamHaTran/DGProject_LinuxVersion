@@ -24,8 +24,8 @@ void updateTimeVaryingBCs()
         {
             globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
             int edgeGrp(auxUlti::getGrpOfEdge(globleEdge));
-            int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
-            if (UType == 5 && TType == 6 && pType == 2)
+            int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]);
+            if (UType == 5 && TType == 6)
             {
                 nonequilibriumBCs::MaxwellSmoluchowskiBC::implicit2ndOrderMethod(globleEdge,edgeGrp);
             }

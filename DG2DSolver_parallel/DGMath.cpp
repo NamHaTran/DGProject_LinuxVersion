@@ -8,239 +8,477 @@
 #include <algorithm>
 #include <iostream>
 
+#include "./parallelFunctions/parallelVariables.h"
+
+#include "debuggingFuncs.h"
+
 namespace math
 {
-    void Gauss(int nGauss)
+void volumeGauss(int nGauss)
     {
         if (nGauss==0)
         {
-            mathVar::xGauss[nGauss] = 0.0;
-            mathVar::wGauss[nGauss] = 2.0;
+            mathVar::xGaussVol[nGauss] = 0.0;
+            mathVar::wGaussVol[nGauss] = 2.0;
         }
         else if (nGauss==1)
         {
-            mathVar::xGauss[nGauss - 1] = -0.577350269189625764509148780502;
-            mathVar::xGauss[nGauss] = 0.577350269189625764509148780502;
+            mathVar::xGaussVol[nGauss - 1] = -0.577350269189625764509148780502;
+            mathVar::xGaussVol[nGauss] = 0.577350269189625764509148780502;
 
-            mathVar::wGauss[nGauss - 1] = 1.0;
-            mathVar::wGauss[nGauss] = 1.0;
+            mathVar::wGaussVol[nGauss - 1] = 1.0;
+            mathVar::wGaussVol[nGauss] = 1.0;
         }
         else if (nGauss==2)
         {
-            mathVar::xGauss[nGauss - 2] = -0.774596669241483377035853079956;
-            mathVar::xGauss[nGauss - 1] = 0.0;
-            mathVar::xGauss[nGauss] = 0.774596669241483377035853079956;
+            mathVar::xGaussVol[nGauss - 2] = -0.774596669241483377035853079956;
+            mathVar::xGaussVol[nGauss - 1] = 0.0;
+            mathVar::xGaussVol[nGauss] = 0.774596669241483377035853079956;
 
-            mathVar::wGauss[nGauss - 2] = 0.555555555555555555555;
-            mathVar::wGauss[nGauss - 1] = 0.888888888888888888888;
-            mathVar::wGauss[nGauss] = 0.55555555555555555555555;
+            mathVar::wGaussVol[nGauss - 2] = 0.555555555555555555555;
+            mathVar::wGaussVol[nGauss - 1] = 0.888888888888888888888;
+            mathVar::wGaussVol[nGauss] = 0.55555555555555555555555;
         }
         else if (nGauss==3)
         {
-            mathVar::xGauss[nGauss - 3] = -0.8611363115940526;
-            mathVar::xGauss[nGauss - 2] = -0.3399810435848563;
-            mathVar::xGauss[nGauss - 1] = 0.3399810435848563;
-            mathVar::xGauss[nGauss] = 0.8611363115940526;
+            mathVar::xGaussVol[nGauss - 3] = -0.8611363115940526;
+            mathVar::xGaussVol[nGauss - 2] = -0.3399810435848563;
+            mathVar::xGaussVol[nGauss - 1] = 0.3399810435848563;
+            mathVar::xGaussVol[nGauss] = 0.8611363115940526;
 
-            mathVar::wGauss[nGauss - 3] = 0.3478548451374538;
-            mathVar::wGauss[nGauss - 2] = 0.6521451548625461;
-            mathVar::wGauss[nGauss - 1] = 0.6521451548625461;
-            mathVar::wGauss[nGauss] = 0.3478548451374538	;
+            mathVar::wGaussVol[nGauss - 3] = 0.3478548451374538;
+            mathVar::wGaussVol[nGauss - 2] = 0.6521451548625461;
+            mathVar::wGaussVol[nGauss - 1] = 0.6521451548625461;
+            mathVar::wGaussVol[nGauss] = 0.3478548451374538;
         }
         else if (nGauss==4)
         {
-            mathVar::xGauss[nGauss - 4] = -0.9061798459386640;
-            mathVar::xGauss[nGauss - 3] = -0.5384693101056831;
-            mathVar::xGauss[nGauss - 2] = 0.0000000000000000;
-            mathVar::xGauss[nGauss - 1] = 0.5384693101056831;
-            mathVar::xGauss[nGauss] = 0.9061798459386640;
+            mathVar::xGaussVol[nGauss - 4] = -0.9061798459386640;
+            mathVar::xGaussVol[nGauss - 3] = -0.5384693101056831;
+            mathVar::xGaussVol[nGauss - 2] = 0.0000000000000000;
+            mathVar::xGaussVol[nGauss - 1] = 0.5384693101056831;
+            mathVar::xGaussVol[nGauss] = 0.9061798459386640;
 
-            mathVar::wGauss[nGauss - 4] = 0.2369268850561891;
-            mathVar::wGauss[nGauss - 3] = 0.4786286704993665;
-            mathVar::wGauss[nGauss - 2] = 0.5688888888888889;
-            mathVar::wGauss[nGauss - 1] = 0.4786286704993665;
-            mathVar::wGauss[nGauss] = 0.2369268850561891;
+            mathVar::wGaussVol[nGauss - 4] = 0.2369268850561891;
+            mathVar::wGaussVol[nGauss - 3] = 0.4786286704993665;
+            mathVar::wGaussVol[nGauss - 2] = 0.5688888888888889;
+            mathVar::wGaussVol[nGauss - 1] = 0.4786286704993665;
+            mathVar::wGaussVol[nGauss] = 0.2369268850561891;
         }
         else if (nGauss==5)
         {
-            mathVar::xGauss[nGauss - 5] = -0.9324695142031521;
-            mathVar::xGauss[nGauss - 4] = -0.6612093864662645;
-            mathVar::xGauss[nGauss - 3] = -0.2386191860831969;
-            mathVar::xGauss[nGauss - 2] = 0.2386191860831969;
-            mathVar::xGauss[nGauss - 1] = 0.6612093864662645;
-            mathVar::xGauss[nGauss] = 0.9324695142031521;
+            mathVar::xGaussVol[nGauss - 5] = -0.9324695142031521;
+            mathVar::xGaussVol[nGauss - 4] = -0.6612093864662645;
+            mathVar::xGaussVol[nGauss - 3] = -0.2386191860831969;
+            mathVar::xGaussVol[nGauss - 2] = 0.2386191860831969;
+            mathVar::xGaussVol[nGauss - 1] = 0.6612093864662645;
+            mathVar::xGaussVol[nGauss] = 0.9324695142031521;
 
-            mathVar::wGauss[nGauss - 5] = 0.1713244923791704;
-            mathVar::wGauss[nGauss - 4] = 0.3607615730481386;
-            mathVar::wGauss[nGauss - 3] = 0.4679139345726910;
-            mathVar::wGauss[nGauss - 2] = 0.4679139345726910;
-            mathVar::wGauss[nGauss - 1] = 0.3607615730481386;
-            mathVar::wGauss[nGauss] = 0.1713244923791704;
+            mathVar::wGaussVol[nGauss - 5] = 0.1713244923791704;
+            mathVar::wGaussVol[nGauss - 4] = 0.3607615730481386;
+            mathVar::wGaussVol[nGauss - 3] = 0.4679139345726910;
+            mathVar::wGaussVol[nGauss - 2] = 0.4679139345726910;
+            mathVar::wGaussVol[nGauss - 1] = 0.3607615730481386;
+            mathVar::wGaussVol[nGauss] = 0.1713244923791704;
         }
         else if (nGauss==6)
         {
-            mathVar::xGauss[nGauss - 6] = -0.9491079123427585;
-            mathVar::xGauss[nGauss - 5] = -0.7415311855993945;
-            mathVar::xGauss[nGauss - 4] = -0.4058451513773972;
-            mathVar::xGauss[nGauss - 3] = 0.0;
-            mathVar::xGauss[nGauss - 2] = 0.4058451513773972;
-            mathVar::xGauss[nGauss - 1] = 0.7415311855993945;
-            mathVar::xGauss[nGauss] = 0.9491079123427585;
+            mathVar::xGaussVol[nGauss - 6] = -0.9491079123427585;
+            mathVar::xGaussVol[nGauss - 5] = -0.7415311855993945;
+            mathVar::xGaussVol[nGauss - 4] = -0.4058451513773972;
+            mathVar::xGaussVol[nGauss - 3] = 0.0;
+            mathVar::xGaussVol[nGauss - 2] = 0.4058451513773972;
+            mathVar::xGaussVol[nGauss - 1] = 0.7415311855993945;
+            mathVar::xGaussVol[nGauss] = 0.9491079123427585;
 
-            mathVar::wGauss[nGauss - 6] = 0.1294849661688697;
-            mathVar::wGauss[nGauss - 5] = 0.2797053914892766;
-            mathVar::wGauss[nGauss - 4] = 0.3818300505051189;
-            mathVar::wGauss[nGauss - 3] = 0.4179591836734694;
-            mathVar::wGauss[nGauss - 2] = 0.3818300505051189;
-            mathVar::wGauss[nGauss - 1] = 0.2797053914892766;
-            mathVar::wGauss[nGauss] = 0.1294849661688697;
+            mathVar::wGaussVol[nGauss - 6] = 0.1294849661688697;
+            mathVar::wGaussVol[nGauss - 5] = 0.2797053914892766;
+            mathVar::wGaussVol[nGauss - 4] = 0.3818300505051189;
+            mathVar::wGaussVol[nGauss - 3] = 0.4179591836734694;
+            mathVar::wGaussVol[nGauss - 2] = 0.3818300505051189;
+            mathVar::wGaussVol[nGauss - 1] = 0.2797053914892766;
+            mathVar::wGaussVol[nGauss] = 0.1294849661688697;
         }
         else if (nGauss==7)
         {
-            mathVar::xGauss[nGauss - 7] = -0.9602898564975363;
-            mathVar::xGauss[nGauss - 6] = -0.7966664774136267;
-            mathVar::xGauss[nGauss - 5] = -0.5255324099163290;
-            mathVar::xGauss[nGauss - 4] = -0.1834346424956498;
-            mathVar::xGauss[nGauss - 3] = 0.1834346424956498;
-            mathVar::xGauss[nGauss - 2] = 0.5255324099163290;
-            mathVar::xGauss[nGauss - 1] = 0.7966664774136267;
-            mathVar::xGauss[nGauss] = 0.9602898564975363;
+            mathVar::xGaussVol[nGauss - 7] = -0.9602898564975363;
+            mathVar::xGaussVol[nGauss - 6] = -0.7966664774136267;
+            mathVar::xGaussVol[nGauss - 5] = -0.5255324099163290;
+            mathVar::xGaussVol[nGauss - 4] = -0.1834346424956498;
+            mathVar::xGaussVol[nGauss - 3] = 0.1834346424956498;
+            mathVar::xGaussVol[nGauss - 2] = 0.5255324099163290;
+            mathVar::xGaussVol[nGauss - 1] = 0.7966664774136267;
+            mathVar::xGaussVol[nGauss] = 0.9602898564975363;
 
-            mathVar::wGauss[nGauss - 7] = 0.1012285362903763;
-            mathVar::wGauss[nGauss - 6] = 0.2223810344533745;
-            mathVar::wGauss[nGauss - 5] = 0.3137066458778873;
-            mathVar::wGauss[nGauss - 4] = 0.3626837833783620;
-            mathVar::wGauss[nGauss - 3] = 0.3626837833783620;
-            mathVar::wGauss[nGauss - 2] = 0.3137066458778873;
-            mathVar::wGauss[nGauss - 1] = 0.2223810344533745;
-            mathVar::wGauss[nGauss] = 0.1012285362903763;
+            mathVar::wGaussVol[nGauss - 7] = 0.1012285362903763;
+            mathVar::wGaussVol[nGauss - 6] = 0.2223810344533745;
+            mathVar::wGaussVol[nGauss - 5] = 0.3137066458778873;
+            mathVar::wGaussVol[nGauss - 4] = 0.3626837833783620;
+            mathVar::wGaussVol[nGauss - 3] = 0.3626837833783620;
+            mathVar::wGaussVol[nGauss - 2] = 0.3137066458778873;
+            mathVar::wGaussVol[nGauss - 1] = 0.2223810344533745;
+            mathVar::wGaussVol[nGauss] = 0.1012285362903763;
         }
         else if (nGauss==8)
         {
-            mathVar::xGauss[nGauss - 8] = -0.9681602395076261;
-            mathVar::xGauss[nGauss - 7] = -0.8360311073266358;
-            mathVar::xGauss[nGauss - 6] = -0.6133714327005904;
-            mathVar::xGauss[nGauss - 5] = -0.3242534234038089;
-            mathVar::xGauss[nGauss - 4] = 0.0;
-            mathVar::xGauss[nGauss - 3] = 0.3242534234038089;
-            mathVar::xGauss[nGauss - 2] = 0.6133714327005904;
-            mathVar::xGauss[nGauss - 1] = 0.8360311073266358;
-            mathVar::xGauss[nGauss] = 0.9681602395076261;
+            mathVar::xGaussVol[nGauss - 8] = -0.9681602395076261;
+            mathVar::xGaussVol[nGauss - 7] = -0.8360311073266358;
+            mathVar::xGaussVol[nGauss - 6] = -0.6133714327005904;
+            mathVar::xGaussVol[nGauss - 5] = -0.3242534234038089;
+            mathVar::xGaussVol[nGauss - 4] = 0.0;
+            mathVar::xGaussVol[nGauss - 3] = 0.3242534234038089;
+            mathVar::xGaussVol[nGauss - 2] = 0.6133714327005904;
+            mathVar::xGaussVol[nGauss - 1] = 0.8360311073266358;
+            mathVar::xGaussVol[nGauss] = 0.9681602395076261;
 
-            mathVar::wGauss[nGauss - 8] = 0.0812743883615744;
-            mathVar::wGauss[nGauss - 7] = 0.1806481606948574;
-            mathVar::wGauss[nGauss - 6] = 0.2606106964029354;
-            mathVar::wGauss[nGauss - 5] = 0.3123470770400029;
-            mathVar::wGauss[nGauss - 4] = 0.3302393550012598;
-            mathVar::wGauss[nGauss - 3] = 0.3123470770400029;
-            mathVar::wGauss[nGauss - 2] = 0.2606106964029354;
-            mathVar::wGauss[nGauss - 1] = 0.1806481606948574;
-            mathVar::wGauss[nGauss] = 0.0812743883615744;
+            mathVar::wGaussVol[nGauss - 8] = 0.0812743883615744;
+            mathVar::wGaussVol[nGauss - 7] = 0.1806481606948574;
+            mathVar::wGaussVol[nGauss - 6] = 0.2606106964029354;
+            mathVar::wGaussVol[nGauss - 5] = 0.3123470770400029;
+            mathVar::wGaussVol[nGauss - 4] = 0.3302393550012598;
+            mathVar::wGaussVol[nGauss - 3] = 0.3123470770400029;
+            mathVar::wGaussVol[nGauss - 2] = 0.2606106964029354;
+            mathVar::wGaussVol[nGauss - 1] = 0.1806481606948574;
+            mathVar::wGaussVol[nGauss] = 0.0812743883615744;
         }
         else if (nGauss==9)
         {
-            mathVar::xGauss[nGauss - 9] = -0.9739065285171717;
-            mathVar::xGauss[nGauss - 8] = -0.8650633666889845;
-            mathVar::xGauss[nGauss - 7] = -0.6794095682990244;
-            mathVar::xGauss[nGauss - 6] = -0.4333953941292472;
-            mathVar::xGauss[nGauss - 5] = -0.1488743389816312;
-            mathVar::xGauss[nGauss - 4] = 0.1488743389816312;
-            mathVar::xGauss[nGauss - 3] = 0.4333953941292472;
-            mathVar::xGauss[nGauss - 2] = 0.6794095682990244;
-            mathVar::xGauss[nGauss - 1] = 0.8650633666889845;
-            mathVar::xGauss[nGauss] = 0.9739065285171717;
+            mathVar::xGaussVol[nGauss - 9] = -0.9739065285171717;
+            mathVar::xGaussVol[nGauss - 8] = -0.8650633666889845;
+            mathVar::xGaussVol[nGauss - 7] = -0.6794095682990244;
+            mathVar::xGaussVol[nGauss - 6] = -0.4333953941292472;
+            mathVar::xGaussVol[nGauss - 5] = -0.1488743389816312;
+            mathVar::xGaussVol[nGauss - 4] = 0.1488743389816312;
+            mathVar::xGaussVol[nGauss - 3] = 0.4333953941292472;
+            mathVar::xGaussVol[nGauss - 2] = 0.6794095682990244;
+            mathVar::xGaussVol[nGauss - 1] = 0.8650633666889845;
+            mathVar::xGaussVol[nGauss] = 0.9739065285171717;
 
-            mathVar::wGauss[nGauss - 9] = 0.0666713443086881;
-            mathVar::wGauss[nGauss - 8] = 0.1494513491505806;
-            mathVar::wGauss[nGauss - 7] = 0.2190863625159820;
-            mathVar::wGauss[nGauss - 6] = 0.2692667193099963;
-            mathVar::wGauss[nGauss - 5] = 0.2955242247147529;
-            mathVar::wGauss[nGauss - 4] = 0.2955242247147529;
-            mathVar::wGauss[nGauss - 3] = 0.2692667193099963;
-            mathVar::wGauss[nGauss - 2] = 0.2190863625159820;
-            mathVar::wGauss[nGauss - 1] = 0.1494513491505806;
-            mathVar::wGauss[nGauss] = 0.0666713443086881;
+            mathVar::wGaussVol[nGauss - 9] = 0.0666713443086881;
+            mathVar::wGaussVol[nGauss - 8] = 0.1494513491505806;
+            mathVar::wGaussVol[nGauss - 7] = 0.2190863625159820;
+            mathVar::wGaussVol[nGauss - 6] = 0.2692667193099963;
+            mathVar::wGaussVol[nGauss - 5] = 0.2955242247147529;
+            mathVar::wGaussVol[nGauss - 4] = 0.2955242247147529;
+            mathVar::wGaussVol[nGauss - 3] = 0.2692667193099963;
+            mathVar::wGaussVol[nGauss - 2] = 0.2190863625159820;
+            mathVar::wGaussVol[nGauss - 1] = 0.1494513491505806;
+            mathVar::wGaussVol[nGauss] = 0.0666713443086881;
         }
         else if (nGauss==10)
         {
-            mathVar::xGauss[nGauss - 10] = -0.9782286581460570;
-            mathVar::xGauss[nGauss - 9] = -0.8870625997680953;
-            mathVar::xGauss[nGauss - 8] = -0.7301520055740494;
-            mathVar::xGauss[nGauss - 7] = -0.5190961292068118;
-            mathVar::xGauss[nGauss - 6] = -0.2695431559523450;
-            mathVar::xGauss[nGauss - 5] = 0.0;
-            mathVar::xGauss[nGauss - 4] = 0.2695431559523450;
-            mathVar::xGauss[nGauss - 3] = 0.5190961292068118;
-            mathVar::xGauss[nGauss - 2] = 0.7301520055740494;
-            mathVar::xGauss[nGauss - 1] = 0.8870625997680953;
-            mathVar::xGauss[nGauss] = 0.9782286581460570;
+            mathVar::xGaussVol[nGauss - 10] = -0.9782286581460570;
+            mathVar::xGaussVol[nGauss - 9] = -0.8870625997680953;
+            mathVar::xGaussVol[nGauss - 8] = -0.7301520055740494;
+            mathVar::xGaussVol[nGauss - 7] = -0.5190961292068118;
+            mathVar::xGaussVol[nGauss - 6] = -0.2695431559523450;
+            mathVar::xGaussVol[nGauss - 5] = 0.0;
+            mathVar::xGaussVol[nGauss - 4] = 0.2695431559523450;
+            mathVar::xGaussVol[nGauss - 3] = 0.5190961292068118;
+            mathVar::xGaussVol[nGauss - 2] = 0.7301520055740494;
+            mathVar::xGaussVol[nGauss - 1] = 0.8870625997680953;
+            mathVar::xGaussVol[nGauss] = 0.9782286581460570;
 
-            mathVar::wGauss[nGauss - 10] = 0.0556685671161737;
-            mathVar::wGauss[nGauss - 9] = 0.1255803694649046;
-            mathVar::wGauss[nGauss - 8] = 0.1862902109277343;
-            mathVar::wGauss[nGauss - 7] = 0.2331937645919905;
-            mathVar::wGauss[nGauss - 6] = 0.2628045445102467;
-            mathVar::wGauss[nGauss - 5] = 0.2729250867779006;
-            mathVar::wGauss[nGauss - 4] = 0.2628045445102467;
-            mathVar::wGauss[nGauss - 3] = 0.2331937645919905;
-            mathVar::wGauss[nGauss - 2] = 0.1862902109277343;
-            mathVar::wGauss[nGauss - 1] = 0.1255803694649046;
-            mathVar::wGauss[nGauss] = 0.0556685671161737;
+            mathVar::wGaussVol[nGauss - 10] = 0.0556685671161737;
+            mathVar::wGaussVol[nGauss - 9] = 0.1255803694649046;
+            mathVar::wGaussVol[nGauss - 8] = 0.1862902109277343;
+            mathVar::wGaussVol[nGauss - 7] = 0.2331937645919905;
+            mathVar::wGaussVol[nGauss - 6] = 0.2628045445102467;
+            mathVar::wGaussVol[nGauss - 5] = 0.2729250867779006;
+            mathVar::wGaussVol[nGauss - 4] = 0.2628045445102467;
+            mathVar::wGaussVol[nGauss - 3] = 0.2331937645919905;
+            mathVar::wGaussVol[nGauss - 2] = 0.1862902109277343;
+            mathVar::wGaussVol[nGauss - 1] = 0.1255803694649046;
+            mathVar::wGaussVol[nGauss] = 0.0556685671161737;
         }
         else if (nGauss==11)
         {
-            mathVar::xGauss[nGauss - 11] = -0.9815606342467192;
-            mathVar::xGauss[nGauss - 10] = -0.9041172563704749;
-            mathVar::xGauss[nGauss - 9] = -0.7699026741943047;
-            mathVar::xGauss[nGauss - 8] = -0.5873179542866175;
-            mathVar::xGauss[nGauss - 7] = -0.3678314989981802;
-            mathVar::xGauss[nGauss - 6] = -0.1252334085114689;
-            mathVar::xGauss[nGauss - 5] = 0.1252334085114689;
-            mathVar::xGauss[nGauss - 4] = 0.3678314989981802;
-            mathVar::xGauss[nGauss - 3] = 0.5873179542866175;
-            mathVar::xGauss[nGauss - 2] = 0.7699026741943047;
-            mathVar::xGauss[nGauss - 1] = 0.9041172563704749;
-            mathVar::xGauss[nGauss] = 0.9815606342467192;
+            mathVar::xGaussVol[nGauss - 11] = -0.9815606342467192;
+            mathVar::xGaussVol[nGauss - 10] = -0.9041172563704749;
+            mathVar::xGaussVol[nGauss - 9] = -0.7699026741943047;
+            mathVar::xGaussVol[nGauss - 8] = -0.5873179542866175;
+            mathVar::xGaussVol[nGauss - 7] = -0.3678314989981802;
+            mathVar::xGaussVol[nGauss - 6] = -0.1252334085114689;
+            mathVar::xGaussVol[nGauss - 5] = 0.1252334085114689;
+            mathVar::xGaussVol[nGauss - 4] = 0.3678314989981802;
+            mathVar::xGaussVol[nGauss - 3] = 0.5873179542866175;
+            mathVar::xGaussVol[nGauss - 2] = 0.7699026741943047;
+            mathVar::xGaussVol[nGauss - 1] = 0.9041172563704749;
+            mathVar::xGaussVol[nGauss] = 0.9815606342467192;
 
-            mathVar::wGauss[nGauss - 11] = 0.0471753363865118;
-            mathVar::wGauss[nGauss - 10] = 0.1069393259953184;
-            mathVar::wGauss[nGauss - 9] = 0.1600783285433462;
-            mathVar::wGauss[nGauss - 8] = 0.2031674267230659;
-            mathVar::wGauss[nGauss - 7] = 0.2331937645919905;
-            mathVar::wGauss[nGauss - 6] = 0.2491470458134028;
-            mathVar::wGauss[nGauss - 5] = 0.2491470458134028;
-            mathVar::wGauss[nGauss - 4] = 0.2334925365383548;
-            mathVar::wGauss[nGauss - 3] = 0.2031674267230659;
-            mathVar::wGauss[nGauss - 2] = 0.1600783285433462;
-            mathVar::wGauss[nGauss - 1] = 0.1069393259953184;
-            mathVar::wGauss[nGauss] = 0.0471753363865118;
+            mathVar::wGaussVol[nGauss - 11] = 0.0471753363865118;
+            mathVar::wGaussVol[nGauss - 10] = 0.1069393259953184;
+            mathVar::wGaussVol[nGauss - 9] = 0.1600783285433462;
+            mathVar::wGaussVol[nGauss - 8] = 0.2031674267230659;
+            mathVar::wGaussVol[nGauss - 7] = 0.2331937645919905;
+            mathVar::wGaussVol[nGauss - 6] = 0.2491470458134028;
+            mathVar::wGaussVol[nGauss - 5] = 0.2491470458134028;
+            mathVar::wGaussVol[nGauss - 4] = 0.2334925365383548;
+            mathVar::wGaussVol[nGauss - 3] = 0.2031674267230659;
+            mathVar::wGaussVol[nGauss - 2] = 0.1600783285433462;
+            mathVar::wGaussVol[nGauss - 1] = 0.1069393259953184;
+            mathVar::wGaussVol[nGauss] = 0.0471753363865118;
         }
     }
 
-    void GaussLobatto(int nGauss)
+    void surfaceGauss(int nGauss)
+    {
+        if (nGauss==0)
+        {
+            mathVar::xGaussSur[nGauss] = 0.0;
+            mathVar::wGaussSur[nGauss] = 2.0;
+        }
+        else if (nGauss==1)
+        {
+            mathVar::xGaussSur[nGauss - 1] = -0.577350269189625764509148780502;
+            mathVar::xGaussSur[nGauss] = 0.577350269189625764509148780502;
+
+            mathVar::wGaussSur[nGauss - 1] = 1.0;
+            mathVar::wGaussSur[nGauss] = 1.0;
+        }
+        else if (nGauss==2)
+        {
+            mathVar::xGaussSur[nGauss - 2] = -0.774596669241483377035853079956;
+            mathVar::xGaussSur[nGauss - 1] = 0.0;
+            mathVar::xGaussSur[nGauss] = 0.774596669241483377035853079956;
+
+            mathVar::wGaussSur[nGauss - 2] = 0.555555555555555555555;
+            mathVar::wGaussSur[nGauss - 1] = 0.888888888888888888888;
+            mathVar::wGaussSur[nGauss] = 0.55555555555555555555555;
+        }
+        else if (nGauss==3)
+        {
+            mathVar::xGaussSur[nGauss - 3] = -0.8611363115940526;
+            mathVar::xGaussSur[nGauss - 2] = -0.3399810435848563;
+            mathVar::xGaussSur[nGauss - 1] = 0.3399810435848563;
+            mathVar::xGaussSur[nGauss] = 0.8611363115940526;
+
+            mathVar::wGaussSur[nGauss - 3] = 0.3478548451374538;
+            mathVar::wGaussSur[nGauss - 2] = 0.6521451548625461;
+            mathVar::wGaussSur[nGauss - 1] = 0.6521451548625461;
+            mathVar::wGaussSur[nGauss] = 0.3478548451374538;
+        }
+        else if (nGauss==4)
+        {
+            mathVar::xGaussSur[nGauss - 4] = -0.9061798459386640;
+            mathVar::xGaussSur[nGauss - 3] = -0.5384693101056831;
+            mathVar::xGaussSur[nGauss - 2] = 0.0000000000000000;
+            mathVar::xGaussSur[nGauss - 1] = 0.5384693101056831;
+            mathVar::xGaussSur[nGauss] = 0.9061798459386640;
+
+            mathVar::wGaussSur[nGauss - 4] = 0.2369268850561891;
+            mathVar::wGaussSur[nGauss - 3] = 0.4786286704993665;
+            mathVar::wGaussSur[nGauss - 2] = 0.5688888888888889;
+            mathVar::wGaussSur[nGauss - 1] = 0.4786286704993665;
+            mathVar::wGaussSur[nGauss] = 0.2369268850561891;
+        }
+        else if (nGauss==5)
+        {
+            mathVar::xGaussSur[nGauss - 5] = -0.9324695142031521;
+            mathVar::xGaussSur[nGauss - 4] = -0.6612093864662645;
+            mathVar::xGaussSur[nGauss - 3] = -0.2386191860831969;
+            mathVar::xGaussSur[nGauss - 2] = 0.2386191860831969;
+            mathVar::xGaussSur[nGauss - 1] = 0.6612093864662645;
+            mathVar::xGaussSur[nGauss] = 0.9324695142031521;
+
+            mathVar::wGaussSur[nGauss - 5] = 0.1713244923791704;
+            mathVar::wGaussSur[nGauss - 4] = 0.3607615730481386;
+            mathVar::wGaussSur[nGauss - 3] = 0.4679139345726910;
+            mathVar::wGaussSur[nGauss - 2] = 0.4679139345726910;
+            mathVar::wGaussSur[nGauss - 1] = 0.3607615730481386;
+            mathVar::wGaussSur[nGauss] = 0.1713244923791704;
+        }
+        else if (nGauss==6)
+        {
+            mathVar::xGaussSur[nGauss - 6] = -0.9491079123427585;
+            mathVar::xGaussSur[nGauss - 5] = -0.7415311855993945;
+            mathVar::xGaussSur[nGauss - 4] = -0.4058451513773972;
+            mathVar::xGaussSur[nGauss - 3] = 0.0;
+            mathVar::xGaussSur[nGauss - 2] = 0.4058451513773972;
+            mathVar::xGaussSur[nGauss - 1] = 0.7415311855993945;
+            mathVar::xGaussSur[nGauss] = 0.9491079123427585;
+
+            mathVar::wGaussSur[nGauss - 6] = 0.1294849661688697;
+            mathVar::wGaussSur[nGauss - 5] = 0.2797053914892766;
+            mathVar::wGaussSur[nGauss - 4] = 0.3818300505051189;
+            mathVar::wGaussSur[nGauss - 3] = 0.4179591836734694;
+            mathVar::wGaussSur[nGauss - 2] = 0.3818300505051189;
+            mathVar::wGaussSur[nGauss - 1] = 0.2797053914892766;
+            mathVar::wGaussSur[nGauss] = 0.1294849661688697;
+        }
+        else if (nGauss==7)
+        {
+            mathVar::xGaussSur[nGauss - 7] = -0.9602898564975363;
+            mathVar::xGaussSur[nGauss - 6] = -0.7966664774136267;
+            mathVar::xGaussSur[nGauss - 5] = -0.5255324099163290;
+            mathVar::xGaussSur[nGauss - 4] = -0.1834346424956498;
+            mathVar::xGaussSur[nGauss - 3] = 0.1834346424956498;
+            mathVar::xGaussSur[nGauss - 2] = 0.5255324099163290;
+            mathVar::xGaussSur[nGauss - 1] = 0.7966664774136267;
+            mathVar::xGaussSur[nGauss] = 0.9602898564975363;
+
+            mathVar::wGaussSur[nGauss - 7] = 0.1012285362903763;
+            mathVar::wGaussSur[nGauss - 6] = 0.2223810344533745;
+            mathVar::wGaussSur[nGauss - 5] = 0.3137066458778873;
+            mathVar::wGaussSur[nGauss - 4] = 0.3626837833783620;
+            mathVar::wGaussSur[nGauss - 3] = 0.3626837833783620;
+            mathVar::wGaussSur[nGauss - 2] = 0.3137066458778873;
+            mathVar::wGaussSur[nGauss - 1] = 0.2223810344533745;
+            mathVar::wGaussSur[nGauss] = 0.1012285362903763;
+        }
+        else if (nGauss==8)
+        {
+            mathVar::xGaussSur[nGauss - 8] = -0.9681602395076261;
+            mathVar::xGaussSur[nGauss - 7] = -0.8360311073266358;
+            mathVar::xGaussSur[nGauss - 6] = -0.6133714327005904;
+            mathVar::xGaussSur[nGauss - 5] = -0.3242534234038089;
+            mathVar::xGaussSur[nGauss - 4] = 0.0;
+            mathVar::xGaussSur[nGauss - 3] = 0.3242534234038089;
+            mathVar::xGaussSur[nGauss - 2] = 0.6133714327005904;
+            mathVar::xGaussSur[nGauss - 1] = 0.8360311073266358;
+            mathVar::xGaussSur[nGauss] = 0.9681602395076261;
+
+            mathVar::wGaussSur[nGauss - 8] = 0.0812743883615744;
+            mathVar::wGaussSur[nGauss - 7] = 0.1806481606948574;
+            mathVar::wGaussSur[nGauss - 6] = 0.2606106964029354;
+            mathVar::wGaussSur[nGauss - 5] = 0.3123470770400029;
+            mathVar::wGaussSur[nGauss - 4] = 0.3302393550012598;
+            mathVar::wGaussSur[nGauss - 3] = 0.3123470770400029;
+            mathVar::wGaussSur[nGauss - 2] = 0.2606106964029354;
+            mathVar::wGaussSur[nGauss - 1] = 0.1806481606948574;
+            mathVar::wGaussSur[nGauss] = 0.0812743883615744;
+        }
+        else if (nGauss==9)
+        {
+            mathVar::xGaussSur[nGauss - 9] = -0.9739065285171717;
+            mathVar::xGaussSur[nGauss - 8] = -0.8650633666889845;
+            mathVar::xGaussSur[nGauss - 7] = -0.6794095682990244;
+            mathVar::xGaussSur[nGauss - 6] = -0.4333953941292472;
+            mathVar::xGaussSur[nGauss - 5] = -0.1488743389816312;
+            mathVar::xGaussSur[nGauss - 4] = 0.1488743389816312;
+            mathVar::xGaussSur[nGauss - 3] = 0.4333953941292472;
+            mathVar::xGaussSur[nGauss - 2] = 0.6794095682990244;
+            mathVar::xGaussSur[nGauss - 1] = 0.8650633666889845;
+            mathVar::xGaussSur[nGauss] = 0.9739065285171717;
+
+            mathVar::wGaussSur[nGauss - 9] = 0.0666713443086881;
+            mathVar::wGaussSur[nGauss - 8] = 0.1494513491505806;
+            mathVar::wGaussSur[nGauss - 7] = 0.2190863625159820;
+            mathVar::wGaussSur[nGauss - 6] = 0.2692667193099963;
+            mathVar::wGaussSur[nGauss - 5] = 0.2955242247147529;
+            mathVar::wGaussSur[nGauss - 4] = 0.2955242247147529;
+            mathVar::wGaussSur[nGauss - 3] = 0.2692667193099963;
+            mathVar::wGaussSur[nGauss - 2] = 0.2190863625159820;
+            mathVar::wGaussSur[nGauss - 1] = 0.1494513491505806;
+            mathVar::wGaussSur[nGauss] = 0.0666713443086881;
+        }
+        else if (nGauss==10)
+        {
+            mathVar::xGaussSur[nGauss - 10] = -0.9782286581460570;
+            mathVar::xGaussSur[nGauss - 9] = -0.8870625997680953;
+            mathVar::xGaussSur[nGauss - 8] = -0.7301520055740494;
+            mathVar::xGaussSur[nGauss - 7] = -0.5190961292068118;
+            mathVar::xGaussSur[nGauss - 6] = -0.2695431559523450;
+            mathVar::xGaussSur[nGauss - 5] = 0.0;
+            mathVar::xGaussSur[nGauss - 4] = 0.2695431559523450;
+            mathVar::xGaussSur[nGauss - 3] = 0.5190961292068118;
+            mathVar::xGaussSur[nGauss - 2] = 0.7301520055740494;
+            mathVar::xGaussSur[nGauss - 1] = 0.8870625997680953;
+            mathVar::xGaussSur[nGauss] = 0.9782286581460570;
+
+            mathVar::wGaussSur[nGauss - 10] = 0.0556685671161737;
+            mathVar::wGaussSur[nGauss - 9] = 0.1255803694649046;
+            mathVar::wGaussSur[nGauss - 8] = 0.1862902109277343;
+            mathVar::wGaussSur[nGauss - 7] = 0.2331937645919905;
+            mathVar::wGaussSur[nGauss - 6] = 0.2628045445102467;
+            mathVar::wGaussSur[nGauss - 5] = 0.2729250867779006;
+            mathVar::wGaussSur[nGauss - 4] = 0.2628045445102467;
+            mathVar::wGaussSur[nGauss - 3] = 0.2331937645919905;
+            mathVar::wGaussSur[nGauss - 2] = 0.1862902109277343;
+            mathVar::wGaussSur[nGauss - 1] = 0.1255803694649046;
+            mathVar::wGaussSur[nGauss] = 0.0556685671161737;
+        }
+        else if (nGauss==11)
+        {
+            mathVar::xGaussSur[nGauss - 11] = -0.9815606342467192;
+            mathVar::xGaussSur[nGauss - 10] = -0.9041172563704749;
+            mathVar::xGaussSur[nGauss - 9] = -0.7699026741943047;
+            mathVar::xGaussSur[nGauss - 8] = -0.5873179542866175;
+            mathVar::xGaussSur[nGauss - 7] = -0.3678314989981802;
+            mathVar::xGaussSur[nGauss - 6] = -0.1252334085114689;
+            mathVar::xGaussSur[nGauss - 5] = 0.1252334085114689;
+            mathVar::xGaussSur[nGauss - 4] = 0.3678314989981802;
+            mathVar::xGaussSur[nGauss - 3] = 0.5873179542866175;
+            mathVar::xGaussSur[nGauss - 2] = 0.7699026741943047;
+            mathVar::xGaussSur[nGauss - 1] = 0.9041172563704749;
+            mathVar::xGaussSur[nGauss] = 0.9815606342467192;
+
+            mathVar::wGaussSur[nGauss - 11] = 0.0471753363865118;
+            mathVar::wGaussSur[nGauss - 10] = 0.1069393259953184;
+            mathVar::wGaussSur[nGauss - 9] = 0.1600783285433462;
+            mathVar::wGaussSur[nGauss - 8] = 0.2031674267230659;
+            mathVar::wGaussSur[nGauss - 7] = 0.2331937645919905;
+            mathVar::wGaussSur[nGauss - 6] = 0.2491470458134028;
+            mathVar::wGaussSur[nGauss - 5] = 0.2491470458134028;
+            mathVar::wGaussSur[nGauss - 4] = 0.2334925365383548;
+            mathVar::wGaussSur[nGauss - 3] = 0.2031674267230659;
+            mathVar::wGaussSur[nGauss - 2] = 0.1600783285433462;
+            mathVar::wGaussSur[nGauss - 1] = 0.1069393259953184;
+            mathVar::wGaussSur[nGauss] = 0.0471753363865118;
+        }
+    }
+
+    void volumeGaussLobatto(int nGauss)
     {
         if (nGauss == 0)
         {
-            mathVar::xGaussLobatto[nGauss] = 0.0;
-            mathVar::wGaussLobatto[nGauss] = 2.0;
+            mathVar::xGaussLobattoVol[nGauss] = 0.0;
+            mathVar::wGaussLobattoVol[nGauss] = 2.0;
         }
         else if (nGauss == 1)
         {
-            mathVar::xGaussLobatto[nGauss - 1] = -1.0;
-            mathVar::xGaussLobatto[nGauss] = 1.0;
+            mathVar::xGaussLobattoVol[nGauss - 1] = -1.0;
+            mathVar::xGaussLobattoVol[nGauss] = 1.0;
 
-            mathVar::wGaussLobatto[nGauss - 1] = 1.0;
-            mathVar::wGaussLobatto[nGauss] = 1.0;
+            mathVar::wGaussLobattoVol[nGauss - 1] = 1.0;
+            mathVar::wGaussLobattoVol[nGauss] = 1.0;
         }
         else if (nGauss == 2)
         {
-            mathVar::xGaussLobatto[nGauss - 2] = -1.0;
-            mathVar::xGaussLobatto[nGauss - 1] = 0.0;
-            mathVar::xGaussLobatto[nGauss] = 1.0;
+            mathVar::xGaussLobattoVol[nGauss - 2] = -1.0;
+            mathVar::xGaussLobattoVol[nGauss - 1] = 0.0;
+            mathVar::xGaussLobattoVol[nGauss] = 1.0;
 
-            mathVar::wGaussLobatto[nGauss - 2] = 1.0/3.0;
-            mathVar::wGaussLobatto[nGauss - 1] = 4.0/3.0;
-            mathVar::wGaussLobatto[nGauss] = 1.0/3.0;
+            mathVar::wGaussLobattoVol[nGauss - 2] = 1.0/3.0;
+            mathVar::wGaussLobattoVol[nGauss - 1] = 4.0/3.0;
+            mathVar::wGaussLobattoVol[nGauss] = 1.0/3.0;
+        }
+    }
+
+    void surfaceGaussLobatto(int nGauss)
+    {
+        if (nGauss == 0)
+        {
+            mathVar::xGaussLobattoSur[nGauss] = 0.0;
+            mathVar::wGaussLobattoSur[nGauss] = 2.0;
+        }
+        else if (nGauss == 1)
+        {
+            mathVar::xGaussLobattoSur[nGauss - 1] = -1.0;
+            mathVar::xGaussLobattoSur[nGauss] = 1.0;
+
+            mathVar::wGaussLobattoSur[nGauss - 1] = 1.0;
+            mathVar::wGaussLobattoSur[nGauss] = 1.0;
+        }
+        else if (nGauss == 2)
+        {
+            mathVar::xGaussLobattoSur[nGauss - 2] = -1.0;
+            mathVar::xGaussLobattoSur[nGauss - 1] = 0.0;
+            mathVar::xGaussLobattoSur[nGauss] = 1.0;
+
+            mathVar::wGaussLobattoSur[nGauss - 2] = 1.0/3.0;
+            mathVar::wGaussLobattoSur[nGauss - 1] = 4.0/3.0;
+            mathVar::wGaussLobattoSur[nGauss] = 1.0/3.0;
         }
     }
 
@@ -652,6 +890,38 @@ namespace math
         return jacobi;
     }
 
+    double calcMeanPriVar(int element, int varId)
+    {
+        /* Ham tinh gia tri trung binh cua bien primary tren cell (trung binh gia tri tai cac Gauss point)
+         * Hien tai chi co bien T, varId = 1*/
+        double sum(0.0);
+        int count(0);
+        switch (varId)
+        {
+        case 1:
+        {
+            for (int na = 0; na <= mathVar::nGauss; na++)
+            {
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                {
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    sum+=volumeFields::T[element][nanb];
+                    count++;
+                }
+            }
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        default:
+            break;
+        }
+
+        return (sum/count);
+    }
+
     std::vector<double> SolveSysEqs(std::vector< std::vector<double> > &a, std::vector<double> &b)
     {
         int n = static_cast<int>(b.size());
@@ -748,7 +1018,7 @@ namespace math
         if (DGSchemes::solveTImplicitly)
         {
             //Em is total energy with total velocity (um), not advective velocity (u)
-            double T(0.0), TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
+            double T(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
                     u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
             std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
             Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
@@ -765,15 +1035,15 @@ namespace math
                         B3*pow(material::Ts,2)
             };
             //compute initial T
-            TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
+            //TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
             //Solve T
-            T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
+            T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,T_old);
             if (T!=T || T<0)
             {
                 //std::cout<<"Failed to solve T\n";
                 //exit(1);
                 //mathVar::solveTFailed=true;
-                TFinal=TIni;
+                TFinal=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
             }
             else {
                 TFinal=T;
@@ -808,6 +1078,24 @@ namespace math
         else
         {
             return TFinal;
+        }
+    }
+
+    double CalcTFromConsvVar_massDiff_explicit(double rho, double rhou, double rhov, double rhoE, double muRhox, double muRhoy)
+    {
+        /* Ham giai T khi mass diffusion on, explicitly
+        */
+        double rhou_m(rhou-material::massDiffusion::DmCoeff*muRhox/rho),
+                rhov_m(rhov-material::massDiffusion::DmCoeff*muRhoy/rho);
+        double T_m((rhoE-0.5*(rhou_m*rhou_m+rhov_m*rhov_m)/rho)/(material::Cv*rho)),
+                T((rhoE-0.5*(rhou*rhou+rhov*rhov)/rho)/(material::Cv*rho));
+        if (T_m<0)
+        {
+            return T;
+        }
+        else
+        {
+            return T_m;
         }
     }
 
@@ -937,7 +1225,7 @@ namespace math
         double inte(0.0), J(meshVar::J1D[edge]), w(0.0);
         for (int nG = 0; nG <= mathVar::nGauss; nG++)
         {
-            w = mathVar::wGauss[nG];
+            w = mathVar::wGaussSur[nG];
             inte += w * Fvalue[nG] * J;
         }
         return inte;
@@ -973,8 +1261,8 @@ namespace math
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 if (flowProperties::massDiffusion)
                 {
-                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,5,2));
                     out = material::Cv*math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
@@ -990,8 +1278,8 @@ namespace math
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
                 if (flowProperties::massDiffusion)
                 {
-                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,5,2));
                     out = math::CalcP(CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
                 }
                 else
@@ -1005,10 +1293,11 @@ namespace math
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
+
                 if (flowProperties::massDiffusion)
                 {
-                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,5,2));
                     out = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
@@ -1030,8 +1319,8 @@ namespace math
                 double TVal(0.0);
                 if (flowProperties::massDiffusion)
                 {
-                    double dRhoX(math::pointAuxValue(element,a,b,1,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,1,2));
+                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
+                            dRhoY(math::pointAuxValue(element,a,b,5,2));
                     TVal = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
                 }
                 else
@@ -1104,6 +1393,14 @@ namespace math
 
     std::tuple <double, double> internalSurfaceDerivativeValue(int edge, int element, int nG, int valType, int dir)
     {
+        /* ValType la id cua bien can tinh:
+         * 1: (mu)dRho
+         * 2: (mu)dRhou
+         * 3: (mu)dRhov
+         * 4: (mu)dRhoE
+         * 5: dRho --> day la bien phu khi mass diffusion on: Sm = div(rho)
+        */
+
         int masterElem(0), servantElem(0);
         std::tie(masterElem, servantElem) = auxUlti::getMasterServantOfEdge(edge);
         double valPlus(0.0), valMinus(0.0), aMaster(0.0), bMaster(0.0), aServant(0.0), bServant(0.0);
@@ -1197,8 +1494,15 @@ namespace math
 
     double pointAuxValue(int element, double a, double b, int valType, int dir)
     {
+        /* ValType la id cua bien can tinh:
+         * 1: (mu)dRho
+         * 2: (mu)dRhou
+         * 3: (mu)dRhov
+         * 4: (mu)dRhoE
+         * 5: dRho --> day la bien phu khi mass diffusion on: Sm = div(rho)
+        */
+
         double out(0.0);
-        //if Mass diffusion is on, d(rho) must be multiplied by mu before returning
         std::vector<double> Value(mathVar::orderElem + 1, 0.0);
 
         Value = auxUlti::getElementAuxValuesOfOrder(element, valType, dir);
@@ -1208,6 +1512,7 @@ namespace math
         {
             out += Value[order] * mathVar::B[order];
         }
+
         return out;
     }
 
@@ -2255,6 +2560,7 @@ namespace math
             rhoVal = U[0];
             rhouVal = U[1];
             rhovVal = U[2];
+
             if (flowProperties::massDiffusion)
             {
                 rhoEVal=rhoVal*material::Cv*TVal+0.5*(rhouVal*rhouVal+rhovVal*rhovVal)/rhoVal;
@@ -2948,9 +3254,9 @@ namespace math
         {
             //tang initial value len
             double initialValue_org(initialValue);
-            initialValue=initialValue*2.0;
+            initialValue=initialValue*5.0;
 
-            int polySize(static_cast<int>(power.size())), maxIter(100);
+            int polySize(static_cast<int>(power.size())), maxIter(50);
             std::vector<double> power_deriv(polySize, 0.0),
                     coefs_deriv(polySize, 0.0);
             double error(1), convergence_cri(1e-8), output(0.0), fValue(0.0), derivfValue(0.0);
@@ -3091,5 +3397,56 @@ namespace math
         //dRho here is mu*d(rho)/d(x,y)
         return (advecV-material::massDiffusion::DmCoeff*mudRho/(rho*rho));
     }
+    }
+
+    /**
+     * @brief Function calculates value at surface Gauss point on (+) side (side of input element Id).
+     * @param edge: edge Id.
+     * @param element: element Id.
+     * @param nG: Gauss point Id.
+     * @param valType: type of outlet value. More detail at math::pointValue function.
+     * @param valKind: kind of outlet value. More detail at math::pointValue function.
+     * @return values at Gauss point on (+) side.
+     */
+    double plusSideSurfaceValue(int edge, int element, int nG, int valType, int valKind)
+    {
+        double a(0.0), b(0.0);
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+
+        return math::pointValue(element, a, b, valType, valKind);
+    }
+
+    /**
+     * @brief Function calculates derivative value at surface Gauss point on (+) side (side of input element Id).
+     * @param edge: edge Id.
+     * @param element: element Id.
+     * @param nG: Gauss point Id.
+     * @param valType: type of value.
+     * @param dir: direction, 1 for Ox, 2 for Oy.
+     * @return derivative value.
+     */
+    double plusSideSurfaceDerivativeValue(int edge, int element, int nG, int valType, int dir)
+    {
+        /* ValType la id cua bien can tinh:
+         * 1: (mu)dRho
+         * 2: (mu)dRhou
+         * 3: (mu)dRhov
+         * 4: (mu)dRhoE
+         * 5: dRho --> day la bien phu khi mass diffusion on: Sm = div(rho)
+        */
+
+        double valPlus(0.0), a(0.0), b(0.0);
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
+
+        if (systemVar::auxVariables==1)
+        {
+            valPlus = math::pointAuxValue(element, a, b, valType, dir);
+        }
+        else if (systemVar::auxVariables==2)
+        {
+
+        }
+
+        return valPlus;
     }
 }//end of namespace math

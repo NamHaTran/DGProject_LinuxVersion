@@ -13,23 +13,25 @@ namespace systemVar
 	extern std::string cmd;
 	extern bool endKey;
 
-	extern double CFL; //Courant number
-	extern double Ttime; //Total time
-	extern int wrtI; //write interval
+    //! Courant number
+    extern double CFL;
+    //! Total time
+    extern double Ttime;
+    //! write interval
+    extern int wrtI;
 	extern bool wrtLog, loadSavedCase, initializedOrNot, runPreProcess;
 
-	/*
-	time discretization scheme	|keyWord	|index		|
-	----------------------------|-----------|-----------|
-	-Euler						|Euler		|1			|
-	-Runge-Kutta 2 order		|RK2		|2			|
-	-Runge-Kutta 3 order		|RK3		|3			|
-	-Total Variation Diminishing|TVDRK2		|4			|
-	Runge-Kutta 2 order			|			| 			|
-	-Total Variation Diminishing|TVDRK2		|5			|
-	Runge-Kutta 3 order			|			| 			|
-	----------------------------|-----------|-----------|*/
-	extern int ddtScheme;
+    /*! Type of time discretization scheme
+     * Time discretization scheme	|Key word	|index		|
+        ----------------------------|-----------|-----------|
+        Euler						|Euler		|1			|
+        Runge-Kutta 2 order		|RK2		|2			|
+        Runge-Kutta 3 order		|RK3		|3			|
+        Total Variation Diminishing|TVDRK2		|4			|
+        Runge-Kutta 2 order			|			| 			|
+        Total Variation Diminishing|TVDRK2		|5			|
+        Runge-Kutta 3 order			|			| 			|*/
+    extern int ddtScheme;
 
 	//constant for limiter
 	extern double epsilon;
@@ -59,13 +61,20 @@ namespace systemVar
 
 namespace meshVar
 {
-	extern int nelem1D, nelem2D, npoin, nBc;
+    //! Number of 1D element
+    extern int nelem1D,
+    //! Number of 2D element
+    nelem2D,
+    //! Number of point
+    npoin,
+    //! Number of boundary (which can be applied boundary condition)
+    nBc;
 
 	/*Default values*/
-	//number of nodes per element
-	extern const int nnode;
-	//number of edges per element (default is 4)
-	extern const int nedel;
+    //! Number of nodes per element
+    extern const int nnode;
+    //! Number of edges per element (default is 4)
+    extern const int nedel;
 
 	/*Elements surrounding points*/
     extern std::vector<int> esup1, esup2;
@@ -73,10 +82,11 @@ namespace meshVar
 	/*Points surrounding points*/
 	extern std::vector<int> psup1, psup2;
 
-	/*Variables help to save mesh data*/
-	extern int inpoedCount;  //can be used for normalVector, MasterElemOfEdge, ineled
+    //! Variables help to save mesh data, can be used for normalVector, MasterElemOfEdge, ineled
+    extern int inpoedCount;
 
-	extern int numBCEdges;
+    //! Number of boundary edge
+    extern int numBCEdges;
 
     //Number of BC groups
     extern int numBCGrp;
@@ -84,8 +94,18 @@ namespace meshVar
 
 namespace mathVar
 {
-    extern int nGauss, orderElem, orderOfAccuracy;
+    extern int
+    //! Number of basis function mode. Smallest is 0
+    orderElem,
+    orderOfAccuracy;
+    //! Flag to trigger T failed error
     extern bool solveTFailed;
+
+    //! Number of volume Gauss point in 1 direction. So total number of Gauss points is nVolGauss*nVolGauss
+    extern int nGauss;
+
+    //! Number of Gauss points on 1 surface
+    //nSurGauss;
 }
 
 namespace material
@@ -126,15 +146,11 @@ namespace bcValues
     extern bool temperatureJump;
 }
 
-namespace refValues
-{
-	extern bool subsonic;
-}
-
 namespace flowProperties
 {
     extern bool viscous, massDiffusion;
     extern double Mach;
+    extern bool subsonic;
 }
 
 //time step
@@ -210,5 +226,9 @@ namespace DGSchemes {
         //convective flux
         extern bool LxF, Roe, HLL, HLLC, central;
     }
+}
+
+namespace debugVars {
+extern int element;
 }
 #endif // VARDECLARATION_H_INCLUDED

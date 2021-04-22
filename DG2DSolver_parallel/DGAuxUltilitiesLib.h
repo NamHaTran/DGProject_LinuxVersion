@@ -168,23 +168,6 @@ namespace auxUlti
 		std::tuple<double, double> findPointCoorInStandardSpace(int point, int element);
 	}
 
-    namespace functionsOfParallelComputing {
-    std::tuple<double,double> getGaussPointCoorsOfNeighborCell(int loc, int nG);
-
-    void prepareParallelCase();
-
-    void sendString(std::string content, int destination, int tag);
-
-    std::string receiveString(int source, int tag);
-
-    void sendReceiveMeshData(int vertex, int dir, double**Buffer);
-    void sendRecvDiscretedVar(int sendingProc, int receivingProc, double**Var,double**Buffer,int order);
-    void sendRecvTheta(int sendingProc, int receivingProc, double*thetaArray,double*Buffer);
-    void sendReceiveU();
-    void sendReceivedU();
-    void sendReceivedRho();
-    }
-
     void checkInforBeforeRunning();
 
     void getCommand();

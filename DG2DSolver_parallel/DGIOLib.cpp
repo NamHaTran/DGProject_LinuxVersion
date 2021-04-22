@@ -15,9 +15,31 @@
 #include <cstdlib> //include this library to create folder in linux
 #include <mpi.h>
 #include "DGPostProcessLib.h"
+#include "./parallelFunctions/generalParallelFuncs.h"
+
+//Boundary condition libs
+#include "./boundaryConditions/bcVariables.h"
+#include "./boundaryConditions/fixedValue.h"
+
+#include "./boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.h"
+#include "./boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.h"
+#include "./boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.h"
+
+#include "./boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.h"
+#include "./boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h"
+#include "./boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.h"
+
+#include "./boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.h"
+#include "./boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.h"
+#include "./boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.h"
+
+#include "./boundaryConditions/readBCInfor/readSymmetryBC.h"
 
 namespace IO
 {
+    /**
+     * @brief Function displays DG2DSolver Logo
+     */
 	void dispLogo()
 	{
 		std::string logoStr(" ");
@@ -25,6 +47,9 @@ namespace IO
 		std::cout << logoStr << std::endl;
 	}
 
+    /**
+     * @brief Function gets submitted case's information
+     */
 	void getCase()
 	{
         if (systemVar::currentProc==0)
@@ -556,6 +581,9 @@ namespace IO
 		}
 	}
 
+    /**
+     * @brief Function reads number of defined cores for running parallel
+     */
     void readNumberOfCores()
     {
         /*Read totalProcess in DGOptions*/
@@ -1314,29 +1342,53 @@ namespace IO
         }
     }
 
-    void write2DDoubleArrayToFile(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol)
-	{
-		std::ofstream Flux(loc.c_str());
-		if (Flux)
-		{
+    void write2DDoubleArrayToFile_typeVector(std::vector<std::vector<double>> &array, std::string loc, std::string name, int numRow, int numCol)
+    {
+        std::ofstream Flux(loc.c_str());
+        if (Flux)
+        {
             Flux<<message::headerFile()<<name<<"\n"<<"NumberOfEntities "<<numRow<<"\n"<<"{\n";
             for (int i = 0; i < numRow; i++)
-			{
+            {
                 for (int j = 0; j < numCol; j++)
-				{
-					Flux << array[i][j] << " ";
-				}
-				Flux << "\n";
-			}
+                {
+                    Flux << array[i][j] << " ";
+                }
+                Flux << "\n";
+            }
             Flux<<"}\n";
-		}
-		else
-		{
-			std::cout<<"Can not open file "<<loc<<" to write.\n";
-			std::cout << "DGSolver will exit after you hit return.\n";
-			exit(EXIT_FAILURE);
-		}
-	}
+        }
+        else
+        {
+            std::cout<<"Can not open file "<<loc<<" to write.\n";
+            std::cout << "DGSolver will exit after you hit return.\n";
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    void write2DDoubleArrayToFile_typeArray(double **array, std::string loc, std::string name, int numRow, int numCol)
+    {
+        std::ofstream Flux(loc.c_str());
+        if (Flux)
+        {
+            Flux<<message::headerFile()<<name<<"\n"<<"NumberOfEntities "<<numRow<<"\n"<<"{\n";
+            for (int i = 0; i < numRow; i++)
+            {
+                for (int j = 0; j < numCol; j++)
+                {
+                    Flux << array[i][j] << " ";
+                }
+                Flux << "\n";
+            }
+            Flux<<"}\n";
+        }
+        else
+        {
+            std::cout<<"Can not open file "<<loc<<" to write.\n";
+            std::cout << "DGSolver will exit after you hit return.\n";
+            exit(EXIT_FAILURE);
+        }
+    }
 
     void writeResiduals(int iter, double rhoRes, double rhouRes, double rhovRes, double rhoERes)
     {
@@ -1347,7 +1399,7 @@ namespace IO
                              +std::to_string(rhoERes)+"\n");
     }
 
-    void write2DIntArrayToFile(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol)
+    void write2DIntArrayToFile_typeVector(std::vector<std::vector<int>> &array, std::string loc, std::string name, int numRow, int numCol)
 	{
 		std::ofstream Flux(loc.c_str());
 		if (Flux)
@@ -1370,6 +1422,30 @@ namespace IO
 			exit(EXIT_FAILURE);
 		}
 	}
+
+    void write2DIntArrayToFile_typeArray(int **array, std::string loc, std::string name, int numRow, int numCol)
+    {
+        std::ofstream Flux(loc.c_str());
+        if (Flux)
+        {
+            Flux<<message::headerFile()<<name<<"\n"<<"NumberOfEntities "<<numRow<<"\n"<<"{\n";
+            for (int i = 0; i < numRow; i++)
+            {
+                for (int j = 0; j < numCol; j++)
+                {
+                    Flux << array[i][j] << " ";
+                }
+                Flux << "\n";
+            }
+            Flux<<"}\n";
+        }
+        else
+        {
+            std::cout<<"Can not open file "<<loc<<" to write.\n";
+            std::cout << "DGSolver will exit after you hit return.\n";
+            exit(EXIT_FAILURE);
+        }
+    }
 
     void openFileToAppend(std::string Loc, std::string content)
     {
@@ -1396,11 +1472,11 @@ namespace IO
                 std::cin>>sourceCaseName;
                 //Send command to all processors
                 for (int irank=1;irank<systemVar::totalProc;irank++) {
-                    auxUlti::functionsOfParallelComputing::sendString(sourceCaseName,irank,2);
+                    parallelFuncs_Gen::sendString(sourceCaseName,irank,2);
                 }
             }
             else {
-                sourceCaseName=auxUlti::functionsOfParallelComputing::receiveString(0,2);
+                sourceCaseName=parallelFuncs_Gen::receiveString(0,2);
             }
 
             sourceLoc = systemVar::wD + "/CASES/" + sourceCaseName;
@@ -1804,31 +1880,42 @@ namespace IO
     namespace readVectorBC {
         void u(std::string mode)
         {
-            /*NOTES:
-            Boundary conditions compatibility
-            |U					|T					|p					|
-            +-------------------+-------------------+-------------------+
-            |1. inFlow			|1. inFlow			|1. inFlow			|
-            |	Value u v w		|	Value T			|	Value p			|
-            +-------------------+-------------------+-------------------+
-            |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-            |					|	Value T			|					|
-            +-------------------+-------------------+-------------------+
-            |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-            +-------------------+-------------------+-------------------+
-            |7.	symmetry		|7. symmetry		|7. symmetry		|
-            +-------------------+-------------------+-------------------+
-            |4. outFlow			|4. outFlow			|4. outFlow			|
-            |	Value u v w		|	Value T			|	Value p			|
-            +-------------------+-------------------+-------------------+
-            |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
-            |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
-            |   v_wall u v w    |   T_wall T        |                   |
-            +-------------------+-------------------+-------------------+
-            U:
-            + 3:
-            movingWall
-            velocity        u v w
+            /* Velocity boundary conditions:
+                Id = 1:---------------------------------------------------------------------------------------------------------
+                    fixedValue
+                    value u v w
+                    Description: ham nay set dieu kien fixedValue cho patch.
+
+                Id = 2:---------------------------------------------------------------------------------------------------------
+                    noSlip
+
+                Id = 3:---------------------------------------------------------------------------------------------------------
+                    movingWall
+                    value u v w
+                    Description: set velocity cho wall (typically: cavity case)
+
+                Id = 4:---------------------------------------------------------------------------------------------------------
+                    inletOutlet
+                    inletValue u v w
+                    Description: Neu subsonic fixedValue neu inFlow va zeroGradient neu outFlow. Neu supersonic deu la zeroGradient.
+                    Nen dung cho outlet.
+
+                Id = 5:---------------------------------------------------------------------------------------------------------
+                    slip
+                    sigmaU value
+                    uWall u v w
+                    Description: apply dieu kien slip cua Maxwell
+
+                Id = 6:---------------------------------------------------------------------------------------------------------
+                    zeroGradient
+                    Description: zeroGradient lay theo gia tri trung binh tai cell centroid
+
+                Id = 7:---------------------------------------------------------------------------------------------------------
+                    symmetry
+
+                Id = 10:--------------------------------------------------------------------------------------------------------
+                    matched
+                    Description: dung cho tinh toan song song
             */
 
             std::string fileName("U.txt"), tempStr(""), Loc;
@@ -1892,10 +1979,9 @@ namespace IO
                                         {
                                             if ((str0.compare("noSlip") == 0))  //Type noSlip
                                             {
-                                                bcValues::UBcType[bcGrp - 1] = 2;
-                                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
-                                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
-                                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::velocityBCId::noSlip;
+                                                readNoSlipU(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
@@ -1904,51 +1990,18 @@ namespace IO
                                             {
                                                 //Use Maxwell-Smoluchovsky boundary condition
                                                 bcValues::slipBCFlag=true;
-                                                bcValues::UBcType[bcGrp - 1] = 5;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream fixedUStream1(line);
-                                                //Read sigmaU
-                                                fixedUStream1>>tempStr;
-                                                if ((tempStr.compare("sigmaU") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'sigmaU' in file U/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    fixedUStream1>>bcValues::sigmaU;
-                                                }
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::velocityBCId::slipWall;
+                                                readMaxwellSlipU(FileFlux,bcGrp);
 
-                                                std::getline(FileFlux, line);
-                                                std::istringstream fixedUStream2(line);
-                                                //Read UWall
-                                                fixedUStream2 >> tempStr;
-                                                if ((tempStr.compare("wallU") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'wallU' in file U/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    fixedUStream2 >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-                                                }
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
                                             }
                                             else if ((str0.compare("movingWall") == 0))  //Type movingWall
                                             {
-                                                bcValues::UBcType[bcGrp - 1] = 3;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream fixedUStream(line);
-                                                fixedUStream >> tempStr;
-                                                if ((tempStr.compare("uWall") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'uWall' in file U/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    fixedUStream >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-                                                }
-                                                std::getline(FileFlux, line);
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::velocityBCId::movingWall;
+                                                readFixedValueU(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
@@ -1960,42 +2013,36 @@ namespace IO
                                         }
                                         else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
                                         {
-                                            if ((str0.compare("inFlow") == 0))  //Type inletOutlet
+                                            if ((str0.compare("fixedValue") == 0))  //Type fixedValue
                                             {
-                                                bcValues::UBcType[bcGrp - 1] = 1;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream fixedUStream(line);
-                                                fixedUStream >> tempStr;
-                                                if ((tempStr.compare("value") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file U/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    fixedUStream >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-                                                }
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::velocityBCId::fixedValue;
+                                                readFixedValueU(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
                                             }
-                                            else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
+                                            else if ((str0.compare("inletOutlet") == 0))  //Type inletOutlet
                                             {
-                                                bcValues::UBcType[bcGrp - 1] = 4;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream fixedUStream(line);
-                                                fixedUStream >> tempStr;
-                                                if ((tempStr.compare("backFlowValue") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'backFlowValue' in file U/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    fixedUStream >> bcValues::uBCFixed[bcGrp - 1] >> bcValues::vBCFixed[bcGrp - 1] >> bcValues::wBCFixed[bcGrp - 1];
-                                                }
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::velocityBCId::inletOutlet;
+                                                readInletOutletU(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
                                             }
+
+                                            // 11/09/2020: add them zeroGradient cho velocityBC, Id = 6
+                                            else if ((str0.compare("zeroGradient") == 0))  //Type zeroGradient
+                                            {
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::velocityBCId::zeroGrad;
+                                                readZeroGradU(FileFlux,bcGrp);
+
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+
                                             else
                                             {
                                                 message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "U", "patch"));
@@ -2005,10 +2052,9 @@ namespace IO
                                         {
                                             if ((str0.compare("symmetry") == 0))  //Type symmetry
                                             {
-                                                bcValues::UBcType[bcGrp - 1] = 7;
-                                                bcValues::uBCFixed[bcGrp - 1] = 0.0;
-                                                bcValues::vBCFixed[bcGrp - 1] = 0.0;
-                                                bcValues::wBCFixed[bcGrp - 1] = 0.0;
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::generalBCId::symmetry;
+                                                readSymmetryBC(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
@@ -2022,7 +2068,7 @@ namespace IO
                                         {
                                             if ((str0.compare("matched") == 0))  //Type matched
                                             {
-                                                bcValues::UBcType[bcGrp - 1] = 10;
+                                                bcValues::UBcType[bcGrp - 1] = BCVars::generalBCId::matched;
                                                 bcValues::uBCFixed[bcGrp - 1] = 0.0;
                                                 bcValues::vBCFixed[bcGrp - 1] = 0.0;
                                                 bcValues::wBCFixed[bcGrp - 1] = 0.0;
@@ -2062,31 +2108,32 @@ namespace IO
     namespace readScalarBC {
         void p(std::string mode)
         {
-            /*NOTES:
-            Boundary conditions compatibility
-            |U					|T					|p					|
-            +-------------------+-------------------+-------------------+
-            |1. inFlow			|1. inFlow			|1. inFlow			|
-            |	Value u v w		|	Value T			|	Value p			|
-            +-------------------+-------------------+-------------------+
-            |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-            |					|	Value T			|					|
-            +-------------------+-------------------+-------------------+
-            |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-            +-------------------+-------------------+-------------------+
-            |7.	symmetry		|7. symmetry		|7. symmetry		|
-            +-------------------+-------------------+-------------------+
-            |4. outFlow			|4. outFlow			|4. outFlow			|
-            |	Value u v w		|	Value T			|	Value p			|
-            +-------------------+-------------------+-------------------+
-            |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
-            |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
-            |   v_wall u v w    |   T_wall T        |                   |
-            +-------------------+-------------------+-------------------+
-            U:
-            + 3:
-            movingWall
-            velocity        u v w
+            /* Pressure boundary conditions:
+                Id = 1:---------------------------------------------------------------------------------------------------------
+                    fixedValue
+                    value p
+
+                Id = 2:---------------------------------------------------------------------------------------------------------
+                    zeroGradient
+                    Description: zeroGradient lay theo gia tri trung binh tai cell centroid. Argument pP de nguyen, de phong truong hop
+                    muon lay zeroGradient la gia tri tai diem Gauss dang tinh cua cell phia plus.
+
+                Id = 4:---------------------------------------------------------------------------------------------------------
+                    inletOutlet
+                    inletValue p
+                    Description:
+
+                Id = 7:---------------------------------------------------------------------------------------------------------
+                    symmetry
+
+                Id = 10:---------------------------------------------------------------------------------------------------------
+                    matched
+                    Description: dung cho tinh toan song song
+
+                Id = 11:---------------------------------------------------------------------------------------------------------
+                    interpFrmDensity
+                    Description: Dung cho wall. Gia tri cua P duoc tinh tu rhoP va Twall, van dung zeroGradient cho P khi tinh gradient.
+                    correctRho = true khi dung kieu BC nay.
             */
 
             std::string fileName = "p.txt";
@@ -2144,78 +2191,65 @@ namespace IO
                                     {
                                         std::string str0(ptr[1]);
 
-                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
+                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1 || meshVar::BoundaryType[bcGrp - 1][1] == 2)  //WALL
                                         {
                                             if ((str0.compare("zeroGradient") == 0))
                                             {
-                                                bcValues::pBcType[bcGrp - 1] = 2;
-                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::zeroGrad;
+                                                readZeroGradP(FileFlux,bcGrp);
+
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
                                             }
+                                            else if ((str0.compare("fixedValue") == 0))
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::fixedValue;
+                                                readFixedValueP(FileFlux,bcGrp);
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("inletOutlet") == 0))
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::inletOutlet;
+                                                readInletOutletP(FileFlux,bcGrp);
+
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+
+                                            else if ((str0.compare("interpFrmDensity") == 0))
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::interpFrmDensity;
+                                                readZeroGradP(FileFlux,bcGrp);
+
+                                                //Turn on correctRho
+                                                BCVars::correctRho=true;
+
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+
+
                                             else
                                             {
-                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "wall"));
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "wall/patch"));
                                             }
                                             check_bc[i]=true;
                                             bcIndex++;
                                             goto label;
                                         }
-                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
-                                        {
-                                            if ((str0.compare("inFlow") == 0))  //Type inletOutlet
-                                            {
-                                                bcValues::pBcType[bcGrp - 1] = 1;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream(line);
-                                                Stream >> tempStr;
-                                                if ((tempStr.compare("value") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file p/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream >> bcValues::pBCFixed[bcGrp - 1];
-                                                }
-                                                check_bc[i]=true;
-                                                bcIndex++;
-                                                goto label;
-                                            }
-                                            else if ((str0.compare("zeroGradient") == 0))
-                                            {
-                                                bcValues::pBcType[bcGrp - 1] = 2;
-                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
-                                                check_bc[i]=true;
-                                                bcIndex++;
-                                                goto label;
-                                            }
-                                            else if ((str0.compare("outFlow") == 0))  //Type inletOutlet
-                                            {
-                                                bcValues::pBcType[bcGrp - 1] = 4;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream(line);
-                                                Stream >> tempStr;
-                                                if ((tempStr.compare("backFlowValue") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'backFlowValue' in file p/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream >> bcValues::pBCFixed[bcGrp - 1];
-                                                }
-                                                check_bc[i]=true;
-                                                bcIndex++;
-                                                goto label;
-                                            }
-                                            else
-                                            {
-                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "patch"));
-                                            }
-                                        }
                                         else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
                                         {
                                             if ((str0.compare("symmetry") == 0))  //Type symmetry
                                             {
-                                                bcValues::pBcType[bcGrp - 1] = 7;
-                                                bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::generalBCId::symmetry;
+
+                                                readSymmetryBC(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
@@ -2229,7 +2263,7 @@ namespace IO
                                         {
                                             if ((str0.compare("matched") == 0))  //Type matched
                                             {
-                                                bcValues::pBcType[bcGrp - 1] = 10;
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::generalBCId::matched;
                                                 bcValues::pBCFixed[bcGrp - 1] = iniValues::pIni;
                                                 check_bc[i]=true;
                                                 bcIndex++;
@@ -2265,31 +2299,38 @@ namespace IO
 
         void T(std::string mode)
         {
-            /*NOTES:
-            Boundary conditions compatibility
-            |U					|T					|p					|
-            +-------------------+-------------------+-------------------+
-            |1. inFlow			|1. inFlow			|1. inFlow			|
-            |	Value u v w		|	Value T			|	Value p			|
-            +-------------------+-------------------+-------------------+
-            |2. noSlip			|2. WallIsothermal	|2. zeroGradient	|
-            |					|	Value T			|					|
-            +-------------------+-------------------+-------------------+
-            |2. noSlip			|3. WallAdiabatic	|2. zeroGradient	|
-            +-------------------+-------------------+-------------------+
-            |7.	symmetry		|7. symmetry		|7. symmetry		|
-            +-------------------+-------------------+-------------------+
-            |4. outFlow			|4. outFlow			|4. outFlow			|
-            |	Value u v w		|	Value T			|	Value p			|
-            +-------------------+-------------------+-------------------+
-            |5.	slip    		|6. temperatureJump	|2. zeroGradient    |
-            |   sigmaU sigmaU   |   sigmaT sigmaT   |                   |
-            |   v_wall u v w    |   T_wall T        |                   |
-            +-------------------+-------------------+-------------------+
-            U:
-            + 3:
-            movingWall
-            velocity        u v w
+            /* Temperature boundary conditions:
+                Id = 2:---------------------------------------------------------------------------------------------------------
+                    fixedValue
+                    value T
+                    ==> grad surface = grad surface plus
+
+                Id = 3:---------------------------------------------------------------------------------------------------------
+                    zeroGradient
+                    Description: zeroGradient lay theo gia tri trung binh tai cell centroid. Argument TP de nguyen, de phong truong hop
+                    muon lay zeroGradient la gia tri tai diem Gauss dang tinh cua cell phia plus.
+                    ==> giai zero normal grad
+
+                Id = 4:---------------------------------------------------------------------------------------------------------
+                    inletOutlet
+                    inletValue T
+                    Description:
+                    ==> giai zero normal grad neu outflow, grad surface = grad mean neu inflow
+
+                Id = 6:---------------------------------------------------------------------------------------------------------
+                    temperatureJump
+                    sigmaT value
+                    TWall T
+                    Description: apply dieu kien temperature cua Smoluchowsky
+                    ==> giai zero normal grad
+
+                Id = 7:---------------------------------------------------------------------------------------------------------
+                    symmetry
+                    ==> reflect vector grad T
+
+                Id = 10:---------------------------------------------------------------------------------------------------------
+                    matched
+                    Description: dung cho tinh toan song song
             */
 
             std::string fileName = "T.txt";
@@ -2347,30 +2388,31 @@ namespace IO
                                     {
                                         std::string str0(ptr[1]);
 
-                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
+                                        if (meshVar::BoundaryType[bcGrp - 1][1] == 1 || meshVar::BoundaryType[bcGrp - 1][1] == 2)  //WALL or PATCH
                                         {
-                                            if ((str0.compare("WallAdiabatic") == 0))
+                                            if ((str0.compare("zeroGradient") == 0))
                                             {
-                                                bcValues::TBcType[bcGrp - 1] = 3;
-                                                bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
+                                                bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::zeroGrad;
+                                                readZeroGradT(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
                                             }
-                                            else if ((str0.compare("WallIsothermal") == 0))
+                                            else if ((str0.compare("fixedValue") == 0))
                                             {
-                                                bcValues::TBcType[bcGrp - 1] = 2;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream(line);
-                                                Stream >> tempStr;
-                                                if ((tempStr.compare("value") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file T/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream >> bcValues::TBCFixed[bcGrp - 1];
-                                                }
+                                                bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::fixedValue;
+                                                readFixedValueT(FileFlux,bcGrp);
+
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
+                                            else if ((str0.compare("inletOutlet") == 0))
+                                            {
+                                                bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::inletOutlet;
+                                                readInletOutletT(FileFlux,bcGrp);
+
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
@@ -2378,90 +2420,24 @@ namespace IO
                                             else if ((str0.compare("temperatureJump") == 0))  //Type temperatureJump
                                             {
                                                 bcValues::temperatureJump=true;
-                                                bcValues::TBcType[bcGrp - 1] = 6;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream1(line);
-                                                //Read sigmaT
-                                                Stream1>> tempStr;
-                                                if ((tempStr.compare("sigmaT") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'sigmaT' in file T/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream1>> bcValues::sigmaT;
-                                                }
+                                                bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::temperatureJump;
+                                                readTemperatureJump(FileFlux,bcGrp);
 
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream2(line);
-                                                //Read TWall
-                                                Stream2 >> tempStr;
-                                                if ((tempStr.compare("Twall") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'Twall' in file T/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream2 >> bcValues::TBCFixed[bcGrp - 1];
-                                                }
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
                                             }
                                             else
                                             {
-                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "wall"));
-                                            }
-                                        }
-                                        else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
-                                        {
-                                            if ((str0.compare("inFlow") == 0))
-                                            {
-                                                bcValues::TBcType[bcGrp - 1] = 1;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream(line);
-                                                Stream >> tempStr;
-                                                if ((tempStr.compare("value") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'value' in file T/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream >> bcValues::TBCFixed[bcGrp - 1];
-                                                }
-                                                check_bc[i]=true;
-                                                bcIndex++;
-                                                goto label;
-                                            }
-                                            else if ((str0.compare("outFlow") == 0))
-                                            {
-                                                bcValues::TBcType[bcGrp - 1] = 4;
-                                                std::getline(FileFlux, line);
-                                                std::istringstream Stream(line);
-                                                Stream >> tempStr;
-                                                if ((tempStr.compare("backFlowValue") != 0))
-                                                {
-                                                    message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'backFlowValue' in file T/group " + std::to_string(bcGrp) + ".\n");
-                                                }
-                                                else
-                                                {
-                                                    Stream >> bcValues::TBCFixed[bcGrp - 1];
-                                                }
-                                                check_bc[i]=true;
-                                                bcIndex++;
-                                                goto label;
-                                            }
-                                            else
-                                            {
-                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "patch"));
+                                                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "wall/patch"));
                                             }
                                         }
                                         else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
                                         {
                                             if ((str0.compare("symmetry") == 0))  //Type symmetry
                                             {
-                                                bcValues::TBcType[bcGrp - 1] = 7;
-                                                bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
+                                                bcValues::TBcType[bcGrp - 1] = BCVars::generalBCId::symmetry;
+                                                readSymmetryBC(FileFlux,bcGrp);
                                             }
                                             else
                                             {
@@ -2475,7 +2451,7 @@ namespace IO
                                         {
                                             if ((str0.compare("matched") == 0))  //Type matched
                                             {
-                                                bcValues::TBcType[bcGrp - 1] = 10;
+                                                bcValues::TBcType[bcGrp - 1] = BCVars::generalBCId::matched;
                                                 bcValues::TBCFixed[bcGrp - 1] = iniValues::TIni;
                                             }
                                             else

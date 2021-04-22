@@ -10,6 +10,8 @@
 #include <iostream>
 #include "dynamicVarDeclaration.h"
 #include "DGLimiterLib.h"
+#include "./parallelFunctions/generalParallelFuncs.h"
+#include "./parallelFunctions/parallelVariables.h"
 
 void Executer()
 {
@@ -242,9 +244,6 @@ void checkCommandLine(std::string cmd)
 
 void Processing()
 {
-    //Giai phong bot bo nho truoc khi tinh toan
-    //auxUlti::releaseMemory();
-
     //Setup case san sang de chay
     process::prepareCaseForRunning();
 
@@ -258,8 +257,8 @@ void Processing()
                       << "Total time = "<<runTime<<std::endl;
         }
 
-		//CALCULATE TIME STEP
-		process::timeDiscretization::calcGlobalTimeStep();
+        //CALCULATE TIME STEP
+        process::timeDiscretization::calcGlobalTimeStep();
         process::timeDiscretization::parallel::minTimeStep();
 
 		//SOLVE TIME MARCHING BY USING TVDRK3
@@ -290,8 +289,6 @@ void PreProcessing()
 
 	/*LOAD MESH*/
     IO::loadMesh(readWriteMode);
-    //Check and fix inversed vertex order cell
-    //MshReader::fixCellVerticesOrder();
 
 	/*LOAD p T U*/
     IO::loadpTU(readWriteMode);
@@ -304,14 +301,16 @@ void PreProcessing()
 
     /*RESIZE ARRAYS*/
     auxUlti::resizeDGArrays();
+    parallelFuncs_Gen::resizeMeshParallelBuffers();
 
     for (int ivertex=0;ivertex<4;ivertex++)
     {
-        auxUlti::functionsOfParallelComputing::sendReceiveMeshData(ivertex,1,parallelBuffer::xCoor);
-        auxUlti::functionsOfParallelComputing::sendReceiveMeshData(ivertex,2,parallelBuffer::yCoor);
+        parallelFuncs_Gen::sendReceiveMeshData(ivertex,1,parallelBuffer::xCoor);
+        parallelFuncs_Gen::sendReceiveMeshData(ivertex,2,parallelBuffer::yCoor);
     }
 
 	/*CALCULATE JACOBIAN, BASIS FUNCTION AND GAUSSIAN*/
+    meshParam::genBasedGaussPtsVectors();
 	meshParam::GaussParam();
 	meshParam::basisFcParam();
 	meshParam::JacobianParam();

@@ -1,15 +1,23 @@
+/*! \brief Main DG2D file.
+ */
+
 #include "DGIOLib.h"
 #include "DGController.h"
 #include "VarDeclaration.h"
 #include "DGAuxUltilitiesLib.h"
 #include <iostream>
 #include <mpi.h>
+#include "./parallelFunctions/generalParallelFuncs.h"
 
 using namespace std;
 
+/**
+ * @brief Main function of DG2DSolver
+ * @return
+ */
 int main()
 {
-    auxUlti::functionsOfParallelComputing::prepareParallelCase();
+    parallelFuncs_Gen::prepareParallelCase();
 
 	/*DISPLAY LOGO*/
     if (systemVar::currentProc==0)

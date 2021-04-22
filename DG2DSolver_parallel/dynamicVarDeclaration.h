@@ -48,7 +48,9 @@ namespace meshVar
     extern double **dyb;
 	
     /*Jacobian*/
+    //! Array of Jacobian of all interior Gauss points
     extern double **J2D;
+    //! Array of Jacobian of all edge (in 2D case, J1D = length of edge)
     extern double *J1D;
 
     /*Arrays for parallel computing*/
@@ -66,23 +68,43 @@ namespace meshVar
 }
 
 namespace mathVar {
-    extern double *wGauss;
-    extern double *xGauss;
-    extern double *wGaussLobatto;
-    extern double *xGaussLobatto;
+    //! Vector of weights used to generate array mathVar::wGaussPts
+    extern double *wGaussVol;
+    //! Vector of coordinates used to generate array mathVar::xGaussPts
+    extern double *xGaussVol;
+    //! Vector of weights used to generate array mathVar::wGaussLobattoPts
+    extern double *wGaussLobattoVol;
+    //! Vector of coordinates used to generate array mathVar::xGaussLobattoPts
+    extern double *xGaussLobattoVol;
+
+    extern double *wGaussSur;
+    extern double *xGaussSur;
+    extern double *wGaussLobattoSur;
+    extern double *xGaussLobattoSur;
+
     extern double *B;
     extern double *dBa;
     extern double *dBb;
 	
+    //! Array of Gauss coordinates of all Gauss points at interior of cell
     extern double **GaussPts;
+    //! Array of Gauss weights of all Gauss points at interior of cell
     extern double **wGaussPts;
+    //! Array of Gauss coordinates of all Gauss-Lobatto points at interior of cell
     extern double **GaussLobattoPts;
+    //! Array of Gauss weights of all Gauss-Lobatto points at interior of cell
     extern double **wGaussLobattoPts;
+    //! Array of value of Basis function (for Quad element) at interior points of cell
     extern double **BPts_Quad;
+    //! Array of value of \f$\frac{\partial \phi}{\partial a}\f$ (for Quad element) at interior points of cell
     extern double **dBaPts_Quad;
+    //! Array of value of \f$\frac{\partial \phi}{\partial b}\f$ (for Quad element) at interior points of cell
     extern double **dBbPts_Quad;
+    //! Array of value of Basis function (for Tri element) at interior points of cell
     extern double **BPts_Tri;
+    //! Array of value of \f$\frac{\partial \phi}{\partial a}\f$ (for Tri element) at interior points of cell
     extern double **dBaPts_Tri;
+    //! Array of value of \f$\frac{\partial \phi}{\partial b}\f$ (for Tri element) at interior points of cell
     extern double **dBbPts_Tri;
 }
 
@@ -132,6 +154,12 @@ extern double **rhoY;
 extern double **rhouY;
 extern double **rhovY;
 extern double **rhoEY;
+
+    namespace massDiffusion {
+    /* Bien phu Sm = div(rho) de giai mass diffusion*/
+    extern double **rhoX;
+    extern double **rhoY;
+    }
 }
 
 namespace BR2Vars {
@@ -195,6 +223,18 @@ namespace surfaceFields {
     extern double **Vis_rhoE;
 
     extern double **T;
+
+    //Derivatives
+    //Ox
+    extern double **dRhoX;
+    extern double **dRhouX;
+    extern double **dRhovX;
+    extern double **dRhoEX;
+    //Oy
+    extern double **dRhoY;
+    extern double **dRhouY;
+    extern double **dRhovY;
+    extern double **dRhoEY;
 }
 
 namespace volumeFields {
@@ -233,7 +273,22 @@ namespace SurfaceBCFields
     extern double *TBc;
     extern double *uBc;
     extern double *vBc;
+    extern double *pBc;
     extern int *localGlobalBCEdgesMatching;
+
+    /*Derivatives*/
+    /*
+    //Ox
+    extern double **GaussDRhoX;
+    extern double **GaussDRhouX;
+    extern double **GaussDRhovX;
+    extern double **GaussDRhoEX;
+    //Oy
+    extern double **GaussDRhoY;
+    extern double **GaussDRhouY;
+    extern double **GaussDRhovY;
+    extern double **GaussDRhoEY;
+    */
 }
 
 namespace limitVal {
@@ -244,31 +299,5 @@ namespace limitVal {
 namespace debug
 {
 	//extern std::vector<double> minRhoArr, minRhoeArr;
-}
-
-namespace parallelBuffer {
-    extern double **rho;
-    extern double **rhou;
-    extern double **rhov;
-    extern double **rhoE;
-
-    //Neu div scheme la BR2, cac mang nay chua S_Surface
-    extern double **drhoX;
-    extern double **drhouX;
-    extern double **drhovX;
-    extern double **drhoEX;
-    extern double **drhoY;
-    extern double **drhouY;
-    extern double **drhovY;
-    extern double **drhoEY;
-
-    extern double **xCoor;
-    extern double **yCoor;
-    extern double **aCoor;
-    extern double **bCoor;
-
-    extern double *theta1;
-    extern double *theta2;
-    extern int *elemType;
 }
 #endif // DYNAMICVARDECLARATION_H_INCLUDED

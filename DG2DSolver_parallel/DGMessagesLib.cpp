@@ -175,7 +175,7 @@ To convert unv mesh format to DG2D readable format, do following task step by st
         std::cout<<"    - Number of Gauss points "<<mathVar::nGauss<<".\n";
 
         std::cout<<"\nFlow properties:\n";
-        if (refValues::subsonic)
+        if (flowProperties::subsonic)
         {
             std::cout<<"    - Flow is subsonic, Mach number is "<<flowProperties::Mach<<".\n";
         }

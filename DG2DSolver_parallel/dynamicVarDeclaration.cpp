@@ -71,10 +71,16 @@ namespace meshVar
 }
 
 namespace mathVar {
-    double *wGauss = new double[1];
-    double *xGauss = new double[1];
-    double *wGaussLobatto = new double[1];
-    double *xGaussLobatto = new double[1];
+    double *wGaussVol = new double[1];
+    double *xGaussVol = new double[1];
+    double *wGaussLobattoVol = new double[1];
+    double *xGaussLobattoVol = new double[1];
+
+    double *wGaussSur = new double[1];
+    double *xGaussSur = new double[1];
+    double *wGaussLobattoSur = new double[1];
+    double *xGaussLobattoSur = new double[1];
+
     double *B = new double[1];
     double *dBa = new double[1];
     double *dBb = new double[1];
@@ -139,6 +145,12 @@ double **rhoY = new double*[1];
 double **rhouY = new double*[1];
 double **rhovY = new double*[1];
 double **rhoEY = new double*[1];
+
+    namespace massDiffusion {
+    /* Bien phu Sm = div(rho) de giai mass diffusion*/
+    double **rhoX = new double*[1];
+    double **rhoY = new double*[1];
+    }
 }
 
 namespace BR2Vars {
@@ -202,6 +214,18 @@ namespace surfaceFields {
     double **Vis_rhoE = new double*[1];
 
     double **T = new double*[1];
+
+    //Derivatives
+    //Ox
+    double **dRhoX = new double*[1];
+    double **dRhouX = new double*[1];
+    double **dRhovX = new double*[1];
+    double **dRhoEX = new double*[1];
+    //Oy
+    double **dRhoY = new double*[1];
+    double **dRhouY = new double*[1];
+    double **dRhovY = new double*[1];
+    double **dRhoEY = new double*[1];
 }
 
 namespace volumeFields {
@@ -241,7 +265,22 @@ namespace SurfaceBCFields
     double *TBc = new double[1];
     double *uBc = new double[1];
     double *vBc = new double[1];
+    double *pBc = new double[1];
     int *localGlobalBCEdgesMatching = new int[1];
+
+    /*
+    //Derivatives
+    //Ox
+    double **GaussDRhoX = new double*[1];
+    double **GaussDRhouX = new double*[1];
+    double **GaussDRhovX = new double*[1];
+    double **GaussDRhoEX = new double*[1];
+    //Oy
+    double **GaussDRhoY = new double*[1];
+    double **GaussDRhouY = new double*[1];
+    double **GaussDRhovY = new double*[1];
+    double **GaussDRhoEY = new double*[1];
+    */
 }
 
 namespace limitVal {
@@ -254,30 +293,4 @@ namespace debug
 	//std::vector<double>
 		//minRhoArr(1, 1.0),
 		//minRhoeArr(1, 1.0);
-}
-
-namespace parallelBuffer {
-    double **rho = new double*[1];
-    double **rhou = new double*[1];
-    double **rhov = new double*[1];
-    double **rhoE = new double*[1];
-
-    //Neu div scheme la BR2, cac mang nay chua S_Surface
-    double **drhoX = new double*[1];
-    double **drhouX = new double*[1];
-    double **drhovX = new double*[1];
-    double **drhoEX = new double*[1];
-    double **drhoY = new double*[1];
-    double **drhouY = new double*[1];
-    double **drhovY = new double*[1];
-    double **drhoEY = new double*[1];
-
-    double **xCoor = new double*[1];
-    double **yCoor = new double*[1];
-    double **aCoor = new double*[1];
-    double **bCoor = new double*[1];
-
-    double *theta1 = new double[1];
-    double *theta2 = new double[1];
-    int *elemType = new int[1];
 }
