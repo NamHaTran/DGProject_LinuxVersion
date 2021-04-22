@@ -1,0 +1,116 @@
+\hypertarget{_d_g_b_cs_lib_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/boundary\+Conditions/\+D\+G\+B\+Cs\+Lib.cpp File Reference}
+\label{_d_g_b_cs_lib_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/boundaryConditions/DGBCsLib.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/boundaryConditions/DGBCsLib.cpp}}
+{\ttfamily \#include \char`\"{}D\+G\+B\+Cs\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Aux\+Ultilities\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Messages\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Proc\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include \char`\"{}B\+C\+Support\+Fncs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}bc\+Variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./parallel\+Functions/general\+Parallel\+Funcs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./parallel\+Functions/parallel\+Variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}matched.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}symmetry.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}debugging\+Funcs.\+h\char`\"{}}\newline
+Include dependency graph for D\+G\+B\+Cs\+Lib.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_b_cs_lib_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{_d_g_b_cs_lib_8cpp_a81bbe7081cbc57a0de9da300735fc88c}{N\+S\+F\+Eq\+B\+Cs\+Implement}} (int element, int edge, int nG)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{_d_g_b_cs_lib_8cpp_a506ccf1df6a9e17bc1d04e04c4897ba2}{aux\+Eq\+B\+Cs\+Implement}} (int element, int edge, int nG)
+\item 
+void \mbox{\hyperlink{_d_g_b_cs_lib_8cpp_aa4858f476593ce457fa0eb9c53e47309}{aux\+Eq\+B\+Cs\+For\+Normal\+Boundary}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&Fluxes, int element, int edge, int edge\+Grp, int nG)
+\item 
+void \mbox{\hyperlink{_d_g_b_cs_lib_8cpp_ac64c3630ac78dbea9f4ff463bdfd1500}{N\+S\+F\+Eq\+B\+Cs\+For\+Normal\+Boundary}} (std\+::vector$<$ double $>$ \&Fluxes, int element, int edge, int edge\+Grp, int nG)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{_d_g_b_cs_lib_8cpp_a2f7c9931b3c38d64d8503e07212f73ca}{rho\+B\+Cs\+Implement}} (int edge, int nG)
+\begin{DoxyCompactList}\small\item\em Function applies boundary conditions for Rho (only when mass diffusion = ON). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_d_g_b_cs_lib_8cpp_aa4858f476593ce457fa0eb9c53e47309}\label{_d_g_b_cs_lib_8cpp_aa4858f476593ce457fa0eb9c53e47309}} 
+\index{DGBCsLib.cpp@{DGBCsLib.cpp}!auxEqBCsForNormalBoundary@{auxEqBCsForNormalBoundary}}
+\index{auxEqBCsForNormalBoundary@{auxEqBCsForNormalBoundary}!DGBCsLib.cpp@{DGBCsLib.cpp}}
+\doxysubsubsection{\texorpdfstring{auxEqBCsForNormalBoundary()}{auxEqBCsForNormalBoundary()}}
+{\footnotesize\ttfamily void aux\+Eq\+B\+Cs\+For\+Normal\+Boundary (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{Fluxes,  }\item[{int}]{element,  }\item[{int}]{edge,  }\item[{int}]{edge\+Grp,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 80 of file D\+G\+B\+Cs\+Lib.\+cpp.
+
+\mbox{\Hypertarget{_d_g_b_cs_lib_8cpp_a506ccf1df6a9e17bc1d04e04c4897ba2}\label{_d_g_b_cs_lib_8cpp_a506ccf1df6a9e17bc1d04e04c4897ba2}} 
+\index{DGBCsLib.cpp@{DGBCsLib.cpp}!auxEqBCsImplement@{auxEqBCsImplement}}
+\index{auxEqBCsImplement@{auxEqBCsImplement}!DGBCsLib.cpp@{DGBCsLib.cpp}}
+\doxysubsubsection{\texorpdfstring{auxEqBCsImplement()}{auxEqBCsImplement()}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$double$>$ $>$ aux\+Eq\+B\+Cs\+Implement (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{edge,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 53 of file D\+G\+B\+Cs\+Lib.\+cpp.
+
+\mbox{\Hypertarget{_d_g_b_cs_lib_8cpp_ac64c3630ac78dbea9f4ff463bdfd1500}\label{_d_g_b_cs_lib_8cpp_ac64c3630ac78dbea9f4ff463bdfd1500}} 
+\index{DGBCsLib.cpp@{DGBCsLib.cpp}!NSFEqBCsForNormalBoundary@{NSFEqBCsForNormalBoundary}}
+\index{NSFEqBCsForNormalBoundary@{NSFEqBCsForNormalBoundary}!DGBCsLib.cpp@{DGBCsLib.cpp}}
+\doxysubsubsection{\texorpdfstring{NSFEqBCsForNormalBoundary()}{NSFEqBCsForNormalBoundary()}}
+{\footnotesize\ttfamily void N\+S\+F\+Eq\+B\+Cs\+For\+Normal\+Boundary (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{Fluxes,  }\item[{int}]{element,  }\item[{int}]{edge,  }\item[{int}]{edge\+Grp,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 138 of file D\+G\+B\+Cs\+Lib.\+cpp.
+
+\mbox{\Hypertarget{_d_g_b_cs_lib_8cpp_a81bbe7081cbc57a0de9da300735fc88c}\label{_d_g_b_cs_lib_8cpp_a81bbe7081cbc57a0de9da300735fc88c}} 
+\index{DGBCsLib.cpp@{DGBCsLib.cpp}!NSFEqBCsImplement@{NSFEqBCsImplement}}
+\index{NSFEqBCsImplement@{NSFEqBCsImplement}!DGBCsLib.cpp@{DGBCsLib.cpp}}
+\doxysubsubsection{\texorpdfstring{NSFEqBCsImplement()}{NSFEqBCsImplement()}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ N\+S\+F\+Eq\+B\+Cs\+Implement (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{edge,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 29 of file D\+G\+B\+Cs\+Lib.\+cpp.
+
+\mbox{\Hypertarget{_d_g_b_cs_lib_8cpp_a2f7c9931b3c38d64d8503e07212f73ca}\label{_d_g_b_cs_lib_8cpp_a2f7c9931b3c38d64d8503e07212f73ca}} 
+\index{DGBCsLib.cpp@{DGBCsLib.cpp}!rhoBCsImplement@{rhoBCsImplement}}
+\index{rhoBCsImplement@{rhoBCsImplement}!DGBCsLib.cpp@{DGBCsLib.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoBCsImplement()}{rhoBCsImplement()}}
+{\footnotesize\ttfamily std\+::tuple$<$double, double$>$ rho\+B\+Cs\+Implement (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Function applies boundary conditions for Rho (only when mass diffusion = ON). 
+
+If edge has type \char`\"{}matched\char`\"{}\+:
+\begin{DoxyItemize}
+\item Calculate Gauss points coordinates at side \textquotesingle{}-\/\textquotesingle{} then calculate /f\$\textbackslash{}rho\+\_\+-\//f\$ as normal. For another type, apply zero\+Gradient BC.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id. \\
+\hline
+{\em edge} & edge Id. \\
+\hline
+{\em nG} & Gauss point Id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 225 of file D\+G\+B\+Cs\+Lib.\+cpp.
+

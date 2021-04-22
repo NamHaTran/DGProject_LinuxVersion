@@ -1,0 +1,138 @@
+\hypertarget{_d_g_i_o_lib_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+D\+G\+I\+O\+Lib.cpp File Reference}
+\label{_d_g_i_o_lib_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGIOLib.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGIOLib.cpp}}
+{\ttfamily \#include \char`\"{}D\+G\+I\+O\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Messages\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Const\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Aux\+Ultilities\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Proc\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$cstdlib$>$}\newline
+{\ttfamily \#include $<$mpi.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Post\+Process\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./parallel\+Functions/general\+Parallel\+Funcs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/bc\+Variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/fixed\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/velocity/read\+Dirichlet\+Vel\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/velocity/read\+Newmann\+Vel\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/velocity/read\+Mixed\+Vel\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/pressure/read\+Newmann\+Pres\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/pressure/read\+Dirichlet\+Pres\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/pressure/read\+Mixed\+Pres\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/temperature/read\+Newmann\+Temp\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/temperature/read\+Dirichlet\+Temp\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/temperature/read\+Mixed\+Temp\+B\+C\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/read\+B\+C\+Infor/read\+Symmetry\+B\+C.\+h\char`\"{}}\newline
+Include dependency graph for D\+G\+I\+O\+Lib.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_i_o_lib_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespace_i_o}{IO}}
+\item 
+ \mbox{\hyperlink{namespace_i_o_1_1import_case}{I\+O\+::import\+Case}}
+\item 
+ \mbox{\hyperlink{namespace_i_o_1_1load_setting_files}{I\+O\+::load\+Setting\+Files}}
+\item 
+ \mbox{\hyperlink{namespace_i_o_1_1read_vector_b_c}{I\+O\+::read\+Vector\+BC}}
+\item 
+ \mbox{\hyperlink{namespace_i_o_1_1read_scalar_b_c}{I\+O\+::read\+Scalar\+BC}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespace_i_o_ad8fc4866203fa30668aa1f54f316cbe2}{I\+O\+::disp\+Logo}} ()
+\begin{DoxyCompactList}\small\item\em Function displays D\+G2\+D\+Solver Logo. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespace_i_o_a5188eb5319ec11598f0c97976843fa54}{I\+O\+::get\+Case}} ()
+\begin{DoxyCompactList}\small\item\em Function gets submitted case\textquotesingle{}s information. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespace_i_o_ac6d88e066c4afc9f1d5e5153471f3bcb}{I\+O\+::load\+Mesh}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a7f00641b7866517991691ec32186b355}{I\+O\+::\+Save\+Mesh\+Infor}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a0543b03d3a1e6460f15e233c605f7203}{I\+O\+::read\+Number\+Of\+Cores}} ()
+\begin{DoxyCompactList}\small\item\em Function reads number of defined cores for running parallel. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespace_i_o_a847639d408890aa81c4d65f509038902}{I\+O\+::read\+Data\+File}} (std\+::string file\+Name, std\+::string direction, std\+::string key\+Words\+Dbl\mbox{[}$\,$\mbox{]}, std\+::string key\+Words\+Int\mbox{[}$\,$\mbox{]}, std\+::string key\+Words\+Bool\mbox{[}$\,$\mbox{]}, std\+::string key\+Words\+Str\mbox{[}$\,$\mbox{]}, double $\ast$out\+Dbl, int $\ast$out\+Int, bool $\ast$out\+Bool, std\+::string $\ast$out\+Str, int num\+Param\+Dbl, int num\+Param\+Int, int num\+Param\+Bool, int num\+Param\+Str)
+\item 
+std\+::tuple$<$ bool, double $\ast$$\ast$, int $>$ \mbox{\hyperlink{namespace_i_o_a1b75e51c2801d7ca72255e67d07b74f0}{I\+O\+::read2\+D\+Array}} (int column, std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, bool exit\+When\+File\+Not\+Found)
+\item 
+std\+::tuple$<$ bool, int $\ast$$\ast$, int $>$ \mbox{\hyperlink{namespace_i_o_a652e4e2c3f072822cb16cd18bb0b447c}{I\+O\+::read2\+D\+Int\+Array}} (int column, std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, bool exit\+When\+File\+Not\+Found)
+\item 
+std\+::tuple$<$ bool, double $\ast$, int $>$ \mbox{\hyperlink{namespace_i_o_ab4c88cfd735924a4b1c5dfb90517a301}{I\+O\+::read1\+D\+Array}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, bool exit\+When\+File\+Not\+Found)
+\item 
+std\+::tuple$<$ bool, int $\ast$, int $>$ \mbox{\hyperlink{namespace_i_o_acb62251f75c5bda63d0ded79df9027ac}{I\+O\+::read1\+D\+Int\+Array}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, bool exit\+When\+File\+Not\+Found)
+\item 
+void \mbox{\hyperlink{namespace_i_o_aff30b559435d9e5d151d1f23b476f5a2}{I\+O\+::residual\+Output}} (double rho\+Res\+Global, double rhou\+Res\+Global, double rhov\+Res\+Global, double rho\+E\+Res\+Global)
+\item 
+void \mbox{\hyperlink{namespace_i_o_ad08c3a50a00d78d3aeb06f02c5f298cf}{I\+O\+::read\+Decomposed\+Mesh\+Infor}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_aa3b1781f058e45c8a7eced1dca160167}{I\+O\+::write\+Discreted\+Fields}} (std\+::string Loc, std\+::string file\+Name, double $\ast$$\ast$Var)
+\item 
+void \mbox{\hyperlink{namespace_i_o_ae4ea5f2b211c19d8f6f91fb3ccfd4545}{I\+O\+::read\+Discreted\+Fields}} (std\+::string Loc, std\+::string file\+Name, double $\ast$$\ast$Var)
+\item 
+void \mbox{\hyperlink{namespace_i_o_abffa00680df4f34e5f23c3e68547ba0f}{I\+O\+::save\+Case}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_ac8522f3a9ce34d89ceb9ede172d9cc35}{I\+O\+::save\+Case\+\_\+reconstruct}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_ac7f681fef2b56edf0e3482be46243c20}{I\+O\+::load\+Case}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a317404f978969b46182c270cfb27d934}{I\+O\+::loadp\+TU}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_i_o_ab3054f43e297182395cd6ab2d7988255}{I\+O\+::load\+Time}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_a98e33bc51095e7ed613c2ac487a41e11}{I\+O\+::load\+Limiter\+Settings}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_a4c41700bf0364831e95cb00fd4825835}{I\+O\+::write2\+D\+Double\+Array\+To\+File\+\_\+type\+Vector}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&array, std\+::string loc, std\+::string name, int num\+Row, int num\+Col)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a13c4dd6ac721e1197d831f812ac5ace7}{I\+O\+::write2\+D\+Double\+Array\+To\+File\+\_\+type\+Array}} (double $\ast$$\ast$array, std\+::string loc, std\+::string name, int num\+Row, int num\+Col)
+\item 
+void \mbox{\hyperlink{namespace_i_o_ac2ad109ce9f2ba2494595bfe52682b51}{I\+O\+::write\+Residuals}} (int iter, double rho\+Res, double rhou\+Res, double rhov\+Res, double rho\+E\+Res)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a20dbaac55840b662fae87affd6ca3a2a}{I\+O\+::write2\+D\+Int\+Array\+To\+File\+\_\+type\+Vector}} (std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&array, std\+::string loc, std\+::string name, int num\+Row, int num\+Col)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a975c2a5838ab561cc60fd372d5867661}{I\+O\+::write2\+D\+Int\+Array\+To\+File\+\_\+type\+Array}} (int $\ast$$\ast$array, std\+::string loc, std\+::string name, int num\+Row, int num\+Col)
+\item 
+void \mbox{\hyperlink{namespace_i_o_ac2c1791c2897c41345eb28b120c7eee7}{I\+O\+::open\+File\+To\+Append}} (std\+::string Loc, std\+::string content)
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1import_case_ac5f74d1ad0895790722bf610b517ef36}{I\+O\+::import\+Case\+::import\+Results\+From\+Another\+Case}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1import_case_acfbfe759ef52f108c004b2448f16c913}{I\+O\+::import\+Case\+::mapp\+Source\+To\+Current}} (std\+::string file\+Loc, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&current\+Result)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a237945a654071e02c6b8944377e3c571}{I\+O\+::write2\+D\+Double\+Vector\+To\+File}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&vector)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a39dd2fbfdae14a39fec8093b763623fc}{I\+O\+::write1\+D\+Double\+Vector\+To\+File}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, double $\ast$vector, int length)
+\item 
+void \mbox{\hyperlink{namespace_i_o_a21429173f36a2fd4938216f344920a17}{I\+O\+::write1\+D\+Int\+Vector\+To\+File}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, std\+::string file\+Name, int $\ast$vector, int length)
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_a6171ab66a981960a98966679b1eb6b84}{I\+O\+::load\+Setting\+Files\+::load\+Constants}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_aad43c7f58aafb43d1b5a70dc424089cd}{I\+O\+::load\+Setting\+Files\+::load\+Constants\+While\+Running}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_a4d2852087a87ad7b2b3fd4f9cac22040}{I\+O\+::load\+Setting\+Files\+::\+D\+G\+Options}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_ae5959d6ca9280ee23372e08739dc944c}{I\+O\+::load\+Setting\+Files\+::\+Material}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_a02b53dc2e54bcaf45cc4fef976a0a503}{I\+O\+::load\+Setting\+Files\+::\+Flow\+Properties}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_a31067f8faf10a09e10304b51fa8ffba7}{I\+O\+::load\+Setting\+Files\+::\+D\+G\+Schemes}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1load_setting_files_ab0fa699f0a720069a79c99f9d8172c5a}{I\+O\+::load\+Setting\+Files\+::\+T\+Bounds}} ()
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1read_vector_b_c_ab83a2f3ee9184be4cbaa799551c419c0}{I\+O\+::read\+Vector\+B\+C\+::u}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1read_scalar_b_c_a1fe15067348b2f6ca2b23beac0f22ed7}{I\+O\+::read\+Scalar\+B\+C\+::p}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_i_o_1_1read_scalar_b_c_a822831aeb8a5989d632801bca3c2178d}{I\+O\+::read\+Scalar\+B\+C\+::T}} (std\+::string mode)
+\end{DoxyCompactItemize}

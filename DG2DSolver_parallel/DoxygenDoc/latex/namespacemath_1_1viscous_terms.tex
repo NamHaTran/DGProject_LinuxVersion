@@ -1,0 +1,56 @@
+\hypertarget{namespacemath_1_1viscous_terms}{}\doxysection{math\+::viscous\+Terms Namespace Reference}
+\label{namespacemath_1_1viscous_terms}\index{math::viscousTerms@{math::viscousTerms}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_1_1viscous_terms_a33c530fc434fa56ff2124ff21a494a77}{calc\+Stress\+Tensor\+And\+Heat\+Flux}} (std\+::vector$<$ double $>$ \&U, std\+::vector$<$ double $>$ \&d\+Ux, std\+::vector$<$ double $>$ \&d\+Uy, double T\+Val)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1viscous_terms_a2687a8b158d58d6e66fe36905ff738b1}{calc\+Stress\+Component}} (int index, double fst\+Deriv, double snd\+Deriv)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1viscous_terms_a48d219a062bf0f8cdacea2b0d5ad9377}{calc\+Heat\+Flux\+Terms}} (double d\+Tx, double d\+Ty, double k)
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacemath_1_1viscous_terms_a3e380970f2f87c7b9ba860c76fc559ba}{calc\+Viscous\+Terms\+From\+Stress\+Heat\+Flux\+Matrix}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&Stress\+Heat\+Flux, double u\+Val, double v\+Val, double nud\+Rho, int dir)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacemath_1_1viscous_terms_a48d219a062bf0f8cdacea2b0d5ad9377}\label{namespacemath_1_1viscous_terms_a48d219a062bf0f8cdacea2b0d5ad9377}} 
+\index{math::viscousTerms@{math::viscousTerms}!calcHeatFluxTerms@{calcHeatFluxTerms}}
+\index{calcHeatFluxTerms@{calcHeatFluxTerms}!math::viscousTerms@{math::viscousTerms}}
+\doxysubsubsection{\texorpdfstring{calcHeatFluxTerms()}{calcHeatFluxTerms()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::viscous\+Terms\+::calc\+Heat\+Flux\+Terms (\begin{DoxyParamCaption}\item[{double}]{d\+Tx,  }\item[{double}]{d\+Ty,  }\item[{double}]{k }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2658 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1viscous_terms_a2687a8b158d58d6e66fe36905ff738b1}\label{namespacemath_1_1viscous_terms_a2687a8b158d58d6e66fe36905ff738b1}} 
+\index{math::viscousTerms@{math::viscousTerms}!calcStressComponent@{calcStressComponent}}
+\index{calcStressComponent@{calcStressComponent}!math::viscousTerms@{math::viscousTerms}}
+\doxysubsubsection{\texorpdfstring{calcStressComponent()}{calcStressComponent()}}
+{\footnotesize\ttfamily double math\+::viscous\+Terms\+::calc\+Stress\+Component (\begin{DoxyParamCaption}\item[{int}]{index,  }\item[{double}]{fst\+Deriv,  }\item[{double}]{snd\+Deriv }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2633 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1viscous_terms_a33c530fc434fa56ff2124ff21a494a77}\label{namespacemath_1_1viscous_terms_a33c530fc434fa56ff2124ff21a494a77}} 
+\index{math::viscousTerms@{math::viscousTerms}!calcStressTensorAndHeatFlux@{calcStressTensorAndHeatFlux}}
+\index{calcStressTensorAndHeatFlux@{calcStressTensorAndHeatFlux}!math::viscousTerms@{math::viscousTerms}}
+\doxysubsubsection{\texorpdfstring{calcStressTensorAndHeatFlux()}{calcStressTensorAndHeatFlux()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ math\+::viscous\+Terms\+::calc\+Stress\+Tensor\+And\+Heat\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{U,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+Ux,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+Uy,  }\item[{double}]{T\+Val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2543 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1viscous_terms_a3e380970f2f87c7b9ba860c76fc559ba}\label{namespacemath_1_1viscous_terms_a3e380970f2f87c7b9ba860c76fc559ba}} 
+\index{math::viscousTerms@{math::viscousTerms}!calcViscousTermsFromStressHeatFluxMatrix@{calcViscousTermsFromStressHeatFluxMatrix}}
+\index{calcViscousTermsFromStressHeatFluxMatrix@{calcViscousTermsFromStressHeatFluxMatrix}!math::viscousTerms@{math::viscousTerms}}
+\doxysubsubsection{\texorpdfstring{calcViscousTermsFromStressHeatFluxMatrix()}{calcViscousTermsFromStressHeatFluxMatrix()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double, double, double $>$ math\+::viscous\+Terms\+::calc\+Viscous\+Terms\+From\+Stress\+Heat\+Flux\+Matrix (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&}]{Stress\+Heat\+Flux,  }\item[{double}]{u\+Val,  }\item[{double}]{v\+Val,  }\item[{double}]{nud\+Rho,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2666 of file D\+G\+Math.\+cpp.
+

@@ -1,0 +1,176 @@
+\hypertarget{namespacemath_1_1geometric_op}{}\doxysection{math\+::geometric\+Op Namespace Reference}
+\label{namespacemath_1_1geometric_op}\index{math::geometricOp@{math::geometricOp}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_a0b2d166e774e428f033406ecc5754618}{calc\+Distance\+From\+Center\+To\+Edge}} (int element, int edge)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a39d2282029836081adbe2b7124a3abee}{calc\+Geo\+Center}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor, int type)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_a2b9b33ea3cfb9d10e8fb29f42cf55f02}{calc\+Polygon\+Area}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor, int type)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a79cbbc630d0f5fb6d1f35a0faec790e8}{calc\+Quad\+Centroid}} (int element, double x\+CG, double y\+CG, double area)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_aed0c7180316e148380d24497ea831ca2}{cal\+Local\+Cell\+Size}} (int element, double element\+Area)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_ae73e00278c3147c975f9890896beb987}{cal\+Edge\+Metric}} (int edge\+Id, int element\+Id)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a836bfd736a657769b1d9e7ccca17269d}{cal\+Difference\+Of\+Elements\+Cell\+Centers}} (int elem1, int elem2)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_adecdf8b1d02d5e53289238af4710c5ef}{cal\+Dist\+Between2\+Points}} (double x\+Pt1, double y\+Pt1, double x\+Pt2, double y\+Pt2)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_a006e0912e46d98ab7df54e3b2e2b0a18}{cal\+Polygon\+Perimeter}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor, int num\+Of\+Edge)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_abf31165a01f8005a63ecda4824c12e81}{cal\+R\+Of\+Inscribed\+Circle\+Of\+Tri\+Element}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_aa34046acd7ba45f170210f23880adf91}{cal\+Size\+Of\+Quad\+Element}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a394bf0e30fe99c7a7d9f7d40539c2b1c}{find\+Normal\+Projection\+Of\+Point\+To\+Edge}} (double xA, double yA, double xB, double yB, double xC, double yC)
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a35d3e8cbf5633db4f03215488914b884}{sort\+Vertices\+C\+CW}} (std\+::vector$<$ int $>$ vertices\+Id, std\+::vector$<$ double $>$ angle)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_ac12692ec050ca42058884ac8b20bc129}{calc\+Angle\+Of\+Point}} (double x\+Orig, double y\+Orig, double x\+Point, double y\+Point)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_ac12692ec050ca42058884ac8b20bc129}\label{namespacemath_1_1geometric_op_ac12692ec050ca42058884ac8b20bc129}} 
+\index{math::geometricOp@{math::geometricOp}!calcAngleOfPoint@{calcAngleOfPoint}}
+\index{calcAngleOfPoint@{calcAngleOfPoint}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calcAngleOfPoint()}{calcAngleOfPoint()}}
+{\footnotesize\ttfamily double math\+::geometric\+Op\+::calc\+Angle\+Of\+Point (\begin{DoxyParamCaption}\item[{double}]{x\+Orig,  }\item[{double}]{y\+Orig,  }\item[{double}]{x\+Point,  }\item[{double}]{y\+Point }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3003 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a0b2d166e774e428f033406ecc5754618}\label{namespacemath_1_1geometric_op_a0b2d166e774e428f033406ecc5754618}} 
+\index{math::geometricOp@{math::geometricOp}!calcDistanceFromCenterToEdge@{calcDistanceFromCenterToEdge}}
+\index{calcDistanceFromCenterToEdge@{calcDistanceFromCenterToEdge}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calcDistanceFromCenterToEdge()}{calcDistanceFromCenterToEdge()}}
+{\footnotesize\ttfamily double math\+::geometric\+Op\+::calc\+Distance\+From\+Center\+To\+Edge (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2767 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a39d2282029836081adbe2b7124a3abee}\label{namespacemath_1_1geometric_op_a39d2282029836081adbe2b7124a3abee}} 
+\index{math::geometricOp@{math::geometricOp}!calcGeoCenter@{calcGeoCenter}}
+\index{calcGeoCenter@{calcGeoCenter}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calcGeoCenter()}{calcGeoCenter()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::calc\+Geo\+Center (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{x\+Coor,  }\item[{std\+::vector$<$ double $>$ \&}]{y\+Coor,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2786 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a2b9b33ea3cfb9d10e8fb29f42cf55f02}\label{namespacemath_1_1geometric_op_a2b9b33ea3cfb9d10e8fb29f42cf55f02}} 
+\index{math::geometricOp@{math::geometricOp}!calcPolygonArea@{calcPolygonArea}}
+\index{calcPolygonArea@{calcPolygonArea}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calcPolygonArea()}{calcPolygonArea()}}
+{\footnotesize\ttfamily double math\+::geometric\+Op\+::calc\+Polygon\+Area (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{x\+Coor,  }\item[{std\+::vector$<$ double $>$ \&}]{y\+Coor,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2802 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a79cbbc630d0f5fb6d1f35a0faec790e8}\label{namespacemath_1_1geometric_op_a79cbbc630d0f5fb6d1f35a0faec790e8}} 
+\index{math::geometricOp@{math::geometricOp}!calcQuadCentroid@{calcQuadCentroid}}
+\index{calcQuadCentroid@{calcQuadCentroid}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calcQuadCentroid()}{calcQuadCentroid()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::calc\+Quad\+Centroid (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{x\+CG,  }\item[{double}]{y\+CG,  }\item[{double}]{area }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2819 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a836bfd736a657769b1d9e7ccca17269d}\label{namespacemath_1_1geometric_op_a836bfd736a657769b1d9e7ccca17269d}} 
+\index{math::geometricOp@{math::geometricOp}!calDifferenceOfElementsCellCenters@{calDifferenceOfElementsCellCenters}}
+\index{calDifferenceOfElementsCellCenters@{calDifferenceOfElementsCellCenters}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calDifferenceOfElementsCellCenters()}{calDifferenceOfElementsCellCenters()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::cal\+Difference\+Of\+Elements\+Cell\+Centers (\begin{DoxyParamCaption}\item[{int}]{elem1,  }\item[{int}]{elem2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2912 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_adecdf8b1d02d5e53289238af4710c5ef}\label{namespacemath_1_1geometric_op_adecdf8b1d02d5e53289238af4710c5ef}} 
+\index{math::geometricOp@{math::geometricOp}!calDistBetween2Points@{calDistBetween2Points}}
+\index{calDistBetween2Points@{calDistBetween2Points}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calDistBetween2Points()}{calDistBetween2Points()}}
+{\footnotesize\ttfamily double math\+::geometric\+Op\+::cal\+Dist\+Between2\+Points (\begin{DoxyParamCaption}\item[{double}]{x\+Pt1,  }\item[{double}]{y\+Pt1,  }\item[{double}]{x\+Pt2,  }\item[{double}]{y\+Pt2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2921 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_ae73e00278c3147c975f9890896beb987}\label{namespacemath_1_1geometric_op_ae73e00278c3147c975f9890896beb987}} 
+\index{math::geometricOp@{math::geometricOp}!calEdgeMetric@{calEdgeMetric}}
+\index{calEdgeMetric@{calEdgeMetric}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calEdgeMetric()}{calEdgeMetric()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::cal\+Edge\+Metric (\begin{DoxyParamCaption}\item[{int}]{edge\+Id,  }\item[{int}]{element\+Id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2895 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_aed0c7180316e148380d24497ea831ca2}\label{namespacemath_1_1geometric_op_aed0c7180316e148380d24497ea831ca2}} 
+\index{math::geometricOp@{math::geometricOp}!calLocalCellSize@{calLocalCellSize}}
+\index{calLocalCellSize@{calLocalCellSize}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calLocalCellSize()}{calLocalCellSize()}}
+{\footnotesize\ttfamily double math\+::geometric\+Op\+::cal\+Local\+Cell\+Size (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{element\+Area }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2866 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a006e0912e46d98ab7df54e3b2e2b0a18}\label{namespacemath_1_1geometric_op_a006e0912e46d98ab7df54e3b2e2b0a18}} 
+\index{math::geometricOp@{math::geometricOp}!calPolygonPerimeter@{calPolygonPerimeter}}
+\index{calPolygonPerimeter@{calPolygonPerimeter}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calPolygonPerimeter()}{calPolygonPerimeter()}}
+{\footnotesize\ttfamily double math\+::geometric\+Op\+::cal\+Polygon\+Perimeter (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{x\+Coor,  }\item[{std\+::vector$<$ double $>$ \&}]{y\+Coor,  }\item[{int}]{num\+Of\+Edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2926 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_abf31165a01f8005a63ecda4824c12e81}\label{namespacemath_1_1geometric_op_abf31165a01f8005a63ecda4824c12e81}} 
+\index{math::geometricOp@{math::geometricOp}!calROfInscribedCircleOfTriElement@{calROfInscribedCircleOfTriElement}}
+\index{calROfInscribedCircleOfTriElement@{calROfInscribedCircleOfTriElement}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calROfInscribedCircleOfTriElement()}{calROfInscribedCircleOfTriElement()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::cal\+R\+Of\+Inscribed\+Circle\+Of\+Tri\+Element (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{x\+Coor,  }\item[{std\+::vector$<$ double $>$ \&}]{y\+Coor }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2936 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_aa34046acd7ba45f170210f23880adf91}\label{namespacemath_1_1geometric_op_aa34046acd7ba45f170210f23880adf91}} 
+\index{math::geometricOp@{math::geometricOp}!calSizeOfQuadElement@{calSizeOfQuadElement}}
+\index{calSizeOfQuadElement@{calSizeOfQuadElement}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{calSizeOfQuadElement()}{calSizeOfQuadElement()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::cal\+Size\+Of\+Quad\+Element (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{x\+Coor,  }\item[{std\+::vector$<$ double $>$ \&}]{y\+Coor }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2943 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a394bf0e30fe99c7a7d9f7d40539c2b1c}\label{namespacemath_1_1geometric_op_a394bf0e30fe99c7a7d9f7d40539c2b1c}} 
+\index{math::geometricOp@{math::geometricOp}!findNormalProjectionOfPointToEdge@{findNormalProjectionOfPointToEdge}}
+\index{findNormalProjectionOfPointToEdge@{findNormalProjectionOfPointToEdge}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{findNormalProjectionOfPointToEdge()}{findNormalProjectionOfPointToEdge()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::geometric\+Op\+::find\+Normal\+Projection\+Of\+Point\+To\+Edge (\begin{DoxyParamCaption}\item[{double}]{xA,  }\item[{double}]{yA,  }\item[{double}]{xB,  }\item[{double}]{yB,  }\item[{double}]{xC,  }\item[{double}]{yC }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2960 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1geometric_op_a35d3e8cbf5633db4f03215488914b884}\label{namespacemath_1_1geometric_op_a35d3e8cbf5633db4f03215488914b884}} 
+\index{math::geometricOp@{math::geometricOp}!sortVerticesCCW@{sortVerticesCCW}}
+\index{sortVerticesCCW@{sortVerticesCCW}!math::geometricOp@{math::geometricOp}}
+\doxysubsubsection{\texorpdfstring{sortVerticesCCW()}{sortVerticesCCW()}}
+{\footnotesize\ttfamily std\+::vector$<$ int $>$ math\+::geometric\+Op\+::sort\+Vertices\+C\+CW (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{vertices\+Id,  }\item[{std\+::vector$<$ double $>$}]{angle }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2975 of file D\+G\+Math.\+cpp.
+

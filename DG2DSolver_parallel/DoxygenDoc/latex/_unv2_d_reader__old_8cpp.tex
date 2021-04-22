@@ -1,0 +1,246 @@
+\hypertarget{_unv2_d_reader__old_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/09012020-\/\+Unv/\+Unv2\+D\+Reader\+\_\+old.cpp File Reference}
+\label{_unv2_d_reader__old_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/09012020-\/Unv/Unv2DReader\_old.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/09012020-\/Unv/Unv2DReader\_old.cpp}}
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}Unv2\+D\+Reader\+Lib.\+h\char`\"{}}\newline
+Include dependency graph for Unv2\+D\+Reader\+\_\+old.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_unv2_d_reader__old_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+const int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a42571c8883acc82927e6cb81e856ebaf}{mesh\+Arr\+Size}} (1500000)
+\item 
+const int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a1c1134f983382e5739555334f88b2b01}{points\+Arr\+Size}} (500000)
+\item 
+const int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_ada7c353b95dfb48c350e8d8f1ac07a66}{elements2\+D\+Arr\+Size}} (1000000)
+\item 
+string \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a5865af9e875d4cdf83dc2971c788967f}{case\+Name}} (\char`\"{} \char`\"{})
+\item 
+string \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a4dd1369c91acb3263360cba7d36c5deb}{wD}} (\char`\"{} \char`\"{})
+\item 
+string \mbox{\hyperlink{_unv2_d_reader__old_8cpp_ab9ec82ff166af0524a70f0bb235b96ec}{pwd}} (\char`\"{} \char`\"{})
+\item 
+string \mbox{\hyperlink{_unv2_d_reader__old_8cpp_ae0890277c96bf3f141bdb9cc9f463f64}{mesh\+File\+Name}} (\char`\"{} \char`\"{})
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_aa33b358ba9c8bf3e1244cdf2f818af73}{no\+Lines}} (0)
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_af4ea42ef4d1604b734332363df9e8884}{num\+Of\+Bound}} (0)
+\item 
+bool \mbox{\hyperlink{_unv2_d_reader__old_8cpp_af2a86efcefd331952e64b9df5299f9c3}{saving\+Flag}} (false)
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_accbc3736c66bcfdd3ecd0d6163626e77}{node\+Number}} (0)
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a4a212c4b10ae1d6d85f52c95f680cf74}{n1D}} (0)
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_ad7159b667c528dc18ead768a55295922}{n2D}} (0)
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a5381f3d5cbac6cd57bfc2569bccfe915}{num\+Of\+Bound\+Edge}} (1)
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a1ebb9d3857f3eade42fcbd053b4135bc}{Mesh}} \mbox{[}\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a12bb0babe83c01ad2d93f00ac33d92a8}{mesh\+Arr\+Size}}\mbox{]}
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a0abef9ba52ad0eb406abd09a10975aee}{location}} \mbox{[}3\mbox{]}\mbox{[}2\mbox{]}
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a79fd8e1608f78c6f66466ee0428bc8cb}{Elements1D}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}\mbox{]}\mbox{[}4\mbox{]}
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_aafe72426fb4e8cde971541f6f05b7e9c}{Elements2D}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a1f9d268fd41e771863237691d9a9138b}{elements2\+D\+Arr\+Size}}\mbox{]}\mbox{[}5\mbox{]}
+\item 
+int \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a8249dff456ed3ac3820b24061625abd2}{boundaries}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}\mbox{]}\mbox{[}2\mbox{]}
+\item 
+double \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a30ceaedea47c4ed0dbe2c01ab1da4de0}{Points}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}\mbox{]}\mbox{[}4\mbox{]}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a866f709127333941f3c73b46a0040533}{bound\+Location}}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{_unv2_d_reader__old_8cpp_a0e2da0b6cb82149d3d3ade692557ead7}{bound\+Name}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a5865af9e875d4cdf83dc2971c788967f}\label{_unv2_d_reader__old_8cpp_a5865af9e875d4cdf83dc2971c788967f}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!caseName@{caseName}}
+\index{caseName@{caseName}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{caseName()}{caseName()}}
+{\footnotesize\ttfamily string case\+Name (\begin{DoxyParamCaption}\item[{\char`\"{} \char`\"{}}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_ada7c353b95dfb48c350e8d8f1ac07a66}\label{_unv2_d_reader__old_8cpp_ada7c353b95dfb48c350e8d8f1ac07a66}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!elements2DArrSize@{elements2DArrSize}}
+\index{elements2DArrSize@{elements2DArrSize}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{elements2DArrSize()}{elements2DArrSize()}}
+{\footnotesize\ttfamily const int elements2\+D\+Arr\+Size (\begin{DoxyParamCaption}\item[{1000000}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{_unv2_d_reader__old_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!main@{main}}
+\index{main@{main}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 23 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a42571c8883acc82927e6cb81e856ebaf}\label{_unv2_d_reader__old_8cpp_a42571c8883acc82927e6cb81e856ebaf}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!meshArrSize@{meshArrSize}}
+\index{meshArrSize@{meshArrSize}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{meshArrSize()}{meshArrSize()}}
+{\footnotesize\ttfamily const int mesh\+Arr\+Size (\begin{DoxyParamCaption}\item[{1500000}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_ae0890277c96bf3f141bdb9cc9f463f64}\label{_unv2_d_reader__old_8cpp_ae0890277c96bf3f141bdb9cc9f463f64}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!meshFileName@{meshFileName}}
+\index{meshFileName@{meshFileName}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{meshFileName()}{meshFileName()}}
+{\footnotesize\ttfamily string mesh\+File\+Name (\begin{DoxyParamCaption}\item[{\char`\"{} \char`\"{}}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a4a212c4b10ae1d6d85f52c95f680cf74}\label{_unv2_d_reader__old_8cpp_a4a212c4b10ae1d6d85f52c95f680cf74}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!n1D@{n1D}}
+\index{n1D@{n1D}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{n1D()}{n1D()}}
+{\footnotesize\ttfamily int n1D (\begin{DoxyParamCaption}\item[{0}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_ad7159b667c528dc18ead768a55295922}\label{_unv2_d_reader__old_8cpp_ad7159b667c528dc18ead768a55295922}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!n2D@{n2D}}
+\index{n2D@{n2D}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{n2D()}{n2D()}}
+{\footnotesize\ttfamily int n2D (\begin{DoxyParamCaption}\item[{0}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_accbc3736c66bcfdd3ecd0d6163626e77}\label{_unv2_d_reader__old_8cpp_accbc3736c66bcfdd3ecd0d6163626e77}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!nodeNumber@{nodeNumber}}
+\index{nodeNumber@{nodeNumber}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{nodeNumber()}{nodeNumber()}}
+{\footnotesize\ttfamily int node\+Number (\begin{DoxyParamCaption}\item[{0}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_aa33b358ba9c8bf3e1244cdf2f818af73}\label{_unv2_d_reader__old_8cpp_aa33b358ba9c8bf3e1244cdf2f818af73}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!noLines@{noLines}}
+\index{noLines@{noLines}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{noLines()}{noLines()}}
+{\footnotesize\ttfamily int no\+Lines (\begin{DoxyParamCaption}\item[{0}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_af4ea42ef4d1604b734332363df9e8884}\label{_unv2_d_reader__old_8cpp_af4ea42ef4d1604b734332363df9e8884}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!numOfBound@{numOfBound}}
+\index{numOfBound@{numOfBound}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{numOfBound()}{numOfBound()}}
+{\footnotesize\ttfamily int num\+Of\+Bound (\begin{DoxyParamCaption}\item[{0}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a5381f3d5cbac6cd57bfc2569bccfe915}\label{_unv2_d_reader__old_8cpp_a5381f3d5cbac6cd57bfc2569bccfe915}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!numOfBoundEdge@{numOfBoundEdge}}
+\index{numOfBoundEdge@{numOfBoundEdge}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{numOfBoundEdge()}{numOfBoundEdge()}}
+{\footnotesize\ttfamily int num\+Of\+Bound\+Edge (\begin{DoxyParamCaption}\item[{1}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a1c1134f983382e5739555334f88b2b01}\label{_unv2_d_reader__old_8cpp_a1c1134f983382e5739555334f88b2b01}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!pointsArrSize@{pointsArrSize}}
+\index{pointsArrSize@{pointsArrSize}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{pointsArrSize()}{pointsArrSize()}}
+{\footnotesize\ttfamily const int points\+Arr\+Size (\begin{DoxyParamCaption}\item[{500000}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_ab9ec82ff166af0524a70f0bb235b96ec}\label{_unv2_d_reader__old_8cpp_ab9ec82ff166af0524a70f0bb235b96ec}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!pwd@{pwd}}
+\index{pwd@{pwd}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{pwd()}{pwd()}}
+{\footnotesize\ttfamily string pwd (\begin{DoxyParamCaption}\item[{\char`\"{} \char`\"{}}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_af2a86efcefd331952e64b9df5299f9c3}\label{_unv2_d_reader__old_8cpp_af2a86efcefd331952e64b9df5299f9c3}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!savingFlag@{savingFlag}}
+\index{savingFlag@{savingFlag}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{savingFlag()}{savingFlag()}}
+{\footnotesize\ttfamily bool saving\+Flag (\begin{DoxyParamCaption}\item[{false}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a4dd1369c91acb3263360cba7d36c5deb}\label{_unv2_d_reader__old_8cpp_a4dd1369c91acb3263360cba7d36c5deb}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!wD@{wD}}
+\index{wD@{wD}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{wD()}{wD()}}
+{\footnotesize\ttfamily string wD (\begin{DoxyParamCaption}\item[{\char`\"{} \char`\"{}}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a8249dff456ed3ac3820b24061625abd2}\label{_unv2_d_reader__old_8cpp_a8249dff456ed3ac3820b24061625abd2}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!boundaries@{boundaries}}
+\index{boundaries@{boundaries}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{boundaries}{boundaries}}
+{\footnotesize\ttfamily int boundaries\mbox{[}\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}\mbox{]}\mbox{[}2\mbox{]}}
+
+
+
+Definition at line 15 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a866f709127333941f3c73b46a0040533}\label{_unv2_d_reader__old_8cpp_a866f709127333941f3c73b46a0040533}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!boundLocation@{boundLocation}}
+\index{boundLocation@{boundLocation}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{boundLocation}{boundLocation}}
+{\footnotesize\ttfamily std\+::vector$<$int$>$ bound\+Location}
+
+
+
+Definition at line 17 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a0e2da0b6cb82149d3d3ade692557ead7}\label{_unv2_d_reader__old_8cpp_a0e2da0b6cb82149d3d3ade692557ead7}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!boundName@{boundName}}
+\index{boundName@{boundName}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{boundName}{boundName}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ bound\+Name}
+
+
+
+Definition at line 18 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a79fd8e1608f78c6f66466ee0428bc8cb}\label{_unv2_d_reader__old_8cpp_a79fd8e1608f78c6f66466ee0428bc8cb}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!Elements1D@{Elements1D}}
+\index{Elements1D@{Elements1D}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{Elements1D}{Elements1D}}
+{\footnotesize\ttfamily int Elements1D\mbox{[}\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}\mbox{]}\mbox{[}4\mbox{]}}
+
+
+
+Definition at line 15 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_aafe72426fb4e8cde971541f6f05b7e9c}\label{_unv2_d_reader__old_8cpp_aafe72426fb4e8cde971541f6f05b7e9c}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!Elements2D@{Elements2D}}
+\index{Elements2D@{Elements2D}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{Elements2D}{Elements2D}}
+{\footnotesize\ttfamily int Elements2D\mbox{[}\mbox{\hyperlink{_const_declaration_8h_a1f9d268fd41e771863237691d9a9138b}{elements2\+D\+Arr\+Size}}\mbox{]}\mbox{[}5\mbox{]}}
+
+
+
+Definition at line 15 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a0abef9ba52ad0eb406abd09a10975aee}\label{_unv2_d_reader__old_8cpp_a0abef9ba52ad0eb406abd09a10975aee}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!location@{location}}
+\index{location@{location}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{location}{location}}
+{\footnotesize\ttfamily int location\mbox{[}3\mbox{]}\mbox{[}2\mbox{]}}
+
+
+
+Definition at line 15 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a1ebb9d3857f3eade42fcbd053b4135bc}\label{_unv2_d_reader__old_8cpp_a1ebb9d3857f3eade42fcbd053b4135bc}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!Mesh@{Mesh}}
+\index{Mesh@{Mesh}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{Mesh}{Mesh}}
+{\footnotesize\ttfamily string Mesh\mbox{[}\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a12bb0babe83c01ad2d93f00ac33d92a8}{mesh\+Arr\+Size}}\mbox{]}}
+
+
+
+Definition at line 14 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+
+\mbox{\Hypertarget{_unv2_d_reader__old_8cpp_a30ceaedea47c4ed0dbe2c01ab1da4de0}\label{_unv2_d_reader__old_8cpp_a30ceaedea47c4ed0dbe2c01ab1da4de0}} 
+\index{Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}!Points@{Points}}
+\index{Points@{Points}!Unv2DReader\_old.cpp@{Unv2DReader\_old.cpp}}
+\doxysubsubsection{\texorpdfstring{Points}{Points}}
+{\footnotesize\ttfamily double Points\mbox{[}\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}\mbox{]}\mbox{[}4\mbox{]}}
+
+
+
+Definition at line 16 of file Unv2\+D\+Reader\+\_\+old.\+cpp.
+

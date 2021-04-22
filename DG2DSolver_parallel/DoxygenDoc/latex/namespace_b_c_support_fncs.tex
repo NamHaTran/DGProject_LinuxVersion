@@ -1,0 +1,185 @@
+\hypertarget{namespace_b_c_support_fncs}{}\doxysection{B\+C\+Support\+Fncs Namespace Reference}
+\label{namespace_b_c_support_fncs}\index{BCSupportFncs@{BCSupportFncs}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs_1_1auxilary_b_cs}{auxilary\+B\+Cs}}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs}{N\+S\+F\+Eq\+B\+Cs}}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs_1_1parallel}{parallel}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespace_b_c_support_fncs_a17a1feeba92ff26231dcaf3a08efa51b}{check\+Inflow}} (double u, double v, double nx, double ny)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a84e9fdbc838d800792f29381d73ccf74}{decompseU}} (std\+::vector$<$ double $>$ \&pri\+Vars, const std\+::vector$<$ double $>$ \&U, double rhoX, double rhoY, double iniT, bool calcT)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a2f04db525a5792aea5abd5bc9486c445}{decompsedU}} (std\+::vector$<$ double $>$ \&pri\+Vars, const std\+::vector$<$ double $>$ \&U, const std\+::vector$<$ double $>$ \&dU, double T)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a169ee236d4c326a9891393a8f86e7cec}{reconstructdU}} (std\+::vector$<$ double $>$ \&dU, const std\+::vector$<$ double $>$ \&pri\+Vars, const std\+::vector$<$ double $>$ \&U)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a045bb55f370f69b07d050b92aacc0a5c}{reconstruct\+ConvectiveU}} (std\+::vector$<$ double $>$ \&U, const std\+::vector$<$ double $>$ \&pri\+Vars)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a7d2fd0f2cc99e1f168263eb5d0b562f8}{correct\+Pri\+Vars}} (int edge, int edge\+Grp, std\+::vector$<$ double $>$ \&pri\+VarsM, const std\+::vector$<$ double $>$ \&pri\+VarsP, const std\+::vector$<$ double $>$ \&pri\+Vars\+Mean, const std\+::vector$<$ double $>$ \&n, bool inflow)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a0cf5d9080e55d258f0d64ffc97c020ec}{correct\+Pri\+Vars\+Grad}} (int edge\+Grp, std\+::vector$<$ double $>$ \&dpri\+Vars\+XM, std\+::vector$<$ double $>$ \&dpri\+Vars\+YM, const std\+::vector$<$ double $>$ \&dpri\+Vars\+XP, const std\+::vector$<$ double $>$ \&dpri\+Vars\+YP, const std\+::vector$<$ double $>$ \&UM, double TM, const std\+::vector$<$ double $>$ \&n, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_a0f53749bec83bc624e84e070c3f5d368}{correct\+Velocity}} (int edge, int edge\+Grp, double uP, double u\+Mean, double vP, double v\+Mean, const std\+::vector$<$ double $>$ \&n, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_a2839780b0c91624d3372d46c7f957b5c}{correct\+Velocity\+Grad}} (int edge\+Grp, double du\+XP, double du\+YP, bool inflow, const std\+::vector$<$ double $>$ \&n)
+\item 
+double \mbox{\hyperlink{namespace_b_c_support_fncs_a89d153810ce3c6078a9a56df7d0d1c42}{correct\+Temperature}} (int edge, int edge\+Grp, double TP, double T\+Mean, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_aa7bfcf89000f34e1d8cf5e6f013e2732}{correct\+Temperature\+Grad}} (int edge\+Grp, double d\+T\+XP, double d\+T\+YP, bool inflow, const std\+::vector$<$ double $>$ \&n)
+\item 
+double \mbox{\hyperlink{namespace_b_c_support_fncs_a5e094cbf4cd2df5edd56c85b87b8b9a8}{correct\+Pressure}} (int edge, int edge\+Grp, double pP, double p\+Mean, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_a38343f939fa184980baf4f4d18e8c084}{correct\+Pressure\+Grad}} (int edge\+Grp, double dp\+XP, double dp\+YP, bool inflow, const std\+::vector$<$ double $>$ \&n)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_affe8c6a861d7c4e173347b5f00f8349c}{correct\+Density}} (std\+::vector$<$ double $>$ \&pri\+VarsM, int edge\+Grp, const std\+::vector$<$ double $>$ \&pri\+VarsP)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a17a1feeba92ff26231dcaf3a08efa51b}\label{namespace_b_c_support_fncs_a17a1feeba92ff26231dcaf3a08efa51b}} 
+\index{BCSupportFncs@{BCSupportFncs}!checkInflow@{checkInflow}}
+\index{checkInflow@{checkInflow}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{checkInflow()}{checkInflow()}}
+{\footnotesize\ttfamily bool B\+C\+Support\+Fncs\+::check\+Inflow (\begin{DoxyParamCaption}\item[{double}]{u,  }\item[{double}]{v,  }\item[{double}]{nx,  }\item[{double}]{ny }\end{DoxyParamCaption})}
+
+
+
+Definition at line 22 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_affe8c6a861d7c4e173347b5f00f8349c}\label{namespace_b_c_support_fncs_affe8c6a861d7c4e173347b5f00f8349c}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctDensity@{correctDensity}}
+\index{correctDensity@{correctDensity}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctDensity()}{correctDensity()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::correct\+Density (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{pri\+VarsM,  }\item[{int}]{edge\+Grp,  }\item[{const std\+::vector$<$ double $>$ \&}]{pri\+VarsP }\end{DoxyParamCaption})}
+
+
+
+Definition at line 834 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a5e094cbf4cd2df5edd56c85b87b8b9a8}\label{namespace_b_c_support_fncs_a5e094cbf4cd2df5edd56c85b87b8b9a8}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctPressure@{correctPressure}}
+\index{correctPressure@{correctPressure}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctPressure()}{correctPressure()}}
+{\footnotesize\ttfamily double B\+C\+Support\+Fncs\+::correct\+Pressure (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{edge\+Grp,  }\item[{double}]{pP,  }\item[{double}]{p\+Mean,  }\item[{bool}]{inflow }\end{DoxyParamCaption})}
+
+
+
+Definition at line 653 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a38343f939fa184980baf4f4d18e8c084}\label{namespace_b_c_support_fncs_a38343f939fa184980baf4f4d18e8c084}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctPressureGrad@{correctPressureGrad}}
+\index{correctPressureGrad@{correctPressureGrad}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctPressureGrad()}{correctPressureGrad()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ B\+C\+Support\+Fncs\+::correct\+Pressure\+Grad (\begin{DoxyParamCaption}\item[{int}]{edge\+Grp,  }\item[{double}]{dp\+XP,  }\item[{double}]{dp\+YP,  }\item[{bool}]{inflow,  }\item[{const std\+::vector$<$ double $>$ \&}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line 742 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a7d2fd0f2cc99e1f168263eb5d0b562f8}\label{namespace_b_c_support_fncs_a7d2fd0f2cc99e1f168263eb5d0b562f8}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctPriVars@{correctPriVars}}
+\index{correctPriVars@{correctPriVars}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctPriVars()}{correctPriVars()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::correct\+Pri\+Vars (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{edge\+Grp,  }\item[{std\+::vector$<$ double $>$ \&}]{pri\+VarsM,  }\item[{const std\+::vector$<$ double $>$ \&}]{pri\+VarsP,  }\item[{const std\+::vector$<$ double $>$ \&}]{pri\+Vars\+Mean,  }\item[{const std\+::vector$<$ double $>$ \&}]{n,  }\item[{bool}]{inflow }\end{DoxyParamCaption})}
+
+
+
+Definition at line 127 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a0cf5d9080e55d258f0d64ffc97c020ec}\label{namespace_b_c_support_fncs_a0cf5d9080e55d258f0d64ffc97c020ec}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctPriVarsGrad@{correctPriVarsGrad}}
+\index{correctPriVarsGrad@{correctPriVarsGrad}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctPriVarsGrad()}{correctPriVarsGrad()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::correct\+Pri\+Vars\+Grad (\begin{DoxyParamCaption}\item[{int}]{edge\+Grp,  }\item[{std\+::vector$<$ double $>$ \&}]{dpri\+Vars\+XM,  }\item[{std\+::vector$<$ double $>$ \&}]{dpri\+Vars\+YM,  }\item[{const std\+::vector$<$ double $>$ \&}]{dpri\+Vars\+XP,  }\item[{const std\+::vector$<$ double $>$ \&}]{dpri\+Vars\+YP,  }\item[{const std\+::vector$<$ double $>$ \&}]{UM,  }\item[{double}]{TM,  }\item[{const std\+::vector$<$ double $>$ \&}]{n,  }\item[{bool}]{inflow }\end{DoxyParamCaption})}
+
+
+
+Definition at line 178 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a89d153810ce3c6078a9a56df7d0d1c42}\label{namespace_b_c_support_fncs_a89d153810ce3c6078a9a56df7d0d1c42}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctTemperature@{correctTemperature}}
+\index{correctTemperature@{correctTemperature}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctTemperature()}{correctTemperature()}}
+{\footnotesize\ttfamily double B\+C\+Support\+Fncs\+::correct\+Temperature (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{edge\+Grp,  }\item[{double}]{TP,  }\item[{double}]{T\+Mean,  }\item[{bool}]{inflow }\end{DoxyParamCaption})}
+
+
+
+Definition at line 470 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_aa7bfcf89000f34e1d8cf5e6f013e2732}\label{namespace_b_c_support_fncs_aa7bfcf89000f34e1d8cf5e6f013e2732}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctTemperatureGrad@{correctTemperatureGrad}}
+\index{correctTemperatureGrad@{correctTemperatureGrad}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctTemperatureGrad()}{correctTemperatureGrad()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ B\+C\+Support\+Fncs\+::correct\+Temperature\+Grad (\begin{DoxyParamCaption}\item[{int}]{edge\+Grp,  }\item[{double}]{d\+T\+XP,  }\item[{double}]{d\+T\+YP,  }\item[{bool}]{inflow,  }\item[{const std\+::vector$<$ double $>$ \&}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line 562 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a0f53749bec83bc624e84e070c3f5d368}\label{namespace_b_c_support_fncs_a0f53749bec83bc624e84e070c3f5d368}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctVelocity@{correctVelocity}}
+\index{correctVelocity@{correctVelocity}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctVelocity()}{correctVelocity()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ B\+C\+Support\+Fncs\+::correct\+Velocity (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{edge\+Grp,  }\item[{double}]{uP,  }\item[{double}]{u\+Mean,  }\item[{double}]{vP,  }\item[{double}]{v\+Mean,  }\item[{const std\+::vector$<$ double $>$ \&}]{n,  }\item[{bool}]{inflow }\end{DoxyParamCaption})}
+
+
+
+Definition at line 252 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a2839780b0c91624d3372d46c7f957b5c}\label{namespace_b_c_support_fncs_a2839780b0c91624d3372d46c7f957b5c}} 
+\index{BCSupportFncs@{BCSupportFncs}!correctVelocityGrad@{correctVelocityGrad}}
+\index{correctVelocityGrad@{correctVelocityGrad}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{correctVelocityGrad()}{correctVelocityGrad()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ B\+C\+Support\+Fncs\+::correct\+Velocity\+Grad (\begin{DoxyParamCaption}\item[{int}]{edge\+Grp,  }\item[{double}]{du\+XP,  }\item[{double}]{du\+YP,  }\item[{bool}]{inflow,  }\item[{const std\+::vector$<$ double $>$ \&}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line 363 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a2f04db525a5792aea5abd5bc9486c445}\label{namespace_b_c_support_fncs_a2f04db525a5792aea5abd5bc9486c445}} 
+\index{BCSupportFncs@{BCSupportFncs}!decompsedU@{decompsedU}}
+\index{decompsedU@{decompsedU}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{decompsedU()}{decompsedU()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::decompsedU (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{pri\+Vars,  }\item[{const std\+::vector$<$ double $>$ \&}]{U,  }\item[{const std\+::vector$<$ double $>$ \&}]{dU,  }\item[{double}]{T }\end{DoxyParamCaption})}
+
+
+
+Definition at line 78 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a84e9fdbc838d800792f29381d73ccf74}\label{namespace_b_c_support_fncs_a84e9fdbc838d800792f29381d73ccf74}} 
+\index{BCSupportFncs@{BCSupportFncs}!decompseU@{decompseU}}
+\index{decompseU@{decompseU}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{decompseU()}{decompseU()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::decompseU (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{pri\+Vars,  }\item[{const std\+::vector$<$ double $>$ \&}]{U,  }\item[{double}]{rhoX,  }\item[{double}]{rhoY,  }\item[{double}]{iniT,  }\item[{bool}]{calcT }\end{DoxyParamCaption})}
+
+
+
+Definition at line 44 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a045bb55f370f69b07d050b92aacc0a5c}\label{namespace_b_c_support_fncs_a045bb55f370f69b07d050b92aacc0a5c}} 
+\index{BCSupportFncs@{BCSupportFncs}!reconstructConvectiveU@{reconstructConvectiveU}}
+\index{reconstructConvectiveU@{reconstructConvectiveU}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{reconstructConvectiveU()}{reconstructConvectiveU()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::reconstruct\+ConvectiveU (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{U,  }\item[{const std\+::vector$<$ double $>$ \&}]{pri\+Vars }\end{DoxyParamCaption})}
+
+
+
+Definition at line 115 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_a169ee236d4c326a9891393a8f86e7cec}\label{namespace_b_c_support_fncs_a169ee236d4c326a9891393a8f86e7cec}} 
+\index{BCSupportFncs@{BCSupportFncs}!reconstructdU@{reconstructdU}}
+\index{reconstructdU@{reconstructdU}!BCSupportFncs@{BCSupportFncs}}
+\doxysubsubsection{\texorpdfstring{reconstructdU()}{reconstructdU()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::reconstructdU (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{dU,  }\item[{const std\+::vector$<$ double $>$ \&}]{pri\+Vars,  }\item[{const std\+::vector$<$ double $>$ \&}]{U }\end{DoxyParamCaption})}
+
+
+
+Definition at line 100 of file B\+C\+Support\+Fncs.\+cpp.
+

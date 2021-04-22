@@ -1,0 +1,258 @@
+\hypertarget{_d_g_math_8h}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+D\+G\+Math.h File Reference}
+\label{_d_g_math_8h}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGMath.h@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGMath.h}}
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+Include dependency graph for D\+G\+Math.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=259pt]{_d_g_math_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_math_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacemath}{math}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1tensor_math}{math\+::tensor\+Math}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1_b_r2_fncs}{math\+::\+B\+R2\+Fncs}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1solve_polynomials_eq}{math\+::solve\+Polynomials\+Eq}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1numerical_fluxes}{math\+::numerical\+Fluxes}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1inviscid_terms}{math\+::inviscid\+Terms}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1viscous_terms}{math\+::viscous\+Terms}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1geometric_op}{math\+::geometric\+Op}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1residual_manipulation}{math\+::residual\+Manipulation}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1mass_diffusion_fncs}{math\+::mass\+Diffusion\+Fncs}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacemath_af5a1207ff0114a92ec11f31675b3f11d}{math\+::volume\+Gauss}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_afdd6c424ebfbad9631f2ac9aac569ddf}{math\+::surface\+Gauss}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_a81b4b821310867c03d713e65ba131edb}{math\+::volume\+Gauss\+Lobatto}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_a41c1d7d343daf42ae42fa51825d30e7b}{math\+::surface\+Gauss\+Lobatto}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_a442beb1e6c1d2ebeb37fc08bf5158077}{math\+::basis\+Fc}} (double a, double b, int elem\+Type)
+\item 
+void \mbox{\hyperlink{namespacemath_a4f5b84db4eeed650294b323ab345d44c}{math\+::d\+Basis\+Fc}} (double a, double b, int elem\+Type)
+\item 
+double \mbox{\hyperlink{namespacemath_a75af59085b920cea9d0a55697220b35d}{math\+::\+J2\+D\+Cal}} (int elem, double a, double b)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_af082ece7a9489d7fdea6bb70966d282d}{math\+::\+J1\+D\+Cal}} (int edge)
+\item 
+double \mbox{\hyperlink{namespacemath_a699bab28b80867fe156e93c2eb39014a}{math\+::ini\+Integral}} (int elem\+Type, int order)
+\item 
+double \mbox{\hyperlink{namespacemath_a3345126abe953df3f65e4f0b09d8728e}{math\+::volume\+Inte}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&Fvalue, int elem)
+\item 
+double \mbox{\hyperlink{namespacemath_a0d132569a1e71999fd55061ded5f702c}{math\+::jacobian\+Quad}} (double xA, double xB, double xC, double xD, double yA, double yB, double yC, double yD, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_a28ab84bc66352f73786f84dcea8e563c}{math\+::jacobian\+Tri}} (double xA, double xB, double xC, double yA, double yB, double yC, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_ab865c882a1e01dd36a955cb0d33b9cf6}{math\+::jacobian1\+D\+Quad}} (int edge\+Index, double xA, double xB, double xC, double xD, double yA, double yB, double yC, double yD)
+\item 
+double \mbox{\hyperlink{namespacemath_a315d9106f4fec6ab22b807594a99f5a8}{math\+::jacobian1\+D\+Tri}} (int edge\+Index, double xA, double xB, double xC, double yA, double yB, double yC)
+\item 
+double \mbox{\hyperlink{namespacemath_a1e7a61c8119a8b9cf637055dd58a2f43}{math\+::calc\+Mean\+Pri\+Var}} (int element, int var\+Id)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a32aae97393e4ecab6c98816b240e8abc}{math\+::\+Solve\+Sys\+Eqs}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&a, std\+::vector$<$ double $>$ \&b)
+\item 
+double \mbox{\hyperlink{namespacemath_a9d3e434727fb95a1fc0f98ae5696d9f6}{math\+::error\+GS}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&a, std\+::vector$<$ double $>$ \&b, std\+::vector$<$ double $>$ \&No)
+\item 
+double \mbox{\hyperlink{namespacemath_ab784c91c1a5ddffe12b8e2d03a3ae617}{math\+::\+Calc\+Vis\+Coef}} (double T)
+\item 
+double \mbox{\hyperlink{namespacemath_a4e99529b0422128bd708c3fa5fe0bd8c}{math\+::\+CalcT}} (int elem, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_abcc57a7d407f4805a90af22026a476bd}{math\+::\+Calc\+T\+From\+Consv\+Var}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}})
+\item 
+double \mbox{\hyperlink{namespacemath_a70380a144fd2e4d704ea18164794f19c}{math\+::\+Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double rhox, double rhoy, double T\+\_\+old)
+\item 
+double \mbox{\hyperlink{namespacemath_a44d244c122218b6dc0ef2c6c15408254}{math\+::\+Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff\+\_\+explicit}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double mu\+Rhox, double mu\+Rhoy)
+\item 
+double \mbox{\hyperlink{namespacemath_a582d91c5db3f952d08b6c09253307430}{math\+::\+Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff\+\_\+implicit}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double rhox, double rhoy)
+\item 
+double \mbox{\hyperlink{namespacemath_adf119f6fa85e3be88994f9dffac4ffed}{math\+::calc\+Mean\+Free\+Path}} (double mu, double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double T)
+\item 
+double \mbox{\hyperlink{namespacemath_a8b7862571aadce45436567cd9f387ef2}{math\+::\+CalcP}} (double T, double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}})
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacemath_a1342ea287678a63c4bc68866ffcc51da}{math\+::\+Calc\+\_\+dxydab}} (int elem, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_a98311fbda0afa358589ce125f00f4e40}{math\+::\+Calc\+\_\+d\+Bxd\+By}} (int elem, int order, int na, int nb, int opt)
+\item 
+double \mbox{\hyperlink{namespacemath_ace952e7838225b05a43b4d81ffa2d304}{math\+::surface\+Inte}} (std\+::vector$<$ double $>$ \&Fvalue, int edge)
+\item 
+double \mbox{\hyperlink{namespacemath_a123873830eae31561b6fdc543987ef35}{math\+::point\+Value}} (int element, double a, double b, int val\+Type, int val\+Kind)
+\item 
+double \mbox{\hyperlink{namespacemath_a43783b637422d46bfeac970018c32a35}{math\+::point\+Value\+No\+Limiter}} (int element, double a, double b, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespacemath_a902881f419c954b3c667054f16b1bf0e}{math\+::point\+Deriv\+Rho}} (int element, double a, double b, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_a28b6605cc8e1b0a4d99ee4e5ecff767d}{math\+::vector\+Dot\+Product}} (std\+::vector$<$ double $>$ \&a, std\+::vector$<$ double $>$ \&b)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a2e0c6f0e06f08dfad7c1e0e0d84d90e5}{math\+::internal\+Surface\+Value}} (int edge, int element, int nG, int val\+Type, int val\+Kind)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a5b66fd85c26991b5eb5059acd82f9db0}{math\+::internal\+Surface\+Derivative\+Value}} (int edge, int element, int nG, int val\+Type, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_a8b3d2a928e19871cda8f72af196ecc54}{math\+::\+Surface\+Value\+From\+Master}} (int edge, int nG, int val\+Type, int val\+Kind)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a55861d2ef7e1a045b8eff9d32552a881}{math\+::vector\+Sum}} (std\+::vector$<$ double $>$ \&a, std\+::vector$<$ double $>$ \&b)
+\item 
+double \mbox{\hyperlink{namespacemath_aab7b2936247928e9637f8a620b235038}{math\+::\+Calc\+Speed\+Of\+Sound}} (double T)
+\item 
+double \mbox{\hyperlink{namespacemath_a1833bcbbd6b7f6aa9473f98af700c335}{math\+::calc\+Rhouv\+E\+Deriv}} (double d\+Rho\+U\+Val, double d\+Rho\+Val, double rho\+U\+Val, double rho\+Val)
+\item 
+double \mbox{\hyperlink{namespacemath_a100f4e88d5a6de90dcf3887848cd4e98}{math\+::calc\+T\+Deriv}} (double dE, double du, double dv, double u, double v)
+\item 
+double \mbox{\hyperlink{namespacemath_a7990a64b3b661ce8485e82035d7ac6ec}{math\+::point\+Aux\+Value}} (int element, double a, double b, int val\+Type, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_aa374b1ac95b46fe84c28ed7c4fea866f}{math\+::calc\+Thermal\+Conductivity}} (double mu\+Val)
+\item 
+std\+::tuple$<$ bool, double, double $>$ \mbox{\hyperlink{namespacemath_a171f534ed5a896dd397881f7c6175732}{math\+::solv\+Quadratic\+Eq}} (double A, double B, double C)
+\item 
+double \mbox{\hyperlink{namespacemath_a7b5772b1e4ab1f0c756f4bdf925ed01b}{math\+::center\+Value}} (int element, int val\+Type, int val\+Kind)
+\item 
+double \mbox{\hyperlink{namespacemath_abe4f30786927c9d2cabcb7640781068a}{math\+::center\+Aux\+Value}} (int element, int val\+Type, int dir)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a077c7ef3efc8fddf2e159880ed861a43}{math\+::direct\+Mapping}} (int element, double a\+Coor, double b\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_acf272633728faee2014a58f727dfcd63}{math\+::mapping\+Real\+To\+Std}} (int edge, int element, double x\+Coor, double y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a3b78873ae2819c605380b89383cf5024}{math\+::inverse\+Mapping}} (int element, double x\+Coor, double y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a0bb671360e1a62f79d583e363082e47c}{math\+::inverse\+Mapping\+\_\+\+For\+Parallel}} (int edge, double x\+Coor, double y\+Coor)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a2e29f48a594ddb32646d2165d2855d89}{math\+::trace\+Of\+Matrix}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&M)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_af70d832549593ee987b538e8b626849f}{math\+::transformation\+Tensor}} (double nx, double ny)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_aca0baf8e9f2a22fc33b0c0c392444200}{math\+::gradU}} (std\+::vector$<$ double $>$ \&U, std\+::vector$<$ double $>$ \&d\+Ux, std\+::vector$<$ double $>$ \&d\+Uy)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_aac8850b8ff4d8b0d2e611e6ea966e685}{math\+::transpose\+Double\+Matrix}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&M)
+\item 
+double \mbox{\hyperlink{namespacemath_a147afcc672bfc46298f9e728df0e5976}{math\+::calc\+Consv\+Var\+Wth\+Limiter}} (int element, double a, double b, int val\+Type)
+\item 
+int \mbox{\hyperlink{namespacemath_abc085e0537ec011db99f8d00eeb5804e}{math\+::find\+Index}} (int number, std\+::vector$<$ int $>$ In\+Array)
+\item 
+int \mbox{\hyperlink{namespacemath_ad5526cc5a380bdc33b13341797f40269}{math\+::find\+Index\+\_\+double}} (double number, std\+::vector$<$ double $>$ In\+Array)
+\item 
+double \mbox{\hyperlink{namespacemath_aa246437d78f8b6b0f7752d5d923caf94}{math\+::vector\+Norm}} (std\+::vector$<$ double $>$ vector)
+\item 
+double \mbox{\hyperlink{namespacemath_aef225b962edee04fdeb074190be00f16}{math\+::calc\+Residual\+From\+Residual\+Of\+Order}} (int element, double a, double b, int val\+Type)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a50743350e259f3189b8c5411883bb7bf}{math\+::point\+U\+Vars}} (int element, double a, double b)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a40e9eed446cee956b76c3a03684bd114}{math\+::point\+S\+Vars}} (int edge, int element, double a, double b, int dir, int option)
+\item 
+double \mbox{\hyperlink{namespacemath_a5b8c18930450b2202e0080b9e0248f92}{math\+::calc\+Div\+T\+From\+Aux\+Variable}} (double d\+RhoE, double d\+Rho, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}})
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a4ad68616d3348bee571afbf15061a424}{math\+::rotate\+To\+Local\+Coordinate\+System}} (double x\+Comp, double y\+Comp, double nx, double ny)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a31288a7fa00587fc9829416d09acb250}{math\+::rotate\+To\+Global\+Coordinate\+System}} (double local\+X\+Comp, double local\+Y\+Comp, double nx, double ny)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_ac13788652b75855fd4edfa0c6ca2c394}{math\+::tensor\+Math\+::unit\+Tensor}} (int row\+Num)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_ab8da101bdafc5ca4eb193a505b912897}{math\+::tensor\+Math\+::tensor\+Vector\+Dot\+Product}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&S, std\+::vector$<$ double $>$ \&V)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_aa62bf060b84dce1e9a3c9db075c74084}{math\+::tensor\+Math\+::vector\+Tensor\+Dot\+Product}} (std\+::vector$<$ double $>$ \&V, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&S)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_a819f7c54871aabe50a3cb241b2475a71}{math\+::tensor\+Math\+::number\+Tensor\+Product}} (double num, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&S)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_a991e255cb80af97f86cfcaecb8660ea1}{math\+::tensor\+Math\+::number\+Vector\+Product}} (double num, std\+::vector$<$ double $>$ \&V)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_ab82230530dedb11c54add0174564f7bb}{math\+::tensor\+Math\+::sum\+Of2\+Tensor}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&S1, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&S2, int coef\+Of\+S1, int coef\+Of\+S2)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_1_1tensor_math_a55ff89698168f15169712b2cfb5386a4}{math\+::tensor\+Math\+::sum\+Of2\+Vector}} (std\+::vector$<$ double $>$ \&V1, std\+::vector$<$ double $>$ \&V2, int coef\+Of\+V1, int coef\+Of\+V2)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1_b_r2_fncs_a275e6832760cfc34acc29d0a173ac6b0}{math\+::\+B\+R2\+Fncs\+::point\+Aux\+Value\+\_\+vol}} (int element, double a, double b, int val\+Type, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1_b_r2_fncs_afa20534ff30022558d599e67d98f61fe}{math\+::\+B\+R2\+Fncs\+::point\+Aux\+Value\+\_\+sur}} (int edge, int element, double a, double b, int val\+Type, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1solve_polynomials_eq_a7d68e98ae5e4b1d05aca686501806a98}{math\+::solve\+Polynomials\+Eq\+::\+Newton\+Raphson}} (std\+::vector$<$ double $>$ \&power, std\+::vector$<$ double $>$ \&coefs, double initial\+Value)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1solve_polynomials_eq_aa5680d8f7b57f409afbdf1603a32f50b}{math\+::solve\+Polynomials\+Eq\+::\+Bisection}} (std\+::vector$<$ double $>$ \&power, std\+::vector$<$ double $>$ \&coefs, double initial\+Value)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1solve_polynomials_eq_a065a5c5fec0802f44fcd83b324eda895}{math\+::solve\+Polynomials\+Eq\+::sub\+Val\+To\+Polynomial}} (std\+::vector$<$ double $>$ \&power, std\+::vector$<$ double $>$ \&coefs, double Value)
+\item 
+std\+::tuple$<$ bool, double, double $>$ \mbox{\hyperlink{namespacemath_1_1solve_polynomials_eq_a55ce9a3b256b38fe241fa470e9f2d6cc}{math\+::solve\+Polynomials\+Eq\+::polynominal2d}} (double A, double B, double C)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a97b0d81e81827f8c81435533d785b72e}{math\+::numerical\+Fluxes\+::cal\+Convective\+Fluxes}} (int edge\+Id, std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fxP, std\+::vector$<$ double $>$ \&fxM, std\+::vector$<$ double $>$ \&fyP, std\+::vector$<$ double $>$ \&fyM, std\+::vector$<$ double $>$ \&UP, std\+::vector$<$ double $>$ \&UM, double TP, double TM, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a446629b3941a396ef958d70e5eac431b}{math\+::numerical\+Fluxes\+::\+Lx\+F\+Flux}} (int edge\+Id, std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fxP, std\+::vector$<$ double $>$ \&fxM, std\+::vector$<$ double $>$ \&fyP, std\+::vector$<$ double $>$ \&fyM, std\+::vector$<$ double $>$ \&U\+GP, std\+::vector$<$ double $>$ \&U\+GM, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a51f23902a517c52a9983c59334ba0e2a}{math\+::numerical\+Fluxes\+::central\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fxP, std\+::vector$<$ double $>$ \&fxM, std\+::vector$<$ double $>$ \&fyP, std\+::vector$<$ double $>$ \&fyM, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a06e6977218da7b268ad8168ee09490be}{math\+::numerical\+Fluxes\+::\+Roe\+Average\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fx\+Plus, std\+::vector$<$ double $>$ \&fx\+Minus, std\+::vector$<$ double $>$ \&U\+L\+Plus, std\+::vector$<$ double $>$ \&U\+L\+Minus, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_ab5b18d553b3b6662bd74b04376fa154b}{math\+::numerical\+Fluxes\+::\+H\+L\+L\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fx\+Plus, std\+::vector$<$ double $>$ \&fx\+Minus, std\+::vector$<$ double $>$ \&U\+L\+Plus, std\+::vector$<$ double $>$ \&U\+L\+Minus, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_abf2812c4cc018bb690a2850d8d600b83}{math\+::numerical\+Fluxes\+::aux\+Flux}} (double Minus\+Val, double Plus\+Var, double vector\+Comp)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a05e9682efabeb3281114d19e86022934}{math\+::numerical\+Fluxes\+::constantC}} (double u\+MagP, double u\+MagM, double aP, double aM)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a5dae53908ed68a6418fc2945d5a46630}{math\+::numerical\+Fluxes\+::constant\+Beta}} (double rhoP, double rhoM, double eP, double eM, std\+::vector$<$ std\+::vector$<$ double $>$$>$ stress\+Heat\+FluxP, std\+::vector$<$ std\+::vector$<$ double $>$$>$ stress\+Heat\+FluxM, std\+::vector$<$ double $>$ nP)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a7abe4166082d67da1685e7c89ea100a0}{math\+::numerical\+Fluxes\+::find\+Max\+Lx\+F\+Constant\+On\+Edge}} (int iedge, int master\+Cell)
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacemath_1_1inviscid_terms_a9ad90ae675154db90661d44eab476d01}{math\+::inviscid\+Terms\+::calc\+Invis\+Terms\+From\+Pri\+Vars}} (double rho\+Val, double u\+Val, double um\+Val, double v\+Val, double vm\+Val, double totalE, double p\+Val, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1viscous_terms_a2687a8b158d58d6e66fe36905ff738b1}{math\+::viscous\+Terms\+::calc\+Stress\+Component}} (int index, double fst\+Deriv, double snd\+Deriv)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_1_1viscous_terms_a33c530fc434fa56ff2124ff21a494a77}{math\+::viscous\+Terms\+::calc\+Stress\+Tensor\+And\+Heat\+Flux}} (std\+::vector$<$ double $>$ \&U, std\+::vector$<$ double $>$ \&d\+Ux, std\+::vector$<$ double $>$ \&d\+Uy, double T\+Val)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1viscous_terms_a48d219a062bf0f8cdacea2b0d5ad9377}{math\+::viscous\+Terms\+::calc\+Heat\+Flux\+Terms}} (double d\+Tx, double d\+Ty, double k)
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacemath_1_1viscous_terms_a3e380970f2f87c7b9ba860c76fc559ba}{math\+::viscous\+Terms\+::calc\+Viscous\+Terms\+From\+Stress\+Heat\+Flux\+Matrix}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&Stress\+Heat\+Flux, double u\+Val, double v\+Val, double nud\+Rho, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_a0b2d166e774e428f033406ecc5754618}{math\+::geometric\+Op\+::calc\+Distance\+From\+Center\+To\+Edge}} (int element, int edge)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a39d2282029836081adbe2b7124a3abee}{math\+::geometric\+Op\+::calc\+Geo\+Center}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor, int type)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_a2b9b33ea3cfb9d10e8fb29f42cf55f02}{math\+::geometric\+Op\+::calc\+Polygon\+Area}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor, int type)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a79cbbc630d0f5fb6d1f35a0faec790e8}{math\+::geometric\+Op\+::calc\+Quad\+Centroid}} (int element, double x\+CG, double y\+CG, double area)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_ae73e00278c3147c975f9890896beb987}{math\+::geometric\+Op\+::cal\+Edge\+Metric}} (int edge\+Id, int element\+Id)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a836bfd736a657769b1d9e7ccca17269d}{math\+::geometric\+Op\+::cal\+Difference\+Of\+Elements\+Cell\+Centers}} (int elem1, int elem2)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_aed0c7180316e148380d24497ea831ca2}{math\+::geometric\+Op\+::cal\+Local\+Cell\+Size}} (int element, double element\+Area)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_adecdf8b1d02d5e53289238af4710c5ef}{math\+::geometric\+Op\+::cal\+Dist\+Between2\+Points}} (double x\+Pt1, double y\+Pt1, double x\+Pt2, double y\+Pt2)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_a006e0912e46d98ab7df54e3b2e2b0a18}{math\+::geometric\+Op\+::cal\+Polygon\+Perimeter}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor, int num\+Of\+Edge)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_abf31165a01f8005a63ecda4824c12e81}{math\+::geometric\+Op\+::cal\+R\+Of\+Inscribed\+Circle\+Of\+Tri\+Element}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_aa34046acd7ba45f170210f23880adf91}{math\+::geometric\+Op\+::cal\+Size\+Of\+Quad\+Element}} (std\+::vector$<$ double $>$ \&x\+Coor, std\+::vector$<$ double $>$ \&y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a394bf0e30fe99c7a7d9f7d40539c2b1c}{math\+::geometric\+Op\+::find\+Normal\+Projection\+Of\+Point\+To\+Edge}} (double xA, double yA, double xB, double yB, double xC, double yC)
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacemath_1_1geometric_op_a35d3e8cbf5633db4f03215488914b884}{math\+::geometric\+Op\+::sort\+Vertices\+C\+CW}} (std\+::vector$<$ int $>$ vertices\+Id, std\+::vector$<$ double $>$ angle)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1geometric_op_ac12692ec050ca42058884ac8b20bc129}{math\+::geometric\+Op\+::calc\+Angle\+Of\+Point}} (double x\+Orig, double y\+Orig, double x\+Point, double y\+Point)
+\item 
+double \mbox{\hyperlink{namespacemath_a2680630830169fc4b71f7a99e12a3c89}{math\+::calc\+MaxT}} (int element)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1mass_diffusion_fncs_a08bb2f2b78d8e9326dc04d147a15e59e}{math\+::mass\+Diffusion\+Fncs\+::calc\+Total\+Velocity}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double advecV, double mud\+Rho)
+\item 
+double \mbox{\hyperlink{namespacemath_a4452b554e87a705c27390f2b7a3964e1}{math\+::plus\+Side\+Surface\+Value}} (int edge, int element, int nG, int val\+Type, int val\+Kind)
+\begin{DoxyCompactList}\small\item\em Function calculates value at surface Gauss point on (+) side (side of input element Id). \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{namespacemath_a2b31c1bd113b4da056168492b0277076}{math\+::plus\+Side\+Surface\+Derivative\+Value}} (int edge, int element, int nG, int val\+Type, int dir)
+\begin{DoxyCompactList}\small\item\em Function calculates derivative value at surface Gauss point on (+) side (side of input element Id). \end{DoxyCompactList}\end{DoxyCompactItemize}

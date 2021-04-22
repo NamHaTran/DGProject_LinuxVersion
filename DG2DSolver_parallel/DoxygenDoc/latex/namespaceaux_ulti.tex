@@ -1,0 +1,771 @@
+\hypertarget{namespaceaux_ulti}{}\doxysection{aux\+Ulti Namespace Reference}
+\label{namespaceaux_ulti}\index{auxUlti@{auxUlti}}
+
+
+\mbox{\hyperlink{namespaceaux_ulti}{aux\+Ulti}}. Namespace contains auxiliary functions in D\+G2D.  
+
+
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespaceaux_ulti_1_1post_process}{post\+Process}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Q\+String \mbox{\hyperlink{namespaceaux_ulti_a649fc4c0ed683895e5d4ed6886b85cba}{workingdir}} ()
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_ad1917ab18ba14edd481e4930c122d540}{find\+Edge\+Order}} (int element, int edge)
+\begin{DoxyCompactList}\small\item\em Function finds edge order in element. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{namespaceaux_ulti_a0c8657eafb656db3290162b171e05e7b}{check\+Type}} (int element)
+\begin{DoxyCompactList}\small\item\em Check type of element. \end{DoxyCompactList}\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_a6cc5f2e120a49477cf34892a16ae437f}{get\+Elem\+Corner\+Coord}} (int elem, int index)
+\item 
+bool \mbox{\hyperlink{namespaceaux_ulti_aae7619c1579476cb07255fa9d180cb90}{check\+Master}} (int elem, int edge)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_aee17b32f4c42d4d4f092b563472c2b34}{get\+Gauss\+Surf\+Coor}} (int edge, int elem, int nG)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_ae603ee8a141a1df1a4ec0c402a90d64a}{look\+For\+Data\+Of\+Keyword}} (std\+::string file\+Loc, std\+::string input\+Key\+Word)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_ac0b90bde73b3c0c5ca03e77f859c4e97}{get\+Gauss\+Surf\+Coor\+Master}} (int edge, int elem, int nG)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceaux_ulti_a83a622993bdd3e5b5609d3dbc9448ef4}{get\+Vector\+Gauss\+Surf\+Coor}} (int edge, int elem)
+\item 
+double \mbox{\hyperlink{namespaceaux_ulti_a300427aeeaaeb03c4185fa67f97e0d07}{get\+Norm\+Vector\+Comp}} (int elem, int edge, int dir)
+\begin{DoxyCompactList}\small\item\em Function gets components of edge normal vector. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceaux_ulti_adeb726101ac0a8b6b67d808bfb394cbc}{open\+File\+E\+XE}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}})
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceaux_ulti_af928f6a116701f931c230d14e815c256}{get\+Element\+Conser\+Values\+Of\+Order}} (int element, int type)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceaux_ulti_adf430e910d54ee3c03ffbd561df040e4}{get\+Residual\+Values\+Of\+Order}} (int element, int type)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceaux_ulti_a8c068b88edcbf091681c7ea905d6d6e9}{get\+Element\+Aux\+Values\+Of\+Order}} (int element, int type, int dir)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceaux_ulti_a549fc1fed5b30bd8d7e63fbdcb9a89ed}{get\+Element\+Aux\+Values\+Of\+Order\+\_\+\+B\+R2\+\_\+vol}} (int element, int type, int dir)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceaux_ulti_ab19ddec8b96c1a4eeba7fa092b9c547d}{get\+Element\+Aux\+Values\+Of\+Order\+\_\+\+B\+R2\+\_\+sur}} (int edge, int element, int type, int dir)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_af4f2cf5d64b5b784f2f1fb7290c3da73}{get\+Gauss\+Coor}} (int na, int nb)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_a8bb6d5f5fcc1013fc6e4ff526f981fca}{get\+Grp\+Of\+Edge}} (int edge)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_a596cedeb4ed87850aa47021d7c8d4ce1}{get\+B\+C\+Type}} (int edge)
+\begin{DoxyCompactList}\small\item\em Function gets boundary type of edge. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespaceaux_ulti_a6bfa493e054e1858425b70bd99435548}{check\+Sub\+Sonic}} ()
+\item 
+bool \mbox{\hyperlink{namespaceaux_ulti_a40d5d8276b57d93a853624b43ddc210d}{check\+Sub\+Sonic\+Locally}} (double T\+Val, double u\+Val, double v\+Val)
+\item 
+std\+::tuple$<$ int, int $>$ \mbox{\hyperlink{namespaceaux_ulti_a7c43bb7a4f0095b4fb512dcf8e01b9bf}{get\+Master\+Servant\+Of\+Edge}} (int edge)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a1711d46fb40906de90d1d79bb5709b34}{initialize1\+D\+Array}} (double $\ast$Array, int row, double initial\+Value)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_aad492ee014c4182330f3d2a862e0c154}{initialize1\+D\+Int\+Array}} (int $\ast$Array, int row, int initial\+Value)
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespaceaux_ulti_a2f321e21825670333c6879e6f3d33b6f}{resize2\+D\+Array}} (int row, int column, double initial\+Value)
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespaceaux_ulti_ae0a5ba36fc33349711512f7971ba7baf}{resize2\+D\+Int\+Array}} (int row, int column, int initial\+Value)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a6d64c15578cc59d24e1c502bffd7dcad}{resize3\+D\+Array}} (std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$$>$$>$ \&Array, int direct1, int direct2, int direct3)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a55ff939ad40e2096de126a46a58ed939}{add\+Row\+To2\+D\+Int\+Array}} (std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&Array, int num\+Col)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_aa407c28af41cc20d126a19d43b9d8f05}{add\+Row\+To2\+D\+Double\+Array}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&Array, int num\+Col)
+\item 
+std\+::tuple$<$ double, double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_a4017ffb22d09ab07f8ffa60c8fb1f091}{get\+Cell\+Metrics}} (int element)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a2eb4ed9354efd5379f7cfdd1b470b53a}{mapping\+Edges}} ()
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_ab8344019e03666eca4b889f0da4e00ba}{resize\+D\+G\+Arrays}} ()
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_ae0af2514bd1036c3dc8d9f69a8f5d057}{get\+Adress\+Of\+B\+C\+Edges\+On\+B\+C\+Vals\+Array}} (int global\+Edge\+Id)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_a7e60ae9c25bfbc677fc0dc14fe914f3e}{get\+Global\+Edge\+Id\+From\+Local\+B\+C\+Edge\+Id}} (int local\+B\+C\+Edge\+Id)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_a81a3486bf438decb8a6d4aafaf2b26ee}{get\+Cell\+Centroid}} (int element)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a629d9f6437e28c30363aea848df4f370}{clear1\+D\+Int\+Vector}} (std\+::vector$<$ int $>$ \&vector)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_aa3bece0e936eaaedf4020aeaab2f20b3}{clear2\+D\+Int\+Vector}} (std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&vector)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_ad1b4209397bb9d05049328113748458d}{find\+Vertex\+Order}} (int point, int element)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_a0408c43d76bb2064219b844a9fb9e3bc}{get\+Neighbor\+Element}} (int element, int edge)
+\item 
+int \mbox{\hyperlink{namespaceaux_ulti_a0ccd03297da28f33988542a89fa94309}{get\+Edge\+Has\+Input\+Order\+Of\+Element}} (int element, int input\+Edge\+Order)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a5ac52d04c6ea3fa34d7d1cb63e1790db}{create\+Folder}} (std\+::string \mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a24505b6abe5da0bb820daf3047845c7c}{location}}, bool pass\+Exit)
+\item 
+std\+::string \mbox{\hyperlink{namespaceaux_ulti_a7e710f0179065a64dbec2c16da0058ff}{create\+Time\+Step\+Folder}} (int iter, std\+::string option)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a7b2d7fc4627fd8fc863f1008b5520290}{copy\+Folder}} (std\+::string source, std\+::string destination)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_ac50fae4d2913a15ad9a4023e90f1b3e1}{copy\+File}} (std\+::string source, std\+::string destination)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a8dda5f15516f949ed3651938b5f979c4}{get\+Vector\+U\+Mean\+Of\+Cell}} (int element, std\+::vector$<$ double $>$ \&U)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_afa278aba5bc6551273f95b2accd89da3}{get\+U\+At\+Interfaces}} (int edge, int element, int nG, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespaceaux_ulti_ab05a5cf2c0bbaa1cf7df28481e833d1f}{get\+U\+Plus\+At\+BC}} (int edge, int nG, int val\+Type)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceaux_ulti_a90d6d9df0e869d87d1ea0b6472af509a}{get\+T\+At\+Interfaces}} (int edge, int element, int nG)
+\item 
+double \mbox{\hyperlink{namespaceaux_ulti_a3808c6b865e3478dc74f8f9570ded15e}{get\+T\+Plus\+At\+BC}} (int edge, int nG)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_ada22f1fe982108d457ad8d3e9e8a924a}{save\+U\+At\+B\+C\+To\+Surface\+Fields}} (int edge, int nG, std\+::vector$<$ double $>$ \&U\+Plus, std\+::vector$<$ double $>$ \&U\+Minus)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a9ee006c850469cbbe325049a82d84e7e}{check\+Infor\+Before\+Running}} ()
+\item 
+bool \mbox{\hyperlink{namespaceaux_ulti_ad2969aa487e275949d3647e715d6c9a3}{check\+Time\+Varying\+B\+C\+Available}} ()
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_a7ff44171889cf856ddf46961d61ca281}{get\+Command}} ()
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_ac03d5993a1583fd17669c17abd8a5fda}{shrink2\+D\+Int\+Vector}} (std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&vector, int num\+Row)
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_af492d0e626ffbd8a1f85674abe19ba6b}{release\+Memory}} ()
+\item 
+void \mbox{\hyperlink{namespaceaux_ulti_ae3276f02a1f066f0d36f9ffc41e96c5b}{resize\+Temporary\+Arrays}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{namespaceaux_ulti}{aux\+Ulti}}. Namespace contains auxiliary functions in D\+G2D. 
+
+No detailed description. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceaux_ulti_aa407c28af41cc20d126a19d43b9d8f05}\label{namespaceaux_ulti_aa407c28af41cc20d126a19d43b9d8f05}} 
+\index{auxUlti@{auxUlti}!addRowTo2DDoubleArray@{addRowTo2DDoubleArray}}
+\index{addRowTo2DDoubleArray@{addRowTo2DDoubleArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{addRowTo2DDoubleArray()}{addRowTo2DDoubleArray()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::add\+Row\+To2\+D\+Double\+Array (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{Array,  }\item[{int}]{num\+Col }\end{DoxyParamCaption})}
+
+
+
+Definition at line 905 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a55ff939ad40e2096de126a46a58ed939}\label{namespaceaux_ulti_a55ff939ad40e2096de126a46a58ed939}} 
+\index{auxUlti@{auxUlti}!addRowTo2DIntArray@{addRowTo2DIntArray}}
+\index{addRowTo2DIntArray@{addRowTo2DIntArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{addRowTo2DIntArray()}{addRowTo2DIntArray()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::add\+Row\+To2\+D\+Int\+Array (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&}]{Array,  }\item[{int}]{num\+Col }\end{DoxyParamCaption})}
+
+
+
+Definition at line 895 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a9ee006c850469cbbe325049a82d84e7e}\label{namespaceaux_ulti_a9ee006c850469cbbe325049a82d84e7e}} 
+\index{auxUlti@{auxUlti}!checkInforBeforeRunning@{checkInforBeforeRunning}}
+\index{checkInforBeforeRunning@{checkInforBeforeRunning}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{checkInforBeforeRunning()}{checkInforBeforeRunning()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::check\+Infor\+Before\+Running (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1522 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_aae7619c1579476cb07255fa9d180cb90}\label{namespaceaux_ulti_aae7619c1579476cb07255fa9d180cb90}} 
+\index{auxUlti@{auxUlti}!checkMaster@{checkMaster}}
+\index{checkMaster@{checkMaster}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{checkMaster()}{checkMaster()}}
+{\footnotesize\ttfamily bool aux\+Ulti\+::check\+Master (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 155 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a6bfa493e054e1858425b70bd99435548}\label{namespaceaux_ulti_a6bfa493e054e1858425b70bd99435548}} 
+\index{auxUlti@{auxUlti}!checkSubSonic@{checkSubSonic}}
+\index{checkSubSonic@{checkSubSonic}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{checkSubSonic()}{checkSubSonic()}}
+{\footnotesize\ttfamily bool aux\+Ulti\+::check\+Sub\+Sonic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 750 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a40d5d8276b57d93a853624b43ddc210d}\label{namespaceaux_ulti_a40d5d8276b57d93a853624b43ddc210d}} 
+\index{auxUlti@{auxUlti}!checkSubSonicLocally@{checkSubSonicLocally}}
+\index{checkSubSonicLocally@{checkSubSonicLocally}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{checkSubSonicLocally()}{checkSubSonicLocally()}}
+{\footnotesize\ttfamily bool aux\+Ulti\+::check\+Sub\+Sonic\+Locally (\begin{DoxyParamCaption}\item[{double}]{T\+Val,  }\item[{double}]{u\+Val,  }\item[{double}]{v\+Val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 774 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ad2969aa487e275949d3647e715d6c9a3}\label{namespaceaux_ulti_ad2969aa487e275949d3647e715d6c9a3}} 
+\index{auxUlti@{auxUlti}!checkTimeVaryingBCAvailable@{checkTimeVaryingBCAvailable}}
+\index{checkTimeVaryingBCAvailable@{checkTimeVaryingBCAvailable}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{checkTimeVaryingBCAvailable()}{checkTimeVaryingBCAvailable()}}
+{\footnotesize\ttfamily bool aux\+Ulti\+::check\+Time\+Varying\+B\+C\+Available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1547 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a0c8657eafb656db3290162b171e05e7b}\label{namespaceaux_ulti_a0c8657eafb656db3290162b171e05e7b}} 
+\index{auxUlti@{auxUlti}!checkType@{checkType}}
+\index{checkType@{checkType}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{checkType()}{checkType()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::check\+Type (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Check type of element. 
+
+Tri element\+: value 3.~\newline
+Quad element\+: value 4.~\newline
+ 
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+element type. 
+\end{DoxyReturn}
+
+
+Definition at line 124 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a629d9f6437e28c30363aea848df4f370}\label{namespaceaux_ulti_a629d9f6437e28c30363aea848df4f370}} 
+\index{auxUlti@{auxUlti}!clear1DIntVector@{clear1DIntVector}}
+\index{clear1DIntVector@{clear1DIntVector}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{clear1DIntVector()}{clear1DIntVector()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::clear1\+D\+Int\+Vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$ \&}]{vector }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1176 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_aa3bece0e936eaaedf4020aeaab2f20b3}\label{namespaceaux_ulti_aa3bece0e936eaaedf4020aeaab2f20b3}} 
+\index{auxUlti@{auxUlti}!clear2DIntVector@{clear2DIntVector}}
+\index{clear2DIntVector@{clear2DIntVector}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{clear2DIntVector()}{clear2DIntVector()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::clear2\+D\+Int\+Vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&}]{vector }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1184 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ac50fae4d2913a15ad9a4023e90f1b3e1}\label{namespaceaux_ulti_ac50fae4d2913a15ad9a4023e90f1b3e1}} 
+\index{auxUlti@{auxUlti}!copyFile@{copyFile}}
+\index{copyFile@{copyFile}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{copyFile()}{copyFile()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::copy\+File (\begin{DoxyParamCaption}\item[{std\+::string}]{source,  }\item[{std\+::string}]{destination }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1385 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a7b2d7fc4627fd8fc863f1008b5520290}\label{namespaceaux_ulti_a7b2d7fc4627fd8fc863f1008b5520290}} 
+\index{auxUlti@{auxUlti}!copyFolder@{copyFolder}}
+\index{copyFolder@{copyFolder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{copyFolder()}{copyFolder()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::copy\+Folder (\begin{DoxyParamCaption}\item[{std\+::string}]{source,  }\item[{std\+::string}]{destination }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1374 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a5ac52d04c6ea3fa34d7d1cb63e1790db}\label{namespaceaux_ulti_a5ac52d04c6ea3fa34d7d1cb63e1790db}} 
+\index{auxUlti@{auxUlti}!createFolder@{createFolder}}
+\index{createFolder@{createFolder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{createFolder()}{createFolder()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::create\+Folder (\begin{DoxyParamCaption}\item[{std\+::string}]{location,  }\item[{bool}]{pass\+Exit }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1326 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a7e710f0179065a64dbec2c16da0058ff}\label{namespaceaux_ulti_a7e710f0179065a64dbec2c16da0058ff}} 
+\index{auxUlti@{auxUlti}!createTimeStepFolder@{createTimeStepFolder}}
+\index{createTimeStepFolder@{createTimeStepFolder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{createTimeStepFolder()}{createTimeStepFolder()}}
+{\footnotesize\ttfamily std\+::string aux\+Ulti\+::create\+Time\+Step\+Folder (\begin{DoxyParamCaption}\item[{int}]{iter,  }\item[{std\+::string}]{option }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1340 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ad1917ab18ba14edd481e4930c122d540}\label{namespaceaux_ulti_ad1917ab18ba14edd481e4930c122d540}} 
+\index{auxUlti@{auxUlti}!findEdgeOrder@{findEdgeOrder}}
+\index{findEdgeOrder@{findEdgeOrder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{findEdgeOrder()}{findEdgeOrder()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::find\+Edge\+Order (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Function finds edge order in element. 
+
+Edge oder starts from 0 and is counted in counter clockwise. Edge AB is the first order.
+
+
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id. \\
+\hline
+{\em edge} & edge Id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+edge order. 
+\end{DoxyReturn}
+
+
+Definition at line 50 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ad1b4209397bb9d05049328113748458d}\label{namespaceaux_ulti_ad1b4209397bb9d05049328113748458d}} 
+\index{auxUlti@{auxUlti}!findVertexOrder@{findVertexOrder}}
+\index{findVertexOrder@{findVertexOrder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{findVertexOrder()}{findVertexOrder()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::find\+Vertex\+Order (\begin{DoxyParamCaption}\item[{int}]{point,  }\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1199 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ae0af2514bd1036c3dc8d9f69a8f5d057}\label{namespaceaux_ulti_ae0af2514bd1036c3dc8d9f69a8f5d057}} 
+\index{auxUlti@{auxUlti}!getAdressOfBCEdgesOnBCValsArray@{getAdressOfBCEdgesOnBCValsArray}}
+\index{getAdressOfBCEdgesOnBCValsArray@{getAdressOfBCEdgesOnBCValsArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getAdressOfBCEdgesOnBCValsArray()}{getAdressOfBCEdgesOnBCValsArray()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::get\+Adress\+Of\+B\+C\+Edges\+On\+B\+C\+Vals\+Array (\begin{DoxyParamCaption}\item[{int}]{global\+Edge\+Id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1160 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a596cedeb4ed87850aa47021d7c8d4ce1}\label{namespaceaux_ulti_a596cedeb4ed87850aa47021d7c8d4ce1}} 
+\index{auxUlti@{auxUlti}!getBCType@{getBCType}}
+\index{getBCType@{getBCType}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getBCType()}{getBCType()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::get\+B\+C\+Type (\begin{DoxyParamCaption}\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Function gets boundary type of edge. 
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Id  }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Id  }\\\cline{1-2}
+\endhead
+internal edge &0  \\\cline{1-2}
+wall &1  \\\cline{1-2}
+patch &2  \\\cline{1-2}
+symmetry &3  \\\cline{1-2}
+mached (for parallel) &4  \\\cline{1-2}
+\end{longtabu}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em edge} & edge Id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Id of type. 
+\end{DoxyReturn}
+
+
+Definition at line 744 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a81a3486bf438decb8a6d4aafaf2b26ee}\label{namespaceaux_ulti_a81a3486bf438decb8a6d4aafaf2b26ee}} 
+\index{auxUlti@{auxUlti}!getCellCentroid@{getCellCentroid}}
+\index{getCellCentroid@{getCellCentroid}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getCellCentroid()}{getCellCentroid()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+Cell\+Centroid (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1170 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a4017ffb22d09ab07f8ffa60c8fb1f091}\label{namespaceaux_ulti_a4017ffb22d09ab07f8ffa60c8fb1f091}} 
+\index{auxUlti@{auxUlti}!getCellMetrics@{getCellMetrics}}
+\index{getCellMetrics@{getCellMetrics}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getCellMetrics()}{getCellMetrics()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double, double $>$ aux\+Ulti\+::get\+Cell\+Metrics (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 916 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a7ff44171889cf856ddf46961d61ca281}\label{namespaceaux_ulti_a7ff44171889cf856ddf46961d61ca281}} 
+\index{auxUlti@{auxUlti}!getCommand@{getCommand}}
+\index{getCommand@{getCommand}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getCommand()}{getCommand()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::get\+Command (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1559 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a0ccd03297da28f33988542a89fa94309}\label{namespaceaux_ulti_a0ccd03297da28f33988542a89fa94309}} 
+\index{auxUlti@{auxUlti}!getEdgeHasInputOrderOfElement@{getEdgeHasInputOrderOfElement}}
+\index{getEdgeHasInputOrderOfElement@{getEdgeHasInputOrderOfElement}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getEdgeHasInputOrderOfElement()}{getEdgeHasInputOrderOfElement()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::get\+Edge\+Has\+Input\+Order\+Of\+Element (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{input\+Edge\+Order }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1310 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a6cc5f2e120a49477cf34892a16ae437f}\label{namespaceaux_ulti_a6cc5f2e120a49477cf34892a16ae437f}} 
+\index{auxUlti@{auxUlti}!getElemCornerCoord@{getElemCornerCoord}}
+\index{getElemCornerCoord@{getElemCornerCoord}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getElemCornerCoord()}{getElemCornerCoord()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+Elem\+Corner\+Coord (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 139 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a8c068b88edcbf091681c7ea905d6d6e9}\label{namespaceaux_ulti_a8c068b88edcbf091681c7ea905d6d6e9}} 
+\index{auxUlti@{auxUlti}!getElementAuxValuesOfOrder@{getElementAuxValuesOfOrder}}
+\index{getElementAuxValuesOfOrder@{getElementAuxValuesOfOrder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getElementAuxValuesOfOrder()}{getElementAuxValuesOfOrder()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ aux\+Ulti\+::get\+Element\+Aux\+Values\+Of\+Order (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 382 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ab19ddec8b96c1a4eeba7fa092b9c547d}\label{namespaceaux_ulti_ab19ddec8b96c1a4eeba7fa092b9c547d}} 
+\index{auxUlti@{auxUlti}!getElementAuxValuesOfOrder\_BR2\_sur@{getElementAuxValuesOfOrder\_BR2\_sur}}
+\index{getElementAuxValuesOfOrder\_BR2\_sur@{getElementAuxValuesOfOrder\_BR2\_sur}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getElementAuxValuesOfOrder\_BR2\_sur()}{getElementAuxValuesOfOrder\_BR2\_sur()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ aux\+Ulti\+::get\+Element\+Aux\+Values\+Of\+Order\+\_\+\+B\+R2\+\_\+sur (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 549 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a549fc1fed5b30bd8d7e63fbdcb9a89ed}\label{namespaceaux_ulti_a549fc1fed5b30bd8d7e63fbdcb9a89ed}} 
+\index{auxUlti@{auxUlti}!getElementAuxValuesOfOrder\_BR2\_vol@{getElementAuxValuesOfOrder\_BR2\_vol}}
+\index{getElementAuxValuesOfOrder\_BR2\_vol@{getElementAuxValuesOfOrder\_BR2\_vol}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getElementAuxValuesOfOrder\_BR2\_vol()}{getElementAuxValuesOfOrder\_BR2\_vol()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ aux\+Ulti\+::get\+Element\+Aux\+Values\+Of\+Order\+\_\+\+B\+R2\+\_\+vol (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 465 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_af928f6a116701f931c230d14e815c256}\label{namespaceaux_ulti_af928f6a116701f931c230d14e815c256}} 
+\index{auxUlti@{auxUlti}!getElementConserValuesOfOrder@{getElementConserValuesOfOrder}}
+\index{getElementConserValuesOfOrder@{getElementConserValuesOfOrder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getElementConserValuesOfOrder()}{getElementConserValuesOfOrder()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ aux\+Ulti\+::get\+Element\+Conser\+Values\+Of\+Order (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 312 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_af4f2cf5d64b5b784f2f1fb7290c3da73}\label{namespaceaux_ulti_af4f2cf5d64b5b784f2f1fb7290c3da73}} 
+\index{auxUlti@{auxUlti}!getGaussCoor@{getGaussCoor}}
+\index{getGaussCoor@{getGaussCoor}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getGaussCoor()}{getGaussCoor()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+Gauss\+Coor (\begin{DoxyParamCaption}\item[{int}]{na,  }\item[{int}]{nb }\end{DoxyParamCaption})}
+
+
+
+Definition at line 715 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_aee17b32f4c42d4d4f092b563472c2b34}\label{namespaceaux_ulti_aee17b32f4c42d4d4f092b563472c2b34}} 
+\index{auxUlti@{auxUlti}!getGaussSurfCoor@{getGaussSurfCoor}}
+\index{getGaussSurfCoor@{getGaussSurfCoor}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getGaussSurfCoor()}{getGaussSurfCoor()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+Gauss\+Surf\+Coor (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{elem,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 169 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ac0b90bde73b3c0c5ca03e77f859c4e97}\label{namespaceaux_ulti_ac0b90bde73b3c0c5ca03e77f859c4e97}} 
+\index{auxUlti@{auxUlti}!getGaussSurfCoorMaster@{getGaussSurfCoorMaster}}
+\index{getGaussSurfCoorMaster@{getGaussSurfCoorMaster}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getGaussSurfCoorMaster()}{getGaussSurfCoorMaster()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+Gauss\+Surf\+Coor\+Master (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{elem,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 218 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a7e60ae9c25bfbc677fc0dc14fe914f3e}\label{namespaceaux_ulti_a7e60ae9c25bfbc677fc0dc14fe914f3e}} 
+\index{auxUlti@{auxUlti}!getGlobalEdgeIdFromLocalBCEdgeId@{getGlobalEdgeIdFromLocalBCEdgeId}}
+\index{getGlobalEdgeIdFromLocalBCEdgeId@{getGlobalEdgeIdFromLocalBCEdgeId}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getGlobalEdgeIdFromLocalBCEdgeId()}{getGlobalEdgeIdFromLocalBCEdgeId()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::get\+Global\+Edge\+Id\+From\+Local\+B\+C\+Edge\+Id (\begin{DoxyParamCaption}\item[{int}]{local\+B\+C\+Edge\+Id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1165 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a8bb6d5f5fcc1013fc6e4ff526f981fca}\label{namespaceaux_ulti_a8bb6d5f5fcc1013fc6e4ff526f981fca}} 
+\index{auxUlti@{auxUlti}!getGrpOfEdge@{getGrpOfEdge}}
+\index{getGrpOfEdge@{getGrpOfEdge}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getGrpOfEdge()}{getGrpOfEdge()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::get\+Grp\+Of\+Edge (\begin{DoxyParamCaption}\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 724 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a7c43bb7a4f0095b4fb512dcf8e01b9bf}\label{namespaceaux_ulti_a7c43bb7a4f0095b4fb512dcf8e01b9bf}} 
+\index{auxUlti@{auxUlti}!getMasterServantOfEdge@{getMasterServantOfEdge}}
+\index{getMasterServantOfEdge@{getMasterServantOfEdge}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getMasterServantOfEdge()}{getMasterServantOfEdge()}}
+{\footnotesize\ttfamily std\+::tuple$<$ int, int $>$ aux\+Ulti\+::get\+Master\+Servant\+Of\+Edge (\begin{DoxyParamCaption}\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 788 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a0408c43d76bb2064219b844a9fb9e3bc}\label{namespaceaux_ulti_a0408c43d76bb2064219b844a9fb9e3bc}} 
+\index{auxUlti@{auxUlti}!getNeighborElement@{getNeighborElement}}
+\index{getNeighborElement@{getNeighborElement}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getNeighborElement()}{getNeighborElement()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::get\+Neighbor\+Element (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1289 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a300427aeeaaeb03c4185fa67f97e0d07}\label{namespaceaux_ulti_a300427aeeaaeb03c4185fa67f97e0d07}} 
+\index{auxUlti@{auxUlti}!getNormVectorComp@{getNormVectorComp}}
+\index{getNormVectorComp@{getNormVectorComp}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getNormVectorComp()}{getNormVectorComp()}}
+{\footnotesize\ttfamily double aux\+Ulti\+::get\+Norm\+Vector\+Comp (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{int}]{edge,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Function gets components of edge normal vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em elem} & element Id. \\
+\hline
+{\em edge} & edge Id. \\
+\hline
+{\em dir} & direction Id. 1 for Ox, 2 for Oy \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 286 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_adf430e910d54ee3c03ffbd561df040e4}\label{namespaceaux_ulti_adf430e910d54ee3c03ffbd561df040e4}} 
+\index{auxUlti@{auxUlti}!getResidualValuesOfOrder@{getResidualValuesOfOrder}}
+\index{getResidualValuesOfOrder@{getResidualValuesOfOrder}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getResidualValuesOfOrder()}{getResidualValuesOfOrder()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ aux\+Ulti\+::get\+Residual\+Values\+Of\+Order (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 347 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a90d6d9df0e869d87d1ea0b6472af509a}\label{namespaceaux_ulti_a90d6d9df0e869d87d1ea0b6472af509a}} 
+\index{auxUlti@{auxUlti}!getTAtInterfaces@{getTAtInterfaces}}
+\index{getTAtInterfaces@{getTAtInterfaces}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getTAtInterfaces()}{getTAtInterfaces()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+T\+At\+Interfaces (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1484 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a3808c6b865e3478dc74f8f9570ded15e}\label{namespaceaux_ulti_a3808c6b865e3478dc74f8f9570ded15e}} 
+\index{auxUlti@{auxUlti}!getTPlusAtBC@{getTPlusAtBC}}
+\index{getTPlusAtBC@{getTPlusAtBC}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getTPlusAtBC()}{getTPlusAtBC()}}
+{\footnotesize\ttfamily double aux\+Ulti\+::get\+T\+Plus\+At\+BC (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1505 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_afa278aba5bc6551273f95b2accd89da3}\label{namespaceaux_ulti_afa278aba5bc6551273f95b2accd89da3}} 
+\index{auxUlti@{auxUlti}!getUAtInterfaces@{getUAtInterfaces}}
+\index{getUAtInterfaces@{getUAtInterfaces}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getUAtInterfaces()}{getUAtInterfaces()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ aux\+Ulti\+::get\+U\+At\+Interfaces (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1404 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ab05a5cf2c0bbaa1cf7df28481e833d1f}\label{namespaceaux_ulti_ab05a5cf2c0bbaa1cf7df28481e833d1f}} 
+\index{auxUlti@{auxUlti}!getUPlusAtBC@{getUPlusAtBC}}
+\index{getUPlusAtBC@{getUPlusAtBC}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getUPlusAtBC()}{getUPlusAtBC()}}
+{\footnotesize\ttfamily double aux\+Ulti\+::get\+U\+Plus\+At\+BC (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{nG,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1452 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a83a622993bdd3e5b5609d3dbc9448ef4}\label{namespaceaux_ulti_a83a622993bdd3e5b5609d3dbc9448ef4}} 
+\index{auxUlti@{auxUlti}!getVectorGaussSurfCoor@{getVectorGaussSurfCoor}}
+\index{getVectorGaussSurfCoor@{getVectorGaussSurfCoor}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getVectorGaussSurfCoor()}{getVectorGaussSurfCoor()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ aux\+Ulti\+::get\+Vector\+Gauss\+Surf\+Coor (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{elem }\end{DoxyParamCaption})}
+
+
+
+Definition at line 269 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a8dda5f15516f949ed3651938b5f979c4}\label{namespaceaux_ulti_a8dda5f15516f949ed3651938b5f979c4}} 
+\index{auxUlti@{auxUlti}!getVectorUMeanOfCell@{getVectorUMeanOfCell}}
+\index{getVectorUMeanOfCell@{getVectorUMeanOfCell}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{getVectorUMeanOfCell()}{getVectorUMeanOfCell()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::get\+Vector\+U\+Mean\+Of\+Cell (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{U }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1396 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a1711d46fb40906de90d1d79bb5709b34}\label{namespaceaux_ulti_a1711d46fb40906de90d1d79bb5709b34}} 
+\index{auxUlti@{auxUlti}!initialize1DArray@{initialize1DArray}}
+\index{initialize1DArray@{initialize1DArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{initialize1DArray()}{initialize1DArray()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::initialize1\+D\+Array (\begin{DoxyParamCaption}\item[{double $\ast$}]{Array,  }\item[{int}]{row,  }\item[{double}]{initial\+Value }\end{DoxyParamCaption})}
+
+
+
+Definition at line 821 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_aad492ee014c4182330f3d2a862e0c154}\label{namespaceaux_ulti_aad492ee014c4182330f3d2a862e0c154}} 
+\index{auxUlti@{auxUlti}!initialize1DIntArray@{initialize1DIntArray}}
+\index{initialize1DIntArray@{initialize1DIntArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{initialize1DIntArray()}{initialize1DIntArray()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::initialize1\+D\+Int\+Array (\begin{DoxyParamCaption}\item[{int $\ast$}]{Array,  }\item[{int}]{row,  }\item[{int}]{initial\+Value }\end{DoxyParamCaption})}
+
+
+
+Definition at line 829 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ae603ee8a141a1df1a4ec0c402a90d64a}\label{namespaceaux_ulti_ae603ee8a141a1df1a4ec0c402a90d64a}} 
+\index{auxUlti@{auxUlti}!lookForDataOfKeyword@{lookForDataOfKeyword}}
+\index{lookForDataOfKeyword@{lookForDataOfKeyword}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{lookForDataOfKeyword()}{lookForDataOfKeyword()}}
+{\footnotesize\ttfamily int aux\+Ulti\+::look\+For\+Data\+Of\+Keyword (\begin{DoxyParamCaption}\item[{std\+::string}]{file\+Loc,  }\item[{std\+::string}]{input\+Key\+Word }\end{DoxyParamCaption})}
+
+
+
+Definition at line 188 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a2eb4ed9354efd5379f7cfdd1b470b53a}\label{namespaceaux_ulti_a2eb4ed9354efd5379f7cfdd1b470b53a}} 
+\index{auxUlti@{auxUlti}!mappingEdges@{mappingEdges}}
+\index{mappingEdges@{mappingEdges}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{mappingEdges()}{mappingEdges()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::mapping\+Edges (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 922 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_adeb726101ac0a8b6b67d808bfb394cbc}\label{namespaceaux_ulti_adeb726101ac0a8b6b67d808bfb394cbc}} 
+\index{auxUlti@{auxUlti}!openFileEXE@{openFileEXE}}
+\index{openFileEXE@{openFileEXE}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{openFileEXE()}{openFileEXE()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::open\+File\+E\+XE (\begin{DoxyParamCaption}\item[{std\+::string}]{location }\end{DoxyParamCaption})}
+
+
+
+Definition at line 306 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_af492d0e626ffbd8a1f85674abe19ba6b}\label{namespaceaux_ulti_af492d0e626ffbd8a1f85674abe19ba6b}} 
+\index{auxUlti@{auxUlti}!releaseMemory@{releaseMemory}}
+\index{releaseMemory@{releaseMemory}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{releaseMemory()}{releaseMemory()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::release\+Memory (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1589 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a2f321e21825670333c6879e6f3d33b6f}\label{namespaceaux_ulti_a2f321e21825670333c6879e6f3d33b6f}} 
+\index{auxUlti@{auxUlti}!resize2DArray@{resize2DArray}}
+\index{resize2DArray@{resize2DArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{resize2DArray()}{resize2DArray()}}
+{\footnotesize\ttfamily double $\ast$$\ast$ aux\+Ulti\+::resize2\+D\+Array (\begin{DoxyParamCaption}\item[{int}]{row,  }\item[{int}]{column,  }\item[{double}]{initial\+Value }\end{DoxyParamCaption})}
+
+
+
+Definition at line 837 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ae0a5ba36fc33349711512f7971ba7baf}\label{namespaceaux_ulti_ae0a5ba36fc33349711512f7971ba7baf}} 
+\index{auxUlti@{auxUlti}!resize2DIntArray@{resize2DIntArray}}
+\index{resize2DIntArray@{resize2DIntArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{resize2DIntArray()}{resize2DIntArray()}}
+{\footnotesize\ttfamily int $\ast$$\ast$ aux\+Ulti\+::resize2\+D\+Int\+Array (\begin{DoxyParamCaption}\item[{int}]{row,  }\item[{int}]{column,  }\item[{int}]{initial\+Value }\end{DoxyParamCaption})}
+
+
+
+Definition at line 860 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a6d64c15578cc59d24e1c502bffd7dcad}\label{namespaceaux_ulti_a6d64c15578cc59d24e1c502bffd7dcad}} 
+\index{auxUlti@{auxUlti}!resize3DArray@{resize3DArray}}
+\index{resize3DArray@{resize3DArray}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{resize3DArray()}{resize3DArray()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::resize3\+D\+Array (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$$>$$>$ \&}]{Array,  }\item[{int}]{direct1,  }\item[{int}]{direct2,  }\item[{int}]{direct3 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 882 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ab8344019e03666eca4b889f0da4e00ba}\label{namespaceaux_ulti_ab8344019e03666eca4b889f0da4e00ba}} 
+\index{auxUlti@{auxUlti}!resizeDGArrays@{resizeDGArrays}}
+\index{resizeDGArrays@{resizeDGArrays}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{resizeDGArrays()}{resizeDGArrays()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::resize\+D\+G\+Arrays (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 964 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ae3276f02a1f066f0d36f9ffc41e96c5b}\label{namespaceaux_ulti_ae3276f02a1f066f0d36f9ffc41e96c5b}} 
+\index{auxUlti@{auxUlti}!resizeTemporaryArrays@{resizeTemporaryArrays}}
+\index{resizeTemporaryArrays@{resizeTemporaryArrays}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{resizeTemporaryArrays()}{resizeTemporaryArrays()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::resize\+Temporary\+Arrays (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1607 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ada22f1fe982108d457ad8d3e9e8a924a}\label{namespaceaux_ulti_ada22f1fe982108d457ad8d3e9e8a924a}} 
+\index{auxUlti@{auxUlti}!saveUAtBCToSurfaceFields@{saveUAtBCToSurfaceFields}}
+\index{saveUAtBCToSurfaceFields@{saveUAtBCToSurfaceFields}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{saveUAtBCToSurfaceFields()}{saveUAtBCToSurfaceFields()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::save\+U\+At\+B\+C\+To\+Surface\+Fields (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{nG,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+Minus }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1510 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_ac03d5993a1583fd17669c17abd8a5fda}\label{namespaceaux_ulti_ac03d5993a1583fd17669c17abd8a5fda}} 
+\index{auxUlti@{auxUlti}!shrink2DIntVector@{shrink2DIntVector}}
+\index{shrink2DIntVector@{shrink2DIntVector}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{shrink2DIntVector()}{shrink2DIntVector()}}
+{\footnotesize\ttfamily void aux\+Ulti\+::shrink2\+D\+Int\+Vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&}]{vector,  }\item[{int}]{num\+Row }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1576 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceaux_ulti_a649fc4c0ed683895e5d4ed6886b85cba}\label{namespaceaux_ulti_a649fc4c0ed683895e5d4ed6886b85cba}} 
+\index{auxUlti@{auxUlti}!workingdir@{workingdir}}
+\index{workingdir@{workingdir}!auxUlti@{auxUlti}}
+\doxysubsubsection{\texorpdfstring{workingdir()}{workingdir()}}
+{\footnotesize\ttfamily std\+::string aux\+Ulti\+::workingdir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 7 of file D\+G\+Aux\+Ultilities\+Lib.\+cpp.
+

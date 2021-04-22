@@ -1,0 +1,288 @@
+\hypertarget{namespacepre_process_key}{}\doxysection{pre\+Process\+Key Namespace Reference}
+\label{namespacepre_process_key}\index{preProcessKey@{preProcessKey}}
+
+
+\mbox{\hyperlink{namespacepre_process_key}{pre\+Process\+Key}}. Namespace contains function of checking pre-\/processing commands.  
+
+
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacepre_process_key_1_1debug}{debug}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespacepre_process_key_a1b287d57434a150b7b06e26f693659da}{check\+Unv\+Reader}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if Unv\+To\+DG is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_aa64dea3f9530207968e8d552753f48c5}{check\+Unv\+Helper}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if Unv\+Reader\+Help is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_a493dfe286d0ec53d49a71249228470e9}{check\+B\+Cs\+Helper}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if bc\+Help is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_ab4edbfbba20a54012fbc6782e799ca9b}{re\+Submit}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if re\+Submit is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_ad905ca6a0e01f666ccf0f7f74d9d36e0}{mapp\+Results}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if mapp\+Results is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_af6c827e9580eaccc9f3bfaee516c1cba}{export\+Mesh\+To\+Metis}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if export\+Mesh\+To\+Metis is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_a358a4bfa34c77c5899153ecd599cfb26}{test\+Mesh\+Partition\+Result}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if test\+Mesh\+Partition\+Result is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_a910ddc031c83180e0f33e0b3e494c3a0}{decompose\+Case}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if decompose\+Case is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_a6ce492ffff464c902d6702f7cfc05946}{reconstruct\+Latest\+Time}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if reconstruct\+Latest\+Time is available. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacepre_process_key_a9110594faf68f097b0f36a3731e4fb9e}{check\+Partitioned\+Mesh}} (std\+::string cmd)
+\begin{DoxyCompactList}\small\item\em Function return true if check\+Partitioned\+Mesh is available. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{namespacepre_process_key}{pre\+Process\+Key}}. Namespace contains function of checking pre-\/processing commands. 
+
+No detailed description. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacepre_process_key_a493dfe286d0ec53d49a71249228470e9}\label{namespacepre_process_key_a493dfe286d0ec53d49a71249228470e9}} 
+\index{preProcessKey@{preProcessKey}!checkBCsHelper@{checkBCsHelper}}
+\index{checkBCsHelper@{checkBCsHelper}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{checkBCsHelper()}{checkBCsHelper()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::check\+B\+Cs\+Helper (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if bc\+Help is available. 
+
+bc\+Help shows helps of available boundary conditions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & command inputed from terminal. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 74 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_a9110594faf68f097b0f36a3731e4fb9e}\label{namespacepre_process_key_a9110594faf68f097b0f36a3731e4fb9e}} 
+\index{preProcessKey@{preProcessKey}!checkPartitionedMesh@{checkPartitionedMesh}}
+\index{checkPartitionedMesh@{checkPartitionedMesh}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{checkPartitionedMesh()}{checkPartitionedMesh()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::check\+Partitioned\+Mesh (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if check\+Partitioned\+Mesh is available. 
+
+check\+Partitioned\+Mesh loops over all mesh cells to find isolated cells, then changes the master core to the lowest index master core of neighbour cell.~\newline
+Explainations\+:
+\begin{DoxyItemize}
+\item Isolated cell is the cell which has A\+LL neighbour cells belong to different master cores in comparison with itself.
+\item Master core of cell is the core contains the cell after decomposing mesh.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 203 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_aa64dea3f9530207968e8d552753f48c5}\label{namespacepre_process_key_aa64dea3f9530207968e8d552753f48c5}} 
+\index{preProcessKey@{preProcessKey}!checkUnvHelper@{checkUnvHelper}}
+\index{checkUnvHelper@{checkUnvHelper}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{checkUnvHelper()}{checkUnvHelper()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::check\+Unv\+Helper (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if Unv\+Reader\+Help is available. 
+
+Unv\+Reader\+Help shows helps of Unv\+Reader function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & command inputed from terminal. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 56 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_a1b287d57434a150b7b06e26f693659da}\label{namespacepre_process_key_a1b287d57434a150b7b06e26f693659da}} 
+\index{preProcessKey@{preProcessKey}!checkUnvReader@{checkUnvReader}}
+\index{checkUnvReader@{checkUnvReader}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{checkUnvReader()}{checkUnvReader()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::check\+Unv\+Reader (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if Unv\+To\+DG is available. 
+
+Unv\+To\+DG is used for converting Unv mesh to DG mesh.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & command inputed from terminal. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 38 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_a910ddc031c83180e0f33e0b3e494c3a0}\label{namespacepre_process_key_a910ddc031c83180e0f33e0b3e494c3a0}} 
+\index{preProcessKey@{preProcessKey}!decomposeCase@{decomposeCase}}
+\index{decomposeCase@{decomposeCase}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{decomposeCase()}{decomposeCase()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::decompose\+Case (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if decompose\+Case is available. 
+
+decompose\+Case decomposes mesh and boundary condtions of case to all cores.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 164 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_af6c827e9580eaccc9f3bfaee516c1cba}\label{namespacepre_process_key_af6c827e9580eaccc9f3bfaee516c1cba}} 
+\index{preProcessKey@{preProcessKey}!exportMeshToMetis@{exportMeshToMetis}}
+\index{exportMeshToMetis@{exportMeshToMetis}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{exportMeshToMetis()}{exportMeshToMetis()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::export\+Mesh\+To\+Metis (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if export\+Mesh\+To\+Metis is available. 
+
+export\+Mesh\+To\+Metis exports DG mesh to Metis\textquotesingle{}s format. Metis is a tool to distribute mesh into to defined number of cores.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 128 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_ad905ca6a0e01f666ccf0f7f74d9d36e0}\label{namespacepre_process_key_ad905ca6a0e01f666ccf0f7f74d9d36e0}} 
+\index{preProcessKey@{preProcessKey}!mappResults@{mappResults}}
+\index{mappResults@{mappResults}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{mappResults()}{mappResults()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::mapp\+Results (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if mapp\+Results is available. 
+
+mapp\+Results maps results from low order case to higher order case.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 110 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_a6ce492ffff464c902d6702f7cfc05946}\label{namespacepre_process_key_a6ce492ffff464c902d6702f7cfc05946}} 
+\index{preProcessKey@{preProcessKey}!reconstructLatestTime@{reconstructLatestTime}}
+\index{reconstructLatestTime@{reconstructLatestTime}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{reconstructLatestTime()}{reconstructLatestTime()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::reconstruct\+Latest\+Time (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if reconstruct\+Latest\+Time is available. 
+
+reconstruct\+Latest\+Time reconstruct mesh and results of decomposed case.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 182 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_ab4edbfbba20a54012fbc6782e799ca9b}\label{namespacepre_process_key_ab4edbfbba20a54012fbc6782e799ca9b}} 
+\index{preProcessKey@{preProcessKey}!reSubmit@{reSubmit}}
+\index{reSubmit@{reSubmit}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{reSubmit()}{reSubmit()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::re\+Submit (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if re\+Submit is available. 
+
+re\+Submit reread file submit\+Case.\+txt to submit new case.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 92 of file Command\+Check.\+cpp.
+
+\mbox{\Hypertarget{namespacepre_process_key_a358a4bfa34c77c5899153ecd599cfb26}\label{namespacepre_process_key_a358a4bfa34c77c5899153ecd599cfb26}} 
+\index{preProcessKey@{preProcessKey}!testMeshPartitionResult@{testMeshPartitionResult}}
+\index{testMeshPartitionResult@{testMeshPartitionResult}!preProcessKey@{preProcessKey}}
+\doxysubsubsection{\texorpdfstring{testMeshPartitionResult()}{testMeshPartitionResult()}}
+{\footnotesize\ttfamily bool pre\+Process\+Key\+::test\+Mesh\+Partition\+Result (\begin{DoxyParamCaption}\item[{std\+::string}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Function return true if test\+Mesh\+Partition\+Result is available. 
+
+test\+Mesh\+Partition\+Result exports partitioned mesh to techplot format which can be opened on Paraview.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+trigger 
+\end{DoxyReturn}
+
+
+Definition at line 146 of file Command\+Check.\+cpp.
+

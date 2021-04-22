@@ -1,0 +1,80 @@
+\hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp}{}\doxysection{limiter\+::math\+For\+Limiter\+::Pp Namespace Reference}
+\label{namespacelimiter_1_1math_for_limiter_1_1_pp}\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a53a514def009c184f5c5d40ba4f84f00}{calc\+Min\+Rho}} (int element)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a3d0f690515c02fbb9650fe88cbd33ed5}{calc\+Rho\+Modified}} (int element, double a, double b, double theta1)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_ac627c0595de011f3edeaa147a4a46b12}{calc\+Min\+Mean\+Rhoe}} (int element, double theta1)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a64a1c133f8f1b6fbde5897bc6ddbe9f2}{cal\+Rhoe\+From\+Conser\+Vars}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}})
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a41bd72deca587e2af00d385eb46771a0}{calc\+Theta1\+Coeff}} (double min\+Rho, double mean\+Rho)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a719df1ed6c484342d23f1b53202294c7}{calc\+Theta2\+Coeff}} (double mean\+Rhoe, double min\+Rhoe, double mean\+Rho)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp_ac627c0595de011f3edeaa147a4a46b12}\label{namespacelimiter_1_1math_for_limiter_1_1_pp_ac627c0595de011f3edeaa147a4a46b12}} 
+\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}!calcMinMeanRhoe@{calcMinMeanRhoe}}
+\index{calcMinMeanRhoe@{calcMinMeanRhoe}!limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsubsection{\texorpdfstring{calcMinMeanRhoe()}{calcMinMeanRhoe()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Min\+Mean\+Rhoe (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{theta1 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1029 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp_a53a514def009c184f5c5d40ba4f84f00}\label{namespacelimiter_1_1math_for_limiter_1_1_pp_a53a514def009c184f5c5d40ba4f84f00}} 
+\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}!calcMinRho@{calcMinRho}}
+\index{calcMinRho@{calcMinRho}!limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsubsection{\texorpdfstring{calcMinRho()}{calcMinRho()}}
+{\footnotesize\ttfamily double limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Min\+Rho (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 959 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp_a3d0f690515c02fbb9650fe88cbd33ed5}\label{namespacelimiter_1_1math_for_limiter_1_1_pp_a3d0f690515c02fbb9650fe88cbd33ed5}} 
+\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}!calcRhoModified@{calcRhoModified}}
+\index{calcRhoModified@{calcRhoModified}!limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsubsection{\texorpdfstring{calcRhoModified()}{calcRhoModified()}}
+{\footnotesize\ttfamily double limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Rho\+Modified (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{double}]{theta1 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1014 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp_a41bd72deca587e2af00d385eb46771a0}\label{namespacelimiter_1_1math_for_limiter_1_1_pp_a41bd72deca587e2af00d385eb46771a0}} 
+\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}!calcTheta1Coeff@{calcTheta1Coeff}}
+\index{calcTheta1Coeff@{calcTheta1Coeff}!limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsubsection{\texorpdfstring{calcTheta1Coeff()}{calcTheta1Coeff()}}
+{\footnotesize\ttfamily double limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Theta1\+Coeff (\begin{DoxyParamCaption}\item[{double}]{min\+Rho,  }\item[{double}]{mean\+Rho }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1247 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp_a719df1ed6c484342d23f1b53202294c7}\label{namespacelimiter_1_1math_for_limiter_1_1_pp_a719df1ed6c484342d23f1b53202294c7}} 
+\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}!calcTheta2Coeff@{calcTheta2Coeff}}
+\index{calcTheta2Coeff@{calcTheta2Coeff}!limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsubsection{\texorpdfstring{calcTheta2Coeff()}{calcTheta2Coeff()}}
+{\footnotesize\ttfamily double limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Theta2\+Coeff (\begin{DoxyParamCaption}\item[{double}]{mean\+Rhoe,  }\item[{double}]{min\+Rhoe,  }\item[{double}]{mean\+Rho }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1275 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1math_for_limiter_1_1_pp_a64a1c133f8f1b6fbde5897bc6ddbe9f2}\label{namespacelimiter_1_1math_for_limiter_1_1_pp_a64a1c133f8f1b6fbde5897bc6ddbe9f2}} 
+\index{limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}!calRhoeFromConserVars@{calRhoeFromConserVars}}
+\index{calRhoeFromConserVars@{calRhoeFromConserVars}!limiter::mathForLimiter::Pp@{limiter::mathForLimiter::Pp}}
+\doxysubsubsection{\texorpdfstring{calRhoeFromConserVars()}{calRhoeFromConserVars()}}
+{\footnotesize\ttfamily double limiter\+::math\+For\+Limiter\+::\+Pp\+::cal\+Rhoe\+From\+Conser\+Vars (\begin{DoxyParamCaption}\item[{double}]{rho,  }\item[{double}]{rhou,  }\item[{double}]{rhov,  }\item[{double}]{rhoE }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1240 of file D\+G\+Limiter\+Lib.\+cpp.
+

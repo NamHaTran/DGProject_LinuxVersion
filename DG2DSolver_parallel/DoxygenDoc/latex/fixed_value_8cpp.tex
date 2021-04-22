@@ -1,0 +1,90 @@
+\hypertarget{fixed_value_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/boundary\+Conditions/fixed\+Value.cpp File Reference}
+\label{fixed_value_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/boundaryConditions/fixedValue.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/boundaryConditions/fixedValue.cpp}}
+{\ttfamily \#include \char`\"{}fixed\+Value.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}zero\+Gradient.\+h\char`\"{}}\newline
+Include dependency graph for fixed\+Value.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=324pt]{fixed_value_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{fixed_value_8cpp_a9cc18fcee57e883c8a8dd7ff9e0a526e}{weak\+Fixed\+Value\+\_\+vector}} (std\+::vector$<$ double $>$ \&vectorM, const std\+::vector$<$ double $>$ \&const\+Vector)
+\item 
+void \mbox{\hyperlink{fixed_value_8cpp_a0689dfd9c8d92727a356a074a85a3eb2}{strong\+Fixed\+Value\+\_\+vector}} (std\+::vector$<$ double $>$ \&vectorM, const std\+::vector$<$ double $>$ \&vectorP, const std\+::vector$<$ double $>$ \&const\+Vector)
+\item 
+void \mbox{\hyperlink{fixed_value_8cpp_ad9be9021cea6bf9cdaeb54453c5198d5}{fixed\+Value\+\_\+vector}} (std\+::vector$<$ double $>$ \&vectorM, const std\+::vector$<$ double $>$ \&vectorP, const std\+::vector$<$ double $>$ \&const\+Vector, bool is\+Strong\+Meth)
+\item 
+double \mbox{\hyperlink{fixed_value_8cpp_a9c542299bfcddc102636c7aa2a5e7c5b}{weak\+Fixed\+Value\+\_\+scalar}} (double const\+Scalar)
+\item 
+double \mbox{\hyperlink{fixed_value_8cpp_ac6b5ab7b7ec0cc5bc34440ec656cbd02}{strong\+Fixed\+Value\+\_\+scalar}} (double scalarP, double const\+Scalar)
+\item 
+double \mbox{\hyperlink{fixed_value_8cpp_ab7e6e18be4268e0888c76401e2f473cc}{fixed\+Value\+\_\+scalar}} (double scalarP, double const\+Scalar, bool is\+Strong\+Meth)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{fixed_value_8cpp_ab7e6e18be4268e0888c76401e2f473cc}\label{fixed_value_8cpp_ab7e6e18be4268e0888c76401e2f473cc}} 
+\index{fixedValue.cpp@{fixedValue.cpp}!fixedValue\_scalar@{fixedValue\_scalar}}
+\index{fixedValue\_scalar@{fixedValue\_scalar}!fixedValue.cpp@{fixedValue.cpp}}
+\doxysubsubsection{\texorpdfstring{fixedValue\_scalar()}{fixedValue\_scalar()}}
+{\footnotesize\ttfamily double fixed\+Value\+\_\+scalar (\begin{DoxyParamCaption}\item[{double}]{scalarP,  }\item[{double}]{const\+Scalar,  }\item[{bool}]{is\+Strong\+Meth }\end{DoxyParamCaption})}
+
+
+
+Definition at line 38 of file fixed\+Value.\+cpp.
+
+\mbox{\Hypertarget{fixed_value_8cpp_ad9be9021cea6bf9cdaeb54453c5198d5}\label{fixed_value_8cpp_ad9be9021cea6bf9cdaeb54453c5198d5}} 
+\index{fixedValue.cpp@{fixedValue.cpp}!fixedValue\_vector@{fixedValue\_vector}}
+\index{fixedValue\_vector@{fixedValue\_vector}!fixedValue.cpp@{fixedValue.cpp}}
+\doxysubsubsection{\texorpdfstring{fixedValue\_vector()}{fixedValue\_vector()}}
+{\footnotesize\ttfamily void fixed\+Value\+\_\+vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{vectorM,  }\item[{const std\+::vector$<$ double $>$ \&}]{vectorP,  }\item[{const std\+::vector$<$ double $>$ \&}]{const\+Vector,  }\item[{bool}]{is\+Strong\+Meth }\end{DoxyParamCaption})}
+
+
+
+Definition at line 20 of file fixed\+Value.\+cpp.
+
+\mbox{\Hypertarget{fixed_value_8cpp_ac6b5ab7b7ec0cc5bc34440ec656cbd02}\label{fixed_value_8cpp_ac6b5ab7b7ec0cc5bc34440ec656cbd02}} 
+\index{fixedValue.cpp@{fixedValue.cpp}!strongFixedValue\_scalar@{strongFixedValue\_scalar}}
+\index{strongFixedValue\_scalar@{strongFixedValue\_scalar}!fixedValue.cpp@{fixedValue.cpp}}
+\doxysubsubsection{\texorpdfstring{strongFixedValue\_scalar()}{strongFixedValue\_scalar()}}
+{\footnotesize\ttfamily double strong\+Fixed\+Value\+\_\+scalar (\begin{DoxyParamCaption}\item[{double}]{scalarP,  }\item[{double}]{const\+Scalar }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file fixed\+Value.\+cpp.
+
+\mbox{\Hypertarget{fixed_value_8cpp_a0689dfd9c8d92727a356a074a85a3eb2}\label{fixed_value_8cpp_a0689dfd9c8d92727a356a074a85a3eb2}} 
+\index{fixedValue.cpp@{fixedValue.cpp}!strongFixedValue\_vector@{strongFixedValue\_vector}}
+\index{strongFixedValue\_vector@{strongFixedValue\_vector}!fixedValue.cpp@{fixedValue.cpp}}
+\doxysubsubsection{\texorpdfstring{strongFixedValue\_vector()}{strongFixedValue\_vector()}}
+{\footnotesize\ttfamily void strong\+Fixed\+Value\+\_\+vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{vectorM,  }\item[{const std\+::vector$<$ double $>$ \&}]{vectorP,  }\item[{const std\+::vector$<$ double $>$ \&}]{const\+Vector }\end{DoxyParamCaption})}
+
+
+
+Definition at line 10 of file fixed\+Value.\+cpp.
+
+\mbox{\Hypertarget{fixed_value_8cpp_a9c542299bfcddc102636c7aa2a5e7c5b}\label{fixed_value_8cpp_a9c542299bfcddc102636c7aa2a5e7c5b}} 
+\index{fixedValue.cpp@{fixedValue.cpp}!weakFixedValue\_scalar@{weakFixedValue\_scalar}}
+\index{weakFixedValue\_scalar@{weakFixedValue\_scalar}!fixedValue.cpp@{fixedValue.cpp}}
+\doxysubsubsection{\texorpdfstring{weakFixedValue\_scalar()}{weakFixedValue\_scalar()}}
+{\footnotesize\ttfamily double weak\+Fixed\+Value\+\_\+scalar (\begin{DoxyParamCaption}\item[{double}]{const\+Scalar }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file fixed\+Value.\+cpp.
+
+\mbox{\Hypertarget{fixed_value_8cpp_a9cc18fcee57e883c8a8dd7ff9e0a526e}\label{fixed_value_8cpp_a9cc18fcee57e883c8a8dd7ff9e0a526e}} 
+\index{fixedValue.cpp@{fixedValue.cpp}!weakFixedValue\_vector@{weakFixedValue\_vector}}
+\index{weakFixedValue\_vector@{weakFixedValue\_vector}!fixedValue.cpp@{fixedValue.cpp}}
+\doxysubsubsection{\texorpdfstring{weakFixedValue\_vector()}{weakFixedValue\_vector()}}
+{\footnotesize\ttfamily void weak\+Fixed\+Value\+\_\+vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{vectorM,  }\item[{const std\+::vector$<$ double $>$ \&}]{const\+Vector }\end{DoxyParamCaption})}
+
+
+
+Definition at line 5 of file fixed\+Value.\+cpp.
+

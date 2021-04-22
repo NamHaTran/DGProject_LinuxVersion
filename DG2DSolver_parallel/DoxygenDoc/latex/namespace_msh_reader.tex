@@ -1,0 +1,216 @@
+\hypertarget{namespace_msh_reader}{}\doxysection{Msh\+Reader Namespace Reference}
+\label{namespace_msh_reader}\index{MshReader@{MshReader}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_aa93a6940fdf2f5b79c2e517e4abeffd8}{ninpoed}} (-\/1)
+\item 
+std\+::vector$<$ std\+::vector$<$ int $>$ $>$ \mbox{\hyperlink{namespace_msh_reader_a119a09c174d8800dd1d66df5708802fd}{edges\+Of\+Point}} (20, std\+::vector$<$ int $>$(\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}))
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a61f976f9fe33e8b16ea34ddcedb07703}{mesh\+Process}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a6114804c698557bb244fb69039c30da5}{Ele\+Sur\+Pt}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a4bc8eb9b48ae297cbc8d89e4e612048f}{Pts\+Sur\+Pt}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a3dc81e0f30fcb8430dd3012a4ac8d59b}{Elems\+Sur\+Elem}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a6853fc2f804ee58e0d0688fa20ab9de9}{Edges\+Infor}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_acc337830a040452035cf0f6271fae26a}{Edges\+Of\+Elem}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_aa5d55446f62b54ef39b14810a03a0403}{Get\+Normal\+Vector}} ()
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_a75d703c764534af3afc2d43353eec2c5}{Check\+Connection}} (int point, int help\+Array\mbox{[}$\,$\mbox{]}, int length)
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_a83b812278bbc5250b62642bee54ca845}{check\+Individual\+Edge}} (int root\+Pt, int tip\+Pt)
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_a3244b3a061325804ce901f3ad9256615}{find\+Index}} (int number, int iarray\mbox{[}$\,$\mbox{]}, int size)
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a2a52eebbdb44b4150e0bec49383f5804}{get\+Bc\+Grp\+Tp}} (int ipoin, int jpoin, int \mbox{\hyperlink{namespace_msh_reader_aa93a6940fdf2f5b79c2e517e4abeffd8}{ninpoed}})
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_msh_reader_a58f090ff35379f0cd9cdec516108d389}{calc\+Norm\+Vector}} (int point1, int point1\+Indice, int point2, int point2\+Indice, int type)
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a6bdd18d80dbbb318ae930d9fbe29ac23}{get\+Boundary\+Points}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a0c9fff1cbd42c5ffbd55409c611090df}{sort\+Points\+Of\+Elements}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_acebdd091663320f4f2be7bb8c92430d8}{get\+Midpoint\+Of\+B\+C\+Edge}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_ae71ef94ee2d4a085210650e11d1c42c2}{fix\+Cell\+Vertices\+Order}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespace_msh_reader_a58f090ff35379f0cd9cdec516108d389}\label{namespace_msh_reader_a58f090ff35379f0cd9cdec516108d389}} 
+\index{MshReader@{MshReader}!calcNormVector@{calcNormVector}}
+\index{calcNormVector@{calcNormVector}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{calcNormVector()}{calcNormVector()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ Msh\+Reader\+::calc\+Norm\+Vector (\begin{DoxyParamCaption}\item[{int}]{point1,  }\item[{int}]{point1\+Indice,  }\item[{int}]{point2,  }\item[{int}]{point2\+Indice,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 685 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a75d703c764534af3afc2d43353eec2c5}\label{namespace_msh_reader_a75d703c764534af3afc2d43353eec2c5}} 
+\index{MshReader@{MshReader}!CheckConnection@{CheckConnection}}
+\index{CheckConnection@{CheckConnection}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{CheckConnection()}{CheckConnection()}}
+{\footnotesize\ttfamily int Msh\+Reader\+::\+Check\+Connection (\begin{DoxyParamCaption}\item[{int}]{point,  }\item[{int}]{help\+Array\mbox{[}$\,$\mbox{]},  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+
+
+Definition at line 568 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a83b812278bbc5250b62642bee54ca845}\label{namespace_msh_reader_a83b812278bbc5250b62642bee54ca845}} 
+\index{MshReader@{MshReader}!checkIndividualEdge@{checkIndividualEdge}}
+\index{checkIndividualEdge@{checkIndividualEdge}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{checkIndividualEdge()}{checkIndividualEdge()}}
+{\footnotesize\ttfamily int Msh\+Reader\+::check\+Individual\+Edge (\begin{DoxyParamCaption}\item[{int}]{root\+Pt,  }\item[{int}]{tip\+Pt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 587 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a6853fc2f804ee58e0d0688fa20ab9de9}\label{namespace_msh_reader_a6853fc2f804ee58e0d0688fa20ab9de9}} 
+\index{MshReader@{MshReader}!EdgesInfor@{EdgesInfor}}
+\index{EdgesInfor@{EdgesInfor}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{EdgesInfor()}{EdgesInfor()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::\+Edges\+Infor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 333 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_acc337830a040452035cf0f6271fae26a}\label{namespace_msh_reader_acc337830a040452035cf0f6271fae26a}} 
+\index{MshReader@{MshReader}!EdgesOfElem@{EdgesOfElem}}
+\index{EdgesOfElem@{EdgesOfElem}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{EdgesOfElem()}{EdgesOfElem()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::\+Edges\+Of\+Elem (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 420 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a119a09c174d8800dd1d66df5708802fd}\label{namespace_msh_reader_a119a09c174d8800dd1d66df5708802fd}} 
+\index{MshReader@{MshReader}!edgesOfPoint@{edgesOfPoint}}
+\index{edgesOfPoint@{edgesOfPoint}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{edgesOfPoint()}{edgesOfPoint()}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$int$>$ $>$ Msh\+Reader\+::edges\+Of\+Point (\begin{DoxyParamCaption}\item[{20}]{,  }\item[{std\+::vector$<$ int $>$}]{points\+Arr\+Size }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespace_msh_reader_a3dc81e0f30fcb8430dd3012a4ac8d59b}\label{namespace_msh_reader_a3dc81e0f30fcb8430dd3012a4ac8d59b}} 
+\index{MshReader@{MshReader}!ElemsSurElem@{ElemsSurElem}}
+\index{ElemsSurElem@{ElemsSurElem}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{ElemsSurElem()}{ElemsSurElem()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::\+Elems\+Sur\+Elem (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 165 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a6114804c698557bb244fb69039c30da5}\label{namespace_msh_reader_a6114804c698557bb244fb69039c30da5}} 
+\index{MshReader@{MshReader}!EleSurPt@{EleSurPt}}
+\index{EleSurPt@{EleSurPt}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{EleSurPt()}{EleSurPt()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::\+Ele\+Sur\+Pt (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a3244b3a061325804ce901f3ad9256615}\label{namespace_msh_reader_a3244b3a061325804ce901f3ad9256615}} 
+\index{MshReader@{MshReader}!findIndex@{findIndex}}
+\index{findIndex@{findIndex}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{findIndex()}{findIndex()}}
+{\footnotesize\ttfamily int Msh\+Reader\+::find\+Index (\begin{DoxyParamCaption}\item[{int}]{number,  }\item[{int}]{iarray\mbox{[}$\,$\mbox{]},  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Definition at line 637 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_ae71ef94ee2d4a085210650e11d1c42c2}\label{namespace_msh_reader_ae71ef94ee2d4a085210650e11d1c42c2}} 
+\index{MshReader@{MshReader}!fixCellVerticesOrder@{fixCellVerticesOrder}}
+\index{fixCellVerticesOrder@{fixCellVerticesOrder}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{fixCellVerticesOrder()}{fixCellVerticesOrder()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::fix\+Cell\+Vertices\+Order (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 884 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a2a52eebbdb44b4150e0bec49383f5804}\label{namespace_msh_reader_a2a52eebbdb44b4150e0bec49383f5804}} 
+\index{MshReader@{MshReader}!getBcGrpTp@{getBcGrpTp}}
+\index{getBcGrpTp@{getBcGrpTp}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{getBcGrpTp()}{getBcGrpTp()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::get\+Bc\+Grp\+Tp (\begin{DoxyParamCaption}\item[{int}]{ipoin,  }\item[{int}]{jpoin,  }\item[{int}]{ninpoed }\end{DoxyParamCaption})}
+
+
+
+Definition at line 656 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a6bdd18d80dbbb318ae930d9fbe29ac23}\label{namespace_msh_reader_a6bdd18d80dbbb318ae930d9fbe29ac23}} 
+\index{MshReader@{MshReader}!getBoundaryPoints@{getBoundaryPoints}}
+\index{getBoundaryPoints@{getBoundaryPoints}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{getBoundaryPoints()}{getBoundaryPoints()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::get\+Boundary\+Points (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 721 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_acebdd091663320f4f2be7bb8c92430d8}\label{namespace_msh_reader_acebdd091663320f4f2be7bb8c92430d8}} 
+\index{MshReader@{MshReader}!getMidpointOfBCEdge@{getMidpointOfBCEdge}}
+\index{getMidpointOfBCEdge@{getMidpointOfBCEdge}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{getMidpointOfBCEdge()}{getMidpointOfBCEdge()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::get\+Midpoint\+Of\+B\+C\+Edge (\begin{DoxyParamCaption}\item[{std\+::string}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line 857 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_aa5d55446f62b54ef39b14810a03a0403}\label{namespace_msh_reader_aa5d55446f62b54ef39b14810a03a0403}} 
+\index{MshReader@{MshReader}!GetNormalVector@{GetNormalVector}}
+\index{GetNormalVector@{GetNormalVector}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{GetNormalVector()}{GetNormalVector()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::\+Get\+Normal\+Vector (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 508 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a61f976f9fe33e8b16ea34ddcedb07703}\label{namespace_msh_reader_a61f976f9fe33e8b16ea34ddcedb07703}} 
+\index{MshReader@{MshReader}!meshProcess@{meshProcess}}
+\index{meshProcess@{meshProcess}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{meshProcess()}{meshProcess()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::mesh\+Process (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 22 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_aa93a6940fdf2f5b79c2e517e4abeffd8}\label{namespace_msh_reader_aa93a6940fdf2f5b79c2e517e4abeffd8}} 
+\index{MshReader@{MshReader}!ninpoed@{ninpoed}}
+\index{ninpoed@{ninpoed}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{ninpoed()}{ninpoed()}}
+{\footnotesize\ttfamily int Msh\+Reader\+::ninpoed (\begin{DoxyParamCaption}\item[{-\/}]{1 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespace_msh_reader_a4bc8eb9b48ae297cbc8d89e4e612048f}\label{namespace_msh_reader_a4bc8eb9b48ae297cbc8d89e4e612048f}} 
+\index{MshReader@{MshReader}!PtsSurPt@{PtsSurPt}}
+\index{PtsSurPt@{PtsSurPt}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{PtsSurPt()}{PtsSurPt()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::\+Pts\+Sur\+Pt (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 130 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespace_msh_reader_a0c9fff1cbd42c5ffbd55409c611090df}\label{namespace_msh_reader_a0c9fff1cbd42c5ffbd55409c611090df}} 
+\index{MshReader@{MshReader}!sortPointsOfElements@{sortPointsOfElements}}
+\index{sortPointsOfElements@{sortPointsOfElements}!MshReader@{MshReader}}
+\doxysubsubsection{\texorpdfstring{sortPointsOfElements()}{sortPointsOfElements()}}
+{\footnotesize\ttfamily void Msh\+Reader\+::sort\+Points\+Of\+Elements (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 768 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+

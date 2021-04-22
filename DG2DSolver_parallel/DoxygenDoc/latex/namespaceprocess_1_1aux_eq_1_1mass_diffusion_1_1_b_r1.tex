@@ -1,0 +1,135 @@
+\hypertarget{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1}{}\doxysection{process\+::aux\+Eq\+::mass\+Diffusion\+::B\+R1 Namespace Reference}
+\label{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1}\index{process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ac187d8bc3d3139299801b779bbad3997}{solve\+Div\+Rho}} ()
+\begin{DoxyCompactList}\small\item\em Function solves $S_m = \nabla (\rho)$ equation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a33224870a017565a3b54d0ea5d0ec97f}{Calc\+R\+H\+S\+Term}} (int element, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Oy)
+\begin{DoxyCompactList}\small\item\em Function calculates right hand side terms of equation $S_m = \nabla (\rho)$. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a334478bef4d3e6bcac9a5cf811249b91}{calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Vol\+IntX, std\+::vector$<$ double $>$ \&rho\+Vol\+IntY)
+\begin{DoxyCompactList}\small\item\em Function calculates volume integral term at right hand side of equation $S_m = \nabla (\rho)$. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a1ba022f30a8cb8fc54b988bee1c02be5}{calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Surf\+IntX, std\+::vector$<$ double $>$ \&rho\+Surf\+IntY)
+\begin{DoxyCompactList}\small\item\em Function calculates surface integral term at right hand side of equation $S_m = \nabla (\rho)$. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ad5ccda93af5ec40bd246071081ca8ffb}{get\+Gauss\+Vector\+Of\+Rho}} (int element, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxY)
+\begin{DoxyCompactList}\small\item\em Function gets values all Rho fluxes at all Gauss points on all edges of cell. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a33224870a017565a3b54d0ea5d0ec97f}\label{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a33224870a017565a3b54d0ea5d0ec97f}} 
+\index{process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}!CalcRHSTerm@{CalcRHSTerm}}
+\index{CalcRHSTerm@{CalcRHSTerm}!process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}}
+\doxysubsubsection{\texorpdfstring{CalcRHSTerm()}{CalcRHSTerm()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::\+Calc\+R\+H\+S\+Term (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+R\+H\+S\+Ox,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+R\+H\+S\+Oy }\end{DoxyParamCaption})}
+
+
+
+Function calculates right hand side terms of equation $S_m = \nabla (\rho)$. 
+
+Function is used when mass diffusion = ON.
+
+
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id \\
+\hline
+{\em rho\+R\+H\+S\+Ox} & right hand side term of equation $S_mX = \frac{\partial \rho}{\partial x}$. Array is returned using \textquotesingle{}call by reference\textquotesingle{}. \\
+\hline
+{\em rho\+R\+H\+S\+Oy} & right hand side term of equation $S_mY = \frac{\partial \rho}{\partial y}$. Array is returned using \textquotesingle{}call by reference\textquotesingle{}. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1765 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a1ba022f30a8cb8fc54b988bee1c02be5}\label{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a1ba022f30a8cb8fc54b988bee1c02be5}} 
+\index{process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}!calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}}
+\index{calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}!process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}}
+\doxysubsubsection{\texorpdfstring{calcSurfaceIntegralTerms()}{calcSurfaceIntegralTerms()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::calc\+Surface\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Surf\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Surf\+IntY }\end{DoxyParamCaption})}
+
+
+
+Function calculates surface integral term at right hand side of equation $S_m = \nabla (\rho)$. 
+
+
+\begin{DoxyItemize}
+\item The term is \[\int_{\partial I} \phi \rho \cdot \mathbf{n} dV\]
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id \\
+\hline
+{\em rho\+Surf\+IntX} & Ox surface integral term $\int_{\partial I} \phi \rho n_x dV$ \\
+\hline
+{\em rho\+Surf\+IntY} & OY surface integral term $\int_{\partial I} \phi \rho n_y dV$ \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1834 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a334478bef4d3e6bcac9a5cf811249b91}\label{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a334478bef4d3e6bcac9a5cf811249b91}} 
+\index{process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}!calcVolumeIntegralTerms@{calcVolumeIntegralTerms}}
+\index{calcVolumeIntegralTerms@{calcVolumeIntegralTerms}!process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}}
+\doxysubsubsection{\texorpdfstring{calcVolumeIntegralTerms()}{calcVolumeIntegralTerms()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::calc\+Volume\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Vol\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Vol\+IntY }\end{DoxyParamCaption})}
+
+
+
+Function calculates volume integral term at right hand side of equation $S_m = \nabla (\rho)$. 
+
+The term is \[-\int_{I} \nabla \phi \rho dV\]
+
+
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id \\
+\hline
+{\em rho\+Vol\+IntX} & Ox volume integral term $-\int_{I} \frac{\partial \phi}{\partial x} \rho dV$ \\
+\hline
+{\em rho\+Vol\+IntY} & Oy volume integral term $-\int_{I} \frac{\partial \phi}{\partial y} \rho dV$ \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1800 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ad5ccda93af5ec40bd246071081ca8ffb}\label{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ad5ccda93af5ec40bd246071081ca8ffb}} 
+\index{process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}!getGaussVectorOfRho@{getGaussVectorOfRho}}
+\index{getGaussVectorOfRho@{getGaussVectorOfRho}!process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}}
+\doxysubsubsection{\texorpdfstring{getGaussVectorOfRho()}{getGaussVectorOfRho()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::get\+Gauss\+Vector\+Of\+Rho (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rho\+FluxX,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rho\+FluxY }\end{DoxyParamCaption})}
+
+
+
+Function gets values all Rho fluxes at all Gauss points on all edges of cell. 
+
+Rho flux is calculated by central flux\+: \[Flux_\rho = \frac{1}{2}(\rho_+ + \rho_-) \cdot \mathbf{n}\] Function returns Rho fluxes through \textquotesingle{}call by reference\textquotesingle{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em element} & element Id \\
+\hline
+{\em rho\+FluxX} & term ${Flux_\rho}x = \frac{1}{2}(\rho_+ + \rho_-) nx$ \\
+\hline
+{\em rho\+FluxY} & term ${Flux_\rho}y = \frac{1}{2}(\rho_+ + \rho_-) ny$ \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1875 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ac187d8bc3d3139299801b779bbad3997}\label{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ac187d8bc3d3139299801b779bbad3997}} 
+\index{process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}!solveDivRho@{solveDivRho}}
+\index{solveDivRho@{solveDivRho}!process::auxEq::massDiffusion::BR1@{process::auxEq::massDiffusion::BR1}}
+\doxysubsubsection{\texorpdfstring{solveDivRho()}{solveDivRho()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::solve\+Div\+Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function solves $S_m = \nabla (\rho)$ equation. 
+
+
+
+Definition at line 1734 of file D\+G\+Proc\+Lib.\+cpp.
+

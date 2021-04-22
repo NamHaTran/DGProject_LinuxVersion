@@ -1,0 +1,96 @@
+\hypertarget{_d_g_mesh_reader_lib_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+D\+G\+Mesh\+Reader\+Lib.cpp File Reference}
+\label{_d_g_mesh_reader_lib_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGMeshReaderLib.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGMeshReaderLib.cpp}}
+{\ttfamily \#include \char`\"{}D\+G\+Mesh\+Reader\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+I\+O\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Const\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Aux\+Ultilities\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Math.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Messages\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Post\+Process\+Lib.\+h\char`\"{}}\newline
+Include dependency graph for D\+G\+Mesh\+Reader\+Lib.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_mesh_reader_lib_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespace_msh_reader}{Msh\+Reader}}
+\item 
+ \mbox{\hyperlink{namespace_msh_exporter}{Msh\+Exporter}}
+\item 
+ \mbox{\hyperlink{namespacedecompose_part}{decompose\+Part}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_aa93a6940fdf2f5b79c2e517e4abeffd8}{Msh\+Reader\+::ninpoed}} (-\/1)
+\item 
+std\+::vector$<$ std\+::vector$<$ int $>$ $>$ \mbox{\hyperlink{namespace_msh_reader_a119a09c174d8800dd1d66df5708802fd}{Msh\+Reader\+::edges\+Of\+Point}} (20, std\+::vector$<$ int $>$(\mbox{\hyperlink{_const_declaration_8h_a78d2ff796e8778bcb5cea15adc0c501d}{points\+Arr\+Size}}))
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a61f976f9fe33e8b16ea34ddcedb07703}{Msh\+Reader\+::mesh\+Process}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a6114804c698557bb244fb69039c30da5}{Msh\+Reader\+::\+Ele\+Sur\+Pt}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a4bc8eb9b48ae297cbc8d89e4e612048f}{Msh\+Reader\+::\+Pts\+Sur\+Pt}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a3dc81e0f30fcb8430dd3012a4ac8d59b}{Msh\+Reader\+::\+Elems\+Sur\+Elem}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a6853fc2f804ee58e0d0688fa20ab9de9}{Msh\+Reader\+::\+Edges\+Infor}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_acc337830a040452035cf0f6271fae26a}{Msh\+Reader\+::\+Edges\+Of\+Elem}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_aa5d55446f62b54ef39b14810a03a0403}{Msh\+Reader\+::\+Get\+Normal\+Vector}} ()
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_a75d703c764534af3afc2d43353eec2c5}{Msh\+Reader\+::\+Check\+Connection}} (int point, int help\+Array\mbox{[}$\,$\mbox{]}, int length)
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_a83b812278bbc5250b62642bee54ca845}{Msh\+Reader\+::check\+Individual\+Edge}} (int root\+Pt, int tip\+Pt)
+\item 
+int \mbox{\hyperlink{namespace_msh_reader_a3244b3a061325804ce901f3ad9256615}{Msh\+Reader\+::find\+Index}} (int number, int iarray\mbox{[}$\,$\mbox{]}, int size)
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a2a52eebbdb44b4150e0bec49383f5804}{Msh\+Reader\+::get\+Bc\+Grp\+Tp}} (int ipoin, int jpoin, int ninpoed)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_msh_reader_a58f090ff35379f0cd9cdec516108d389}{Msh\+Reader\+::calc\+Norm\+Vector}} (int point1, int point1\+Indice, int point2, int point2\+Indice, int type)
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a6bdd18d80dbbb318ae930d9fbe29ac23}{Msh\+Reader\+::get\+Boundary\+Points}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_a0c9fff1cbd42c5ffbd55409c611090df}{Msh\+Reader\+::sort\+Points\+Of\+Elements}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_acebdd091663320f4f2be7bb8c92430d8}{Msh\+Reader\+::get\+Midpoint\+Of\+B\+C\+Edge}} (std\+::string mode)
+\item 
+void \mbox{\hyperlink{namespace_msh_reader_ae71ef94ee2d4a085210650e11d1c42c2}{Msh\+Reader\+::fix\+Cell\+Vertices\+Order}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_exporter_a4c882d3c1e7f32274efaa3be9f482461}{Msh\+Exporter\+::export\+Mesh\+To\+Metis}} ()
+\item 
+void \mbox{\hyperlink{namespace_msh_exporter_a24db70f30c6efa2f8aab534b7d588374}{Msh\+Exporter\+::test\+Mesh\+Partition\+Result}} ()
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacedecompose_part_ab2b19c53af49b787b807d9a5879728f6}{decompose\+Part\+::load\+Partitioned\+Mesh}} ()
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacedecompose_part_a44305c40a03166f47f0b13da0df0e651}{decompose\+Part\+::find\+Local\+Id\+Of\+Pts}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a5cdc426e58af9a2b9479c2c201162e50}{decompose\+Part\+::find\+Edge\+With\+B\+C\+Type\+Matched}} ()
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacedecompose_part_a25f65f07dca478921c5117f20e579737}{decompose\+Part\+::get\+Mesh\+Infor\+Of\+Ranks}} (std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$$>$$>$ \&\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a8908fa7d907b151ffbbabb9a57e4d906}{Points}}, std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&Elem1D, std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&Elem2D, std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&mesh\+Connection)
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a8182a7adf9fd398ad2832ddae3b5dac8}{decompose\+Part\+::decomposing\+Mesh}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_aa70b3f46e874388f9021f8903eb57cca}{decompose\+Part\+::decomposing\+Time0}} (std\+::string Loc)
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_aa419fc04964aa65e594ca5c69d9befa0}{decompose\+Part\+::decomposing\+Latest\+Time}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_aa7d8244dc4e878587bbe210b70a5a172}{decompose\+Part\+::distributing\+Discreted\+Var}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a481b5e88b2399a5f2c9122f00382f101}{decompose\+Part\+::export\+Partitioned\+Mesh}} (int rank, int npoin, int nelem2D, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a8908fa7d907b151ffbbabb9a57e4d906}{Points}}, std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a56b713210b89395ed5291a22984c008a}{Elements2D}})
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a9853faee30e4a77e1442e2e275fe6fdb}{decompose\+Part\+::fix\+Partitioned\+Mesh}} ()
+\end{DoxyCompactItemize}

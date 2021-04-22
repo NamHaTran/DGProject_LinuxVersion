@@ -1,0 +1,545 @@
+\hypertarget{dynamic_var_declaration_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/dynamic\+Var\+Declaration.cpp File Reference}
+\label{dynamic_var_declaration_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/dynamicVarDeclaration.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/dynamicVarDeclaration.cpp}}
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+Include dependency graph for dynamic\+Var\+Declaration.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dynamic_var_declaration_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacemesh_var}{mesh\+Var}}
+\item 
+ \mbox{\hyperlink{namespacemath_var}{math\+Var}}
+\item 
+ \mbox{\hyperlink{namespace_b_r1_vars}{B\+R1\+Vars}}
+\item 
+ \mbox{\hyperlink{namespace_b_r1_vars_1_1mass_diffusion}{B\+R1\+Vars\+::mass\+Diffusion}}
+\item 
+ \mbox{\hyperlink{namespace_b_r2_vars}{B\+R2\+Vars}}
+\item 
+ \mbox{\hyperlink{namespacesurface_fields}{surface\+Fields}}
+\item 
+ \mbox{\hyperlink{namespacevolume_fields}{volume\+Fields}}
+\item 
+ \mbox{\hyperlink{namespace_surface_b_c_fields}{Surface\+B\+C\+Fields}}
+\item 
+ \mbox{\hyperlink{namespacelimit_val}{limit\+Val}}
+\item 
+ \mbox{\hyperlink{namespacedebug}{debug}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_ad912e4ab5790eb13a211bf56471bd222}{mesh\+Var\+::inpoed}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_ab78410c79ee761a05de362e0d1bbdfe6}{mesh\+Var\+::esuel}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a13e8527b7ffe2fc5ee4f43873380f34f}{mesh\+Var\+::inpoel}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a1ac037a68a1eb6a1592ec8628eb9247b}{mesh\+Var\+::inedel}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a3f6da75af2f10341527f0c6e2dcf0b61}{mesh\+Var\+::ineled}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a111844ef17deb6a278536db9e6a86f7c}{mesh\+Var\+::\+Points}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_ada06e34c4acdda38865e9b820ecc3db1}{mesh\+Var\+::normal\+Vector}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_aedbf366fa0bf7e65a9d57ca0ee473c02}{mesh\+Var\+::\+Elements1D}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a2492d3c34370ffc26e9bc5990ab771f4}{mesh\+Var\+::\+Elements2D}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_ac84f2adfa6c64068c8807e0ff7361aa2}{mesh\+Var\+::\+Boundary\+Type}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$ \mbox{\hyperlink{namespacemesh_var_af8becbb3c381ec26da18145df4fca11d}{mesh\+Var\+::mark\+Points\+At\+BC}} = new int\mbox{[}1\mbox{]}
+\item 
+int $\ast$ \mbox{\hyperlink{namespacemesh_var_a17732f05bcc496df0b3719a0eb035c56}{mesh\+Var\+::\+Master\+Elem\+Of\+Edge}} = new int\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a5acf333674a784d150b6c323d951b629}{mesh\+Var\+::edge\+Gauss\+Points\+\_\+a}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a0e5d2d7a2174a4cc14de2e6728c82d9e}{mesh\+Var\+::edge\+Gauss\+Points\+\_\+b}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a5f93bea61204dc8c383e0da184f8136b}{mesh\+Var\+::neighboring\+Elements}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_adcb5a2d3326bcb1256b79f8abd87c2ec}{mesh\+Var\+::geo\+Center}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemesh_var_af85baf8bc39b42066e83e4c9db053a6c}{mesh\+Var\+::cell\+Size}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemesh_var_ad1dae76cf92e15d25ca86f184094eb7c}{mesh\+Var\+::cell\+Area}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemesh_var_a9bf59432d5e267cccee1510d1e737b1d}{mesh\+Var\+::local\+Cell\+Size}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a8073f1a62965802ea7adba7b8889d7e2}{mesh\+Var\+::dxa}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_ace0520815df54897b76ddad7b240aeb4}{mesh\+Var\+::dxb}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a1f907ff6740db858e2b02685c51330a9}{mesh\+Var\+::dya}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_adf0086416ffe71d7a025761fe96e41ba}{mesh\+Var\+::dyb}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a5251cb6d813b3fef07aabd08f31fc87c}{mesh\+Var\+::\+J2D}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of Jacobian of all interior Gauss points. \end{DoxyCompactList}\item 
+double $\ast$ \mbox{\hyperlink{namespacemesh_var_ac0804d8f6057f90b991d777c72819ce5}{mesh\+Var\+::\+J1D}}
+\begin{DoxyCompactList}\small\item\em Array of Jacobian of all edge (in 2D case, J1D = length of edge) \end{DoxyCompactList}\item 
+int $\ast$ \mbox{\hyperlink{namespacemesh_var_ab115e087202063772157390838107d99}{mesh\+Var\+::\+Elem2\+Dlocal\+Id\+With\+Rank}} = new int\mbox{[}1\mbox{]}
+\item 
+int $\ast$ \mbox{\hyperlink{namespacemesh_var_a36d9e1e4797e85e51ab874b33c0b6ffa}{mesh\+Var\+::rank\+Of2\+D\+Elem}} = new int\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_aae9c98f1546c416deb4c6d993fe1b3e9}{mesh\+Var\+::\+Pointslocal\+Id\+With\+Rank}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a07b3c4e4b4655075d909a73732f4aca8}{mesh\+Var\+::mesh\+Connection}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a59d1b351e30f8aba1e161cf5f9c99a13}{mesh\+Var\+::norm\+Projection\+Of\+Center\+To\+B\+C\+Edge\+\_\+real\+Sys\+Coor}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemesh_var_a3045fa4ae9616e300efa4d458ba56cb1}{mesh\+Var\+::norm\+Projection\+Of\+Center\+To\+B\+C\+Edge\+\_\+standard\+Sys\+Coor}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemesh_var_a009738d2c7a16d54f51d1e218c19ff05}{mesh\+Var\+::distance\+From\+Centroid\+To\+B\+C\+Edge}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a062b4612c851a1c175f35bf54178dfc0}{math\+Var\+::w\+Gauss\+Vol}} = new double\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Vector of weights used to generate array \mbox{\hyperlink{namespacemath_var_ad610534d06a2605140cc9f94694359c4}{math\+Var\+::w\+Gauss\+Pts}}. \end{DoxyCompactList}\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_ada82fc432e7696cf0438d42f2eb9128c}{math\+Var\+::x\+Gauss\+Vol}} = new double\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Vector of coordinates used to generate array math\+Var\+::x\+Gauss\+Pts. \end{DoxyCompactList}\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a912f11ff48b9a45111c269cbff3bee06}{math\+Var\+::w\+Gauss\+Lobatto\+Vol}} = new double\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Vector of weights used to generate array \mbox{\hyperlink{namespacemath_var_af8b544243b0a7d8669019c9264a7c095}{math\+Var\+::w\+Gauss\+Lobatto\+Pts}}. \end{DoxyCompactList}\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a2fa22c2312f9fae4cdc701c6f22626e1}{math\+Var\+::x\+Gauss\+Lobatto\+Vol}} = new double\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Vector of coordinates used to generate array math\+Var\+::x\+Gauss\+Lobatto\+Pts. \end{DoxyCompactList}\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a7015e42dd5ffbdbf440598bb061a08b0}{math\+Var\+::w\+Gauss\+Sur}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_ad92ed6bb90f4fe69644338d9bf2bc073}{math\+Var\+::x\+Gauss\+Sur}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_aa5815b8112d55cfd6f665bfccaafa3c0}{math\+Var\+::w\+Gauss\+Lobatto\+Sur}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a7ae0ee4f6415b0b8872d478cb4c80fab}{math\+Var\+::x\+Gauss\+Lobatto\+Sur}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a162d62d3cdd05c849a2f116c4700bb21}{math\+Var\+::B}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_a3f1ad9736fa0100750eae18af9a8fc6f}{math\+Var\+::d\+Ba}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespacemath_var_add120a3a87a6c793a6759354a3802918}{math\+Var\+::d\+Bb}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a65b26760f90c7161951f1f2a1b104570}{math\+Var\+::\+Gauss\+Pts}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of Gauss coordinates of all Gauss points at interior of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_ad610534d06a2605140cc9f94694359c4}{math\+Var\+::w\+Gauss\+Pts}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of Gauss weights of all Gauss points at interior of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a074477d4642d4085fc61cb88f5187473}{math\+Var\+::\+Gauss\+Lobatto\+Pts}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of Gauss coordinates of all Gauss-\/\+Lobatto points at interior of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_af8b544243b0a7d8669019c9264a7c095}{math\+Var\+::w\+Gauss\+Lobatto\+Pts}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of Gauss weights of all Gauss-\/\+Lobatto points at interior of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a71a75963a313ba47802b8f2083bcbd56}{math\+Var\+::\+B\+Pts\+\_\+\+Quad}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of value of Basis function (for Quad element) at interior points of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_afc9e5bf4d727f118ad9258174d568f5f}{math\+Var\+::d\+Ba\+Pts\+\_\+\+Quad}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of value of $\frac{\partial \phi}{\partial a}$ (for Quad element) at interior points of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a17930a02397103c2e959f0233b483f43}{math\+Var\+::d\+Bb\+Pts\+\_\+\+Quad}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of value of $\frac{\partial \phi}{\partial b}$ (for Quad element) at interior points of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a8b55e87ccfc0740fe43480ea7f21de75}{math\+Var\+::\+B\+Pts\+\_\+\+Tri}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of value of Basis function (for Tri element) at interior points of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a78e88bef0dfd816b717e48ffb6ec3486}{math\+Var\+::d\+Ba\+Pts\+\_\+\+Tri}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of value of $\frac{\partial \phi}{\partial a}$ (for Tri element) at interior points of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacemath_var_a424bb8e3a3494b294a9726ecc78e63aa}{math\+Var\+::d\+Bb\+Pts\+\_\+\+Tri}} = new double$\ast$\mbox{[}1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array of value of $\frac{\partial \phi}{\partial b}$ (for Tri element) at interior points of cell. \end{DoxyCompactList}\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_ae7a21fded6f5e50f59fb05c0735f2479}{rho}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a257717878b3132746c6ce4e41b6d7f39}{rhov}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a50a29d081db770f5f08d83666dbe8089}{rhoE}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a12af9b312bdfc8e67d9ae8e5b70af8cc}{rhoN}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_abf10c5a688928709a31b53e91ea88eff}{rhouN}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_ae161ae2471a5fc5f00220073a8e3643b}{rhovN}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a0200e42c8d5299223222c6d9bb6b6a27}{rho\+EN}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_af93d63604d62766b072b4caf3b403c25}{rho0}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_ad01ed951d6e10e72fc75230747b49160}{rhou0}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_adb93a408244c44751c9de812382bb673}{rhov0}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a65121150ab80b39c6ed9ef94ef35fe83}{rho\+E0}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a93754216f295cfec96c6f7df89c6087b}{rho\+Res\+Arr}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a0be90383501e8489e34cb3d99253410d}{rhou\+Res\+Arr}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_adff6c5a83de1167377f41c7068686d84}{rhov\+Res\+Arr}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a1b6d4a9b7fc1d37e17c854a34c6deda9}{rho\+E\+Res\+Arr}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_aedee3780913631e3fe5cd1ecf06903d7}{B\+R1\+Vars\+::rhoX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_a265ba197f65099ffbefbb0d2db78b8d7}{B\+R1\+Vars\+::rhouX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_afa96517d1e9882abbbdb568c9e74376e}{B\+R1\+Vars\+::rhovX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_a647f299ff565dd1b592bd7f48a709076}{B\+R1\+Vars\+::rho\+EX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_a54885c1ed888997957a984de94d7ce2b}{B\+R1\+Vars\+::rhoY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_af6007edefac1b5312e8aa558206bb07a}{B\+R1\+Vars\+::rhouY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_ab13373f3c5a59cff7ceeecea7e983b31}{B\+R1\+Vars\+::rhovY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_a3f530be831452490e879a40b9c204396}{B\+R1\+Vars\+::rho\+EY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_1_1mass_diffusion_a52d629e62fd97728f22ae742df5151f0}{B\+R1\+Vars\+::mass\+Diffusion\+::rhoX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r1_vars_1_1mass_diffusion_a2e668270ff7ec34ddd0ca207aa5baee7}{B\+R1\+Vars\+::mass\+Diffusion\+::rhoY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a64e68b57dd2c23903abc596f79a334f7}{B\+R2\+Vars\+::rho\+X\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a0706d851c832b64ccc2c39b9d3e173c9}{B\+R2\+Vars\+::rhou\+X\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a9ecc06f5ae994e57d951c5031ea16d11}{B\+R2\+Vars\+::rhov\+X\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_aa9372c39b8790a0f10b584e34255c8c1}{B\+R2\+Vars\+::rho\+E\+X\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a2b7ebbdbb89661768a542b3a17478e44}{B\+R2\+Vars\+::rho\+Y\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a5b5173f38b969763324590323f7c56db}{B\+R2\+Vars\+::rhou\+Y\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a6973106dd30014144d58caa198ac834b}{B\+R2\+Vars\+::rhov\+Y\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_abbaa1002a65f55850195679723bd0676}{B\+R2\+Vars\+::rho\+E\+Y\+Vol}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a70c5ff3c148d7b61ba47b81de180afa3}{B\+R2\+Vars\+::rho\+X\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a0af76842d96ce7561a25848c51c1c3bd}{B\+R2\+Vars\+::rhou\+X\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a4f394e0ebb5c8189874605eb2970e2ba}{B\+R2\+Vars\+::rhov\+X\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_abed4a1c6946ccc892fa1be8fbadb61c0}{B\+R2\+Vars\+::rho\+E\+X\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a399821bb77f695caef63ec2f869e19a1}{B\+R2\+Vars\+::rho\+X\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_aafb4b3c0887f5021a4cf8b1f1b66ece4}{B\+R2\+Vars\+::rhou\+X\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a70b236bb2c9c19f3fe8a319822f7a07b}{B\+R2\+Vars\+::rhov\+X\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_ab6f9b99db8d9ae79f5b6efe417ed5590}{B\+R2\+Vars\+::rho\+E\+X\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a19faf0d5c836872e7f314508ec608824}{B\+R2\+Vars\+::rho\+Y\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a3580a743d6a421b0a945443316eee3a0}{B\+R2\+Vars\+::rhou\+Y\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_ac4d6fddd3e907c9661eda518d19684dd}{B\+R2\+Vars\+::rhov\+Y\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a00f77db1be7c3c057b719d57e430b5a3}{B\+R2\+Vars\+::rho\+E\+Y\+Sur\+Master}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a1b24f72ca2a30cee6d682dba09c4f600}{B\+R2\+Vars\+::rho\+Y\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_a7d20c7010eb4378f71a2df213423b152}{B\+R2\+Vars\+::rhou\+Y\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_ad391120124acbeb8fbf946d56ffb7cfa}{B\+R2\+Vars\+::rhov\+Y\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespace_b_r2_vars_ae8e39d184c111d0a9fb30630ee854a04}{B\+R2\+Vars\+::rho\+E\+Y\+Sur\+Slave}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a7412043fc7b0e1929e4d3c8a1ebe0225}{surface\+Fields\+::rho}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a030acd59a145a9b69e80c0581cdc6a5f}{surface\+Fields\+::rhou}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a8a5d444d83f2ffec95efb293cb3c83d6}{surface\+Fields\+::rhov}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a194461d34290f0a6b69f89f803cefffa}{surface\+Fields\+::rhoE}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a310e5108e1c6fd5d513ad13ade7778a5}{surface\+Fields\+::aux\+\_\+rho}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_ae0da26d79c3177a625d928cf7cb2e42f}{surface\+Fields\+::aux\+\_\+rhou}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_aff02d30ce5c19331f2d98eb501000995}{surface\+Fields\+::aux\+\_\+rhov}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a0b3ab3146090c3bcfe5df4578a4fb8a5}{surface\+Fields\+::aux\+\_\+rhoE}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a8c0bc83b3bd6d9b99dc90f2b57d2efb6}{surface\+Fields\+::invis\+\_\+rho}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a7b26fd3568799113aeaaf6348e978766}{surface\+Fields\+::invis\+\_\+rhou}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a8e5ec575745ddf9ff5087d6e80108aea}{surface\+Fields\+::invis\+\_\+rhov}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_acc8edbc42fcdd5b0f55ee26a9b4c3a84}{surface\+Fields\+::invis\+\_\+rhoE}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a999c5c64f44e604350c168ff1dc1afb3}{surface\+Fields\+::\+Vis\+\_\+rho}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_add7bc43d1bb91230a501a1f57b883e03}{surface\+Fields\+::\+Vis\+\_\+rhou}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a403c678a51c202bb046a26b152ee8e88}{surface\+Fields\+::\+Vis\+\_\+rhov}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a0473696ea98f4842775da625f760676c}{surface\+Fields\+::\+Vis\+\_\+rhoE}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a87d9b52b2ba94445a8d725b5cccf62fd}{surface\+Fields\+::T}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_ac54285381d6de3f5b41fdefb01e4b363}{surface\+Fields\+::d\+RhoX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_ab3d7391790f8eac334102371fc114c0c}{surface\+Fields\+::d\+RhouX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_aa026be6e94256e96b53e77128aca72b1}{surface\+Fields\+::d\+RhovX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_adcc84856d6f2525675bd554b622c1b41}{surface\+Fields\+::d\+Rho\+EX}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a904fcf7a708df1164748cd1464cc97d1}{surface\+Fields\+::d\+RhoY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a58e6c14bce856a86a9a53e084e357465}{surface\+Fields\+::d\+RhouY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a1b402d2dbc4726160b079350ef6983bb}{surface\+Fields\+::d\+RhovY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacesurface_fields_a0d868a497e5c95e11d391e00486cb56e}{surface\+Fields\+::d\+Rho\+EY}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_a8d0a190a5fca8708600f026a3f86f2c0}{volume\+Fields\+::rho\+Vol\+Gauss}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_a19acf471ffc80b55fb1c519ff72c56af}{volume\+Fields\+::rhou\+Vol\+Gauss}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_a5fe3962c5146f7710409e43fa8c6d373}{volume\+Fields\+::rhov\+Vol\+Gauss}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_a945103ed0a4435a2cc417d01733a6998}{volume\+Fields\+::rho\+E\+Vol\+Gauss}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_a6934b822fea86e86ffc5410cab75de84}{volume\+Fields\+::drho\+X\+Vol\+Gauss}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_a5927f86e9b1d39dac371cad243d41e0e}{volume\+Fields\+::drho\+Y\+Vol\+Gauss}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{namespacevolume_fields_ad672313d7789161cf7f9323a1425ba90}{volume\+Fields\+::T}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a03577e324b0de2726e64641e4546fbdf}{Lx\+F\+Const}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a3bbb660b40e533455fc71ac19dec4a2c}{Diffusive\+Flux\+Const}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$$\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a53ded1e3ef39a15ff101a1dadfcc181c}{stiff\+Matrix\+Coeffs}} = new double$\ast$\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_a0942a62e1f167158fa91f28526a4d1cb}{theta1\+Arr}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{dynamic_var_declaration_8cpp_aae30fd7ecb4df760a5923222f8117a80}{theta2\+Arr}} = new double\mbox{[}1\mbox{]}
+\item 
+std\+::vector$<$ std\+::vector$<$ int $>$ $>$ \mbox{\hyperlink{namespace_surface_b_c_fields_ac3e24908e43f9190de82ae5aeb34d99c}{Surface\+B\+C\+Fields\+::\+B\+C\+Points\+Infor}}
+\item 
+double $\ast$ \mbox{\hyperlink{namespace_surface_b_c_fields_af886119e2e557e850525c562a4b303d5}{Surface\+B\+C\+Fields\+::\+T\+Bc}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespace_surface_b_c_fields_adcc17d830e37369ecbff089e1d3f9bfd}{Surface\+B\+C\+Fields\+::u\+Bc}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespace_surface_b_c_fields_adedcd4f9f2ab7104ef693989736925b6}{Surface\+B\+C\+Fields\+::v\+Bc}} = new double\mbox{[}1\mbox{]}
+\item 
+double $\ast$ \mbox{\hyperlink{namespace_surface_b_c_fields_a4ab714c100bc694b38f078f982ed2285}{Surface\+B\+C\+Fields\+::p\+Bc}} = new double\mbox{[}1\mbox{]}
+\item 
+int $\ast$ \mbox{\hyperlink{namespace_surface_b_c_fields_a4ea16f9cc658e18f97906e31aa4f5910}{Surface\+B\+C\+Fields\+::local\+Global\+B\+C\+Edges\+Matching}} = new int\mbox{[}1\mbox{]}
+\item 
+bool $\ast$ \mbox{\hyperlink{namespacelimit_val_a31dbdc76de8f62d9b273db61be76b232}{limit\+Val\+::trouble\+Cells\+Marker}} = new bool\mbox{[}1\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a3bbb660b40e533455fc71ac19dec4a2c}\label{dynamic_var_declaration_8cpp_a3bbb660b40e533455fc71ac19dec4a2c}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!DiffusiveFluxConst@{DiffusiveFluxConst}}
+\index{DiffusiveFluxConst@{DiffusiveFluxConst}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{DiffusiveFluxConst}{DiffusiveFluxConst}}
+{\footnotesize\ttfamily double$\ast$ Diffusive\+Flux\+Const = new double\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 245 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a03577e324b0de2726e64641e4546fbdf}\label{dynamic_var_declaration_8cpp_a03577e324b0de2726e64641e4546fbdf}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!LxFConst@{LxFConst}}
+\index{LxFConst@{LxFConst}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{LxFConst}{LxFConst}}
+{\footnotesize\ttfamily double$\ast$ Lx\+F\+Const = new double\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 244 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_ae7a21fded6f5e50f59fb05c0735f2479}\label{dynamic_var_declaration_8cpp_ae7a21fded6f5e50f59fb05c0735f2479}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rho@{rho}}
+\index{rho@{rho}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rho}{rho}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rho = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 104 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_af93d63604d62766b072b4caf3b403c25}\label{dynamic_var_declaration_8cpp_af93d63604d62766b072b4caf3b403c25}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rho0@{rho0}}
+\index{rho0@{rho0}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rho0}{rho0}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rho0 = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 114 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a50a29d081db770f5f08d83666dbe8089}\label{dynamic_var_declaration_8cpp_a50a29d081db770f5f08d83666dbe8089}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhoE@{rhoE}}
+\index{rhoE@{rhoE}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoE}{rhoE}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhoE = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 107 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a65121150ab80b39c6ed9ef94ef35fe83}\label{dynamic_var_declaration_8cpp_a65121150ab80b39c6ed9ef94ef35fe83}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhoE0@{rhoE0}}
+\index{rhoE0@{rhoE0}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoE0}{rhoE0}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rho\+E0 = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 117 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a0200e42c8d5299223222c6d9bb6b6a27}\label{dynamic_var_declaration_8cpp_a0200e42c8d5299223222c6d9bb6b6a27}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhoEN@{rhoEN}}
+\index{rhoEN@{rhoEN}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoEN}{rhoEN}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rho\+EN = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 112 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a1b6d4a9b7fc1d37e17c854a34c6deda9}\label{dynamic_var_declaration_8cpp_a1b6d4a9b7fc1d37e17c854a34c6deda9}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhoEResArr@{rhoEResArr}}
+\index{rhoEResArr@{rhoEResArr}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoEResArr}{rhoEResArr}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rho\+E\+Res\+Arr = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 122 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a12af9b312bdfc8e67d9ae8e5b70af8cc}\label{dynamic_var_declaration_8cpp_a12af9b312bdfc8e67d9ae8e5b70af8cc}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhoN@{rhoN}}
+\index{rhoN@{rhoN}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoN}{rhoN}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhoN = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 109 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a93754216f295cfec96c6f7df89c6087b}\label{dynamic_var_declaration_8cpp_a93754216f295cfec96c6f7df89c6087b}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhoResArr@{rhoResArr}}
+\index{rhoResArr@{rhoResArr}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhoResArr}{rhoResArr}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rho\+Res\+Arr = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 119 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a5c4522f34d92489bb4d15ed0fb34e8c9}\label{dynamic_var_declaration_8cpp_a5c4522f34d92489bb4d15ed0fb34e8c9}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhou@{rhou}}
+\index{rhou@{rhou}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhou}{rhou}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhou = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 105 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_ad01ed951d6e10e72fc75230747b49160}\label{dynamic_var_declaration_8cpp_ad01ed951d6e10e72fc75230747b49160}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhou0@{rhou0}}
+\index{rhou0@{rhou0}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhou0}{rhou0}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhou0 = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 115 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_abf10c5a688928709a31b53e91ea88eff}\label{dynamic_var_declaration_8cpp_abf10c5a688928709a31b53e91ea88eff}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhouN@{rhouN}}
+\index{rhouN@{rhouN}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhouN}{rhouN}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhouN = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 110 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a0be90383501e8489e34cb3d99253410d}\label{dynamic_var_declaration_8cpp_a0be90383501e8489e34cb3d99253410d}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhouResArr@{rhouResArr}}
+\index{rhouResArr@{rhouResArr}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhouResArr}{rhouResArr}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhou\+Res\+Arr = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 120 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a257717878b3132746c6ce4e41b6d7f39}\label{dynamic_var_declaration_8cpp_a257717878b3132746c6ce4e41b6d7f39}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhov@{rhov}}
+\index{rhov@{rhov}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhov}{rhov}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhov = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 106 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_adb93a408244c44751c9de812382bb673}\label{dynamic_var_declaration_8cpp_adb93a408244c44751c9de812382bb673}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhov0@{rhov0}}
+\index{rhov0@{rhov0}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhov0}{rhov0}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhov0 = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 116 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_ae161ae2471a5fc5f00220073a8e3643b}\label{dynamic_var_declaration_8cpp_ae161ae2471a5fc5f00220073a8e3643b}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhovN@{rhovN}}
+\index{rhovN@{rhovN}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhovN}{rhovN}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhovN = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 111 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_adff6c5a83de1167377f41c7068686d84}\label{dynamic_var_declaration_8cpp_adff6c5a83de1167377f41c7068686d84}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!rhovResArr@{rhovResArr}}
+\index{rhovResArr@{rhovResArr}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{rhovResArr}{rhovResArr}}
+{\footnotesize\ttfamily double$\ast$$\ast$ rhov\+Res\+Arr = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 121 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a53ded1e3ef39a15ff101a1dadfcc181c}\label{dynamic_var_declaration_8cpp_a53ded1e3ef39a15ff101a1dadfcc181c}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!stiffMatrixCoeffs@{stiffMatrixCoeffs}}
+\index{stiffMatrixCoeffs@{stiffMatrixCoeffs}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{stiffMatrixCoeffs}{stiffMatrixCoeffs}}
+{\footnotesize\ttfamily double$\ast$$\ast$ stiff\+Matrix\+Coeffs = new double$\ast$\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 248 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_a0942a62e1f167158fa91f28526a4d1cb}\label{dynamic_var_declaration_8cpp_a0942a62e1f167158fa91f28526a4d1cb}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!theta1Arr@{theta1Arr}}
+\index{theta1Arr@{theta1Arr}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{theta1Arr}{theta1Arr}}
+{\footnotesize\ttfamily double$\ast$ theta1\+Arr = new double\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 251 of file dynamic\+Var\+Declaration.\+cpp.
+
+\mbox{\Hypertarget{dynamic_var_declaration_8cpp_aae30fd7ecb4df760a5923222f8117a80}\label{dynamic_var_declaration_8cpp_aae30fd7ecb4df760a5923222f8117a80}} 
+\index{dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}!theta2Arr@{theta2Arr}}
+\index{theta2Arr@{theta2Arr}!dynamicVarDeclaration.cpp@{dynamicVarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{theta2Arr}{theta2Arr}}
+{\footnotesize\ttfamily double$\ast$ theta2\+Arr = new double\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 252 of file dynamic\+Var\+Declaration.\+cpp.
+

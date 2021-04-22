@@ -1,0 +1,158 @@
+\hypertarget{namespaceparallel_functions}{}\doxysection{parallel\+Functions Namespace Reference}
+\label{namespaceparallel_functions}\index{parallelFunctions@{parallelFunctions}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceparallel_functions_a6ab259ef0390ef4d67416f5aafc71102}{get\+Gauss\+Point\+Coors\+Of\+Neighbor\+Cell}} (int loc, int nG)
+\begin{DoxyCompactList}\small\item\em Function get Gauss point coordinates of neighbor cell which belongs to another master core. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a228566924177aa96fee73d92980af61a}{prepare\+Parallel\+Case}} ()
+\begin{DoxyCompactList}\small\item\em Function prepare case for parallel running. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a4dabb6b09312e950232916d07b043b1b}{send\+Recv\+Discreted\+Var}} (int sending\+Proc, int receiving\+Proc, double $\ast$$\ast$Var, double $\ast$$\ast$Buffer, int order)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a9c8a573def9a5aff4588d0ba1d51c540}{send\+Recv\+Theta}} (int sending\+Proc, int receiving\+Proc, double $\ast$theta\+Array, double $\ast$Buffer)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_abe9b0c0b85be4b5ff8c20222670cab1b}{send\+ReceiveU}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a576ab16475e72c1949746d15eec4ea37}{send\+ReceivedU}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_ac478879ba87ab23f15d508b82ea56481}{send\+Received\+Rho}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a8819b7365867550f8e92fab0057445db}{send\+Received\+Rho\+\_\+for\+Mass\+Diff\+Only}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a30e368cb41e5ff50fa28829a9a2d9add}{send\+Receive\+Mesh\+Data}} (int vertex, int dir, double $\ast$$\ast$Buffer)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_af92899efe42e1e9a1e441c10cdbffe95}{send\+String}} (std\+::string content, int destination, int tag)
+\item 
+std\+::string \mbox{\hyperlink{namespaceparallel_functions_a21ed6df52485b59b963acbb16c996b85}{receive\+String}} (int source, int tag)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparallel_functions_a6ab259ef0390ef4d67416f5aafc71102}\label{namespaceparallel_functions_a6ab259ef0390ef4d67416f5aafc71102}} 
+\index{parallelFunctions@{parallelFunctions}!getGaussPointCoorsOfNeighborCell@{getGaussPointCoorsOfNeighborCell}}
+\index{getGaussPointCoorsOfNeighborCell@{getGaussPointCoorsOfNeighborCell}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{getGaussPointCoorsOfNeighborCell()}{getGaussPointCoorsOfNeighborCell()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ parallel\+Functions\+::get\+Gauss\+Point\+Coors\+Of\+Neighbor\+Cell (\begin{DoxyParamCaption}\item[{int}]{loc,  }\item[{int}]{nG }\end{DoxyParamCaption})}
+
+
+
+Function get Gauss point coordinates of neighbor cell which belongs to another master core. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em loc} & adress of neighor cell in buffer arrays, can be got using \mbox{\hyperlink{namespaceparallel_functions_a6ab259ef0390ef4d67416f5aafc71102}{parallel\+Functions\+::get\+Gauss\+Point\+Coors\+Of\+Neighbor\+Cell}} function. \\
+\hline
+{\em nG} & Gauss point Id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line 15 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a228566924177aa96fee73d92980af61a}\label{namespaceparallel_functions_a228566924177aa96fee73d92980af61a}} 
+\index{parallelFunctions@{parallelFunctions}!prepareParallelCase@{prepareParallelCase}}
+\index{prepareParallelCase@{prepareParallelCase}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{prepareParallelCase()}{prepareParallelCase()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::prepare\+Parallel\+Case (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function prepare case for parallel running. 
+
+
+
+Definition at line 24 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a21ed6df52485b59b963acbb16c996b85}\label{namespaceparallel_functions_a21ed6df52485b59b963acbb16c996b85}} 
+\index{parallelFunctions@{parallelFunctions}!receiveString@{receiveString}}
+\index{receiveString@{receiveString}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{receiveString()}{receiveString()}}
+{\footnotesize\ttfamily std\+::string parallel\+Functions\+::receive\+String (\begin{DoxyParamCaption}\item[{int}]{source,  }\item[{int}]{tag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 320 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_ac478879ba87ab23f15d508b82ea56481}\label{namespaceparallel_functions_ac478879ba87ab23f15d508b82ea56481}} 
+\index{parallelFunctions@{parallelFunctions}!sendReceivedRho@{sendReceivedRho}}
+\index{sendReceivedRho@{sendReceivedRho}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendReceivedRho()}{sendReceivedRho()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+Received\+Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 198 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a8819b7365867550f8e92fab0057445db}\label{namespaceparallel_functions_a8819b7365867550f8e92fab0057445db}} 
+\index{parallelFunctions@{parallelFunctions}!sendReceivedRho\_forMassDiffOnly@{sendReceivedRho\_forMassDiffOnly}}
+\index{sendReceivedRho\_forMassDiffOnly@{sendReceivedRho\_forMassDiffOnly}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendReceivedRho\_forMassDiffOnly()}{sendReceivedRho\_forMassDiffOnly()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+Received\+Rho\+\_\+for\+Mass\+Diff\+Only (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 220 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a576ab16475e72c1949746d15eec4ea37}\label{namespaceparallel_functions_a576ab16475e72c1949746d15eec4ea37}} 
+\index{parallelFunctions@{parallelFunctions}!sendReceivedU@{sendReceivedU}}
+\index{sendReceivedU@{sendReceivedU}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendReceivedU()}{sendReceivedU()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+ReceivedU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 167 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a30e368cb41e5ff50fa28829a9a2d9add}\label{namespaceparallel_functions_a30e368cb41e5ff50fa28829a9a2d9add}} 
+\index{parallelFunctions@{parallelFunctions}!sendReceiveMeshData@{sendReceiveMeshData}}
+\index{sendReceiveMeshData@{sendReceiveMeshData}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendReceiveMeshData()}{sendReceiveMeshData()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+Receive\+Mesh\+Data (\begin{DoxyParamCaption}\item[{int}]{vertex,  }\item[{int}]{dir,  }\item[{double $\ast$$\ast$}]{Buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 242 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_abe9b0c0b85be4b5ff8c20222670cab1b}\label{namespaceparallel_functions_abe9b0c0b85be4b5ff8c20222670cab1b}} 
+\index{parallelFunctions@{parallelFunctions}!sendReceiveU@{sendReceiveU}}
+\index{sendReceiveU@{sendReceiveU}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendReceiveU()}{sendReceiveU()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+ReceiveU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 150 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a4dabb6b09312e950232916d07b043b1b}\label{namespaceparallel_functions_a4dabb6b09312e950232916d07b043b1b}} 
+\index{parallelFunctions@{parallelFunctions}!sendRecvDiscretedVar@{sendRecvDiscretedVar}}
+\index{sendRecvDiscretedVar@{sendRecvDiscretedVar}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendRecvDiscretedVar()}{sendRecvDiscretedVar()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+Recv\+Discreted\+Var (\begin{DoxyParamCaption}\item[{int}]{sending\+Proc,  }\item[{int}]{receiving\+Proc,  }\item[{double $\ast$$\ast$}]{Var,  }\item[{double $\ast$$\ast$}]{Buffer,  }\item[{int}]{order }\end{DoxyParamCaption})}
+
+
+
+Definition at line 38 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_a9c8a573def9a5aff4588d0ba1d51c540}\label{namespaceparallel_functions_a9c8a573def9a5aff4588d0ba1d51c540}} 
+\index{parallelFunctions@{parallelFunctions}!sendRecvTheta@{sendRecvTheta}}
+\index{sendRecvTheta@{sendRecvTheta}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendRecvTheta()}{sendRecvTheta()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+Recv\+Theta (\begin{DoxyParamCaption}\item[{int}]{sending\+Proc,  }\item[{int}]{receiving\+Proc,  }\item[{double $\ast$}]{theta\+Array,  }\item[{double $\ast$}]{Buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 94 of file parallel\+Functions.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_functions_af92899efe42e1e9a1e441c10cdbffe95}\label{namespaceparallel_functions_af92899efe42e1e9a1e441c10cdbffe95}} 
+\index{parallelFunctions@{parallelFunctions}!sendString@{sendString}}
+\index{sendString@{sendString}!parallelFunctions@{parallelFunctions}}
+\doxysubsubsection{\texorpdfstring{sendString()}{sendString()}}
+{\footnotesize\ttfamily void parallel\+Functions\+::send\+String (\begin{DoxyParamCaption}\item[{std\+::string}]{content,  }\item[{int}]{destination,  }\item[{int}]{tag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 315 of file parallel\+Functions.\+cpp.
+

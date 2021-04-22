@@ -1,0 +1,124 @@
+\hypertarget{namespacemath_1_1numerical_fluxes}{}\doxysection{math\+::numerical\+Fluxes Namespace Reference}
+\label{namespacemath_1_1numerical_fluxes}\index{math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a97b0d81e81827f8c81435533d785b72e}{cal\+Convective\+Fluxes}} (int edge\+Id, std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fxP, std\+::vector$<$ double $>$ \&fxM, std\+::vector$<$ double $>$ \&fyP, std\+::vector$<$ double $>$ \&fyM, std\+::vector$<$ double $>$ \&UP, std\+::vector$<$ double $>$ \&UM, double TP, double TM, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a446629b3941a396ef958d70e5eac431b}{Lx\+F\+Flux}} (int edge\+Id, std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fxP, std\+::vector$<$ double $>$ \&fxM, std\+::vector$<$ double $>$ \&fyP, std\+::vector$<$ double $>$ \&fyM, std\+::vector$<$ double $>$ \&U\+GP, std\+::vector$<$ double $>$ \&U\+GM, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a51f23902a517c52a9983c59334ba0e2a}{central\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fxP, std\+::vector$<$ double $>$ \&fxM, std\+::vector$<$ double $>$ \&fyP, std\+::vector$<$ double $>$ \&fyM, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a06e6977218da7b268ad8168ee09490be}{Roe\+Average\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fx\+Plus, std\+::vector$<$ double $>$ \&fx\+Minus, std\+::vector$<$ double $>$ \&U\+L\+Plus, std\+::vector$<$ double $>$ \&U\+L\+Minus, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_ab5b18d553b3b6662bd74b04376fa154b}{H\+L\+L\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fx\+Plus, std\+::vector$<$ double $>$ \&fx\+Minus, std\+::vector$<$ double $>$ \&U\+L\+Plus, std\+::vector$<$ double $>$ \&U\+L\+Minus, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a0aa9f485d6264374cf4b9e2b7012fc9a}{H\+L\+L\+C\+Flux}} (std\+::vector$<$ double $>$ \&flux, std\+::vector$<$ double $>$ \&fx\+Plus, std\+::vector$<$ double $>$ \&fx\+Minus, std\+::vector$<$ double $>$ \&U\+L\+Plus, std\+::vector$<$ double $>$ \&U\+L\+Minus, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&vectorn)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_abf2812c4cc018bb690a2850d8d600b83}{aux\+Flux}} (double Minus\+Val, double Plus\+Var, double vector\+Comp)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a05e9682efabeb3281114d19e86022934}{constantC}} (double u\+MagP, double u\+MagM, double aP, double aM)
+\item 
+void \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a7abe4166082d67da1685e7c89ea100a0}{find\+Max\+Lx\+F\+Constant\+On\+Edge}} (int iedge, int master\+Cell)
+\item 
+double \mbox{\hyperlink{namespacemath_1_1numerical_fluxes_a5dae53908ed68a6418fc2945d5a46630}{constant\+Beta}} (double rhoP, double rhoM, double eP, double eM, std\+::vector$<$ std\+::vector$<$ double $>$$>$ stress\+Heat\+FluxP, std\+::vector$<$ std\+::vector$<$ double $>$$>$ stress\+Heat\+FluxM, std\+::vector$<$ double $>$ nP)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_abf2812c4cc018bb690a2850d8d600b83}\label{namespacemath_1_1numerical_fluxes_abf2812c4cc018bb690a2850d8d600b83}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!auxFlux@{auxFlux}}
+\index{auxFlux@{auxFlux}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{auxFlux()}{auxFlux()}}
+{\footnotesize\ttfamily double math\+::numerical\+Fluxes\+::aux\+Flux (\begin{DoxyParamCaption}\item[{double}]{Minus\+Val,  }\item[{double}]{Plus\+Var,  }\item[{double}]{vector\+Comp }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2472 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a97b0d81e81827f8c81435533d785b72e}\label{namespacemath_1_1numerical_fluxes_a97b0d81e81827f8c81435533d785b72e}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!calConvectiveFluxes@{calConvectiveFluxes}}
+\index{calConvectiveFluxes@{calConvectiveFluxes}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{calConvectiveFluxes()}{calConvectiveFluxes()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::cal\+Convective\+Fluxes (\begin{DoxyParamCaption}\item[{int}]{edge\+Id,  }\item[{std\+::vector$<$ double $>$ \&}]{flux,  }\item[{std\+::vector$<$ double $>$ \&}]{fxP,  }\item[{std\+::vector$<$ double $>$ \&}]{fxM,  }\item[{std\+::vector$<$ double $>$ \&}]{fyP,  }\item[{std\+::vector$<$ double $>$ \&}]{fyM,  }\item[{std\+::vector$<$ double $>$ \&}]{UP,  }\item[{std\+::vector$<$ double $>$ \&}]{UM,  }\item[{double}]{TP,  }\item[{double}]{TM,  }\item[{std\+::vector$<$ double $>$ \&}]{vectorn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2160 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a51f23902a517c52a9983c59334ba0e2a}\label{namespacemath_1_1numerical_fluxes_a51f23902a517c52a9983c59334ba0e2a}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!centralFlux@{centralFlux}}
+\index{centralFlux@{centralFlux}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{centralFlux()}{centralFlux()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::central\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{flux,  }\item[{std\+::vector$<$ double $>$ \&}]{fxP,  }\item[{std\+::vector$<$ double $>$ \&}]{fxM,  }\item[{std\+::vector$<$ double $>$ \&}]{fyP,  }\item[{std\+::vector$<$ double $>$ \&}]{fyM,  }\item[{std\+::vector$<$ double $>$ \&}]{vectorn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2207 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a5dae53908ed68a6418fc2945d5a46630}\label{namespacemath_1_1numerical_fluxes_a5dae53908ed68a6418fc2945d5a46630}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!constantBeta@{constantBeta}}
+\index{constantBeta@{constantBeta}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{constantBeta()}{constantBeta()}}
+{\footnotesize\ttfamily double math\+::numerical\+Fluxes\+::constant\+Beta (\begin{DoxyParamCaption}\item[{double}]{rhoP,  }\item[{double}]{rhoM,  }\item[{double}]{eP,  }\item[{double}]{eM,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$}]{stress\+Heat\+FluxP,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$}]{stress\+Heat\+FluxM,  }\item[{std\+::vector$<$ double $>$}]{nP }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a05e9682efabeb3281114d19e86022934}\label{namespacemath_1_1numerical_fluxes_a05e9682efabeb3281114d19e86022934}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!constantC@{constantC}}
+\index{constantC@{constantC}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{constantC()}{constantC()}}
+{\footnotesize\ttfamily double math\+::numerical\+Fluxes\+::constantC (\begin{DoxyParamCaption}\item[{double}]{u\+MagP,  }\item[{double}]{u\+MagM,  }\item[{double}]{aP,  }\item[{double}]{aM }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2479 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a7abe4166082d67da1685e7c89ea100a0}\label{namespacemath_1_1numerical_fluxes_a7abe4166082d67da1685e7c89ea100a0}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!findMaxLxFConstantOnEdge@{findMaxLxFConstantOnEdge}}
+\index{findMaxLxFConstantOnEdge@{findMaxLxFConstantOnEdge}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{findMaxLxFConstantOnEdge()}{findMaxLxFConstantOnEdge()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::find\+Max\+Lx\+F\+Constant\+On\+Edge (\begin{DoxyParamCaption}\item[{int}]{iedge,  }\item[{int}]{master\+Cell }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2489 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a0aa9f485d6264374cf4b9e2b7012fc9a}\label{namespacemath_1_1numerical_fluxes_a0aa9f485d6264374cf4b9e2b7012fc9a}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!HLLCFlux@{HLLCFlux}}
+\index{HLLCFlux@{HLLCFlux}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{HLLCFlux()}{HLLCFlux()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::\+H\+L\+L\+C\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{flux,  }\item[{std\+::vector$<$ double $>$ \&}]{fx\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{fx\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+L\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+L\+Minus,  }\item[{double}]{T\+Plus,  }\item[{double}]{T\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{vectorn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2384 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_ab5b18d553b3b6662bd74b04376fa154b}\label{namespacemath_1_1numerical_fluxes_ab5b18d553b3b6662bd74b04376fa154b}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!HLLFlux@{HLLFlux}}
+\index{HLLFlux@{HLLFlux}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{HLLFlux()}{HLLFlux()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::\+H\+L\+L\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{flux,  }\item[{std\+::vector$<$ double $>$ \&}]{fx\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{fx\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+L\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+L\+Minus,  }\item[{double}]{T\+Plus,  }\item[{double}]{T\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{vectorn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2297 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a446629b3941a396ef958d70e5eac431b}\label{namespacemath_1_1numerical_fluxes_a446629b3941a396ef958d70e5eac431b}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!LxFFlux@{LxFFlux}}
+\index{LxFFlux@{LxFFlux}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{LxFFlux()}{LxFFlux()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::\+Lx\+F\+Flux (\begin{DoxyParamCaption}\item[{int}]{edge\+Id,  }\item[{std\+::vector$<$ double $>$ \&}]{flux,  }\item[{std\+::vector$<$ double $>$ \&}]{fxP,  }\item[{std\+::vector$<$ double $>$ \&}]{fxM,  }\item[{std\+::vector$<$ double $>$ \&}]{fyP,  }\item[{std\+::vector$<$ double $>$ \&}]{fyM,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+GP,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+GM,  }\item[{std\+::vector$<$ double $>$ \&}]{vectorn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2192 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_1_1numerical_fluxes_a06e6977218da7b268ad8168ee09490be}\label{namespacemath_1_1numerical_fluxes_a06e6977218da7b268ad8168ee09490be}} 
+\index{math::numericalFluxes@{math::numericalFluxes}!RoeAverageFlux@{RoeAverageFlux}}
+\index{RoeAverageFlux@{RoeAverageFlux}!math::numericalFluxes@{math::numericalFluxes}}
+\doxysubsubsection{\texorpdfstring{RoeAverageFlux()}{RoeAverageFlux()}}
+{\footnotesize\ttfamily void math\+::numerical\+Fluxes\+::\+Roe\+Average\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{flux,  }\item[{std\+::vector$<$ double $>$ \&}]{fx\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{fx\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+L\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+L\+Minus,  }\item[{double}]{T\+Plus,  }\item[{double}]{T\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{vectorn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2223 of file D\+G\+Math.\+cpp.
+

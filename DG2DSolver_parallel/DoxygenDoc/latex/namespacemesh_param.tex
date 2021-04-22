@@ -1,0 +1,169 @@
+\hypertarget{namespacemesh_param}{}\doxysection{mesh\+Param Namespace Reference}
+\label{namespacemesh_param}\index{meshParam@{meshParam}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacemesh_param_a5d3cdc017263ee950632d2dcf7779b61}{gen\+Based\+Gauss\+Pts\+Vectors}} ()
+\item 
+void \mbox{\hyperlink{namespacemesh_param_a889a9a227ecdd5b6be6cb7521ab2a19d}{Gauss\+Param}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates coordinates and weights of Gauss Points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_a831751093fc91fa674d7c0a31e48a85b}{Jacobian\+Param}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates Jacobian of 2D element at all volume Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ac70c72a139cbf54e6390768b4414dcd2}{basis\+Fc\+Param}} ()
+\begin{DoxyCompactList}\small\item\em Function calculate basis function at all volume Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_aa5bace80b8395f2d7c41ed9bdd10dce3}{deriv\+Coordinates}} ()
+\begin{DoxyCompactList}\small\item\em Function saves coordinates derivatives at all Gauss points to array. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_adc9e81829592780594c471b115dc309e}{calc\+Cell\+Metrics}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates cell metrics\+: \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ae06eda928011b26288d52badb151eb62}{calc\+Edge\+Length}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates length of edge. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ad4dc8debc5bf4766b78b3f7d3d90ef63}{calc\+Stiff\+Matrix\+Coeffs}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates coefficients of stiff matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_a2fe11558987e813aa03beb5a47bd2824}{calc\+Distance\+From\+Center\+To\+B\+C\+Edge}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates distance from cell center to boundary edge. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ad0200543d51a609dd5b3b52a4e1d049e}{find\+Norm\+Projection\+Of\+Center\+To\+B\+C\+Edge}} ()
+\begin{DoxyCompactList}\small\item\em Function finds normal projection of cell center to boundary edge. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacemesh_param_ac70c72a139cbf54e6390768b4414dcd2}\label{namespacemesh_param_ac70c72a139cbf54e6390768b4414dcd2}} 
+\index{meshParam@{meshParam}!basisFcParam@{basisFcParam}}
+\index{basisFcParam@{basisFcParam}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{basisFcParam()}{basisFcParam()}}
+{\footnotesize\ttfamily void mesh\+Param\+::basis\+Fc\+Param (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculate basis function at all volume Gauss points. 
+
+
+
+Definition at line 86 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_adc9e81829592780594c471b115dc309e}\label{namespacemesh_param_adc9e81829592780594c471b115dc309e}} 
+\index{meshParam@{meshParam}!calcCellMetrics@{calcCellMetrics}}
+\index{calcCellMetrics@{calcCellMetrics}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{calcCellMetrics()}{calcCellMetrics()}}
+{\footnotesize\ttfamily void mesh\+Param\+::calc\+Cell\+Metrics (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates cell metrics\+: 
+
+
+\begin{DoxyItemize}
+\item Geometric Center
+\item Cell size. For Tri cell\+: Radius of Inscribed Circle of element. For Quad cell\+: longest diagonal line.
+\item Local Cell size. This size is used for p\+Adaptive limiter. 
+\end{DoxyItemize}
+
+Definition at line 163 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_a2fe11558987e813aa03beb5a47bd2824}\label{namespacemesh_param_a2fe11558987e813aa03beb5a47bd2824}} 
+\index{meshParam@{meshParam}!calcDistanceFromCenterToBCEdge@{calcDistanceFromCenterToBCEdge}}
+\index{calcDistanceFromCenterToBCEdge@{calcDistanceFromCenterToBCEdge}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{calcDistanceFromCenterToBCEdge()}{calcDistanceFromCenterToBCEdge()}}
+{\footnotesize\ttfamily void mesh\+Param\+::calc\+Distance\+From\+Center\+To\+B\+C\+Edge (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates distance from cell center to boundary edge. 
+
+
+
+Definition at line 246 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_ae06eda928011b26288d52badb151eb62}\label{namespacemesh_param_ae06eda928011b26288d52badb151eb62}} 
+\index{meshParam@{meshParam}!calcEdgeLength@{calcEdgeLength}}
+\index{calcEdgeLength@{calcEdgeLength}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{calcEdgeLength()}{calcEdgeLength()}}
+{\footnotesize\ttfamily void mesh\+Param\+::calc\+Edge\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates length of edge. 
+
+This length is also 1D Jacobian of edge. 
+
+Definition at line 213 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_ad4dc8debc5bf4766b78b3f7d3d90ef63}\label{namespacemesh_param_ad4dc8debc5bf4766b78b3f7d3d90ef63}} 
+\index{meshParam@{meshParam}!calcStiffMatrixCoeffs@{calcStiffMatrixCoeffs}}
+\index{calcStiffMatrixCoeffs@{calcStiffMatrixCoeffs}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{calcStiffMatrixCoeffs()}{calcStiffMatrixCoeffs()}}
+{\footnotesize\ttfamily void mesh\+Param\+::calc\+Stiff\+Matrix\+Coeffs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates coefficients of stiff matrix. 
+
+
+
+Definition at line 228 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_aa5bace80b8395f2d7c41ed9bdd10dce3}\label{namespacemesh_param_aa5bace80b8395f2d7c41ed9bdd10dce3}} 
+\index{meshParam@{meshParam}!derivCoordinates@{derivCoordinates}}
+\index{derivCoordinates@{derivCoordinates}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{derivCoordinates()}{derivCoordinates()}}
+{\footnotesize\ttfamily void mesh\+Param\+::deriv\+Coordinates (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function saves coordinates derivatives at all Gauss points to array. 
+
+
+
+Definition at line 124 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_ad0200543d51a609dd5b3b52a4e1d049e}\label{namespacemesh_param_ad0200543d51a609dd5b3b52a4e1d049e}} 
+\index{meshParam@{meshParam}!findNormProjectionOfCenterToBCEdge@{findNormProjectionOfCenterToBCEdge}}
+\index{findNormProjectionOfCenterToBCEdge@{findNormProjectionOfCenterToBCEdge}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{findNormProjectionOfCenterToBCEdge()}{findNormProjectionOfCenterToBCEdge()}}
+{\footnotesize\ttfamily void mesh\+Param\+::find\+Norm\+Projection\+Of\+Center\+To\+B\+C\+Edge (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function finds normal projection of cell center to boundary edge. 
+
+
+
+Definition at line 264 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_a889a9a227ecdd5b6be6cb7521ab2a19d}\label{namespacemesh_param_a889a9a227ecdd5b6be6cb7521ab2a19d}} 
+\index{meshParam@{meshParam}!GaussParam@{GaussParam}}
+\index{GaussParam@{GaussParam}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{GaussParam()}{GaussParam()}}
+{\footnotesize\ttfamily void mesh\+Param\+::\+Gauss\+Param (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates coordinates and weights of Gauss Points. 
+
+
+
+Definition at line 40 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_a5d3cdc017263ee950632d2dcf7779b61}\label{namespacemesh_param_a5d3cdc017263ee950632d2dcf7779b61}} 
+\index{meshParam@{meshParam}!genBasedGaussPtsVectors@{genBasedGaussPtsVectors}}
+\index{genBasedGaussPtsVectors@{genBasedGaussPtsVectors}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{genBasedGaussPtsVectors()}{genBasedGaussPtsVectors()}}
+{\footnotesize\ttfamily void mesh\+Param\+::gen\+Based\+Gauss\+Pts\+Vectors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacemesh_param_a831751093fc91fa674d7c0a31e48a85b}\label{namespacemesh_param_a831751093fc91fa674d7c0a31e48a85b}} 
+\index{meshParam@{meshParam}!JacobianParam@{JacobianParam}}
+\index{JacobianParam@{JacobianParam}!meshParam@{meshParam}}
+\doxysubsubsection{\texorpdfstring{JacobianParam()}{JacobianParam()}}
+{\footnotesize\ttfamily void mesh\+Param\+::\+Jacobian\+Param (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates Jacobian of 2D element at all volume Gauss points. 
+
+
+
+Definition at line 63 of file D\+G\+Proc\+Lib.\+cpp.
+

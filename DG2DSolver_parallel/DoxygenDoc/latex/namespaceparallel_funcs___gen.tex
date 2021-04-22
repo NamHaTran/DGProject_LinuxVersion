@@ -1,0 +1,94 @@
+\hypertarget{namespaceparallel_funcs___gen}{}\doxysection{parallel\+Funcs\+\_\+\+Gen Namespace Reference}
+\label{namespaceparallel_funcs___gen}\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespaceparallel_funcs___gen_add018550380250534906207b7aa471b0}{prepare\+Parallel\+Case}} ()
+\begin{DoxyCompactList}\small\item\em Function get Gauss point coordinates of neighbor cell which belongs to another master core. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceparallel_funcs___gen_a9e6c248071f851915216ee22805bbdaf}{send\+Receive\+Mesh\+Data}} (int vertex, int dir, double $\ast$$\ast$Buffer)
+\item 
+void \mbox{\hyperlink{namespaceparallel_funcs___gen_a1314edb37155b3076236c23d7f005934}{send\+String}} (std\+::string content, int destination, int tag)
+\item 
+std\+::string \mbox{\hyperlink{namespaceparallel_funcs___gen_ab258b29db2c50c54c093b53885dcb9ed}{receive\+String}} (int source, int tag)
+\item 
+void \mbox{\hyperlink{namespaceparallel_funcs___gen_afcffaa03a8ee7f653fa35e25087a6acc}{resize\+Mesh\+Parallel\+Buffers}} ()
+\item 
+int \mbox{\hyperlink{namespaceparallel_funcs___gen_ae7eca150f53fb646a01c1031b1852d24}{get\+Matched\+Edge\+Id\+Of\+Cell}} (int element)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparallel_funcs___gen_ae7eca150f53fb646a01c1031b1852d24}\label{namespaceparallel_funcs___gen_ae7eca150f53fb646a01c1031b1852d24}} 
+\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}!getMatchedEdgeIdOfCell@{getMatchedEdgeIdOfCell}}
+\index{getMatchedEdgeIdOfCell@{getMatchedEdgeIdOfCell}!parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsubsection{\texorpdfstring{getMatchedEdgeIdOfCell()}{getMatchedEdgeIdOfCell()}}
+{\footnotesize\ttfamily int parallel\+Funcs\+\_\+\+Gen\+::get\+Matched\+Edge\+Id\+Of\+Cell (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 182 of file general\+Parallel\+Funcs.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_funcs___gen_add018550380250534906207b7aa471b0}\label{namespaceparallel_funcs___gen_add018550380250534906207b7aa471b0}} 
+\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}!prepareParallelCase@{prepareParallelCase}}
+\index{prepareParallelCase@{prepareParallelCase}!parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsubsection{\texorpdfstring{prepareParallelCase()}{prepareParallelCase()}}
+{\footnotesize\ttfamily void parallel\+Funcs\+\_\+\+Gen\+::prepare\+Parallel\+Case (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function get Gauss point coordinates of neighbor cell which belongs to another master core. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em loc} & adress of neighor cell in buffer arrays, can be got using parallel\+Functions\+::get\+Gauss\+Point\+Coors\+Of\+Neighbor\+Cell function. \\
+\hline
+{\em nG} & Gauss point Id. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+Function prepare case for parallel running 
+
+Definition at line 26 of file general\+Parallel\+Funcs.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_funcs___gen_ab258b29db2c50c54c093b53885dcb9ed}\label{namespaceparallel_funcs___gen_ab258b29db2c50c54c093b53885dcb9ed}} 
+\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}!receiveString@{receiveString}}
+\index{receiveString@{receiveString}!parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsubsection{\texorpdfstring{receiveString()}{receiveString()}}
+{\footnotesize\ttfamily std\+::string parallel\+Funcs\+\_\+\+Gen\+::receive\+String (\begin{DoxyParamCaption}\item[{int}]{source,  }\item[{int}]{tag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 118 of file general\+Parallel\+Funcs.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_funcs___gen_afcffaa03a8ee7f653fa35e25087a6acc}\label{namespaceparallel_funcs___gen_afcffaa03a8ee7f653fa35e25087a6acc}} 
+\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}!resizeMeshParallelBuffers@{resizeMeshParallelBuffers}}
+\index{resizeMeshParallelBuffers@{resizeMeshParallelBuffers}!parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsubsection{\texorpdfstring{resizeMeshParallelBuffers()}{resizeMeshParallelBuffers()}}
+{\footnotesize\ttfamily void parallel\+Funcs\+\_\+\+Gen\+::resize\+Mesh\+Parallel\+Buffers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 142 of file general\+Parallel\+Funcs.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_funcs___gen_a9e6c248071f851915216ee22805bbdaf}\label{namespaceparallel_funcs___gen_a9e6c248071f851915216ee22805bbdaf}} 
+\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}!sendReceiveMeshData@{sendReceiveMeshData}}
+\index{sendReceiveMeshData@{sendReceiveMeshData}!parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsubsection{\texorpdfstring{sendReceiveMeshData()}{sendReceiveMeshData()}}
+{\footnotesize\ttfamily void parallel\+Funcs\+\_\+\+Gen\+::send\+Receive\+Mesh\+Data (\begin{DoxyParamCaption}\item[{int}]{vertex,  }\item[{int}]{dir,  }\item[{double $\ast$$\ast$}]{Buffer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 40 of file general\+Parallel\+Funcs.\+cpp.
+
+\mbox{\Hypertarget{namespaceparallel_funcs___gen_a1314edb37155b3076236c23d7f005934}\label{namespaceparallel_funcs___gen_a1314edb37155b3076236c23d7f005934}} 
+\index{parallelFuncs\_Gen@{parallelFuncs\_Gen}!sendString@{sendString}}
+\index{sendString@{sendString}!parallelFuncs\_Gen@{parallelFuncs\_Gen}}
+\doxysubsubsection{\texorpdfstring{sendString()}{sendString()}}
+{\footnotesize\ttfamily void parallel\+Funcs\+\_\+\+Gen\+::send\+String (\begin{DoxyParamCaption}\item[{std\+::string}]{content,  }\item[{int}]{destination,  }\item[{int}]{tag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 113 of file general\+Parallel\+Funcs.\+cpp.
+

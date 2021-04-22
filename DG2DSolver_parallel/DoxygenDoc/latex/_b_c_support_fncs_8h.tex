@@ -1,0 +1,81 @@
+\hypertarget{_b_c_support_fncs_8h}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/boundary\+Conditions/\+B\+C\+Support\+Fncs.h File Reference}
+\label{_b_c_support_fncs_8h}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/boundaryConditions/BCSupportFncs.h@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/boundaryConditions/BCSupportFncs.h}}
+{\ttfamily \#include $<$vector$>$}\newline
+Include dependency graph for B\+C\+Support\+Fncs.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{_b_c_support_fncs_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_b_c_support_fncs_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs}{B\+C\+Support\+Fncs}}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs_1_1auxilary_b_cs}{B\+C\+Support\+Fncs\+::auxilary\+B\+Cs}}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs}{B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs}}
+\item 
+ \mbox{\hyperlink{namespace_b_c_support_fncs_1_1parallel}{B\+C\+Support\+Fncs\+::parallel}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespace_b_c_support_fncs_a17a1feeba92ff26231dcaf3a08efa51b}{B\+C\+Support\+Fncs\+::check\+Inflow}} (double u, double v, double nx, double ny)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a84e9fdbc838d800792f29381d73ccf74}{B\+C\+Support\+Fncs\+::decompseU}} (std\+::vector$<$ double $>$ \&pri\+Vars, const std\+::vector$<$ double $>$ \&U, double rhoX, double rhoY, double iniT, bool calcT)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a2f04db525a5792aea5abd5bc9486c445}{B\+C\+Support\+Fncs\+::decompsedU}} (std\+::vector$<$ double $>$ \&pri\+Vars, const std\+::vector$<$ double $>$ \&U, const std\+::vector$<$ double $>$ \&dU, double T)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a7d2fd0f2cc99e1f168263eb5d0b562f8}{B\+C\+Support\+Fncs\+::correct\+Pri\+Vars}} (int edge, int edge\+Grp, std\+::vector$<$ double $>$ \&pri\+VarsM, const std\+::vector$<$ double $>$ \&pri\+VarsP, const std\+::vector$<$ double $>$ \&pri\+Vars\+Mean, const std\+::vector$<$ double $>$ \&n, bool inflow)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a0cf5d9080e55d258f0d64ffc97c020ec}{B\+C\+Support\+Fncs\+::correct\+Pri\+Vars\+Grad}} (int edge\+Grp, std\+::vector$<$ double $>$ \&dpri\+Vars\+XM, std\+::vector$<$ double $>$ \&dpri\+Vars\+YM, const std\+::vector$<$ double $>$ \&dpri\+Vars\+XP, const std\+::vector$<$ double $>$ \&dpri\+Vars\+YP, const std\+::vector$<$ double $>$ \&UM, double TM, const std\+::vector$<$ double $>$ \&n, bool inflow)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_affe8c6a861d7c4e173347b5f00f8349c}{B\+C\+Support\+Fncs\+::correct\+Density}} (std\+::vector$<$ double $>$ \&pri\+VarsM, int edge\+Grp, const std\+::vector$<$ double $>$ \&pri\+VarsP)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_a0f53749bec83bc624e84e070c3f5d368}{B\+C\+Support\+Fncs\+::correct\+Velocity}} (int edge, int edge\+Grp, double uP, double u\+Mean, double vP, double v\+Mean, const std\+::vector$<$ double $>$ \&n, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_a2839780b0c91624d3372d46c7f957b5c}{B\+C\+Support\+Fncs\+::correct\+Velocity\+Grad}} (int edge\+Grp, double du\+XP, double du\+YP, bool inflow, const std\+::vector$<$ double $>$ \&n)
+\item 
+double \mbox{\hyperlink{namespace_b_c_support_fncs_a89d153810ce3c6078a9a56df7d0d1c42}{B\+C\+Support\+Fncs\+::correct\+Temperature}} (int edge, int edge\+Grp, double TP, double T\+Mean, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_aa7bfcf89000f34e1d8cf5e6f013e2732}{B\+C\+Support\+Fncs\+::correct\+Temperature\+Grad}} (int edge\+Grp, double d\+T\+XP, double d\+T\+YP, bool inflow, const std\+::vector$<$ double $>$ \&n)
+\item 
+double \mbox{\hyperlink{namespace_b_c_support_fncs_a5e094cbf4cd2df5edd56c85b87b8b9a8}{B\+C\+Support\+Fncs\+::correct\+Pressure}} (int edge, int edge\+Grp, double pP, double p\+Mean, bool inflow)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespace_b_c_support_fncs_a38343f939fa184980baf4f4d18e8c084}{B\+C\+Support\+Fncs\+::correct\+Pressure\+Grad}} (int edge\+Grp, double dp\+XP, double dp\+YP, bool inflow, const std\+::vector$<$ double $>$ \&n)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a045bb55f370f69b07d050b92aacc0a5c}{B\+C\+Support\+Fncs\+::reconstruct\+ConvectiveU}} (std\+::vector$<$ double $>$ \&U, const std\+::vector$<$ double $>$ \&pri\+Vars)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_a169ee236d4c326a9891393a8f86e7cec}{B\+C\+Support\+Fncs\+::reconstructdU}} (std\+::vector$<$ double $>$ \&dU, const std\+::vector$<$ double $>$ \&pri\+Vars, const std\+::vector$<$ double $>$ \&U)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1auxilary_b_cs_acc2ba3ff1dd6e4d984c41f3de45bca9e}{B\+C\+Support\+Fncs\+::auxilary\+B\+Cs\+::get\+U\+Plus}} (int edge, int nG, std\+::vector$<$ double $>$ \&U\+Plus)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1auxilary_b_cs_a37175bb1fb7ebb20a963f0560141f4bc}{B\+C\+Support\+Fncs\+::auxilary\+B\+Cs\+::calc\+U\+Mean}} (int element, std\+::vector$<$ double $>$ \&U\+Mean)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1auxilary_b_cs_a0b18985fced36e7d64d12ac6a87d7eff}{B\+C\+Support\+Fncs\+::auxilary\+B\+Cs\+::calc\+U\+Reversed\+Flow}} (int edge, int nG, std\+::vector$<$ double $>$ \&U)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a275f3c3d6c17be5d202df43ae6044b07}{B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::find\+Max\+Lx\+F\+Constant\+On\+Edge}} (int element, int edge)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_ab313d90c814e1701cd9f47567e3e9fc8}{B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::getd\+U\+Plus}} (int edge, int nG, std\+::vector$<$ double $>$ \&d\+U\+X\+Plus, std\+::vector$<$ double $>$ \&d\+U\+Y\+Plus)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a247b087b54cc7ba4fd1923a450edc8cb}{B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::calcd\+U\+Mean}} (int edge, int element, std\+::vector$<$ double $>$ \&d\+U\+X\+Mean, std\+::vector$<$ double $>$ \&d\+U\+Y\+Mean)
+\item 
+double \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_afa47551126c9e08163063e19ce0829fc}{B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::calc\+Total\+Energy}} (const std\+::vector$<$ double $>$ \&U\+Minus, double T, double drhoX, double drhoY)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a02356fbd057e4c00a9632beb365dd23d}{B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::\+N\+S\+F\+Eq\+Fluxes}} (int edge\+Id, std\+::vector$<$ double $>$ \&Fluxes, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&U\+Plus, std\+::vector$<$ double $>$ \&U\+Minus, std\+::vector$<$ double $>$ \&d\+U\+X\+Plus, std\+::vector$<$ double $>$ \&d\+U\+X\+Minus, std\+::vector$<$ double $>$ \&d\+U\+Y\+Plus, std\+::vector$<$ double $>$ \&d\+U\+Y\+Minus, std\+::vector$<$ double $>$ \&norm\+Vector)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1parallel_a4d3ed1fe636e3a1fbaa5ae0f974dfcbf}{B\+C\+Support\+Fncs\+::parallel\+::get\+U\+Minus\+\_\+total}} (int edge, int nG, std\+::vector$<$ double $>$ \&U\+Minus)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1parallel_a2c5624aab7d478425d75f055dd0261d8}{B\+C\+Support\+Fncs\+::parallel\+::get\+U\+Minus\+\_\+convective}} (int edge, int nG, std\+::vector$<$ double $>$ \&U\+Minus)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1parallel_a4fff72dc96716e4b093b83cc7779accc}{B\+C\+Support\+Fncs\+::parallel\+::getd\+U\+Minus}} (int edge, int nG, std\+::vector$<$ double $>$ \&d\+U\+Minus, int dir)
+\end{DoxyCompactItemize}

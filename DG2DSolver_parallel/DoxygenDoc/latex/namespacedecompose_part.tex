@@ -1,0 +1,128 @@
+\hypertarget{namespacedecompose_part}{}\doxysection{decompose\+Part Namespace Reference}
+\label{namespacedecompose_part}\index{decomposePart@{decomposePart}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacedecompose_part_ab2b19c53af49b787b807d9a5879728f6}{load\+Partitioned\+Mesh}} ()
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacedecompose_part_a44305c40a03166f47f0b13da0df0e651}{find\+Local\+Id\+Of\+Pts}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a5cdc426e58af9a2b9479c2c201162e50}{find\+Edge\+With\+B\+C\+Type\+Matched}} ()
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacedecompose_part_a25f65f07dca478921c5117f20e579737}{get\+Mesh\+Infor\+Of\+Ranks}} (std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$$>$$>$ \&\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a8908fa7d907b151ffbbabb9a57e4d906}{Points}}, std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&Elem1D, std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&Elem2D, std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&mesh\+Connection)
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a8182a7adf9fd398ad2832ddae3b5dac8}{decomposing\+Mesh}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_aa70b3f46e874388f9021f8903eb57cca}{decomposing\+Time0}} (std\+::string Loc)
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_aa419fc04964aa65e594ca5c69d9befa0}{decomposing\+Latest\+Time}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_aa7d8244dc4e878587bbe210b70a5a172}{distributing\+Discreted\+Var}} ()
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a481b5e88b2399a5f2c9122f00382f101}{export\+Partitioned\+Mesh}} (int rank, int npoin, int nelem2D, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a8908fa7d907b151ffbbabb9a57e4d906}{Points}}, std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&\mbox{\hyperlink{09012020-_unv_2_vardeclaration_8cpp_a56b713210b89395ed5291a22984c008a}{Elements2D}})
+\item 
+void \mbox{\hyperlink{namespacedecompose_part_a9853faee30e4a77e1442e2e275fe6fdb}{fix\+Partitioned\+Mesh}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacedecompose_part_aa419fc04964aa65e594ca5c69d9befa0}\label{namespacedecompose_part_aa419fc04964aa65e594ca5c69d9befa0}} 
+\index{decomposePart@{decomposePart}!decomposingLatestTime@{decomposingLatestTime}}
+\index{decomposingLatestTime@{decomposingLatestTime}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{decomposingLatestTime()}{decomposingLatestTime()}}
+{\footnotesize\ttfamily void decompose\+Part\+::decomposing\+Latest\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1400 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_a8182a7adf9fd398ad2832ddae3b5dac8}\label{namespacedecompose_part_a8182a7adf9fd398ad2832ddae3b5dac8}} 
+\index{decomposePart@{decomposePart}!decomposingMesh@{decomposingMesh}}
+\index{decomposingMesh@{decomposingMesh}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{decomposingMesh()}{decomposingMesh()}}
+{\footnotesize\ttfamily void decompose\+Part\+::decomposing\+Mesh (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1287 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_aa70b3f46e874388f9021f8903eb57cca}\label{namespacedecompose_part_aa70b3f46e874388f9021f8903eb57cca}} 
+\index{decomposePart@{decomposePart}!decomposingTime0@{decomposingTime0}}
+\index{decomposingTime0@{decomposingTime0}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{decomposingTime0()}{decomposingTime0()}}
+{\footnotesize\ttfamily void decompose\+Part\+::decomposing\+Time0 (\begin{DoxyParamCaption}\item[{std\+::string}]{Loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1383 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_aa7d8244dc4e878587bbe210b70a5a172}\label{namespacedecompose_part_aa7d8244dc4e878587bbe210b70a5a172}} 
+\index{decomposePart@{decomposePart}!distributingDiscretedVar@{distributingDiscretedVar}}
+\index{distributingDiscretedVar@{distributingDiscretedVar}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{distributingDiscretedVar()}{distributingDiscretedVar()}}
+{\footnotesize\ttfamily void decompose\+Part\+::distributing\+Discreted\+Var (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1413 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_a481b5e88b2399a5f2c9122f00382f101}\label{namespacedecompose_part_a481b5e88b2399a5f2c9122f00382f101}} 
+\index{decomposePart@{decomposePart}!exportPartitionedMesh@{exportPartitionedMesh}}
+\index{exportPartitionedMesh@{exportPartitionedMesh}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{exportPartitionedMesh()}{exportPartitionedMesh()}}
+{\footnotesize\ttfamily void decompose\+Part\+::export\+Partitioned\+Mesh (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{npoin,  }\item[{int}]{nelem2D,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{Points,  }\item[{std\+::vector$<$ std\+::vector$<$ int $>$$>$ \&}]{Elements2D }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1465 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_a5cdc426e58af9a2b9479c2c201162e50}\label{namespacedecompose_part_a5cdc426e58af9a2b9479c2c201162e50}} 
+\index{decomposePart@{decomposePart}!findEdgeWithBCTypeMatched@{findEdgeWithBCTypeMatched}}
+\index{findEdgeWithBCTypeMatched@{findEdgeWithBCTypeMatched}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{findEdgeWithBCTypeMatched()}{findEdgeWithBCTypeMatched()}}
+{\footnotesize\ttfamily void decompose\+Part\+::find\+Edge\+With\+B\+C\+Type\+Matched (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1144 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_a44305c40a03166f47f0b13da0df0e651}\label{namespacedecompose_part_a44305c40a03166f47f0b13da0df0e651}} 
+\index{decomposePart@{decomposePart}!findLocalIdOfPts@{findLocalIdOfPts}}
+\index{findLocalIdOfPts@{findLocalIdOfPts}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{findLocalIdOfPts()}{findLocalIdOfPts()}}
+{\footnotesize\ttfamily std\+::vector$<$ int $>$ decompose\+Part\+::find\+Local\+Id\+Of\+Pts (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1106 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_a9853faee30e4a77e1442e2e275fe6fdb}\label{namespacedecompose_part_a9853faee30e4a77e1442e2e275fe6fdb}} 
+\index{decomposePart@{decomposePart}!fixPartitionedMesh@{fixPartitionedMesh}}
+\index{fixPartitionedMesh@{fixPartitionedMesh}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{fixPartitionedMesh()}{fixPartitionedMesh()}}
+{\footnotesize\ttfamily void decompose\+Part\+::fix\+Partitioned\+Mesh (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1564 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_a25f65f07dca478921c5117f20e579737}\label{namespacedecompose_part_a25f65f07dca478921c5117f20e579737}} 
+\index{decomposePart@{decomposePart}!getMeshInforOfRanks@{getMeshInforOfRanks}}
+\index{getMeshInforOfRanks@{getMeshInforOfRanks}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{getMeshInforOfRanks()}{getMeshInforOfRanks()}}
+{\footnotesize\ttfamily std\+::vector$<$ int $>$ decompose\+Part\+::get\+Mesh\+Infor\+Of\+Ranks (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$$>$$>$ \&}]{Points,  }\item[{std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&}]{Elem1D,  }\item[{std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&}]{Elem2D,  }\item[{std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ int $>$$>$$>$ \&}]{mesh\+Connection }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1169 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacedecompose_part_ab2b19c53af49b787b807d9a5879728f6}\label{namespacedecompose_part_ab2b19c53af49b787b807d9a5879728f6}} 
+\index{decomposePart@{decomposePart}!loadPartitionedMesh@{loadPartitionedMesh}}
+\index{loadPartitionedMesh@{loadPartitionedMesh}!decomposePart@{decomposePart}}
+\doxysubsubsection{\texorpdfstring{loadPartitionedMesh()}{loadPartitionedMesh()}}
+{\footnotesize\ttfamily std\+::vector$<$ int $>$ decompose\+Part\+::load\+Partitioned\+Mesh (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1064 of file D\+G\+Mesh\+Reader\+Lib.\+cpp.
+

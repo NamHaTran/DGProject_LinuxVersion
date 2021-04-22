@@ -1,0 +1,125 @@
+\hypertarget{_d_g_limiter_lib_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+D\+G\+Limiter\+Lib.cpp File Reference}
+\label{_d_g_limiter_lib_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGLimiterLib.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGLimiterLib.cpp}}
+{\ttfamily \#include \char`\"{}D\+G\+Limiter\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Aux\+Ultilities\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Post\+Process\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Proc\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/\+D\+G\+B\+Cs\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$mpi.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}./parallel\+Functions/cell\+Data.\+h\char`\"{}}\newline
+Include dependency graph for D\+G\+Limiter\+Lib.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_limiter_lib_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacelimiter}{limiter}}
+\item 
+ \mbox{\hyperlink{namespacelimiter_1_1_pp}{limiter\+::\+Pp}}
+\item 
+ \mbox{\hyperlink{namespacelimiter_1_1p_adaptive}{limiter\+::p\+Adaptive}}
+\item 
+ \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter}{limiter\+::mass\+Diffusion\+Limiter}}
+\item 
+ \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter}}
+\item 
+ \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter}{limiter\+::math\+For\+Limiter}}
+\item 
+ \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp}{limiter\+::math\+For\+Limiter\+::\+Pp}}
+\item 
+ \mbox{\hyperlink{namespacetroubled_cell_detection}{troubled\+Cell\+Detection}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacelimiter_a53c37b651524677411fbf35e9525be29}{limiter\+::limiter\+\_\+1\+Step}} ()
+\item 
+void \mbox{\hyperlink{namespacelimiter_ab47bc0e2018548c7e3bf4076fa1eef55}{limiter\+::limit\+Rho\+\_\+\+Positivity\+Preserving}} ()
+\begin{DoxyCompactList}\small\item\em Function limits Rho by applying Positivity Preserving Limiter. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacelimiter_1_1_pp_a1668857a4cab91ec170b74a83c8de7fd}{limiter\+::\+Pp\+::limiter}} ()
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1_pp_a2a8d714ef93af2e62e469e7130c03d54}{limiter\+::\+Pp\+::initialise\+Theta\+Vector}} ()
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1_pp_a893e198435998cb2ea99585a6926296d}{limiter\+::\+Pp\+::calc\+Theta2}} (int element)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1_pp_a59814a46407485f68a970e401944eb6a}{limiter\+::\+Pp\+::calc\+Theta1}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1p_adaptive_a244d3b1e9096d7735a943607b4fa38ed}{limiter\+::p\+Adaptive\+::limiter}} ()
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1p_adaptive_a18e8a2eb23d85f96b71a5af358c7c091}{limiter\+::p\+Adaptive\+::limiter\+\_\+1\+Elem}} (int element, int val\+Type)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacelimiter_1_1p_adaptive_aeffc5a08f9632d0ccb8ee3711c20f1b8}{limiter\+::p\+Adaptive\+::p\+Adaptive\+Child\+Function\+\_\+\+Quad}} (int element, int val\+Type, double I\+Plus, double I\+Minus, double J\+Plus, double J\+Minus)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacelimiter_1_1p_adaptive_a0f9bd56e83ac8b91a4f5110f2314eb75}{limiter\+::p\+Adaptive\+::p\+Adaptive\+Child\+Function\+\_\+\+Tri}} (int element, int val\+Type, double I\+Plus, double I\+Minus, double J\+Minus)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_a8c5155e7112f6b76600ae090f888688f}{limiter\+::mass\+Diffusion\+Limiter\+::limiter}} ()
+\item 
+bool \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_abdd2f228c613cfadb506b77639d936e9}{limiter\+::mass\+Diffusion\+Limiter\+::check\+Trouble\+Cells}} ()
+\item 
+bool \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_af1ba52364d784cc08a33d52fe2ee38b2}{limiter\+::mass\+Diffusion\+Limiter\+::check\+Running}} ()
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a5ec49f5896bb72fc83cb1ca6f3d89b7c}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::limiter\+\_\+1step}} (int R\+K\+Order)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a28f9814c42419ec864796815a0c48511}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Volume\+Gauss\+Rho}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a671dfa5db3c23f083147ac36e51aa9aa}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Rho\+At\+Element\+Edge}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a92943d04a40a6fb435e2f3847292dca0}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::solve\+Div\+Rho}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ac8821099957c0db27173aaea693d3fb6}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Finv\+Fvis\+At\+Interface}} (int element)
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a879761ffece4509453cdda79f685d08a}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Finv\+Fvis\+In\+Volume}} (int element, int na, int nb)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a99bc6fdc427c9f530465a41483b2b423}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Vol\+Int\+Term1)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae224a7cc5217709d009a3a1e3cf9cccc}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Surf\+Int\+Term1)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a440adec5a3f0ab8109ba885b9c3005a4}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::solve\+Mass\+Equation}} (int R\+K\+Order, int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a596f64c4483961f955fa4dba67e41425}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Vol\+Integral\+Term}} (int element, std\+::vector$<$ double $>$ \&Vol\+Int\+Term1)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_acc8cedd90b006c56ae2a126a907568bf}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::update\+Variables}} ()
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae4d9e59ead42b4e36ea33c396a4269e3}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Min\+Rho\+Residual}} (int element)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a1e71e7de5410defccd861bab22b1e480}{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::point\+Rho0}} (int element, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a53a514def009c184f5c5d40ba4f84f00}{limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Min\+Rho}} (int element)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a3d0f690515c02fbb9650fe88cbd33ed5}{limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Rho\+Modified}} (int element, double a, double b, double theta1)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_ac627c0595de011f3edeaa147a4a46b12}{limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Min\+Mean\+Rhoe}} (int element, double theta1)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a64a1c133f8f1b6fbde5897bc6ddbe9f2}{limiter\+::math\+For\+Limiter\+::\+Pp\+::cal\+Rhoe\+From\+Conser\+Vars}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}})
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a41bd72deca587e2af00d385eb46771a0}{limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Theta1\+Coeff}} (double min\+Rho, double mean\+Rho)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_1_1_pp_a719df1ed6c484342d23f1b53202294c7}{limiter\+::math\+For\+Limiter\+::\+Pp\+::calc\+Theta2\+Coeff}} (double mean\+Rhoe, double min\+Rhoe, double mean\+Rho)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_a06ca2290037ff6128113d70b6d58d84d}{limiter\+::math\+For\+Limiter\+::minmod}} (std\+::vector$<$ double $>$ vector\+Arguments)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_af1bebcac636d985ea3d7e10f0c1df4c4}{limiter\+::math\+For\+Limiter\+::modified\+Minmod}} (std\+::vector$<$ double $>$ vector\+Arguments, double condition)
+\item 
+int \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_a46f83d4a09cbdf37c196ec9b22fa9e6c}{limiter\+::math\+For\+Limiter\+::get\+Sign\+Of\+Double}} (double input)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_aa6224c14100722b49488766eac217524}{limiter\+::math\+For\+Limiter\+::calM}} (int element, int val\+Type)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1math_for_limiter_a694e4da2c14d3ea71e67e171558ec145}{limiter\+::math\+For\+Limiter\+::get\+Neighbor\+Elements}} ()
+\item 
+bool \mbox{\hyperlink{namespacetroubled_cell_detection_aa0abe2b54cbdf60361263c2a991bd506}{troubled\+Cell\+Detection\+::check\+Troubled\+Cell}} (std\+::vector$<$ double $>$ Input\+Vector, double condition)
+\item 
+bool \mbox{\hyperlink{namespacetroubled_cell_detection_a179da1b13dcc8147cfcd31c752b9dfc8}{troubled\+Cell\+Detection\+::check\+Trouble\+Cell\+\_\+mass\+Diff}} (int elem)
+\end{DoxyCompactItemize}

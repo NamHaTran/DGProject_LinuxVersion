@@ -1,0 +1,48 @@
+\hypertarget{parallel_functions_8h}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/parallel\+Functions/parallel\+Functions.h File Reference}
+\label{parallel_functions_8h}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/parallelFunctions/parallelFunctions.h@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/parallelFunctions/parallelFunctions.h}}
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+Include dependency graph for parallel\+Functions.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=268pt]{parallel_functions_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{parallel_functions_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespaceparallel_functions}{parallel\+Functions}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceparallel_functions_a6ab259ef0390ef4d67416f5aafc71102}{parallel\+Functions\+::get\+Gauss\+Point\+Coors\+Of\+Neighbor\+Cell}} (int loc, int nG)
+\begin{DoxyCompactList}\small\item\em Function get Gauss point coordinates of neighbor cell which belongs to another master core. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a228566924177aa96fee73d92980af61a}{parallel\+Functions\+::prepare\+Parallel\+Case}} ()
+\begin{DoxyCompactList}\small\item\em Function prepare case for parallel running. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceparallel_functions_af92899efe42e1e9a1e441c10cdbffe95}{parallel\+Functions\+::send\+String}} (std\+::string content, int destination, int tag)
+\item 
+std\+::string \mbox{\hyperlink{namespaceparallel_functions_a21ed6df52485b59b963acbb16c996b85}{parallel\+Functions\+::receive\+String}} (int source, int tag)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a30e368cb41e5ff50fa28829a9a2d9add}{parallel\+Functions\+::send\+Receive\+Mesh\+Data}} (int vertex, int dir, double $\ast$$\ast$Buffer)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a4dabb6b09312e950232916d07b043b1b}{parallel\+Functions\+::send\+Recv\+Discreted\+Var}} (int sending\+Proc, int receiving\+Proc, double $\ast$$\ast$Var, double $\ast$$\ast$Buffer, int order)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a9c8a573def9a5aff4588d0ba1d51c540}{parallel\+Functions\+::send\+Recv\+Theta}} (int sending\+Proc, int receiving\+Proc, double $\ast$theta\+Array, double $\ast$Buffer)
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_abe9b0c0b85be4b5ff8c20222670cab1b}{parallel\+Functions\+::send\+ReceiveU}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a576ab16475e72c1949746d15eec4ea37}{parallel\+Functions\+::send\+ReceivedU}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_ac478879ba87ab23f15d508b82ea56481}{parallel\+Functions\+::send\+Received\+Rho}} ()
+\item 
+void \mbox{\hyperlink{namespaceparallel_functions_a8819b7365867550f8e92fab0057445db}{parallel\+Functions\+::send\+Received\+Rho\+\_\+for\+Mass\+Diff\+Only}} ()
+\end{DoxyCompactItemize}

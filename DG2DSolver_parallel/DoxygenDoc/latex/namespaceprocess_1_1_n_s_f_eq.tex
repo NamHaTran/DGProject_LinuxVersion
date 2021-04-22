@@ -1,0 +1,164 @@
+\hypertarget{namespaceprocess_1_1_n_s_f_eq}{}\doxysection{process\+::N\+S\+F\+Eq Namespace Reference}
+\label{namespaceprocess_1_1_n_s_f_eq}\index{process::NSFEq@{process::NSFEq}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ac3c03a2c171715f0c89953d6af19b8f8}{calc\+Local\+Inviscid\+Flux}} (std\+::vector$<$ double $>$ \&UG, std\+::vector$<$ double $>$ \&F\+LocalX, std\+::vector$<$ double $>$ \&F\+LocalY, std\+::vector$<$ double $>$ \&UL, std\+::vector$<$ double $>$ \&n, double drhoX, double drhoY, double T)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a006911c4c1f1ca9407fe3269b0bf98fe}{calc\+Local\+Viscous\+Flux}} (std\+::vector$<$ double $>$ \&UG, std\+::vector$<$ double $>$ \&d\+UX, std\+::vector$<$ double $>$ \&d\+UY, std\+::vector$<$ double $>$ \&F\+LocalX, std\+::vector$<$ double $>$ \&F\+LocalY, std\+::vector$<$ double $>$ \&n, double T)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a374a94b5b5599d5b826b29550bc69121}{calc\+Surface\+Flux}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ae76dfa6b98979b1ef48b52556a1ad005}{solve\+N\+S\+F\+Equation}} (int R\+K\+Order)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ae788422b4f3f84a3d0d8093f3bccb81e}{update\+Variables}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a2ee97dda49f814a198de68b5f2572e7c}{Calc\+R\+H\+S\+Term}} (int element, std\+::vector$<$ double $>$ \&term1\+R\+HS, std\+::vector$<$ double $>$ \&term2\+R\+HS, std\+::vector$<$ double $>$ \&term3\+R\+HS, std\+::vector$<$ double $>$ \&term4\+R\+HS)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ad15530334e25ab2bd0e835ea7f86340d}{calc\+Gauss\+Inviscid\+Term}} (int element, int na, int nb)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a792d5ce9db7aed6410399dee7478dfe8}{calc\+Gauss\+Viscous\+Term}} (int element, int na, int nb)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ab8a224da7458c30ad1f3c8724e9e15a8}{get\+Interfaces\+Fluxes}} (int edge, int element, int nG, int mod, int val\+Type)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a3243b8452b48b63682ed6604aa670c33}{calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Vol\+Int\+Term1, std\+::vector$<$ double $>$ \&Vol\+Int\+Term2, std\+::vector$<$ double $>$ \&Vol\+Int\+Term3, std\+::vector$<$ double $>$ \&Vol\+Int\+Term4)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a1fe2e510cf2711f55887dcbdfe114065}{calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Surf\+Int\+Term1, std\+::vector$<$ double $>$ \&Surf\+Int\+Term2, std\+::vector$<$ double $>$ \&Surf\+Int\+Term3, std\+::vector$<$ double $>$ \&Surf\+Int\+Term4)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a4416566bb508c0455af975c143ba1c94}{get\+Gauss\+Vector\+Of\+Conser\+Var\+Fluxes\+At\+Internal}} (int edge\+Name, int element, int n\+Gauss)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_aa37213e8da4ae2be7a489d4e0e9fb69d}{solve\+Time\+Marching}} (int element, std\+::vector$<$ double $>$ \&ddt\+Arr, std\+::vector$<$ double $>$ \&Un\+Arr, int R\+K\+Order, int var\+Type)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_ad15530334e25ab2bd0e835ea7f86340d}\label{namespaceprocess_1_1_n_s_f_eq_ad15530334e25ab2bd0e835ea7f86340d}} 
+\index{process::NSFEq@{process::NSFEq}!calcGaussInviscidTerm@{calcGaussInviscidTerm}}
+\index{calcGaussInviscidTerm@{calcGaussInviscidTerm}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcGaussInviscidTerm()}{calcGaussInviscidTerm()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ process\+::\+N\+S\+F\+Eq\+::calc\+Gauss\+Inviscid\+Term (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{na,  }\item[{int}]{nb }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2526 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a792d5ce9db7aed6410399dee7478dfe8}\label{namespaceprocess_1_1_n_s_f_eq_a792d5ce9db7aed6410399dee7478dfe8}} 
+\index{process::NSFEq@{process::NSFEq}!calcGaussViscousTerm@{calcGaussViscousTerm}}
+\index{calcGaussViscousTerm@{calcGaussViscousTerm}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcGaussViscousTerm()}{calcGaussViscousTerm()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ process\+::\+N\+S\+F\+Eq\+::calc\+Gauss\+Viscous\+Term (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{na,  }\item[{int}]{nb }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2581 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_ac3c03a2c171715f0c89953d6af19b8f8}\label{namespaceprocess_1_1_n_s_f_eq_ac3c03a2c171715f0c89953d6af19b8f8}} 
+\index{process::NSFEq@{process::NSFEq}!calcLocalInviscidFlux@{calcLocalInviscidFlux}}
+\index{calcLocalInviscidFlux@{calcLocalInviscidFlux}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcLocalInviscidFlux()}{calcLocalInviscidFlux()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::calc\+Local\+Inviscid\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{UG,  }\item[{std\+::vector$<$ double $>$ \&}]{F\+LocalX,  }\item[{std\+::vector$<$ double $>$ \&}]{F\+LocalY,  }\item[{std\+::vector$<$ double $>$ \&}]{UL,  }\item[{std\+::vector$<$ double $>$ \&}]{n,  }\item[{double}]{drhoX,  }\item[{double}]{drhoY,  }\item[{double}]{T }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2064 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a006911c4c1f1ca9407fe3269b0bf98fe}\label{namespaceprocess_1_1_n_s_f_eq_a006911c4c1f1ca9407fe3269b0bf98fe}} 
+\index{process::NSFEq@{process::NSFEq}!calcLocalViscousFlux@{calcLocalViscousFlux}}
+\index{calcLocalViscousFlux@{calcLocalViscousFlux}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcLocalViscousFlux()}{calcLocalViscousFlux()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::calc\+Local\+Viscous\+Flux (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{UG,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+UX,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+UY,  }\item[{std\+::vector$<$ double $>$ \&}]{F\+LocalX,  }\item[{std\+::vector$<$ double $>$ \&}]{F\+LocalY,  }\item[{std\+::vector$<$ double $>$ \&}]{n,  }\item[{double}]{T }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2135 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a2ee97dda49f814a198de68b5f2572e7c}\label{namespaceprocess_1_1_n_s_f_eq_a2ee97dda49f814a198de68b5f2572e7c}} 
+\index{process::NSFEq@{process::NSFEq}!CalcRHSTerm@{CalcRHSTerm}}
+\index{CalcRHSTerm@{CalcRHSTerm}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{CalcRHSTerm()}{CalcRHSTerm()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::\+Calc\+R\+H\+S\+Term (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{term1\+R\+HS,  }\item[{std\+::vector$<$ double $>$ \&}]{term2\+R\+HS,  }\item[{std\+::vector$<$ double $>$ \&}]{term3\+R\+HS,  }\item[{std\+::vector$<$ double $>$ \&}]{term4\+R\+HS }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2493 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a374a94b5b5599d5b826b29550bc69121}\label{namespaceprocess_1_1_n_s_f_eq_a374a94b5b5599d5b826b29550bc69121}} 
+\index{process::NSFEq@{process::NSFEq}!calcSurfaceFlux@{calcSurfaceFlux}}
+\index{calcSurfaceFlux@{calcSurfaceFlux}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcSurfaceFlux()}{calcSurfaceFlux()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::calc\+Surface\+Flux (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2172 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a1fe2e510cf2711f55887dcbdfe114065}\label{namespaceprocess_1_1_n_s_f_eq_a1fe2e510cf2711f55887dcbdfe114065}} 
+\index{process::NSFEq@{process::NSFEq}!calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}}
+\index{calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcSurfaceIntegralTerms()}{calcSurfaceIntegralTerms()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::calc\+Surface\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{Surf\+Int\+Term1,  }\item[{std\+::vector$<$ double $>$ \&}]{Surf\+Int\+Term2,  }\item[{std\+::vector$<$ double $>$ \&}]{Surf\+Int\+Term3,  }\item[{std\+::vector$<$ double $>$ \&}]{Surf\+Int\+Term4 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2796 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a3243b8452b48b63682ed6604aa670c33}\label{namespaceprocess_1_1_n_s_f_eq_a3243b8452b48b63682ed6604aa670c33}} 
+\index{process::NSFEq@{process::NSFEq}!calcVolumeIntegralTerms@{calcVolumeIntegralTerms}}
+\index{calcVolumeIntegralTerms@{calcVolumeIntegralTerms}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{calcVolumeIntegralTerms()}{calcVolumeIntegralTerms()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::calc\+Volume\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{Vol\+Int\+Term1,  }\item[{std\+::vector$<$ double $>$ \&}]{Vol\+Int\+Term2,  }\item[{std\+::vector$<$ double $>$ \&}]{Vol\+Int\+Term3,  }\item[{std\+::vector$<$ double $>$ \&}]{Vol\+Int\+Term4 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2716 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_a4416566bb508c0455af975c143ba1c94}\label{namespaceprocess_1_1_n_s_f_eq_a4416566bb508c0455af975c143ba1c94}} 
+\index{process::NSFEq@{process::NSFEq}!getGaussVectorOfConserVarFluxesAtInternal@{getGaussVectorOfConserVarFluxesAtInternal}}
+\index{getGaussVectorOfConserVarFluxesAtInternal@{getGaussVectorOfConserVarFluxesAtInternal}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{getGaussVectorOfConserVarFluxesAtInternal()}{getGaussVectorOfConserVarFluxesAtInternal()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ process\+::\+N\+S\+F\+Eq\+::get\+Gauss\+Vector\+Of\+Conser\+Var\+Fluxes\+At\+Internal (\begin{DoxyParamCaption}\item[{int}]{edge\+Name,  }\item[{int}]{element,  }\item[{int}]{n\+Gauss }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2880 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_ab8a224da7458c30ad1f3c8724e9e15a8}\label{namespaceprocess_1_1_n_s_f_eq_ab8a224da7458c30ad1f3c8724e9e15a8}} 
+\index{process::NSFEq@{process::NSFEq}!getInterfacesFluxes@{getInterfacesFluxes}}
+\index{getInterfacesFluxes@{getInterfacesFluxes}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{getInterfacesFluxes()}{getInterfacesFluxes()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ process\+::\+N\+S\+F\+Eq\+::get\+Interfaces\+Fluxes (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{mod,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2622 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_ae76dfa6b98979b1ef48b52556a1ad005}\label{namespaceprocess_1_1_n_s_f_eq_ae76dfa6b98979b1ef48b52556a1ad005}} 
+\index{process::NSFEq@{process::NSFEq}!solveNSFEquation@{solveNSFEquation}}
+\index{solveNSFEquation@{solveNSFEquation}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{solveNSFEquation()}{solveNSFEquation()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::solve\+N\+S\+F\+Equation (\begin{DoxyParamCaption}\item[{int}]{R\+K\+Order }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2376 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_aa37213e8da4ae2be7a489d4e0e9fb69d}\label{namespaceprocess_1_1_n_s_f_eq_aa37213e8da4ae2be7a489d4e0e9fb69d}} 
+\index{process::NSFEq@{process::NSFEq}!solveTimeMarching@{solveTimeMarching}}
+\index{solveTimeMarching@{solveTimeMarching}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{solveTimeMarching()}{solveTimeMarching()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ process\+::\+N\+S\+F\+Eq\+::solve\+Time\+Marching (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{ddt\+Arr,  }\item[{std\+::vector$<$ double $>$ \&}]{Un\+Arr,  }\item[{int}]{R\+K\+Order,  }\item[{int}]{var\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2919 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1_n_s_f_eq_ae788422b4f3f84a3d0d8093f3bccb81e}\label{namespaceprocess_1_1_n_s_f_eq_ae788422b4f3f84a3d0d8093f3bccb81e}} 
+\index{process::NSFEq@{process::NSFEq}!updateVariables@{updateVariables}}
+\index{updateVariables@{updateVariables}!process::NSFEq@{process::NSFEq}}
+\doxysubsubsection{\texorpdfstring{updateVariables()}{updateVariables()}}
+{\footnotesize\ttfamily void process\+::\+N\+S\+F\+Eq\+::update\+Variables (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2484 of file D\+G\+Proc\+Lib.\+cpp.
+

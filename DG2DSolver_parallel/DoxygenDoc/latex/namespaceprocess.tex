@@ -1,0 +1,245 @@
+\hypertarget{namespaceprocess}{}\doxysection{process Namespace Reference}
+\label{namespaceprocess}\index{process@{process}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq}{aux\+Eq}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq}{N\+S\+F\+Eq}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1time_discretization}{time\+Discretization}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespaceprocess_a98c8dfd20bbca6ab8c52ea57db32df2c}{prepare\+Case\+For\+Running}} ()
+\begin{DoxyCompactList}\small\item\em Function prepares case for parallel running by doing below steps\+: \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_a86942b32d5b2aa46ddda5d45ba6b1d8a}{finalize\+Iteration}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_a97f94a1bee248afb3bf2349f0196d3d7}{set\+Ini\+Volume\+Values}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_ab892f055a55eb117877ee94e3f014436}{set\+Ini\+Surface\+B\+C\+Values}} ()
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_af92b61c7d1fdbf62f3353e17f1485bcb}{calc\+Ini\+Values}} (double ini\+Val, int element)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_a20d1d118585390433d78187174e0b08e}{calc\+Ini\+Values\+R\+HS}} (int element, double ini\+Val)
+\item 
+void \mbox{\hyperlink{namespaceprocess_aa5da5ce57eb977af10d642d0872e92e2}{calc\+Volume\+Gauss\+Values}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_abd341a54fc6bbac32e56871dfc2af2da}{calc\+Volume\+Gauss\+Rho}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates Rho at all volume Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_ae0c3fffbf3c25f01ceb0e3f429816d46}{calc\+T\+Gauss}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_ac6d18bbb73b60d4c301e82d03cd43bee}{calc\+Values\+At\+Interface}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_ad94bd97db71ac7fe9d89522e8ec04908}{calc\+Rho\+At\+Interface}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates Rho at all surface Gauss points. \end{DoxyCompactList}\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceprocess_ad9b5d59d393cb84310cd8965a384a2f9}{get\+Internal\+Values\+From\+Calculated\+Arrays}} (int edge, int element, int nG, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespaceprocess_a888c529967ec7d2cfec7de6b845472e0}{volume\+Inte}} (int elem, std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&Ui, int order, int direction)
+\item 
+double \mbox{\hyperlink{namespaceprocess_a59e8159fa40f1e5b71561180b33e1218}{surface\+Inte}} (int elem, int edge, std\+::vector$<$ double $>$ \&Flux\+Vector, int order)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_ae1423fd08c2349e4ee9bfc83a07ddb6d}{calculate\+Stiff\+Matrix}} (int element)
+\item 
+double \mbox{\hyperlink{namespaceprocess_ad7693dd965e8e97058d13fa2c4d014ac}{calculate\+Stiff\+Matrix\+Element}} (int element, int order1, int order2)
+\item 
+bool \mbox{\hyperlink{namespaceprocess_a015426aebc5b436537fcaecbc1fbe5ff}{check\+Running\+Cond}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceprocess_af92b61c7d1fdbf62f3353e17f1485bcb}\label{namespaceprocess_af92b61c7d1fdbf62f3353e17f1485bcb}} 
+\index{process@{process}!calcIniValues@{calcIniValues}}
+\index{calcIniValues@{calcIniValues}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcIniValues()}{calcIniValues()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ process\+::calc\+Ini\+Values (\begin{DoxyParamCaption}\item[{double}]{ini\+Val,  }\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 426 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a20d1d118585390433d78187174e0b08e}\label{namespaceprocess_a20d1d118585390433d78187174e0b08e}} 
+\index{process@{process}!calcIniValuesRHS@{calcIniValuesRHS}}
+\index{calcIniValuesRHS@{calcIniValuesRHS}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcIniValuesRHS()}{calcIniValuesRHS()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ process\+::calc\+Ini\+Values\+R\+HS (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{ini\+Val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 439 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ad94bd97db71ac7fe9d89522e8ec04908}\label{namespaceprocess_ad94bd97db71ac7fe9d89522e8ec04908}} 
+\index{process@{process}!calcRhoAtInterface@{calcRhoAtInterface}}
+\index{calcRhoAtInterface@{calcRhoAtInterface}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcRhoAtInterface()}{calcRhoAtInterface()}}
+{\footnotesize\ttfamily void process\+::calc\+Rho\+At\+Interface (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates Rho at all surface Gauss points. 
+
+Values are saved in \mbox{\hyperlink{namespacesurface_fields_a7412043fc7b0e1929e4d3c8a1ebe0225}{surface\+Fields\+::rho}}.~\newline
+
+\begin{DoxyItemize}
+\item Master cell side\+: \mbox{[}...\mbox{]}\mbox{[}nG\mbox{]}~\newline
+
+\item Slave cell side\+: \mbox{[}...\mbox{]}\mbox{[}nG + \mbox{\hyperlink{namespacemath_var_a1d9929bd2792af4e0c65292cfca825a0}{math\+Var\+::n\+Gauss}} + 1\mbox{]} 
+\end{DoxyItemize}
+
+Definition at line 859 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ae0c3fffbf3c25f01ceb0e3f429816d46}\label{namespaceprocess_ae0c3fffbf3c25f01ceb0e3f429816d46}} 
+\index{process@{process}!calcTGauss@{calcTGauss}}
+\index{calcTGauss@{calcTGauss}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcTGauss()}{calcTGauss()}}
+{\footnotesize\ttfamily void process\+::calc\+T\+Gauss (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 562 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ae1423fd08c2349e4ee9bfc83a07ddb6d}\label{namespaceprocess_ae1423fd08c2349e4ee9bfc83a07ddb6d}} 
+\index{process@{process}!calculateStiffMatrix@{calculateStiffMatrix}}
+\index{calculateStiffMatrix@{calculateStiffMatrix}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calculateStiffMatrix()}{calculateStiffMatrix()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ process\+::calculate\+Stiff\+Matrix (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3392 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ad7693dd965e8e97058d13fa2c4d014ac}\label{namespaceprocess_ad7693dd965e8e97058d13fa2c4d014ac}} 
+\index{process@{process}!calculateStiffMatrixElement@{calculateStiffMatrixElement}}
+\index{calculateStiffMatrixElement@{calculateStiffMatrixElement}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calculateStiffMatrixElement()}{calculateStiffMatrixElement()}}
+{\footnotesize\ttfamily double process\+::calculate\+Stiff\+Matrix\+Element (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{order1,  }\item[{int}]{order2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3406 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ac6d18bbb73b60d4c301e82d03cd43bee}\label{namespaceprocess_ac6d18bbb73b60d4c301e82d03cd43bee}} 
+\index{process@{process}!calcValuesAtInterface@{calcValuesAtInterface}}
+\index{calcValuesAtInterface@{calcValuesAtInterface}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcValuesAtInterface()}{calcValuesAtInterface()}}
+{\footnotesize\ttfamily void process\+::calc\+Values\+At\+Interface (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 707 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_abd341a54fc6bbac32e56871dfc2af2da}\label{namespaceprocess_abd341a54fc6bbac32e56871dfc2af2da}} 
+\index{process@{process}!calcVolumeGaussRho@{calcVolumeGaussRho}}
+\index{calcVolumeGaussRho@{calcVolumeGaussRho}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcVolumeGaussRho()}{calcVolumeGaussRho()}}
+{\footnotesize\ttfamily void process\+::calc\+Volume\+Gauss\+Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function calculates Rho at all volume Gauss points. 
+
+Values are saved in \mbox{\hyperlink{namespacevolume_fields_a8d0a190a5fca8708600f026a3f86f2c0}{volume\+Fields\+::rho\+Vol\+Gauss}}. 
+
+Definition at line 522 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_aa5da5ce57eb977af10d642d0872e92e2}\label{namespaceprocess_aa5da5ce57eb977af10d642d0872e92e2}} 
+\index{process@{process}!calcVolumeGaussValues@{calcVolumeGaussValues}}
+\index{calcVolumeGaussValues@{calcVolumeGaussValues}!process@{process}}
+\doxysubsubsection{\texorpdfstring{calcVolumeGaussValues()}{calcVolumeGaussValues()}}
+{\footnotesize\ttfamily void process\+::calc\+Volume\+Gauss\+Values (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 460 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a015426aebc5b436537fcaecbc1fbe5ff}\label{namespaceprocess_a015426aebc5b436537fcaecbc1fbe5ff}} 
+\index{process@{process}!checkRunningCond@{checkRunningCond}}
+\index{checkRunningCond@{checkRunningCond}!process@{process}}
+\doxysubsubsection{\texorpdfstring{checkRunningCond()}{checkRunningCond()}}
+{\footnotesize\ttfamily bool process\+::check\+Running\+Cond (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3449 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a86942b32d5b2aa46ddda5d45ba6b1d8a}\label{namespaceprocess_a86942b32d5b2aa46ddda5d45ba6b1d8a}} 
+\index{process@{process}!finalizeIteration@{finalizeIteration}}
+\index{finalizeIteration@{finalizeIteration}!process@{process}}
+\doxysubsubsection{\texorpdfstring{finalizeIteration()}{finalizeIteration()}}
+{\footnotesize\ttfamily void process\+::finalize\+Iteration (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 355 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ad9b5d59d393cb84310cd8965a384a2f9}\label{namespaceprocess_ad9b5d59d393cb84310cd8965a384a2f9}} 
+\index{process@{process}!getInternalValuesFromCalculatedArrays@{getInternalValuesFromCalculatedArrays}}
+\index{getInternalValuesFromCalculatedArrays@{getInternalValuesFromCalculatedArrays}!process@{process}}
+\doxysubsubsection{\texorpdfstring{getInternalValuesFromCalculatedArrays()}{getInternalValuesFromCalculatedArrays()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ process\+::get\+Internal\+Values\+From\+Calculated\+Arrays (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3306 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a98c8dfd20bbca6ab8c52ea57db32df2c}\label{namespaceprocess_a98c8dfd20bbca6ab8c52ea57db32df2c}} 
+\index{process@{process}!prepareCaseForRunning@{prepareCaseForRunning}}
+\index{prepareCaseForRunning@{prepareCaseForRunning}!process@{process}}
+\doxysubsubsection{\texorpdfstring{prepareCaseForRunning()}{prepareCaseForRunning()}}
+{\footnotesize\ttfamily void process\+::prepare\+Case\+For\+Running (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function prepares case for parallel running by doing below steps\+: 
+
+
+\begin{DoxyItemize}
+\item Load saved results if load\+Saved\+Case = true
+\item Setup initial conditions if load\+Saved\+Case = false
+\item Apply limiter
+\item Send/\+Receive data between cores 
+\end{DoxyItemize}
+
+Definition at line 306 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_ab892f055a55eb117877ee94e3f014436}\label{namespaceprocess_ab892f055a55eb117877ee94e3f014436}} 
+\index{process@{process}!setIniSurfaceBCValues@{setIniSurfaceBCValues}}
+\index{setIniSurfaceBCValues@{setIniSurfaceBCValues}!process@{process}}
+\doxysubsubsection{\texorpdfstring{setIniSurfaceBCValues()}{setIniSurfaceBCValues()}}
+{\footnotesize\ttfamily void process\+::set\+Ini\+Surface\+B\+C\+Values (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 412 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a97f94a1bee248afb3bf2349f0196d3d7}\label{namespaceprocess_a97f94a1bee248afb3bf2349f0196d3d7}} 
+\index{process@{process}!setIniVolumeValues@{setIniVolumeValues}}
+\index{setIniVolumeValues@{setIniVolumeValues}!process@{process}}
+\doxysubsubsection{\texorpdfstring{setIniVolumeValues()}{setIniVolumeValues()}}
+{\footnotesize\ttfamily void process\+::set\+Ini\+Volume\+Values (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 382 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a59e8159fa40f1e5b71561180b33e1218}\label{namespaceprocess_a59e8159fa40f1e5b71561180b33e1218}} 
+\index{process@{process}!surfaceInte@{surfaceInte}}
+\index{surfaceInte@{surfaceInte}!process@{process}}
+\doxysubsubsection{\texorpdfstring{surfaceInte()}{surfaceInte()}}
+{\footnotesize\ttfamily double process\+::surface\+Inte (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{int}]{edge,  }\item[{std\+::vector$<$ double $>$ \&}]{Flux\+Vector,  }\item[{int}]{order }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3374 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_a888c529967ec7d2cfec7de6b845472e0}\label{namespaceprocess_a888c529967ec7d2cfec7de6b845472e0}} 
+\index{process@{process}!volumeInte@{volumeInte}}
+\index{volumeInte@{volumeInte}!process@{process}}
+\doxysubsubsection{\texorpdfstring{volumeInte()}{volumeInte()}}
+{\footnotesize\ttfamily double process\+::volume\+Inte (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&}]{Ui,  }\item[{int}]{order,  }\item[{int}]{direction }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3355 of file D\+G\+Proc\+Lib.\+cpp.
+

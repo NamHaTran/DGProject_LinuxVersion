@@ -1,0 +1,111 @@
+\hypertarget{namespaceprocess_1_1time_discretization}{}\doxysection{process\+::time\+Discretization Namespace Reference}
+\label{namespaceprocess_1_1time_discretization}\index{process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1time_discretization_1_1parallel}{parallel}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_aa8b8b3c3c045f183bdfa8f349a8d6dd8}{calc\+Global\+Time\+Step}} ()
+\item 
+double \mbox{\hyperlink{namespaceprocess_1_1time_discretization_a6d378bf7fc9b775e2e27c31f036ff1e5}{local\+Time\+Step}} (int element)
+\item 
+double \mbox{\hyperlink{namespaceprocess_1_1time_discretization_ad00487c6ccc0253959169399614685f4}{local\+Error\+Estimate}} (int element, std\+::vector$<$ double $>$ \&ddt\+Arr)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_ae9c54fa3d937c35282d7f0bacf0c78e7}{global\+Error\+Estimate}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_a0392d2bced62a35d31c10ed31de8accf}{T\+V\+D\+R\+K\+\_\+1step}} (int R\+K\+Order)
+\begin{DoxyCompactList}\small\item\em Function solves 1 T\+V\+D\+\_\+\+RK iteration. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_af227b796df46ea89e3a2d0d567e8ecc3}{T\+V\+D\+R\+K3}} ()
+\begin{DoxyCompactList}\small\item\em Function solves 1 time steps of DG workflow. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceprocess_1_1time_discretization_aa8b8b3c3c045f183bdfa8f349a8d6dd8}\label{namespaceprocess_1_1time_discretization_aa8b8b3c3c045f183bdfa8f349a8d6dd8}} 
+\index{process::timeDiscretization@{process::timeDiscretization}!calcGlobalTimeStep@{calcGlobalTimeStep}}
+\index{calcGlobalTimeStep@{calcGlobalTimeStep}!process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsubsection{\texorpdfstring{calcGlobalTimeStep()}{calcGlobalTimeStep()}}
+{\footnotesize\ttfamily void process\+::time\+Discretization\+::calc\+Global\+Time\+Step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3025 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1time_discretization_ae9c54fa3d937c35282d7f0bacf0c78e7}\label{namespaceprocess_1_1time_discretization_ae9c54fa3d937c35282d7f0bacf0c78e7}} 
+\index{process::timeDiscretization@{process::timeDiscretization}!globalErrorEstimate@{globalErrorEstimate}}
+\index{globalErrorEstimate@{globalErrorEstimate}!process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsubsection{\texorpdfstring{globalErrorEstimate()}{globalErrorEstimate()}}
+{\footnotesize\ttfamily void process\+::time\+Discretization\+::global\+Error\+Estimate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3095 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1time_discretization_ad00487c6ccc0253959169399614685f4}\label{namespaceprocess_1_1time_discretization_ad00487c6ccc0253959169399614685f4}} 
+\index{process::timeDiscretization@{process::timeDiscretization}!localErrorEstimate@{localErrorEstimate}}
+\index{localErrorEstimate@{localErrorEstimate}!process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsubsection{\texorpdfstring{localErrorEstimate()}{localErrorEstimate()}}
+{\footnotesize\ttfamily double process\+::time\+Discretization\+::local\+Error\+Estimate (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{ddt\+Arr }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3075 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1time_discretization_a6d378bf7fc9b775e2e27c31f036ff1e5}\label{namespaceprocess_1_1time_discretization_a6d378bf7fc9b775e2e27c31f036ff1e5}} 
+\index{process::timeDiscretization@{process::timeDiscretization}!localTimeStep@{localTimeStep}}
+\index{localTimeStep@{localTimeStep}!process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsubsection{\texorpdfstring{localTimeStep()}{localTimeStep()}}
+{\footnotesize\ttfamily double process\+::time\+Discretization\+::local\+Time\+Step (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3044 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1time_discretization_af227b796df46ea89e3a2d0d567e8ecc3}\label{namespaceprocess_1_1time_discretization_af227b796df46ea89e3a2d0d567e8ecc3}} 
+\index{process::timeDiscretization@{process::timeDiscretization}!TVDRK3@{TVDRK3}}
+\index{TVDRK3@{TVDRK3}!process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsubsection{\texorpdfstring{TVDRK3()}{TVDRK3()}}
+{\footnotesize\ttfamily void process\+::time\+Discretization\+::\+T\+V\+D\+R\+K3 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function solves 1 time steps of DG workflow. 
+
+
+
+Definition at line 3251 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1time_discretization_a0392d2bced62a35d31c10ed31de8accf}\label{namespaceprocess_1_1time_discretization_a0392d2bced62a35d31c10ed31de8accf}} 
+\index{process::timeDiscretization@{process::timeDiscretization}!TVDRK\_1step@{TVDRK\_1step}}
+\index{TVDRK\_1step@{TVDRK\_1step}!process::timeDiscretization@{process::timeDiscretization}}
+\doxysubsubsection{\texorpdfstring{TVDRK\_1step()}{TVDRK\_1step()}}
+{\footnotesize\ttfamily void process\+::time\+Discretization\+::\+T\+V\+D\+R\+K\+\_\+1step (\begin{DoxyParamCaption}\item[{int}]{R\+K\+Order }\end{DoxyParamCaption})}
+
+
+
+Function solves 1 T\+V\+D\+\_\+\+RK iteration. 
+
+Workflow explanation
+
+Assume that U is at time n\+:
+\begin{DoxyItemize}
+\item 1\+: Run Function Positivity preserving limiter for Rho (to calculate theta1) to keep Rho always positive while solving $S_m = \nabla (\rho)$ in case of mass diffusion = ON. If mass diffusion = O\+FF, Limiter for all remaining conservative variable will be call right after limiter function for Rho to limit vector U.
+\item 2\+: If mass diffusion = ON, calculate value Rho at all volume and surface Gauss points and then solve $S_m = \nabla (\rho)$ equation. Results are saved into \mbox{\hyperlink{namespace_b_r1_vars_1_1mass_diffusion_a52d629e62fd97728f22ae742df5151f0}{B\+R1\+Vars\+::mass\+Diffusion\+::rhoX}} and \mbox{\hyperlink{namespace_b_r1_vars_1_1mass_diffusion_a2e668270ff7ec34ddd0ca207aa5baee7}{B\+R1\+Vars\+::mass\+Diffusion\+::rhoY}}.
+\item 3\+: Apply Limiter for vector U.
+\item 4\+: Solve T from U.
+\item 5\+: Solve equation $S = \mu \nabla (\rho)$.
+\item 6\+: Calculate fluxes (inviscid va viscous) at all faces.
+\item 7\+: Solve N\+SF
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em R\+K\+Order} & Runge-\/\+Kutta order \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 3202 of file D\+G\+Proc\+Lib.\+cpp.
+

@@ -1,0 +1,193 @@
+\hypertarget{_d_g_proc_lib_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+D\+G\+Proc\+Lib.cpp File Reference}
+\label{_d_g_proc_lib_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGProcLib.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGProcLib.cpp}}
+{\ttfamily \#include \char`\"{}D\+G\+Proc\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Post\+Process\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Aux\+Ultilities\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/\+D\+G\+B\+Cs\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+I\+O\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Limiter\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$mpi.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}Non\+Equilibrium\+B\+Cs\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./boundary\+Conditions/\+B\+C\+Support\+Fncs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./parallel\+Functions/\+Gauss\+Point\+Data.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./parallel\+Functions/parallel\+Variables.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}debugging\+Funcs.\+h\char`\"{}}\newline
+Include dependency graph for D\+G\+Proc\+Lib.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_proc_lib_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacemesh_param}{mesh\+Param}}
+\item 
+ \mbox{\hyperlink{namespaceprocess}{process}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq}{process\+::aux\+Eq}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r2}{process\+::aux\+Eq\+::\+B\+R2}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1}{process\+::aux\+Eq\+::\+B\+R1}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion}{process\+::aux\+Eq\+::mass\+Diffusion}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r2}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R2}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq}{process\+::\+N\+S\+F\+Eq}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1time_discretization}{process\+::time\+Discretization}}
+\item 
+ \mbox{\hyperlink{namespaceprocess_1_1time_discretization_1_1parallel}{process\+::time\+Discretization\+::parallel}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacemesh_param_a5d3cdc017263ee950632d2dcf7779b61}{mesh\+Param\+::gen\+Based\+Gauss\+Pts\+Vectors}} ()
+\item 
+void \mbox{\hyperlink{namespacemesh_param_a889a9a227ecdd5b6be6cb7521ab2a19d}{mesh\+Param\+::\+Gauss\+Param}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates coordinates and weights of Gauss Points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_a831751093fc91fa674d7c0a31e48a85b}{mesh\+Param\+::\+Jacobian\+Param}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates Jacobian of 2D element at all volume Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ac70c72a139cbf54e6390768b4414dcd2}{mesh\+Param\+::basis\+Fc\+Param}} ()
+\begin{DoxyCompactList}\small\item\em Function calculate basis function at all volume Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_aa5bace80b8395f2d7c41ed9bdd10dce3}{mesh\+Param\+::deriv\+Coordinates}} ()
+\begin{DoxyCompactList}\small\item\em Function saves coordinates derivatives at all Gauss points to array. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_adc9e81829592780594c471b115dc309e}{mesh\+Param\+::calc\+Cell\+Metrics}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates cell metrics\+: \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ae06eda928011b26288d52badb151eb62}{mesh\+Param\+::calc\+Edge\+Length}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates length of edge. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ad4dc8debc5bf4766b78b3f7d3d90ef63}{mesh\+Param\+::calc\+Stiff\+Matrix\+Coeffs}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates coefficients of stiff matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_a2fe11558987e813aa03beb5a47bd2824}{mesh\+Param\+::calc\+Distance\+From\+Center\+To\+B\+C\+Edge}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates distance from cell center to boundary edge. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacemesh_param_ad0200543d51a609dd5b3b52a4e1d049e}{mesh\+Param\+::find\+Norm\+Projection\+Of\+Center\+To\+B\+C\+Edge}} ()
+\begin{DoxyCompactList}\small\item\em Function finds normal projection of cell center to boundary edge. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_a98c8dfd20bbca6ab8c52ea57db32df2c}{process\+::prepare\+Case\+For\+Running}} ()
+\begin{DoxyCompactList}\small\item\em Function prepares case for parallel running by doing below steps\+: \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_a86942b32d5b2aa46ddda5d45ba6b1d8a}{process\+::finalize\+Iteration}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_a97f94a1bee248afb3bf2349f0196d3d7}{process\+::set\+Ini\+Volume\+Values}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_ab892f055a55eb117877ee94e3f014436}{process\+::set\+Ini\+Surface\+B\+C\+Values}} ()
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_af92b61c7d1fdbf62f3353e17f1485bcb}{process\+::calc\+Ini\+Values}} (double ini\+Val, int element)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_a20d1d118585390433d78187174e0b08e}{process\+::calc\+Ini\+Values\+R\+HS}} (int element, double ini\+Val)
+\item 
+void \mbox{\hyperlink{namespaceprocess_aa5da5ce57eb977af10d642d0872e92e2}{process\+::calc\+Volume\+Gauss\+Values}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_abd341a54fc6bbac32e56871dfc2af2da}{process\+::calc\+Volume\+Gauss\+Rho}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates Rho at all volume Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_ae0c3fffbf3c25f01ceb0e3f429816d46}{process\+::calc\+T\+Gauss}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_ac6d18bbb73b60d4c301e82d03cd43bee}{process\+::calc\+Values\+At\+Interface}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_ad94bd97db71ac7fe9d89522e8ec04908}{process\+::calc\+Rho\+At\+Interface}} ()
+\begin{DoxyCompactList}\small\item\em Function calculates Rho at all surface Gauss points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_aaeae8b2a12c2256813aedd128d706bb2}{process\+::aux\+Eq\+::solve\+Div\+Rho}} ()
+\begin{DoxyCompactList}\small\item\em Function solves equation /f\$\+S\+\_\+m = \textbackslash{}nabla (\textbackslash{}rho)/f\$ in case of mass diffusion = ON. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_adbf66fd20664f506e8682ef749021217}{process\+::aux\+Eq\+::update\+Surface\+Fields\+At\+BC}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_ae6e3459fdf0320e42b8f20ff4a7b79b3}{process\+::aux\+Eq\+::solve\+Aux\+Equation}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r2_ad8c6ce3835fbf7a4d3dda66d6d2c7561}{process\+::aux\+Eq\+::\+B\+R2\+::calc\+Vol\+DivU}} (int element)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r2_a8d05255542b557eb72ab49246ab2e784}{process\+::aux\+Eq\+::\+B\+R2\+::calc\+Sur\+DivU}} (int element)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a079bf30f4c825dce0efc422ff459929e}{process\+::aux\+Eq\+::\+B\+R1\+::calc\+Values\+At\+Interface}} ()
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a37a89d928f67d27f42b59e8283d22d49}{process\+::aux\+Eq\+::\+B\+R1\+::get\+Internal\+Values\+From\+Calculated\+Arrays}} (int edge, int element, int nG, int val\+Type)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_ac07773f7ad85d1076eaacaf44fd513eb}{process\+::aux\+Eq\+::\+B\+R1\+::\+Calc\+R\+H\+S\+Term}} (int element, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Oy, std\+::vector$<$ double $>$ \&rhou\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rhou\+R\+H\+S\+Oy, std\+::vector$<$ double $>$ \&rhov\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rhov\+R\+H\+S\+Oy, std\+::vector$<$ double $>$ \&rho\+E\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rho\+E\+R\+H\+S\+Oy)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_aef618698392398ea761a20098f02a001}{process\+::aux\+Eq\+::\+B\+R1\+::calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Vol\+IntX, std\+::vector$<$ double $>$ \&rhou\+Vol\+IntX, std\+::vector$<$ double $>$ \&rhov\+Vol\+IntX, std\+::vector$<$ double $>$ \&rho\+E\+Vol\+IntX, std\+::vector$<$ double $>$ \&rho\+Vol\+IntY, std\+::vector$<$ double $>$ \&rhou\+Vol\+IntY, std\+::vector$<$ double $>$ \&rhov\+Vol\+IntY, std\+::vector$<$ double $>$ \&rho\+E\+Vol\+IntY)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a4beab310020d33736069a1f718362f17}{process\+::aux\+Eq\+::\+B\+R1\+::calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Surf\+IntX, std\+::vector$<$ double $>$ \&rhou\+Surf\+IntX, std\+::vector$<$ double $>$ \&rhov\+Surf\+IntX, std\+::vector$<$ double $>$ \&rho\+E\+Surf\+IntX, std\+::vector$<$ double $>$ \&rho\+Surf\+IntY, std\+::vector$<$ double $>$ \&rhou\+Surf\+IntY, std\+::vector$<$ double $>$ \&rhov\+Surf\+IntY, std\+::vector$<$ double $>$ \&rho\+E\+Surf\+IntY)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a73e4113fa470c4e11dd8d01cda1d9f25}{process\+::aux\+Eq\+::\+B\+R1\+::get\+Gauss\+Matrix\+Of\+Conser\+Var}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&U\+Gauss, int element, int val\+Type)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a6842e6aacedca26e00f2eb05d861ebdd}{process\+::aux\+Eq\+::\+B\+R1\+::get\+Vector\+Of\+Conser\+Var\+Fluxes\+At\+Internal}} (int edge, int element, int nG, double nx, double ny)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a0d299530043e3f4332d1a959440f12ce}{process\+::aux\+Eq\+::\+B\+R1\+::get\+Gauss\+Vector\+Of\+Conser\+Var}} (int element, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhou\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhov\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+E\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxY, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhou\+FluxY, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhov\+FluxY, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+E\+FluxY)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ac187d8bc3d3139299801b779bbad3997}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::solve\+Div\+Rho}} ()
+\begin{DoxyCompactList}\small\item\em Function solves $S_m = \nabla (\rho)$ equation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a33224870a017565a3b54d0ea5d0ec97f}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::\+Calc\+R\+H\+S\+Term}} (int element, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Oy)
+\begin{DoxyCompactList}\small\item\em Function calculates right hand side terms of equation $S_m = \nabla (\rho)$. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a334478bef4d3e6bcac9a5cf811249b91}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Vol\+IntX, std\+::vector$<$ double $>$ \&rho\+Vol\+IntY)
+\begin{DoxyCompactList}\small\item\em Function calculates volume integral term at right hand side of equation $S_m = \nabla (\rho)$. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_a1ba022f30a8cb8fc54b988bee1c02be5}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Surf\+IntX, std\+::vector$<$ double $>$ \&rho\+Surf\+IntY)
+\begin{DoxyCompactList}\small\item\em Function calculates surface integral term at right hand side of equation $S_m = \nabla (\rho)$. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r1_ad5ccda93af5ec40bd246071081ca8ffb}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R1\+::get\+Gauss\+Vector\+Of\+Rho}} (int element, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxY)
+\begin{DoxyCompactList}\small\item\em Function gets values all Rho fluxes at all Gauss points on all edges of cell. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r2_aac1bc39fa24aa5ba425d037e8660beed}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R2\+::solve\+Div\+Rho}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r2_aad3fd7c9dbb96fc1e360802d93ce33f3}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R2\+::calc\+Vol\+Div\+Rho}} (int element)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1mass_diffusion_1_1_b_r2_adef44dd50a050733613786fba8d2efcc}{process\+::aux\+Eq\+::mass\+Diffusion\+::\+B\+R2\+::calc\+Sur\+Div\+Rho}} (int element)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ac3c03a2c171715f0c89953d6af19b8f8}{process\+::\+N\+S\+F\+Eq\+::calc\+Local\+Inviscid\+Flux}} (std\+::vector$<$ double $>$ \&UG, std\+::vector$<$ double $>$ \&F\+LocalX, std\+::vector$<$ double $>$ \&F\+LocalY, std\+::vector$<$ double $>$ \&UL, std\+::vector$<$ double $>$ \&n, double drhoX, double drhoY, double T)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a006911c4c1f1ca9407fe3269b0bf98fe}{process\+::\+N\+S\+F\+Eq\+::calc\+Local\+Viscous\+Flux}} (std\+::vector$<$ double $>$ \&UG, std\+::vector$<$ double $>$ \&d\+UX, std\+::vector$<$ double $>$ \&d\+UY, std\+::vector$<$ double $>$ \&F\+LocalX, std\+::vector$<$ double $>$ \&F\+LocalY, std\+::vector$<$ double $>$ \&n, double T)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a374a94b5b5599d5b826b29550bc69121}{process\+::\+N\+S\+F\+Eq\+::calc\+Surface\+Flux}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ae76dfa6b98979b1ef48b52556a1ad005}{process\+::\+N\+S\+F\+Eq\+::solve\+N\+S\+F\+Equation}} (int R\+K\+Order)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ae788422b4f3f84a3d0d8093f3bccb81e}{process\+::\+N\+S\+F\+Eq\+::update\+Variables}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a2ee97dda49f814a198de68b5f2572e7c}{process\+::\+N\+S\+F\+Eq\+::\+Calc\+R\+H\+S\+Term}} (int element, std\+::vector$<$ double $>$ \&term1\+R\+HS, std\+::vector$<$ double $>$ \&term2\+R\+HS, std\+::vector$<$ double $>$ \&term3\+R\+HS, std\+::vector$<$ double $>$ \&term4\+R\+HS)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ad15530334e25ab2bd0e835ea7f86340d}{process\+::\+N\+S\+F\+Eq\+::calc\+Gauss\+Inviscid\+Term}} (int element, int na, int nb)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a792d5ce9db7aed6410399dee7478dfe8}{process\+::\+N\+S\+F\+Eq\+::calc\+Gauss\+Viscous\+Term}} (int element, int na, int nb)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_ab8a224da7458c30ad1f3c8724e9e15a8}{process\+::\+N\+S\+F\+Eq\+::get\+Interfaces\+Fluxes}} (int edge, int element, int nG, int mod, int val\+Type)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a3243b8452b48b63682ed6604aa670c33}{process\+::\+N\+S\+F\+Eq\+::calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Vol\+Int\+Term1, std\+::vector$<$ double $>$ \&Vol\+Int\+Term2, std\+::vector$<$ double $>$ \&Vol\+Int\+Term3, std\+::vector$<$ double $>$ \&Vol\+Int\+Term4)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a1fe2e510cf2711f55887dcbdfe114065}{process\+::\+N\+S\+F\+Eq\+::calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Surf\+Int\+Term1, std\+::vector$<$ double $>$ \&Surf\+Int\+Term2, std\+::vector$<$ double $>$ \&Surf\+Int\+Term3, std\+::vector$<$ double $>$ \&Surf\+Int\+Term4)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_a4416566bb508c0455af975c143ba1c94}{process\+::\+N\+S\+F\+Eq\+::get\+Gauss\+Vector\+Of\+Conser\+Var\+Fluxes\+At\+Internal}} (int edge\+Name, int element, int n\+Gauss)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespaceprocess_1_1_n_s_f_eq_aa37213e8da4ae2be7a489d4e0e9fb69d}{process\+::\+N\+S\+F\+Eq\+::solve\+Time\+Marching}} (int element, std\+::vector$<$ double $>$ \&ddt\+Arr, std\+::vector$<$ double $>$ \&Un\+Arr, int R\+K\+Order, int var\+Type)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_aa8b8b3c3c045f183bdfa8f349a8d6dd8}{process\+::time\+Discretization\+::calc\+Global\+Time\+Step}} ()
+\item 
+double \mbox{\hyperlink{namespaceprocess_1_1time_discretization_a6d378bf7fc9b775e2e27c31f036ff1e5}{process\+::time\+Discretization\+::local\+Time\+Step}} (int element)
+\item 
+double \mbox{\hyperlink{namespaceprocess_1_1time_discretization_ad00487c6ccc0253959169399614685f4}{process\+::time\+Discretization\+::local\+Error\+Estimate}} (int element, std\+::vector$<$ double $>$ \&ddt\+Arr)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_ae9c54fa3d937c35282d7f0bacf0c78e7}{process\+::time\+Discretization\+::global\+Error\+Estimate}} ()
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_a0392d2bced62a35d31c10ed31de8accf}{process\+::time\+Discretization\+::\+T\+V\+D\+R\+K\+\_\+1step}} (int R\+K\+Order)
+\begin{DoxyCompactList}\small\item\em Function solves 1 T\+V\+D\+\_\+\+RK iteration. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_af227b796df46ea89e3a2d0d567e8ecc3}{process\+::time\+Discretization\+::\+T\+V\+D\+R\+K3}} ()
+\begin{DoxyCompactList}\small\item\em Function solves 1 time steps of DG workflow. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespaceprocess_1_1time_discretization_1_1parallel_a05d11f3701b98e6b3363a22b709151b0}{process\+::time\+Discretization\+::parallel\+::min\+Time\+Step}} ()
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceprocess_ad9b5d59d393cb84310cd8965a384a2f9}{process\+::get\+Internal\+Values\+From\+Calculated\+Arrays}} (int edge, int element, int nG, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespaceprocess_a888c529967ec7d2cfec7de6b845472e0}{process\+::volume\+Inte}} (int elem, std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&Ui, int order, int direction)
+\item 
+double \mbox{\hyperlink{namespaceprocess_a59e8159fa40f1e5b71561180b33e1218}{process\+::surface\+Inte}} (int elem, int edge, std\+::vector$<$ double $>$ \&Flux\+Vector, int order)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_ae1423fd08c2349e4ee9bfc83a07ddb6d}{process\+::calculate\+Stiff\+Matrix}} (int element)
+\item 
+double \mbox{\hyperlink{namespaceprocess_ad7693dd965e8e97058d13fa2c4d014ac}{process\+::calculate\+Stiff\+Matrix\+Element}} (int element, int order1, int order2)
+\item 
+bool \mbox{\hyperlink{namespaceprocess_a015426aebc5b436537fcaecbc1fbe5ff}{process\+::check\+Running\+Cond}} ()
+\end{DoxyCompactItemize}

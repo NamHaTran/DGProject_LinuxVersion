@@ -1,0 +1,164 @@
+\hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter}{}\doxysection{limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter Namespace Reference}
+\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter}\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a5ec49f5896bb72fc83cb1ca6f3d89b7c}{limiter\+\_\+1step}} (int R\+K\+Order)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a28f9814c42419ec864796815a0c48511}{calc\+Volume\+Gauss\+Rho}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a671dfa5db3c23f083147ac36e51aa9aa}{calc\+Rho\+At\+Element\+Edge}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a92943d04a40a6fb435e2f3847292dca0}{solve\+Div\+Rho}} (int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ac8821099957c0db27173aaea693d3fb6}{calc\+Finv\+Fvis\+At\+Interface}} (int element)
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a879761ffece4509453cdda79f685d08a}{calc\+Finv\+Fvis\+In\+Volume}} (int element, int na, int nb)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a99bc6fdc427c9f530465a41483b2b423}{calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Vol\+Int\+Term1)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae224a7cc5217709d009a3a1e3cf9cccc}{calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&Surf\+Int\+Term1)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a440adec5a3f0ab8109ba885b9c3005a4}{solve\+Mass\+Equation}} (int R\+K\+Order, int element)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a596f64c4483961f955fa4dba67e41425}{calc\+Vol\+Integral\+Term}} (int element, std\+::vector$<$ double $>$ \&Vol\+Int\+Term1)
+\item 
+void \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_acc8cedd90b006c56ae2a126a907568bf}{update\+Variables}} ()
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae4d9e59ead42b4e36ea33c396a4269e3}{calc\+Min\+Rho\+Residual}} (int element)
+\item 
+double \mbox{\hyperlink{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a1e71e7de5410defccd861bab22b1e480}{point\+Rho0}} (int element, double a, double b)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ac8821099957c0db27173aaea693d3fb6}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ac8821099957c0db27173aaea693d3fb6}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcFinvFvisAtInterface@{calcFinvFvisAtInterface}}
+\index{calcFinvFvisAtInterface@{calcFinvFvisAtInterface}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcFinvFvisAtInterface()}{calcFinvFvisAtInterface()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Finv\+Fvis\+At\+Interface (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 551 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a879761ffece4509453cdda79f685d08a}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a879761ffece4509453cdda79f685d08a}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcFinvFvisInVolume@{calcFinvFvisInVolume}}
+\index{calcFinvFvisInVolume@{calcFinvFvisInVolume}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcFinvFvisInVolume()}{calcFinvFvisInVolume()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double, double, double $>$ limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Finv\+Fvis\+In\+Volume (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{na,  }\item[{int}]{nb }\end{DoxyParamCaption})}
+
+
+
+Definition at line 624 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae4d9e59ead42b4e36ea33c396a4269e3}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae4d9e59ead42b4e36ea33c396a4269e3}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcMinRhoResidual@{calcMinRhoResidual}}
+\index{calcMinRhoResidual@{calcMinRhoResidual}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcMinRhoResidual()}{calcMinRhoResidual()}}
+{\footnotesize\ttfamily double limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Min\+Rho\+Residual (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 874 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a671dfa5db3c23f083147ac36e51aa9aa}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a671dfa5db3c23f083147ac36e51aa9aa}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcRhoAtElementEdge@{calcRhoAtElementEdge}}
+\index{calcRhoAtElementEdge@{calcRhoAtElementEdge}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcRhoAtElementEdge()}{calcRhoAtElementEdge()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Rho\+At\+Element\+Edge (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 508 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae224a7cc5217709d009a3a1e3cf9cccc}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_ae224a7cc5217709d009a3a1e3cf9cccc}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}}
+\index{calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcSurfaceIntegralTerms()}{calcSurfaceIntegralTerms()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Surface\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{Surf\+Int\+Term1 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 688 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a596f64c4483961f955fa4dba67e41425}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a596f64c4483961f955fa4dba67e41425}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcVolIntegralTerm@{calcVolIntegralTerm}}
+\index{calcVolIntegralTerm@{calcVolIntegralTerm}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcVolIntegralTerm()}{calcVolIntegralTerm()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Vol\+Integral\+Term (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{Vol\+Int\+Term1 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 803 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a28f9814c42419ec864796815a0c48511}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a28f9814c42419ec864796815a0c48511}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcVolumeGaussRho@{calcVolumeGaussRho}}
+\index{calcVolumeGaussRho@{calcVolumeGaussRho}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcVolumeGaussRho()}{calcVolumeGaussRho()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Volume\+Gauss\+Rho (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 489 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a99bc6fdc427c9f530465a41483b2b423}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a99bc6fdc427c9f530465a41483b2b423}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!calcVolumeIntegralTerms@{calcVolumeIntegralTerms}}
+\index{calcVolumeIntegralTerms@{calcVolumeIntegralTerms}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{calcVolumeIntegralTerms()}{calcVolumeIntegralTerms()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::calc\+Volume\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{Vol\+Int\+Term1 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 653 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a5ec49f5896bb72fc83cb1ca6f3d89b7c}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a5ec49f5896bb72fc83cb1ca6f3d89b7c}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!limiter\_1step@{limiter\_1step}}
+\index{limiter\_1step@{limiter\_1step}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{limiter\_1step()}{limiter\_1step()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::limiter\+\_\+1step (\begin{DoxyParamCaption}\item[{int}]{R\+K\+Order }\end{DoxyParamCaption})}
+
+
+
+Definition at line 470 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a1e71e7de5410defccd861bab22b1e480}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a1e71e7de5410defccd861bab22b1e480}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!pointRho0@{pointRho0}}
+\index{pointRho0@{pointRho0}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{pointRho0()}{pointRho0()}}
+{\footnotesize\ttfamily double limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::point\+Rho0 (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 935 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a92943d04a40a6fb435e2f3847292dca0}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a92943d04a40a6fb435e2f3847292dca0}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!solveDivRho@{solveDivRho}}
+\index{solveDivRho@{solveDivRho}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{solveDivRho()}{solveDivRho()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::solve\+Div\+Rho (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 532 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a440adec5a3f0ab8109ba885b9c3005a4}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_a440adec5a3f0ab8109ba885b9c3005a4}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!solveMassEquation@{solveMassEquation}}
+\index{solveMassEquation@{solveMassEquation}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{solveMassEquation()}{solveMassEquation()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::solve\+Mass\+Equation (\begin{DoxyParamCaption}\item[{int}]{R\+K\+Order,  }\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 756 of file D\+G\+Limiter\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_acc8cedd90b006c56ae2a126a907568bf}\label{namespacelimiter_1_1mass_diffusion_limiter_1_1math_for_mass_diff_limiter_acc8cedd90b006c56ae2a126a907568bf}} 
+\index{limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}!updateVariables@{updateVariables}}
+\index{updateVariables@{updateVariables}!limiter::massDiffusionLimiter::mathForMassDiffLimiter@{limiter::massDiffusionLimiter::mathForMassDiffLimiter}}
+\doxysubsubsection{\texorpdfstring{updateVariables()}{updateVariables()}}
+{\footnotesize\ttfamily void limiter\+::mass\+Diffusion\+Limiter\+::math\+For\+Mass\+Diff\+Limiter\+::update\+Variables (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 857 of file D\+G\+Limiter\+Lib.\+cpp.
+

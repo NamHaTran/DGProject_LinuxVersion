@@ -1,0 +1,326 @@
+\hypertarget{_vardeclaration_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+Var\+Declaration.cpp File Reference}
+\label{_vardeclaration_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/VarDeclaration.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/VarDeclaration.cpp}}
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include \char`\"{}Const\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Messages\+Lib.\+h\char`\"{}}\newline
+Include dependency graph for Var\+Declaration.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_vardeclaration_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacesystem_var}{system\+Var}}
+\item 
+ \mbox{\hyperlink{namespacemesh_var}{mesh\+Var}}
+\item 
+ \mbox{\hyperlink{namespacemath_var}{math\+Var}}
+\item 
+ \mbox{\hyperlink{namespacematerial}{material}}
+\item 
+ \mbox{\hyperlink{namespacematerial_1_1mass_diffusion}{material\+::mass\+Diffusion}}
+\item 
+ \mbox{\hyperlink{namespaceini_values}{ini\+Values}}
+\item 
+ \mbox{\hyperlink{namespacebc_values}{bc\+Values}}
+\item 
+ \mbox{\hyperlink{namespaceflow_properties}{flow\+Properties}}
+\item 
+ \mbox{\hyperlink{namespacelimit_val}{limit\+Val}}
+\item 
+ \mbox{\hyperlink{namespacelimit_val_1_1p_adaptive}{limit\+Val\+::p\+Adaptive}}
+\item 
+ \mbox{\hyperlink{namespacelimit_val_1_1_positivity_preserving_settings}{limit\+Val\+::\+Positivity\+Preserving\+Settings}}
+\item 
+ \mbox{\hyperlink{namespacecontrol_flag}{control\+Flag}}
+\item 
+ \mbox{\hyperlink{namespacecontrol_flag_1_1sequence}{control\+Flag\+::sequence}}
+\item 
+ \mbox{\hyperlink{namespacecontrol_flag_1_1parallel}{control\+Flag\+::parallel}}
+\item 
+ \mbox{\hyperlink{namespacecontrol_flag_1_1file_avail_flags}{control\+Flag\+::file\+Avail\+Flags}}
+\item 
+ \mbox{\hyperlink{namespacewarning_flag}{warning\+Flag}}
+\item 
+ \mbox{\hyperlink{namespace_d_g_schemes}{D\+G\+Schemes}}
+\item 
+ \mbox{\hyperlink{namespace_d_g_schemes_1_1flux_control}{D\+G\+Schemes\+::flux\+Control}}
+\item 
+ \mbox{\hyperlink{namespacedebug_vars}{debug\+Vars}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_a0f87102e29a1acc3cd26fc23a086871f}{system\+Var\+::end\+Key}} (false)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_aafb56aad18853bf1065088aca0d94f5b}{system\+Var\+::\+C\+FL}} (0.\+5)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_a4105202fb9ea5ad22a93b669ebc1b388}{system\+Var\+::\+Ttime}} (0.\+0)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_a656c33fdb3fc8b9325055055cd79b0b7}{system\+Var\+::wrtI}} (0)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_ad14f30620649ed4718f747d02d5bff90}{system\+Var\+::wrt\+Log}} (true)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_ab41a4bb742f103f1af0aa5e00f18ca12}{system\+Var\+::load\+Saved\+Case}} (false)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_adb19b1e208824293490c80947281959f}{system\+Var\+::ddt\+Scheme}} (1)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_ad3b648c9900f77d091b4cc4ef221c957}{system\+Var\+::epsilon}} (1e-\/13)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_a4ede9188d306c8b725e1969ea8a795fd}{system\+Var\+::iter\+Count}} (0)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_a45625cca2475393a0849d7693281ddc5}{system\+Var\+::saving\+Cout}} (0)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_a624e0a742aed9b1c22bc140e7f154c7f}{system\+Var\+::load\+Const\+Count}} (0)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_ae46674951a2a8ef1af28156d7a75d65a}{system\+Var\+::rho\+Res\+Norm}} (1.\+0)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_a6f95354e4a9680cbba1bad03e42bae7f}{system\+Var\+::rhou\+Res\+Norm}} (1.\+0)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_aeb122b355fe38561343efd82903eccd3}{system\+Var\+::rhov\+Res\+Norm}} (1.\+0)
+\item 
+double \mbox{\hyperlink{namespacesystem_var_ae9e5cfad34464090a34485a4fc33fa83}{system\+Var\+::rho\+E\+Res\+Norm}} (1.\+0)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_a7bbb44487f69dc7ebad9c6ed100dabe1}{system\+Var\+::initialized\+Or\+Not}} (false)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_a914188ad7e303df8e1d3787a4f2c2985}{system\+Var\+::run\+Pre\+Process}} (false)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_a0f09e30929520eaf99d5b0a75944676c}{system\+Var\+::aux\+Variables}} (1)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_aaf09e0ce72209ada794a987ebfeba19f}{system\+Var\+::total\+Proc}} (4)
+\item 
+int \mbox{\hyperlink{namespacesystem_var_ad39cdad1abeab86f545f76baf1310dcb}{system\+Var\+::current\+Proc}} (0)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_a724ef78e65c43907956c5ae08244765f}{system\+Var\+::run\+Decompose\+Case\+Fnc}} (false)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_a785d39926387301204be1f50a0f57447}{system\+Var\+::parallel\+Mode}} (true)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_adfdf054e851d41001cdf2b011846e0d3}{system\+Var\+::run\+Check\+Par\+Mesh}} (false)
+\item 
+bool \mbox{\hyperlink{namespacesystem_var_ab59ca2107a90a0e3195123792ab9d357}{system\+Var\+::first\+Iter}} (true)
+\item 
+std\+::string \mbox{\hyperlink{namespacesystem_var_a40b405184c8e3008fd33c20f384f5b3a}{system\+Var\+::header\+File}} (message\+::header\+File())
+\item 
+std\+::string \mbox{\hyperlink{namespacesystem_var_a2ccaabe63249aea22109746883775593}{system\+Var\+::read\+Write\+Mode}} (\char`\"{} \char`\"{})
+\item 
+int \mbox{\hyperlink{namespacemesh_var_ad0a34ef0b9d05f39ae1220adb0bf8f0b}{mesh\+Var\+::nelem1D}} (0)
+\item 
+int \mbox{\hyperlink{namespacemesh_var_ad8c612a8a435486daa5bc39efa3cace1}{mesh\+Var\+::nelem2D}} (0)
+\item 
+int \mbox{\hyperlink{namespacemesh_var_ae8732424739a10a2b01d5ccb8eb39bfb}{mesh\+Var\+::npoin}} (0)
+\item 
+int \mbox{\hyperlink{namespacemesh_var_a679c2e6b8180b8e78cbb88adf970db74}{mesh\+Var\+::n\+Bc}} (0)
+\item 
+const int \mbox{\hyperlink{namespacemesh_var_af06de5bb924c9d2d36d7f757e0d566ef}{mesh\+Var\+::nnode}} (4)
+\item 
+const int \mbox{\hyperlink{namespacemesh_var_ae3f0e4f9d79e82b4d646572b01dfcd0a}{mesh\+Var\+::nedel}} (4)
+\item 
+int \mbox{\hyperlink{namespacemesh_var_a7887eceb2a22c35e497a88f5452fe121}{mesh\+Var\+::inpoed\+Count}} (0)
+\item 
+int \mbox{\hyperlink{namespacemesh_var_a896a27b6fb8fbf2d6a4801c0a412b655}{mesh\+Var\+::num\+B\+C\+Edges}} (0)
+\item 
+int \mbox{\hyperlink{namespacemesh_var_ad97358f632a5bdcd711bc382835cac33}{mesh\+Var\+::num\+B\+C\+Grp}} (0)
+\item 
+int \mbox{\hyperlink{namespacemath_var_a4d817c2f70115bebeae218d885139a31}{math\+Var\+::order\+Elem}} (0)
+\item 
+int \mbox{\hyperlink{namespacemath_var_a2b4c0c61e5d831f71cb5a63eba5f670c}{math\+Var\+::order\+Of\+Accuracy}} (0)
+\item 
+bool \mbox{\hyperlink{namespacemath_var_a4f5b77d6de89ed89e25785d9d123cb24}{math\+Var\+::solve\+T\+Failed}} (false)
+\item 
+int \mbox{\hyperlink{namespacemath_var_ad9d9616da2836041e14d326681a05b10}{math\+Var\+::n\+Gauss}} (0)
+\item 
+double \mbox{\hyperlink{namespacematerial_a78dcd8759f8d6d9a71f2933e61abf870}{material\+::gamma}} (1.\+4)
+\item 
+double \mbox{\hyperlink{namespacematerial_a38a31e2e5960c9ef261e0f0dee7f2113}{material\+::R}} (287.\+0)
+\item 
+double \mbox{\hyperlink{namespacematerial_a8adb0effdd391bb31151b6618477c352}{material\+::\+Pr}} (0.\+72)
+\item 
+double \mbox{\hyperlink{namespacematerial_ad251ebcd5a28a1b758d309645cf66383}{material\+::\+As}} (0.\+001)
+\item 
+double \mbox{\hyperlink{namespacematerial_acd73947b2f27d1908b0d660a1ad9f6d7}{material\+::\+Ts}} (110.\+4)
+\item 
+double \mbox{\hyperlink{namespacematerial_a4c7bc81ba9e36732c4f2df7f2613b5d1}{material\+::\+Cp}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespacematerial_a45a4d5fdd03e274479d08f4f233630cf}{material\+::\+Cv}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespacematerial_1_1mass_diffusion_af12e14423276c59de3529409f7ebb75f}{material\+::mass\+Diffusion\+::\+Dm\+Coeff}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_ad4ff9cfc317a43924b7067ff69db60ef}{ini\+Values\+::u\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_ad6fed58cd15863c626c2baf56504305b}{ini\+Values\+::v\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_aebcebc9256a98c7f7297164f26353832}{ini\+Values\+::w\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_a8b8c13a5f3305dcae62e46a076b11b79}{ini\+Values\+::p\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_a62c02bfce32057de1a8989b31a6b8f7b}{ini\+Values\+::\+T\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_ad4ac99017fe3e57c5be8613adf166a32}{ini\+Values\+::mu\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_ac0888f41ac0b32e860f0120f7e2b101b}{ini\+Values\+::rho\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespaceini_values_a1f9db2f34d9f253056101cc0ddba4086}{ini\+Values\+::e\+Ini}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespacebc_values_ad8f465b8cf6a155add15daab1e7e38ec}{bc\+Values\+::sigmaU}} (1.\+0)
+\item 
+double \mbox{\hyperlink{namespacebc_values_afb033b698105ed7cc317f4a79e4231a6}{bc\+Values\+::sigmaT}} (1.\+0)
+\item 
+bool \mbox{\hyperlink{namespacebc_values_aa9ec1e92e047772f57dcf1ac4f05acd6}{bc\+Values\+::slip\+B\+C\+Flag}} (false)
+\item 
+bool \mbox{\hyperlink{namespacebc_values_a13306886a2cc2a9ddf65c945092ccd54}{bc\+Values\+::temperature\+Jump}} (false)
+\item 
+bool \mbox{\hyperlink{namespaceflow_properties_a7a43e12374fab3f9d5291dcb5610c2ec}{flow\+Properties\+::viscous}} (true)
+\item 
+bool \mbox{\hyperlink{namespaceflow_properties_a41224a136debbeedfc057a34facbb417}{flow\+Properties\+::mass\+Diffusion}} (false)
+\item 
+double \mbox{\hyperlink{namespaceflow_properties_a7cb0320a7f952b387206fadcf41d317e}{flow\+Properties\+::\+Mach}} (0.\+0)
+\item 
+bool \mbox{\hyperlink{namespaceflow_properties_a6ef7ab06baff3d16155eb43b52e47c10}{flow\+Properties\+::subsonic}} (true)
+\item 
+double \mbox{\hyperlink{_vardeclaration_8cpp_aac1512092e800eba6859e5c30b78fca8}{dt}} (1e-\/20)
+\item 
+double \mbox{\hyperlink{_vardeclaration_8cpp_a2c3165c534d22a206304b5ff3f256d3b}{run\+Time}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespacelimit_val_aca16ded0ce690a6b48a4780aa69db2d1}{limit\+Val\+::\+T\+Up}} (5000)
+\item 
+double \mbox{\hyperlink{namespacelimit_val_af953528a96c21d69ee34a1c785e02db2}{limit\+Val\+::\+T\+Dwn}} (20)
+\item 
+double \mbox{\hyperlink{namespacelimit_val_ad7e16b867b22b687eff6d488fd33d7ff}{limit\+Val\+::rho\+Up}} (12.\+5)
+\item 
+double \mbox{\hyperlink{namespacelimit_val_af0f47dbdcfa0f3f509c8f8440c379f80}{limit\+Val\+::rho\+Dwn}} (0.\+0001)
+\item 
+double \mbox{\hyperlink{namespacelimit_val_ab49edb7ebc773ccf83ffddead77215cb}{limit\+Val\+::rho\+E\+Up}} (0.\+0)
+\item 
+double \mbox{\hyperlink{namespacelimit_val_acae9963d96c7981adef78d82bd3fd36f}{limit\+Val\+::rho\+E\+Dwn}} (0.\+0)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_a872512d956c093bebe72b5a5d7428a77}{limit\+Val\+::limit\+T\+Or\+Not}} (false)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_a2615a9835f58c1a67b7ba89f22dbabd6}{limit\+Val\+::limit\+Flag\+Local}} (false)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_a47049aef38ece1e38c77c84aee3f8d9a}{limit\+Val\+::limit\+Flag\+Global}} (false)
+\item 
+int \mbox{\hyperlink{namespacelimit_val_a0557d3c6a64ae8386cafc5c3490aed83}{limit\+Val\+::num\+Of\+Limit\+Cell}} (0)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_1_1p_adaptive_a0694c7b927e30b29fca2a0d1aefe861b}{limit\+Val\+::p\+Adaptive\+::limit\+Flag\+Local}} (false)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_1_1p_adaptive_a55b7131a7e23cb8be73cbe09ab444515}{limit\+Val\+::p\+Adaptive\+::limit\+Flag\+Global}} (false)
+\item 
+int \mbox{\hyperlink{namespacelimit_val_1_1p_adaptive_a02dd9ddf70303a84edcfa416faa01d26}{limit\+Val\+::p\+Adaptive\+::num\+Of\+Limit\+Cell}} (0)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_a42206b6627da8296a7857fe8bf1e29db}{limit\+Val\+::\+Positivity\+Preserving}} (false)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_afdc096e32bfd4984cf8e4035591dbe19}{limit\+Val\+::\+P\+Adaptive}} (false)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_aad7addf36d73f8e2d29e1ea2dfbe0d9e}{limit\+Val\+::mass\+Diffusion}} (false)
+\item 
+bool \mbox{\hyperlink{namespacelimit_val_ad9414f06d769a88f14b749db0882431c}{limit\+Val\+::running\+Mass\+Diff\+Limiter}} (false)
+\item 
+int \mbox{\hyperlink{namespacelimit_val_1_1_positivity_preserving_settings_a4b82b455b156496085016ff377ad1291}{limit\+Val\+::\+Positivity\+Preserving\+Settings\+::version}} (2)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_ab85c1aa2393c4acaa1270f818287f23b}{control\+Flag\+::sequence\+::check\+Unv\+Reader}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_aa12a10404732653b7c45d0a2c09dd08e}{control\+Flag\+::sequence\+::check\+B\+Cs\+Helper}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_a491015d5285f617c7b38f8242549eb94}{control\+Flag\+::sequence\+::check\+Unv\+Helper}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_ac903f7942da2529eb3bceb6e06ab1268}{control\+Flag\+::sequence\+::re\+Submit}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_a62473e089321f651a5f252c609ab3dbe}{control\+Flag\+::sequence\+::export\+Mesh\+To\+Metis}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_a2e06ede6a64a1bc9eb0712b42fcd71c4}{control\+Flag\+::sequence\+::test\+Mesh\+Partition\+Result}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_a108f5b2a18361fbcf6403e5daf447381}{control\+Flag\+::sequence\+::debug\+\_\+check\+Element}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_ad306ce38fd1437ed48cc34cd05ea1560}{control\+Flag\+::sequence\+::decompose\+Case}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_a625e004589c6ef2f78885ed47b0b4af8}{control\+Flag\+::sequence\+::reconstruct\+Latest\+Time}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1sequence_add6f9a5c1c9f963816388d216c1a676e}{control\+Flag\+::sequence\+::check\+Partitioned\+Mesh}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1parallel_aa02e72e00760ea897723ecdcd9227bf2}{control\+Flag\+::parallel\+::check\+D\+G\+Run}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1parallel_a8c7c59f2a0678f58eca63770adc0cd62}{control\+Flag\+::parallel\+::map\+Results}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1file_avail_flags_a5570b981927b4d259df72fd9d8de4479}{control\+Flag\+::file\+Avail\+Flags\+::file\+T\+Surface}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1file_avail_flags_a7fb629ea17383a4f9f0a2d017b8ecb66}{control\+Flag\+::file\+Avail\+Flags\+::fileu\+Surface}} (false)
+\item 
+bool \mbox{\hyperlink{namespacecontrol_flag_1_1file_avail_flags_adf52eb4f7cfa8d543eef28dd69e48e37}{control\+Flag\+::file\+Avail\+Flags\+::filev\+Surface}} (false)
+\item 
+bool \mbox{\hyperlink{namespacewarning_flag_a37969d7e635e4a5948f4c072c2f4d2f0}{warning\+Flag\+::reversed\+Flow\+Occur}} (false)
+\item 
+bool \mbox{\hyperlink{namespace_d_g_schemes_a3c24917a9b407597c9a1d4f66adc4d90}{D\+G\+Schemes\+::solve\+T\+Implicitly}} (true)
+\item 
+bool \mbox{\hyperlink{namespace_d_g_schemes_1_1flux_control_a1c118b3712e9bca7b48dc4e356686afa}{D\+G\+Schemes\+::flux\+Control\+::\+LxF}} (false)
+\item 
+bool \mbox{\hyperlink{namespace_d_g_schemes_1_1flux_control_a03c5d89df5c79c0bbcf6a0cc82658cf2}{D\+G\+Schemes\+::flux\+Control\+::\+Roe}} (false)
+\item 
+bool \mbox{\hyperlink{namespace_d_g_schemes_1_1flux_control_a541951cd7085ad8b2f4d5e38a41c6648}{D\+G\+Schemes\+::flux\+Control\+::\+H\+LL}} (false)
+\item 
+bool \mbox{\hyperlink{namespace_d_g_schemes_1_1flux_control_af7e901aa03e9d3f7df590a0b9a583145}{D\+G\+Schemes\+::flux\+Control\+::\+H\+L\+LC}} (false)
+\item 
+bool \mbox{\hyperlink{namespace_d_g_schemes_1_1flux_control_a1376dce7b3a8698de12b8f372a7735a8}{D\+G\+Schemes\+::flux\+Control\+::central}} (false)
+\item 
+int \mbox{\hyperlink{namespacedebug_vars_a1f81e77633fc489f68898aa88bee7443}{debug\+Vars\+::element}} (0)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{namespacesystem_var_a1a8593cf19056cf62f6c996f04be417d}{system\+Var\+::wD}}
+\item 
+std\+::string \mbox{\hyperlink{namespacesystem_var_a185d5ba8e0759f67ad4f929a3b863d79}{system\+Var\+::case\+Name}}
+\item 
+std\+::string \mbox{\hyperlink{namespacesystem_var_a2054d0c0c498d0224678ea5e5359fea5}{system\+Var\+::pwd}}
+\item 
+std\+::string \mbox{\hyperlink{namespacesystem_var_af52342fa845bcdffccaab2756e7d41c0}{system\+Var\+::cmd}}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{namespacesystem_var_ad7abdb9b09154f981c0892085ecda341}{system\+Var\+::send\+Recv\+Order}} = new int$\ast$\mbox{[}1\mbox{]}
+\item 
+int \mbox{\hyperlink{namespacesystem_var_a0e4babff09d2574da52d50fae81912b9}{system\+Var\+::send\+Recv\+Order\+\_\+length}}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacemesh_var_acc5c96b53016d299ec9ac4daae99557d}{mesh\+Var\+::esup1}}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacemesh_var_adee804fa7a7ea1d0037559131ef16d98}{mesh\+Var\+::esup2}}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacemesh_var_a36c61d68221e521bbb265bfdd12c689c}{mesh\+Var\+::psup1}}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{namespacemesh_var_a7159fd9c0052653d740d696d01af5aaf}{mesh\+Var\+::psup2}}
+\item 
+double \mbox{\hyperlink{namespacebc_values_a0d424e22a5a65b84f936a0bbe8d4793e}{bc\+Values\+::u\+B\+C\+Fixed}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{ 0.\+0 \}
+\item 
+double \mbox{\hyperlink{namespacebc_values_a5bca8c4ee4c188c80ab23d79b6080ef5}{bc\+Values\+::v\+B\+C\+Fixed}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{ 0.\+0 \}
+\item 
+double \mbox{\hyperlink{namespacebc_values_a4bc654a5db4f85ceb8a894d56de2dac8}{bc\+Values\+::w\+B\+C\+Fixed}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{ 0.\+0 \}
+\item 
+double \mbox{\hyperlink{namespacebc_values_ae8e777951229e7c65c4fa079a9c53459}{bc\+Values\+::p\+B\+C\+Fixed}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{ 0.\+0 \}
+\item 
+double \mbox{\hyperlink{namespacebc_values_ab9c967387b4a7cb39560f341b2169e61}{bc\+Values\+::\+T\+B\+C\+Fixed}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{ 0.\+0 \}
+\item 
+int \mbox{\hyperlink{namespacebc_values_a84f581097b31adafd10a5a883559fc9c}{bc\+Values\+::\+U\+Bc\+Type}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{\}
+\item 
+int \mbox{\hyperlink{namespacebc_values_a37eadd94703634910673e8032fa60617}{bc\+Values\+::p\+Bc\+Type}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{\}
+\item 
+int \mbox{\hyperlink{namespacebc_values_aa57273502dd14999bc82036224b9b950}{bc\+Values\+::\+T\+Bc\+Type}} \mbox{[}\mbox{\hyperlink{_const_declaration_8h_a8c8008add98c0bdd3cd53fffa827051a}{bc\+Size}}\mbox{]} = \{\}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{namespacelimit_val_af1b14cb88b79486b32007a3748fc0c9f}{limit\+Val\+::limiter\+Name}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_vardeclaration_8cpp_aac1512092e800eba6859e5c30b78fca8}\label{_vardeclaration_8cpp_aac1512092e800eba6859e5c30b78fca8}} 
+\index{VarDeclaration.cpp@{VarDeclaration.cpp}!dt@{dt}}
+\index{dt@{dt}!VarDeclaration.cpp@{VarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{dt()}{dt()}}
+{\footnotesize\ttfamily double dt (\begin{DoxyParamCaption}\item[{1e-\/}]{20 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vardeclaration_8cpp_a2c3165c534d22a206304b5ff3f256d3b}\label{_vardeclaration_8cpp_a2c3165c534d22a206304b5ff3f256d3b}} 
+\index{VarDeclaration.cpp@{VarDeclaration.cpp}!runTime@{runTime}}
+\index{runTime@{runTime}!VarDeclaration.cpp@{VarDeclaration.cpp}}
+\doxysubsubsection{\texorpdfstring{runTime()}{runTime()}}
+{\footnotesize\ttfamily double run\+Time (\begin{DoxyParamCaption}\item[{0.}]{0 }\end{DoxyParamCaption})}
+

@@ -1,0 +1,104 @@
+\hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1}{}\doxysection{process\+::aux\+Eq\+::B\+R1 Namespace Reference}
+\label{namespaceprocess_1_1aux_eq_1_1_b_r1}\index{process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a079bf30f4c825dce0efc422ff459929e}{calc\+Values\+At\+Interface}} ()
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a37a89d928f67d27f42b59e8283d22d49}{get\+Internal\+Values\+From\+Calculated\+Arrays}} (int edge, int element, int nG, int val\+Type)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_ac07773f7ad85d1076eaacaf44fd513eb}{Calc\+R\+H\+S\+Term}} (int element, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rho\+R\+H\+S\+Oy, std\+::vector$<$ double $>$ \&rhou\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rhou\+R\+H\+S\+Oy, std\+::vector$<$ double $>$ \&rhov\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rhov\+R\+H\+S\+Oy, std\+::vector$<$ double $>$ \&rho\+E\+R\+H\+S\+Ox, std\+::vector$<$ double $>$ \&rho\+E\+R\+H\+S\+Oy)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_aef618698392398ea761a20098f02a001}{calc\+Volume\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Vol\+IntX, std\+::vector$<$ double $>$ \&rhou\+Vol\+IntX, std\+::vector$<$ double $>$ \&rhov\+Vol\+IntX, std\+::vector$<$ double $>$ \&rho\+E\+Vol\+IntX, std\+::vector$<$ double $>$ \&rho\+Vol\+IntY, std\+::vector$<$ double $>$ \&rhou\+Vol\+IntY, std\+::vector$<$ double $>$ \&rhov\+Vol\+IntY, std\+::vector$<$ double $>$ \&rho\+E\+Vol\+IntY)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a4beab310020d33736069a1f718362f17}{calc\+Surface\+Integral\+Terms}} (int element, std\+::vector$<$ double $>$ \&rho\+Surf\+IntX, std\+::vector$<$ double $>$ \&rhou\+Surf\+IntX, std\+::vector$<$ double $>$ \&rhov\+Surf\+IntX, std\+::vector$<$ double $>$ \&rho\+E\+Surf\+IntX, std\+::vector$<$ double $>$ \&rho\+Surf\+IntY, std\+::vector$<$ double $>$ \&rhou\+Surf\+IntY, std\+::vector$<$ double $>$ \&rhov\+Surf\+IntY, std\+::vector$<$ double $>$ \&rho\+E\+Surf\+IntY)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a73e4113fa470c4e11dd8d01cda1d9f25}{get\+Gauss\+Matrix\+Of\+Conser\+Var}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&U\+Gauss, int element, int val\+Type)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a6842e6aacedca26e00f2eb05d861ebdd}{get\+Vector\+Of\+Conser\+Var\+Fluxes\+At\+Internal}} (int edge, int element, int nG, double nx, double ny)
+\item 
+void \mbox{\hyperlink{namespaceprocess_1_1aux_eq_1_1_b_r1_a0d299530043e3f4332d1a959440f12ce}{get\+Gauss\+Vector\+Of\+Conser\+Var}} (int element, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhou\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhov\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+E\+FluxX, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+FluxY, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhou\+FluxY, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rhov\+FluxY, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&rho\+E\+FluxY)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_ac07773f7ad85d1076eaacaf44fd513eb}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_ac07773f7ad85d1076eaacaf44fd513eb}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!CalcRHSTerm@{CalcRHSTerm}}
+\index{CalcRHSTerm@{CalcRHSTerm}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{CalcRHSTerm()}{CalcRHSTerm()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::\+B\+R1\+::\+Calc\+R\+H\+S\+Term (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+R\+H\+S\+Ox,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+R\+H\+S\+Oy,  }\item[{std\+::vector$<$ double $>$ \&}]{rhou\+R\+H\+S\+Ox,  }\item[{std\+::vector$<$ double $>$ \&}]{rhou\+R\+H\+S\+Oy,  }\item[{std\+::vector$<$ double $>$ \&}]{rhov\+R\+H\+S\+Ox,  }\item[{std\+::vector$<$ double $>$ \&}]{rhov\+R\+H\+S\+Oy,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+E\+R\+H\+S\+Ox,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+E\+R\+H\+S\+Oy }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1429 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_a4beab310020d33736069a1f718362f17}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_a4beab310020d33736069a1f718362f17}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}}
+\index{calcSurfaceIntegralTerms@{calcSurfaceIntegralTerms}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{calcSurfaceIntegralTerms()}{calcSurfaceIntegralTerms()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::\+B\+R1\+::calc\+Surface\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Surf\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rhou\+Surf\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rhov\+Surf\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+E\+Surf\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Surf\+IntY,  }\item[{std\+::vector$<$ double $>$ \&}]{rhou\+Surf\+IntY,  }\item[{std\+::vector$<$ double $>$ \&}]{rhov\+Surf\+IntY,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+E\+Surf\+IntY }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1536 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_a079bf30f4c825dce0efc422ff459929e}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_a079bf30f4c825dce0efc422ff459929e}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!calcValuesAtInterface@{calcValuesAtInterface}}
+\index{calcValuesAtInterface@{calcValuesAtInterface}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{calcValuesAtInterface()}{calcValuesAtInterface()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::\+B\+R1\+::calc\+Values\+At\+Interface (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1336 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_aef618698392398ea761a20098f02a001}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_aef618698392398ea761a20098f02a001}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!calcVolumeIntegralTerms@{calcVolumeIntegralTerms}}
+\index{calcVolumeIntegralTerms@{calcVolumeIntegralTerms}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{calcVolumeIntegralTerms()}{calcVolumeIntegralTerms()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::\+B\+R1\+::calc\+Volume\+Integral\+Terms (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Vol\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rhou\+Vol\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rhov\+Vol\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+E\+Vol\+IntX,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+Vol\+IntY,  }\item[{std\+::vector$<$ double $>$ \&}]{rhou\+Vol\+IntY,  }\item[{std\+::vector$<$ double $>$ \&}]{rhov\+Vol\+IntY,  }\item[{std\+::vector$<$ double $>$ \&}]{rho\+E\+Vol\+IntY }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1479 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_a73e4113fa470c4e11dd8d01cda1d9f25}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_a73e4113fa470c4e11dd8d01cda1d9f25}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!getGaussMatrixOfConserVar@{getGaussMatrixOfConserVar}}
+\index{getGaussMatrixOfConserVar@{getGaussMatrixOfConserVar}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{getGaussMatrixOfConserVar()}{getGaussMatrixOfConserVar()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::\+B\+R1\+::get\+Gauss\+Matrix\+Of\+Conser\+Var (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{U\+Gauss,  }\item[{int}]{element,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1597 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_a0d299530043e3f4332d1a959440f12ce}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_a0d299530043e3f4332d1a959440f12ce}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!getGaussVectorOfConserVar@{getGaussVectorOfConserVar}}
+\index{getGaussVectorOfConserVar@{getGaussVectorOfConserVar}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{getGaussVectorOfConserVar()}{getGaussVectorOfConserVar()}}
+{\footnotesize\ttfamily void process\+::aux\+Eq\+::\+B\+R1\+::get\+Gauss\+Vector\+Of\+Conser\+Var (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rho\+FluxX,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rhou\+FluxX,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rhov\+FluxX,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rho\+E\+FluxX,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rho\+FluxY,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rhou\+FluxY,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rhov\+FluxY,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{rho\+E\+FluxY }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1676 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_a37a89d928f67d27f42b59e8283d22d49}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_a37a89d928f67d27f42b59e8283d22d49}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!getInternalValuesFromCalculatedArrays@{getInternalValuesFromCalculatedArrays}}
+\index{getInternalValuesFromCalculatedArrays@{getInternalValuesFromCalculatedArrays}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{getInternalValuesFromCalculatedArrays()}{getInternalValuesFromCalculatedArrays()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ process\+::aux\+Eq\+::\+B\+R1\+::get\+Internal\+Values\+From\+Calculated\+Arrays (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1379 of file D\+G\+Proc\+Lib.\+cpp.
+
+\mbox{\Hypertarget{namespaceprocess_1_1aux_eq_1_1_b_r1_a6842e6aacedca26e00f2eb05d861ebdd}\label{namespaceprocess_1_1aux_eq_1_1_b_r1_a6842e6aacedca26e00f2eb05d861ebdd}} 
+\index{process::auxEq::BR1@{process::auxEq::BR1}!getVectorOfConserVarFluxesAtInternal@{getVectorOfConserVarFluxesAtInternal}}
+\index{getVectorOfConserVarFluxesAtInternal@{getVectorOfConserVarFluxesAtInternal}!process::auxEq::BR1@{process::auxEq::BR1}}
+\doxysubsubsection{\texorpdfstring{getVectorOfConserVarFluxesAtInternal()}{getVectorOfConserVarFluxesAtInternal()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ process\+::aux\+Eq\+::\+B\+R1\+::get\+Vector\+Of\+Conser\+Var\+Fluxes\+At\+Internal (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{double}]{nx,  }\item[{double}]{ny }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1641 of file D\+G\+Proc\+Lib.\+cpp.
+

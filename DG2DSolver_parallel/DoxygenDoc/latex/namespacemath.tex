@@ -1,0 +1,849 @@
+\hypertarget{namespacemath}{}\doxysection{math Namespace Reference}
+\label{namespacemath}\index{math@{math}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1_b_r2_fncs}{B\+R2\+Fncs}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1geometric_op}{geometric\+Op}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1inviscid_terms}{inviscid\+Terms}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1mass_diffusion_fncs}{mass\+Diffusion\+Fncs}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1numerical_fluxes}{numerical\+Fluxes}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1residual_manipulation}{residual\+Manipulation}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1solve_polynomials_eq}{solve\+Polynomials\+Eq}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1tensor_math}{tensor\+Math}}
+\item 
+ \mbox{\hyperlink{namespacemath_1_1viscous_terms}{viscous\+Terms}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacemath_af5a1207ff0114a92ec11f31675b3f11d}{volume\+Gauss}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_afdd6c424ebfbad9631f2ac9aac569ddf}{surface\+Gauss}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_a81b4b821310867c03d713e65ba131edb}{volume\+Gauss\+Lobatto}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_a41c1d7d343daf42ae42fa51825d30e7b}{surface\+Gauss\+Lobatto}} (int n\+Gauss)
+\item 
+void \mbox{\hyperlink{namespacemath_a442beb1e6c1d2ebeb37fc08bf5158077}{basis\+Fc}} (double a, double b, int elem\+Type)
+\item 
+void \mbox{\hyperlink{namespacemath_a4f5b84db4eeed650294b323ab345d44c}{d\+Basis\+Fc}} (double a, double b, int elem\+Type)
+\item 
+double \mbox{\hyperlink{namespacemath_a75af59085b920cea9d0a55697220b35d}{J2\+D\+Cal}} (int elem, double a, double b)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_af082ece7a9489d7fdea6bb70966d282d}{J1\+D\+Cal}} (int edge)
+\item 
+double \mbox{\hyperlink{namespacemath_a699bab28b80867fe156e93c2eb39014a}{ini\+Integral}} (int elem\+Type, int order)
+\item 
+double \mbox{\hyperlink{namespacemath_a3345126abe953df3f65e4f0b09d8728e}{volume\+Inte}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&Fvalue, int elem)
+\item 
+double \mbox{\hyperlink{namespacemath_a0d132569a1e71999fd55061ded5f702c}{jacobian\+Quad}} (double xA, double xB, double xC, double xD, double yA, double yB, double yC, double yD, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_a28ab84bc66352f73786f84dcea8e563c}{jacobian\+Tri}} (double xA, double xB, double xC, double yA, double yB, double yC, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_ab865c882a1e01dd36a955cb0d33b9cf6}{jacobian1\+D\+Quad}} (int edge\+Index, double xA, double xB, double xC, double xD, double yA, double yB, double yC, double yD)
+\item 
+double \mbox{\hyperlink{namespacemath_a315d9106f4fec6ab22b807594a99f5a8}{jacobian1\+D\+Tri}} (int edge\+Index, double xA, double xB, double xC, double yA, double yB, double yC)
+\item 
+double \mbox{\hyperlink{namespacemath_a1e7a61c8119a8b9cf637055dd58a2f43}{calc\+Mean\+Pri\+Var}} (int element, int var\+Id)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a32aae97393e4ecab6c98816b240e8abc}{Solve\+Sys\+Eqs}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&a, std\+::vector$<$ double $>$ \&b)
+\item 
+double \mbox{\hyperlink{namespacemath_a9d3e434727fb95a1fc0f98ae5696d9f6}{error\+GS}} (std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&a, std\+::vector$<$ double $>$ \&b, std\+::vector$<$ double $>$ \&No)
+\item 
+double \mbox{\hyperlink{namespacemath_ab784c91c1a5ddffe12b8e2d03a3ae617}{Calc\+Vis\+Coef}} (double T)
+\item 
+double \mbox{\hyperlink{namespacemath_a4e99529b0422128bd708c3fa5fe0bd8c}{CalcT}} (int elem, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_abcc57a7d407f4805a90af22026a476bd}{Calc\+T\+From\+Consv\+Var}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}})
+\item 
+double \mbox{\hyperlink{namespacemath_a70380a144fd2e4d704ea18164794f19c}{Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double rhox, double rhoy, double T\+\_\+old)
+\item 
+double \mbox{\hyperlink{namespacemath_a44d244c122218b6dc0ef2c6c15408254}{Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff\+\_\+explicit}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double mu\+Rhox, double mu\+Rhoy)
+\item 
+double \mbox{\hyperlink{namespacemath_a582d91c5db3f952d08b6c09253307430}{Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff\+\_\+implicit}} (double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a5c4522f34d92489bb4d15ed0fb34e8c9}{rhou}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a257717878b3132746c6ce4e41b6d7f39}{rhov}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double rhox, double rhoy)
+\item 
+double \mbox{\hyperlink{namespacemath_a8b7862571aadce45436567cd9f387ef2}{CalcP}} (double T, double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}})
+\item 
+std\+::tuple$<$ double, double, double, double $>$ \mbox{\hyperlink{namespacemath_a1342ea287678a63c4bc68866ffcc51da}{Calc\+\_\+dxydab}} (int elem, double a, double b)
+\item 
+double \mbox{\hyperlink{namespacemath_a98311fbda0afa358589ce125f00f4e40}{Calc\+\_\+d\+Bxd\+By}} (int elem, int order, int na, int nb, int opt)
+\item 
+double \mbox{\hyperlink{namespacemath_ace952e7838225b05a43b4d81ffa2d304}{surface\+Inte}} (std\+::vector$<$ double $>$ \&Fvalue, int edge)
+\item 
+double \mbox{\hyperlink{namespacemath_a123873830eae31561b6fdc543987ef35}{point\+Value}} (int element, double a, double b, int val\+Type, int val\+Kind)
+\item 
+double \mbox{\hyperlink{namespacemath_a43783b637422d46bfeac970018c32a35}{point\+Value\+No\+Limiter}} (int element, double a, double b, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespacemath_a28b6605cc8e1b0a4d99ee4e5ecff767d}{vector\+Dot\+Product}} (std\+::vector$<$ double $>$ \&a, std\+::vector$<$ double $>$ \&b)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a2e0c6f0e06f08dfad7c1e0e0d84d90e5}{internal\+Surface\+Value}} (int edge, int element, int nG, int val\+Type, int val\+Kind)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a5b66fd85c26991b5eb5059acd82f9db0}{internal\+Surface\+Derivative\+Value}} (int edge, int element, int nG, int val\+Type, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_a8b3d2a928e19871cda8f72af196ecc54}{Surface\+Value\+From\+Master}} (int edge, int nG, int val\+Type, int val\+Kind)
+\item 
+double \mbox{\hyperlink{namespacemath_aab7b2936247928e9637f8a620b235038}{Calc\+Speed\+Of\+Sound}} (double T)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a55861d2ef7e1a045b8eff9d32552a881}{vector\+Sum}} (std\+::vector$<$ double $>$ \&a, std\+::vector$<$ double $>$ \&b)
+\item 
+double \mbox{\hyperlink{namespacemath_a1833bcbbd6b7f6aa9473f98af700c335}{calc\+Rhouv\+E\+Deriv}} (double d\+Rho\+U\+Val, double d\+Rho\+Val, double rho\+U\+Val, double rho\+Val)
+\item 
+double \mbox{\hyperlink{namespacemath_a100f4e88d5a6de90dcf3887848cd4e98}{calc\+T\+Deriv}} (double dE, double du, double dv, double u, double v)
+\item 
+double \mbox{\hyperlink{namespacemath_a7990a64b3b661ce8485e82035d7ac6ec}{point\+Aux\+Value}} (int element, double a, double b, int val\+Type, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_a902881f419c954b3c667054f16b1bf0e}{point\+Deriv\+Rho}} (int element, double a, double b, int dir)
+\item 
+double \mbox{\hyperlink{namespacemath_aa374b1ac95b46fe84c28ed7c4fea866f}{calc\+Thermal\+Conductivity}} (double mu\+Val)
+\item 
+double \mbox{\hyperlink{namespacemath_a5b8c18930450b2202e0080b9e0248f92}{calc\+Div\+T\+From\+Aux\+Variable}} (double d\+RhoE, double d\+Rho, double \mbox{\hyperlink{dynamic_var_declaration_8h_a50a29d081db770f5f08d83666dbe8089}{rhoE}}, double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}})
+\item 
+double \mbox{\hyperlink{namespacemath_adf119f6fa85e3be88994f9dffac4ffed}{calc\+Mean\+Free\+Path}} (double mu, double \mbox{\hyperlink{dynamic_var_declaration_8h_ae7a21fded6f5e50f59fb05c0735f2479}{rho}}, double T)
+\item 
+std\+::tuple$<$ bool, double, double $>$ \mbox{\hyperlink{namespacemath_a171f534ed5a896dd397881f7c6175732}{solv\+Quadratic\+Eq}} (double A, double B, double C)
+\item 
+double \mbox{\hyperlink{namespacemath_a7b5772b1e4ab1f0c756f4bdf925ed01b}{center\+Value}} (int element, int val\+Type, int val\+Kind)
+\item 
+double \mbox{\hyperlink{namespacemath_abe4f30786927c9d2cabcb7640781068a}{center\+Aux\+Value}} (int element, int val\+Type, int dir)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a077c7ef3efc8fddf2e159880ed861a43}{direct\+Mapping}} (int element, double a\+Coor, double b\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_acf272633728faee2014a58f727dfcd63}{mapping\+Real\+To\+Std}} (int edge, int element, double x\+Coor, double y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a3b78873ae2819c605380b89383cf5024}{inverse\+Mapping}} (int element, double x\+Coor, double y\+Coor)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a0bb671360e1a62f79d583e363082e47c}{inverse\+Mapping\+\_\+\+For\+Parallel}} (int edge, double x\+Coor, double y\+Coor)
+\item 
+double \mbox{\hyperlink{namespacemath_aa246437d78f8b6b0f7752d5d923caf94}{vector\+Norm}} (std\+::vector$<$ double $>$ vector)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a2e29f48a594ddb32646d2165d2855d89}{trace\+Of\+Matrix}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&M)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_af70d832549593ee987b538e8b626849f}{transformation\+Tensor}} (double nx, double ny)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_aca0baf8e9f2a22fc33b0c0c392444200}{gradU}} (std\+::vector$<$ double $>$ \&U, std\+::vector$<$ double $>$ \&d\+Ux, std\+::vector$<$ double $>$ \&d\+Uy)
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{namespacemath_aac8850b8ff4d8b0d2e611e6ea966e685}{transpose\+Double\+Matrix}} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&M)
+\item 
+double \mbox{\hyperlink{namespacemath_a147afcc672bfc46298f9e728df0e5976}{calc\+Consv\+Var\+Wth\+Limiter}} (int element, double a, double b, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespacemath_aef225b962edee04fdeb074190be00f16}{calc\+Residual\+From\+Residual\+Of\+Order}} (int element, double a, double b, int val\+Type)
+\item 
+double \mbox{\hyperlink{namespacemath_a2680630830169fc4b71f7a99e12a3c89}{calc\+MaxT}} (int element)
+\item 
+int \mbox{\hyperlink{namespacemath_abc085e0537ec011db99f8d00eeb5804e}{find\+Index}} (int number, std\+::vector$<$ int $>$ In\+Array)
+\item 
+int \mbox{\hyperlink{namespacemath_ad5526cc5a380bdc33b13341797f40269}{find\+Index\+\_\+double}} (double number, std\+::vector$<$ double $>$ In\+Array)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a50743350e259f3189b8c5411883bb7bf}{point\+U\+Vars}} (int element, double a, double b)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespacemath_a40e9eed446cee956b76c3a03684bd114}{point\+S\+Vars}} (int edge, int element, double a, double b, int dir, int option)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a4ad68616d3348bee571afbf15061a424}{rotate\+To\+Local\+Coordinate\+System}} (double x\+Comp, double y\+Comp, double nx, double ny)
+\item 
+std\+::tuple$<$ double, double $>$ \mbox{\hyperlink{namespacemath_a31288a7fa00587fc9829416d09acb250}{rotate\+To\+Global\+Coordinate\+System}} (double local\+X\+Comp, double local\+Y\+Comp, double nx, double ny)
+\item 
+double \mbox{\hyperlink{namespacemath_a4452b554e87a705c27390f2b7a3964e1}{plus\+Side\+Surface\+Value}} (int edge, int element, int nG, int val\+Type, int val\+Kind)
+\begin{DoxyCompactList}\small\item\em Function calculates value at surface Gauss point on (+) side (side of input element Id). \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{namespacemath_a2b31c1bd113b4da056168492b0277076}{plus\+Side\+Surface\+Derivative\+Value}} (int edge, int element, int nG, int val\+Type, int dir)
+\begin{DoxyCompactList}\small\item\em Function calculates derivative value at surface Gauss point on (+) side (side of input element Id). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacemath_a442beb1e6c1d2ebeb37fc08bf5158077}\label{namespacemath_a442beb1e6c1d2ebeb37fc08bf5158077}} 
+\index{math@{math}!basisFc@{basisFc}}
+\index{basisFc@{basisFc}!math@{math}}
+\doxysubsubsection{\texorpdfstring{basisFc()}{basisFc()}}
+{\footnotesize\ttfamily void math\+::basis\+Fc (\begin{DoxyParamCaption}\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{elem\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 485 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a98311fbda0afa358589ce125f00f4e40}\label{namespacemath_a98311fbda0afa358589ce125f00f4e40}} 
+\index{math@{math}!Calc\_dBxdBy@{Calc\_dBxdBy}}
+\index{Calc\_dBxdBy@{Calc\_dBxdBy}!math@{math}}
+\doxysubsubsection{\texorpdfstring{Calc\_dBxdBy()}{Calc\_dBxdBy()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+\_\+d\+Bxd\+By (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{int}]{order,  }\item[{int}]{na,  }\item[{int}]{nb,  }\item[{int}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1186 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a1342ea287678a63c4bc68866ffcc51da}\label{namespacemath_a1342ea287678a63c4bc68866ffcc51da}} 
+\index{math@{math}!Calc\_dxydab@{Calc\_dxydab}}
+\index{Calc\_dxydab@{Calc\_dxydab}!math@{math}}
+\doxysubsubsection{\texorpdfstring{Calc\_dxydab()}{Calc\_dxydab()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double, double, double $>$ math\+::\+Calc\+\_\+dxydab (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1156 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a147afcc672bfc46298f9e728df0e5976}\label{namespacemath_a147afcc672bfc46298f9e728df0e5976}} 
+\index{math@{math}!calcConsvVarWthLimiter@{calcConsvVarWthLimiter}}
+\index{calcConsvVarWthLimiter@{calcConsvVarWthLimiter}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcConsvVarWthLimiter()}{calcConsvVarWthLimiter()}}
+{\footnotesize\ttfamily double math\+::calc\+Consv\+Var\+Wth\+Limiter (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2719 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a5b8c18930450b2202e0080b9e0248f92}\label{namespacemath_a5b8c18930450b2202e0080b9e0248f92}} 
+\index{math@{math}!calcDivTFromAuxVariable@{calcDivTFromAuxVariable}}
+\index{calcDivTFromAuxVariable@{calcDivTFromAuxVariable}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcDivTFromAuxVariable()}{calcDivTFromAuxVariable()}}
+{\footnotesize\ttfamily double math\+::calc\+Div\+T\+From\+Aux\+Variable (\begin{DoxyParamCaption}\item[{double}]{d\+RhoE,  }\item[{double}]{d\+Rho,  }\item[{double}]{rhoE,  }\item[{double}]{rho }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1553 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a2680630830169fc4b71f7a99e12a3c89}\label{namespacemath_a2680630830169fc4b71f7a99e12a3c89}} 
+\index{math@{math}!calcMaxT@{calcMaxT}}
+\index{calcMaxT@{calcMaxT}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcMaxT()}{calcMaxT()}}
+{\footnotesize\ttfamily double math\+::calc\+MaxT (\begin{DoxyParamCaption}\item[{int}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3047 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_adf119f6fa85e3be88994f9dffac4ffed}\label{namespacemath_adf119f6fa85e3be88994f9dffac4ffed}} 
+\index{math@{math}!calcMeanFreePath@{calcMeanFreePath}}
+\index{calcMeanFreePath@{calcMeanFreePath}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcMeanFreePath()}{calcMeanFreePath()}}
+{\footnotesize\ttfamily double math\+::calc\+Mean\+Free\+Path (\begin{DoxyParamCaption}\item[{double}]{mu,  }\item[{double}]{rho,  }\item[{double}]{T }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1559 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a1e7a61c8119a8b9cf637055dd58a2f43}\label{namespacemath_a1e7a61c8119a8b9cf637055dd58a2f43}} 
+\index{math@{math}!calcMeanPriVar@{calcMeanPriVar}}
+\index{calcMeanPriVar@{calcMeanPriVar}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcMeanPriVar()}{calcMeanPriVar()}}
+{\footnotesize\ttfamily double math\+::calc\+Mean\+Pri\+Var (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{var\+Id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 893 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a8b7862571aadce45436567cd9f387ef2}\label{namespacemath_a8b7862571aadce45436567cd9f387ef2}} 
+\index{math@{math}!CalcP@{CalcP}}
+\index{CalcP@{CalcP}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcP()}{CalcP()}}
+{\footnotesize\ttfamily double math\+::\+CalcP (\begin{DoxyParamCaption}\item[{double}]{T,  }\item[{double}]{rho }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1150 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_aef225b962edee04fdeb074190be00f16}\label{namespacemath_aef225b962edee04fdeb074190be00f16}} 
+\index{math@{math}!calcResidualFromResidualOfOrder@{calcResidualFromResidualOfOrder}}
+\index{calcResidualFromResidualOfOrder@{calcResidualFromResidualOfOrder}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcResidualFromResidualOfOrder()}{calcResidualFromResidualOfOrder()}}
+{\footnotesize\ttfamily double math\+::calc\+Residual\+From\+Residual\+Of\+Order (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2747 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a1833bcbbd6b7f6aa9473f98af700c335}\label{namespacemath_a1833bcbbd6b7f6aa9473f98af700c335}} 
+\index{math@{math}!calcRhouvEDeriv@{calcRhouvEDeriv}}
+\index{calcRhouvEDeriv@{calcRhouvEDeriv}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcRhouvEDeriv()}{calcRhouvEDeriv()}}
+{\footnotesize\ttfamily double math\+::calc\+Rhouv\+E\+Deriv (\begin{DoxyParamCaption}\item[{double}]{d\+Rho\+U\+Val,  }\item[{double}]{d\+Rho\+Val,  }\item[{double}]{rho\+U\+Val,  }\item[{double}]{rho\+Val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1468 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_aab7b2936247928e9637f8a620b235038}\label{namespacemath_aab7b2936247928e9637f8a620b235038}} 
+\index{math@{math}!CalcSpeedOfSound@{CalcSpeedOfSound}}
+\index{CalcSpeedOfSound@{CalcSpeedOfSound}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcSpeedOfSound()}{CalcSpeedOfSound()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+Speed\+Of\+Sound (\begin{DoxyParamCaption}\item[{double}]{T }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1451 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a4e99529b0422128bd708c3fa5fe0bd8c}\label{namespacemath_a4e99529b0422128bd708c3fa5fe0bd8c}} 
+\index{math@{math}!CalcT@{CalcT}}
+\index{CalcT@{CalcT}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcT()}{CalcT()}}
+{\footnotesize\ttfamily double math\+::\+CalcT (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 985 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a100f4e88d5a6de90dcf3887848cd4e98}\label{namespacemath_a100f4e88d5a6de90dcf3887848cd4e98}} 
+\index{math@{math}!calcTDeriv@{calcTDeriv}}
+\index{calcTDeriv@{calcTDeriv}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcTDeriv()}{calcTDeriv()}}
+{\footnotesize\ttfamily double math\+::calc\+T\+Deriv (\begin{DoxyParamCaption}\item[{double}]{dE,  }\item[{double}]{du,  }\item[{double}]{dv,  }\item[{double}]{u,  }\item[{double}]{v }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1482 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_abcc57a7d407f4805a90af22026a476bd}\label{namespacemath_abcc57a7d407f4805a90af22026a476bd}} 
+\index{math@{math}!CalcTFromConsvVar@{CalcTFromConsvVar}}
+\index{CalcTFromConsvVar@{CalcTFromConsvVar}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcTFromConsvVar()}{CalcTFromConsvVar()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+T\+From\+Consv\+Var (\begin{DoxyParamCaption}\item[{double}]{rho,  }\item[{double}]{rhou,  }\item[{double}]{rhov,  }\item[{double}]{rhoE }\end{DoxyParamCaption})}
+
+
+
+Definition at line 996 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a70380a144fd2e4d704ea18164794f19c}\label{namespacemath_a70380a144fd2e4d704ea18164794f19c}} 
+\index{math@{math}!CalcTFromConsvVar\_massDiff@{CalcTFromConsvVar\_massDiff}}
+\index{CalcTFromConsvVar\_massDiff@{CalcTFromConsvVar\_massDiff}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcTFromConsvVar\_massDiff()}{CalcTFromConsvVar\_massDiff()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff (\begin{DoxyParamCaption}\item[{double}]{rho,  }\item[{double}]{rhou,  }\item[{double}]{rhov,  }\item[{double}]{rhoE,  }\item[{double}]{rhox,  }\item[{double}]{rhoy,  }\item[{double}]{T\+\_\+old }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1013 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a44d244c122218b6dc0ef2c6c15408254}\label{namespacemath_a44d244c122218b6dc0ef2c6c15408254}} 
+\index{math@{math}!CalcTFromConsvVar\_massDiff\_explicit@{CalcTFromConsvVar\_massDiff\_explicit}}
+\index{CalcTFromConsvVar\_massDiff\_explicit@{CalcTFromConsvVar\_massDiff\_explicit}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcTFromConsvVar\_massDiff\_explicit()}{CalcTFromConsvVar\_massDiff\_explicit()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff\+\_\+explicit (\begin{DoxyParamCaption}\item[{double}]{rho,  }\item[{double}]{rhou,  }\item[{double}]{rhov,  }\item[{double}]{rhoE,  }\item[{double}]{mu\+Rhox,  }\item[{double}]{mu\+Rhoy }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1084 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a582d91c5db3f952d08b6c09253307430}\label{namespacemath_a582d91c5db3f952d08b6c09253307430}} 
+\index{math@{math}!CalcTFromConsvVar\_massDiff\_implicit@{CalcTFromConsvVar\_massDiff\_implicit}}
+\index{CalcTFromConsvVar\_massDiff\_implicit@{CalcTFromConsvVar\_massDiff\_implicit}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcTFromConsvVar\_massDiff\_implicit()}{CalcTFromConsvVar\_massDiff\_implicit()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+T\+From\+Consv\+Var\+\_\+mass\+Diff\+\_\+implicit (\begin{DoxyParamCaption}\item[{double}]{rho,  }\item[{double}]{rhou,  }\item[{double}]{rhov,  }\item[{double}]{rhoE,  }\item[{double}]{rhox,  }\item[{double}]{rhoy }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1102 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_aa374b1ac95b46fe84c28ed7c4fea866f}\label{namespacemath_aa374b1ac95b46fe84c28ed7c4fea866f}} 
+\index{math@{math}!calcThermalConductivity@{calcThermalConductivity}}
+\index{calcThermalConductivity@{calcThermalConductivity}!math@{math}}
+\doxysubsubsection{\texorpdfstring{calcThermalConductivity()}{calcThermalConductivity()}}
+{\footnotesize\ttfamily double math\+::calc\+Thermal\+Conductivity (\begin{DoxyParamCaption}\item[{double}]{mu\+Val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1546 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_ab784c91c1a5ddffe12b8e2d03a3ae617}\label{namespacemath_ab784c91c1a5ddffe12b8e2d03a3ae617}} 
+\index{math@{math}!CalcVisCoef@{CalcVisCoef}}
+\index{CalcVisCoef@{CalcVisCoef}!math@{math}}
+\doxysubsubsection{\texorpdfstring{CalcVisCoef()}{CalcVisCoef()}}
+{\footnotesize\ttfamily double math\+::\+Calc\+Vis\+Coef (\begin{DoxyParamCaption}\item[{double}]{T }\end{DoxyParamCaption})}
+
+
+
+Definition at line 973 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_abe4f30786927c9d2cabcb7640781068a}\label{namespacemath_abe4f30786927c9d2cabcb7640781068a}} 
+\index{math@{math}!centerAuxValue@{centerAuxValue}}
+\index{centerAuxValue@{centerAuxValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{centerAuxValue()}{centerAuxValue()}}
+{\footnotesize\ttfamily double math\+::center\+Aux\+Value (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{val\+Type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1611 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a7b5772b1e4ab1f0c756f4bdf925ed01b}\label{namespacemath_a7b5772b1e4ab1f0c756f4bdf925ed01b}} 
+\index{math@{math}!centerValue@{centerValue}}
+\index{centerValue@{centerValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{centerValue()}{centerValue()}}
+{\footnotesize\ttfamily double math\+::center\+Value (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{val\+Type,  }\item[{int}]{val\+Kind }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1598 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a4f5b84db4eeed650294b323ab345d44c}\label{namespacemath_a4f5b84db4eeed650294b323ab345d44c}} 
+\index{math@{math}!dBasisFc@{dBasisFc}}
+\index{dBasisFc@{dBasisFc}!math@{math}}
+\doxysubsubsection{\texorpdfstring{dBasisFc()}{dBasisFc()}}
+{\footnotesize\ttfamily void math\+::d\+Basis\+Fc (\begin{DoxyParamCaption}\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{elem\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 564 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a077c7ef3efc8fddf2e159880ed861a43}\label{namespacemath_a077c7ef3efc8fddf2e159880ed861a43}} 
+\index{math@{math}!directMapping@{directMapping}}
+\index{directMapping@{directMapping}!math@{math}}
+\doxysubsubsection{\texorpdfstring{directMapping()}{directMapping()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::direct\+Mapping (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a\+Coor,  }\item[{double}]{b\+Coor }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1631 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a9d3e434727fb95a1fc0f98ae5696d9f6}\label{namespacemath_a9d3e434727fb95a1fc0f98ae5696d9f6}} 
+\index{math@{math}!errorGS@{errorGS}}
+\index{errorGS@{errorGS}!math@{math}}
+\doxysubsubsection{\texorpdfstring{errorGS()}{errorGS()}}
+{\footnotesize\ttfamily double math\+::error\+GS (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&}]{a,  }\item[{std\+::vector$<$ double $>$ \&}]{b,  }\item[{std\+::vector$<$ double $>$ \&}]{No }\end{DoxyParamCaption})}
+
+
+
+Definition at line 954 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_abc085e0537ec011db99f8d00eeb5804e}\label{namespacemath_abc085e0537ec011db99f8d00eeb5804e}} 
+\index{math@{math}!findIndex@{findIndex}}
+\index{findIndex@{findIndex}!math@{math}}
+\doxysubsubsection{\texorpdfstring{findIndex()}{findIndex()}}
+{\footnotesize\ttfamily int math\+::find\+Index (\begin{DoxyParamCaption}\item[{int}]{number,  }\item[{std\+::vector$<$ int $>$}]{In\+Array }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3072 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_ad5526cc5a380bdc33b13341797f40269}\label{namespacemath_ad5526cc5a380bdc33b13341797f40269}} 
+\index{math@{math}!findIndex\_double@{findIndex\_double}}
+\index{findIndex\_double@{findIndex\_double}!math@{math}}
+\doxysubsubsection{\texorpdfstring{findIndex\_double()}{findIndex\_double()}}
+{\footnotesize\ttfamily int math\+::find\+Index\+\_\+double (\begin{DoxyParamCaption}\item[{double}]{number,  }\item[{std\+::vector$<$ double $>$}]{In\+Array }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3090 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_aca0baf8e9f2a22fc33b0c0c392444200}\label{namespacemath_aca0baf8e9f2a22fc33b0c0c392444200}} 
+\index{math@{math}!gradU@{gradU}}
+\index{gradU@{gradU}!math@{math}}
+\doxysubsubsection{\texorpdfstring{gradU()}{gradU()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ math\+::gradU (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{U,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+Ux,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+Uy }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2023 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a699bab28b80867fe156e93c2eb39014a}\label{namespacemath_a699bab28b80867fe156e93c2eb39014a}} 
+\index{math@{math}!iniIntegral@{iniIntegral}}
+\index{iniIntegral@{iniIntegral}!math@{math}}
+\doxysubsubsection{\texorpdfstring{iniIntegral()}{iniIntegral()}}
+{\footnotesize\ttfamily double math\+::ini\+Integral (\begin{DoxyParamCaption}\item[{int}]{elem\+Type,  }\item[{int}]{order }\end{DoxyParamCaption})}
+
+
+
+Definition at line 748 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a5b66fd85c26991b5eb5059acd82f9db0}\label{namespacemath_a5b66fd85c26991b5eb5059acd82f9db0}} 
+\index{math@{math}!internalSurfaceDerivativeValue@{internalSurfaceDerivativeValue}}
+\index{internalSurfaceDerivativeValue@{internalSurfaceDerivativeValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{internalSurfaceDerivativeValue()}{internalSurfaceDerivativeValue()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::internal\+Surface\+Derivative\+Value (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1394 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a2e0c6f0e06f08dfad7c1e0e0d84d90e5}\label{namespacemath_a2e0c6f0e06f08dfad7c1e0e0d84d90e5}} 
+\index{math@{math}!internalSurfaceValue@{internalSurfaceValue}}
+\index{internalSurfaceValue@{internalSurfaceValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{internalSurfaceValue()}{internalSurfaceValue()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::internal\+Surface\+Value (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type,  }\item[{int}]{val\+Kind }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1371 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a3b78873ae2819c605380b89383cf5024}\label{namespacemath_a3b78873ae2819c605380b89383cf5024}} 
+\index{math@{math}!inverseMapping@{inverseMapping}}
+\index{inverseMapping@{inverseMapping}!math@{math}}
+\doxysubsubsection{\texorpdfstring{inverseMapping()}{inverseMapping()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::inverse\+Mapping (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{x\+Coor,  }\item[{double}]{y\+Coor }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1711 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a0bb671360e1a62f79d583e363082e47c}\label{namespacemath_a0bb671360e1a62f79d583e363082e47c}} 
+\index{math@{math}!inverseMapping\_ForParallel@{inverseMapping\_ForParallel}}
+\index{inverseMapping\_ForParallel@{inverseMapping\_ForParallel}!math@{math}}
+\doxysubsubsection{\texorpdfstring{inverseMapping\_ForParallel()}{inverseMapping\_ForParallel()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::inverse\+Mapping\+\_\+\+For\+Parallel (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{double}]{x\+Coor,  }\item[{double}]{y\+Coor }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1845 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_af082ece7a9489d7fdea6bb70966d282d}\label{namespacemath_af082ece7a9489d7fdea6bb70966d282d}} 
+\index{math@{math}!J1DCal@{J1DCal}}
+\index{J1DCal@{J1DCal}!math@{math}}
+\doxysubsubsection{\texorpdfstring{J1DCal()}{J1DCal()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::\+J1\+D\+Cal (\begin{DoxyParamCaption}\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 681 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a75af59085b920cea9d0a55697220b35d}\label{namespacemath_a75af59085b920cea9d0a55697220b35d}} 
+\index{math@{math}!J2DCal@{J2DCal}}
+\index{J2DCal@{J2DCal}!math@{math}}
+\doxysubsubsection{\texorpdfstring{J2DCal()}{J2DCal()}}
+{\footnotesize\ttfamily double math\+::\+J2\+D\+Cal (\begin{DoxyParamCaption}\item[{int}]{elem,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 657 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_ab865c882a1e01dd36a955cb0d33b9cf6}\label{namespacemath_ab865c882a1e01dd36a955cb0d33b9cf6}} 
+\index{math@{math}!jacobian1DQuad@{jacobian1DQuad}}
+\index{jacobian1DQuad@{jacobian1DQuad}!math@{math}}
+\doxysubsubsection{\texorpdfstring{jacobian1DQuad()}{jacobian1DQuad()}}
+{\footnotesize\ttfamily double math\+::jacobian1\+D\+Quad (\begin{DoxyParamCaption}\item[{int}]{edge\+Index,  }\item[{double}]{xA,  }\item[{double}]{xB,  }\item[{double}]{xC,  }\item[{double}]{xD,  }\item[{double}]{yA,  }\item[{double}]{yB,  }\item[{double}]{yC,  }\item[{double}]{yD }\end{DoxyParamCaption})}
+
+
+
+Definition at line 830 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a315d9106f4fec6ab22b807594a99f5a8}\label{namespacemath_a315d9106f4fec6ab22b807594a99f5a8}} 
+\index{math@{math}!jacobian1DTri@{jacobian1DTri}}
+\index{jacobian1DTri@{jacobian1DTri}!math@{math}}
+\doxysubsubsection{\texorpdfstring{jacobian1DTri()}{jacobian1DTri()}}
+{\footnotesize\ttfamily double math\+::jacobian1\+D\+Tri (\begin{DoxyParamCaption}\item[{int}]{edge\+Index,  }\item[{double}]{xA,  }\item[{double}]{xB,  }\item[{double}]{xC,  }\item[{double}]{yA,  }\item[{double}]{yB,  }\item[{double}]{yC }\end{DoxyParamCaption})}
+
+
+
+Definition at line 865 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a0d132569a1e71999fd55061ded5f702c}\label{namespacemath_a0d132569a1e71999fd55061ded5f702c}} 
+\index{math@{math}!jacobianQuad@{jacobianQuad}}
+\index{jacobianQuad@{jacobianQuad}!math@{math}}
+\doxysubsubsection{\texorpdfstring{jacobianQuad()}{jacobianQuad()}}
+{\footnotesize\ttfamily double math\+::jacobian\+Quad (\begin{DoxyParamCaption}\item[{double}]{xA,  }\item[{double}]{xB,  }\item[{double}]{xC,  }\item[{double}]{xD,  }\item[{double}]{yA,  }\item[{double}]{yB,  }\item[{double}]{yC,  }\item[{double}]{yD,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 804 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a28ab84bc66352f73786f84dcea8e563c}\label{namespacemath_a28ab84bc66352f73786f84dcea8e563c}} 
+\index{math@{math}!jacobianTri@{jacobianTri}}
+\index{jacobianTri@{jacobianTri}!math@{math}}
+\doxysubsubsection{\texorpdfstring{jacobianTri()}{jacobianTri()}}
+{\footnotesize\ttfamily double math\+::jacobian\+Tri (\begin{DoxyParamCaption}\item[{double}]{xA,  }\item[{double}]{xB,  }\item[{double}]{xC,  }\item[{double}]{yA,  }\item[{double}]{yB,  }\item[{double}]{yC,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 817 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_acf272633728faee2014a58f727dfcd63}\label{namespacemath_acf272633728faee2014a58f727dfcd63}} 
+\index{math@{math}!mappingRealToStd@{mappingRealToStd}}
+\index{mappingRealToStd@{mappingRealToStd}!math@{math}}
+\doxysubsubsection{\texorpdfstring{mappingRealToStd()}{mappingRealToStd()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::mapping\+Real\+To\+Std (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{double}]{x\+Coor,  }\item[{double}]{y\+Coor }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1657 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a2b31c1bd113b4da056168492b0277076}\label{namespacemath_a2b31c1bd113b4da056168492b0277076}} 
+\index{math@{math}!plusSideSurfaceDerivativeValue@{plusSideSurfaceDerivativeValue}}
+\index{plusSideSurfaceDerivativeValue@{plusSideSurfaceDerivativeValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{plusSideSurfaceDerivativeValue()}{plusSideSurfaceDerivativeValue()}}
+{\footnotesize\ttfamily double math\+::plus\+Side\+Surface\+Derivative\+Value (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Function calculates derivative value at surface Gauss point on (+) side (side of input element Id). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em edge} & edge Id. \\
+\hline
+{\em element} & element Id. \\
+\hline
+{\em nG} & Gauss point Id. \\
+\hline
+{\em val\+Type} & type of value. \\
+\hline
+{\em dir} & direction, 1 for Ox, 2 for Oy. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+derivative value. 
+\end{DoxyReturn}
+
+
+Definition at line 3428 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a4452b554e87a705c27390f2b7a3964e1}\label{namespacemath_a4452b554e87a705c27390f2b7a3964e1}} 
+\index{math@{math}!plusSideSurfaceValue@{plusSideSurfaceValue}}
+\index{plusSideSurfaceValue@{plusSideSurfaceValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{plusSideSurfaceValue()}{plusSideSurfaceValue()}}
+{\footnotesize\ttfamily double math\+::plus\+Side\+Surface\+Value (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{int}]{nG,  }\item[{int}]{val\+Type,  }\item[{int}]{val\+Kind }\end{DoxyParamCaption})}
+
+
+
+Function calculates value at surface Gauss point on (+) side (side of input element Id). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em edge} & edge Id. \\
+\hline
+{\em element} & element Id. \\
+\hline
+{\em nG} & Gauss point Id. \\
+\hline
+{\em val\+Type} & type of outlet value. More detail at \mbox{\hyperlink{namespacemath_a123873830eae31561b6fdc543987ef35}{math\+::point\+Value}} function. \\
+\hline
+{\em val\+Kind} & kind of outlet value. More detail at \mbox{\hyperlink{namespacemath_a123873830eae31561b6fdc543987ef35}{math\+::point\+Value}} function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+values at Gauss point on (+) side. 
+\end{DoxyReturn}
+
+
+Definition at line 3411 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a7990a64b3b661ce8485e82035d7ac6ec}\label{namespacemath_a7990a64b3b661ce8485e82035d7ac6ec}} 
+\index{math@{math}!pointAuxValue@{pointAuxValue}}
+\index{pointAuxValue@{pointAuxValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{pointAuxValue()}{pointAuxValue()}}
+{\footnotesize\ttfamily double math\+::point\+Aux\+Value (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{val\+Type,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1495 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a902881f419c954b3c667054f16b1bf0e}\label{namespacemath_a902881f419c954b3c667054f16b1bf0e}} 
+\index{math@{math}!pointDerivRho@{pointDerivRho}}
+\index{pointDerivRho@{pointDerivRho}!math@{math}}
+\doxysubsubsection{\texorpdfstring{pointDerivRho()}{pointDerivRho()}}
+{\footnotesize\ttfamily double math\+::point\+Deriv\+Rho (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1519 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a40e9eed446cee956b76c3a03684bd114}\label{namespacemath_a40e9eed446cee956b76c3a03684bd114}} 
+\index{math@{math}!pointSVars@{pointSVars}}
+\index{pointSVars@{pointSVars}!math@{math}}
+\doxysubsubsection{\texorpdfstring{pointSVars()}{pointSVars()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ math\+::point\+S\+Vars (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{dir,  }\item[{int}]{option }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3127 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a50743350e259f3189b8c5411883bb7bf}\label{namespacemath_a50743350e259f3189b8c5411883bb7bf}} 
+\index{math@{math}!pointUVars@{pointUVars}}
+\index{pointUVars@{pointUVars}!math@{math}}
+\doxysubsubsection{\texorpdfstring{pointUVars()}{pointUVars()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ math\+::point\+U\+Vars (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3108 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a123873830eae31561b6fdc543987ef35}\label{namespacemath_a123873830eae31561b6fdc543987ef35}} 
+\index{math@{math}!pointValue@{pointValue}}
+\index{pointValue@{pointValue}!math@{math}}
+\doxysubsubsection{\texorpdfstring{pointValue()}{pointValue()}}
+{\footnotesize\ttfamily double math\+::point\+Value (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{val\+Type,  }\item[{int}]{val\+Kind }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1234 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a43783b637422d46bfeac970018c32a35}\label{namespacemath_a43783b637422d46bfeac970018c32a35}} 
+\index{math@{math}!pointValueNoLimiter@{pointValueNoLimiter}}
+\index{pointValueNoLimiter@{pointValueNoLimiter}!math@{math}}
+\doxysubsubsection{\texorpdfstring{pointValueNoLimiter()}{pointValueNoLimiter()}}
+{\footnotesize\ttfamily double math\+::point\+Value\+No\+Limiter (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{double}]{a,  }\item[{double}]{b,  }\item[{int}]{val\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1349 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a31288a7fa00587fc9829416d09acb250}\label{namespacemath_a31288a7fa00587fc9829416d09acb250}} 
+\index{math@{math}!rotateToGlobalCoordinateSystem@{rotateToGlobalCoordinateSystem}}
+\index{rotateToGlobalCoordinateSystem@{rotateToGlobalCoordinateSystem}!math@{math}}
+\doxysubsubsection{\texorpdfstring{rotateToGlobalCoordinateSystem()}{rotateToGlobalCoordinateSystem()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::rotate\+To\+Global\+Coordinate\+System (\begin{DoxyParamCaption}\item[{double}]{local\+X\+Comp,  }\item[{double}]{local\+Y\+Comp,  }\item[{double}]{nx,  }\item[{double}]{ny }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3242 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a4ad68616d3348bee571afbf15061a424}\label{namespacemath_a4ad68616d3348bee571afbf15061a424}} 
+\index{math@{math}!rotateToLocalCoordinateSystem@{rotateToLocalCoordinateSystem}}
+\index{rotateToLocalCoordinateSystem@{rotateToLocalCoordinateSystem}!math@{math}}
+\doxysubsubsection{\texorpdfstring{rotateToLocalCoordinateSystem()}{rotateToLocalCoordinateSystem()}}
+{\footnotesize\ttfamily std\+::tuple$<$ double, double $>$ math\+::rotate\+To\+Local\+Coordinate\+System (\begin{DoxyParamCaption}\item[{double}]{x\+Comp,  }\item[{double}]{y\+Comp,  }\item[{double}]{nx,  }\item[{double}]{ny }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3232 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a32aae97393e4ecab6c98816b240e8abc}\label{namespacemath_a32aae97393e4ecab6c98816b240e8abc}} 
+\index{math@{math}!SolveSysEqs@{SolveSysEqs}}
+\index{SolveSysEqs@{SolveSysEqs}!math@{math}}
+\doxysubsubsection{\texorpdfstring{SolveSysEqs()}{SolveSysEqs()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ math\+::\+Solve\+Sys\+Eqs (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&}]{a,  }\item[{std\+::vector$<$ double $>$ \&}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 925 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a171f534ed5a896dd397881f7c6175732}\label{namespacemath_a171f534ed5a896dd397881f7c6175732}} 
+\index{math@{math}!solvQuadraticEq@{solvQuadraticEq}}
+\index{solvQuadraticEq@{solvQuadraticEq}!math@{math}}
+\doxysubsubsection{\texorpdfstring{solvQuadraticEq()}{solvQuadraticEq()}}
+{\footnotesize\ttfamily std\+::tuple$<$ bool, double, double $>$ math\+::solv\+Quadratic\+Eq (\begin{DoxyParamCaption}\item[{double}]{A,  }\item[{double}]{B,  }\item[{double}]{C }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1564 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_afdd6c424ebfbad9631f2ac9aac569ddf}\label{namespacemath_afdd6c424ebfbad9631f2ac9aac569ddf}} 
+\index{math@{math}!surfaceGauss@{surfaceGauss}}
+\index{surfaceGauss@{surfaceGauss}!math@{math}}
+\doxysubsubsection{\texorpdfstring{surfaceGauss()}{surfaceGauss()}}
+{\footnotesize\ttfamily void math\+::surface\+Gauss (\begin{DoxyParamCaption}\item[{int}]{n\+Gauss }\end{DoxyParamCaption})}
+
+
+
+Definition at line 224 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a41c1d7d343daf42ae42fa51825d30e7b}\label{namespacemath_a41c1d7d343daf42ae42fa51825d30e7b}} 
+\index{math@{math}!surfaceGaussLobatto@{surfaceGaussLobatto}}
+\index{surfaceGaussLobatto@{surfaceGaussLobatto}!math@{math}}
+\doxysubsubsection{\texorpdfstring{surfaceGaussLobatto()}{surfaceGaussLobatto()}}
+{\footnotesize\ttfamily void math\+::surface\+Gauss\+Lobatto (\begin{DoxyParamCaption}\item[{int}]{n\+Gauss }\end{DoxyParamCaption})}
+
+
+
+Definition at line 458 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_ace952e7838225b05a43b4d81ffa2d304}\label{namespacemath_ace952e7838225b05a43b4d81ffa2d304}} 
+\index{math@{math}!surfaceInte@{surfaceInte}}
+\index{surfaceInte@{surfaceInte}!math@{math}}
+\doxysubsubsection{\texorpdfstring{surfaceInte()}{surfaceInte()}}
+{\footnotesize\ttfamily double math\+::surface\+Inte (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{Fvalue,  }\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1223 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a8b3d2a928e19871cda8f72af196ecc54}\label{namespacemath_a8b3d2a928e19871cda8f72af196ecc54}} 
+\index{math@{math}!SurfaceValueFromMaster@{SurfaceValueFromMaster}}
+\index{SurfaceValueFromMaster@{SurfaceValueFromMaster}!math@{math}}
+\doxysubsubsection{\texorpdfstring{SurfaceValueFromMaster()}{SurfaceValueFromMaster()}}
+{\footnotesize\ttfamily double math\+::\+Surface\+Value\+From\+Master (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{nG,  }\item[{int}]{val\+Type,  }\item[{int}]{val\+Kind }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1441 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a2e29f48a594ddb32646d2165d2855d89}\label{namespacemath_a2e29f48a594ddb32646d2165d2855d89}} 
+\index{math@{math}!traceOfMatrix@{traceOfMatrix}}
+\index{traceOfMatrix@{traceOfMatrix}!math@{math}}
+\doxysubsubsection{\texorpdfstring{traceOfMatrix()}{traceOfMatrix()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ math\+::trace\+Of\+Matrix (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{M }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1994 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_af70d832549593ee987b538e8b626849f}\label{namespacemath_af70d832549593ee987b538e8b626849f}} 
+\index{math@{math}!transformationTensor@{transformationTensor}}
+\index{transformationTensor@{transformationTensor}!math@{math}}
+\doxysubsubsection{\texorpdfstring{transformationTensor()}{transformationTensor()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ math\+::transformation\+Tensor (\begin{DoxyParamCaption}\item[{double}]{nx,  }\item[{double}]{ny }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2005 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_aac8850b8ff4d8b0d2e611e6ea966e685}\label{namespacemath_aac8850b8ff4d8b0d2e611e6ea966e685}} 
+\index{math@{math}!transposeDoubleMatrix@{transposeDoubleMatrix}}
+\index{transposeDoubleMatrix@{transposeDoubleMatrix}!math@{math}}
+\doxysubsubsection{\texorpdfstring{transposeDoubleMatrix()}{transposeDoubleMatrix()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ double $>$ $>$ math\+::transpose\+Double\+Matrix (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{M }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2054 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a28b6605cc8e1b0a4d99ee4e5ecff767d}\label{namespacemath_a28b6605cc8e1b0a4d99ee4e5ecff767d}} 
+\index{math@{math}!vectorDotProduct@{vectorDotProduct}}
+\index{vectorDotProduct@{vectorDotProduct}!math@{math}}
+\doxysubsubsection{\texorpdfstring{vectorDotProduct()}{vectorDotProduct()}}
+{\footnotesize\ttfamily double math\+::vector\+Dot\+Product (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{a,  }\item[{std\+::vector$<$ double $>$ \&}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1364 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_aa246437d78f8b6b0f7752d5d923caf94}\label{namespacemath_aa246437d78f8b6b0f7752d5d923caf94}} 
+\index{math@{math}!vectorNorm@{vectorNorm}}
+\index{vectorNorm@{vectorNorm}!math@{math}}
+\doxysubsubsection{\texorpdfstring{vectorNorm()}{vectorNorm()}}
+{\footnotesize\ttfamily double math\+::vector\+Norm (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{vector }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1982 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a55861d2ef7e1a045b8eff9d32552a881}\label{namespacemath_a55861d2ef7e1a045b8eff9d32552a881}} 
+\index{math@{math}!vectorSum@{vectorSum}}
+\index{vectorSum@{vectorSum}!math@{math}}
+\doxysubsubsection{\texorpdfstring{vectorSum()}{vectorSum()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ math\+::vector\+Sum (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{a,  }\item[{std\+::vector$<$ double $>$ \&}]{b }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1457 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_af5a1207ff0114a92ec11f31675b3f11d}\label{namespacemath_af5a1207ff0114a92ec11f31675b3f11d}} 
+\index{math@{math}!volumeGauss@{volumeGauss}}
+\index{volumeGauss@{volumeGauss}!math@{math}}
+\doxysubsubsection{\texorpdfstring{volumeGauss()}{volumeGauss()}}
+{\footnotesize\ttfamily void math\+::volume\+Gauss (\begin{DoxyParamCaption}\item[{int}]{n\+Gauss }\end{DoxyParamCaption})}
+
+
+
+Definition at line 17 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a81b4b821310867c03d713e65ba131edb}\label{namespacemath_a81b4b821310867c03d713e65ba131edb}} 
+\index{math@{math}!volumeGaussLobatto@{volumeGaussLobatto}}
+\index{volumeGaussLobatto@{volumeGaussLobatto}!math@{math}}
+\doxysubsubsection{\texorpdfstring{volumeGaussLobatto()}{volumeGaussLobatto()}}
+{\footnotesize\ttfamily void math\+::volume\+Gauss\+Lobatto (\begin{DoxyParamCaption}\item[{int}]{n\+Gauss }\end{DoxyParamCaption})}
+
+
+
+Definition at line 431 of file D\+G\+Math.\+cpp.
+
+\mbox{\Hypertarget{namespacemath_a3345126abe953df3f65e4f0b09d8728e}\label{namespacemath_a3345126abe953df3f65e4f0b09d8728e}} 
+\index{math@{math}!volumeInte@{volumeInte}}
+\index{volumeInte@{volumeInte}!math@{math}}
+\doxysubsubsection{\texorpdfstring{volumeInte()}{volumeInte()}}
+{\footnotesize\ttfamily double math\+::volume\+Inte (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&}]{Fvalue,  }\item[{int}]{elem }\end{DoxyParamCaption})}
+
+
+
+Definition at line 787 of file D\+G\+Math.\+cpp.
+

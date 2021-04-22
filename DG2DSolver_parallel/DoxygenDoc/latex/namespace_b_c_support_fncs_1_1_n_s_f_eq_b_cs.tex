@@ -1,0 +1,68 @@
+\hypertarget{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs}{}\doxysection{B\+C\+Support\+Fncs\+::N\+S\+F\+Eq\+B\+Cs Namespace Reference}
+\label{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs}\index{BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a275f3c3d6c17be5d202df43ae6044b07}{find\+Max\+Lx\+F\+Constant\+On\+Edge}} (int element, int edge)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_ab313d90c814e1701cd9f47567e3e9fc8}{getd\+U\+Plus}} (int edge, int nG, std\+::vector$<$ double $>$ \&d\+U\+X\+Plus, std\+::vector$<$ double $>$ \&d\+U\+Y\+Plus)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a247b087b54cc7ba4fd1923a450edc8cb}{calcd\+U\+Mean}} (int edge, int element, std\+::vector$<$ double $>$ \&d\+U\+X\+Mean, std\+::vector$<$ double $>$ \&d\+U\+Y\+Mean)
+\item 
+double \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_afa47551126c9e08163063e19ce0829fc}{calc\+Total\+Energy}} (const std\+::vector$<$ double $>$ \&U\+Minus, double T, double drhoX, double drhoY)
+\item 
+void \mbox{\hyperlink{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a02356fbd057e4c00a9632beb365dd23d}{N\+S\+F\+Eq\+Fluxes}} (int edge\+Id, std\+::vector$<$ double $>$ \&Fluxes, double T\+Plus, double T\+Minus, std\+::vector$<$ double $>$ \&U\+Plus, std\+::vector$<$ double $>$ \&U\+Minus, std\+::vector$<$ double $>$ \&d\+U\+X\+Plus, std\+::vector$<$ double $>$ \&d\+U\+X\+Minus, std\+::vector$<$ double $>$ \&d\+U\+Y\+Plus, std\+::vector$<$ double $>$ \&d\+U\+Y\+Minus, std\+::vector$<$ double $>$ \&norm\+Vector)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a247b087b54cc7ba4fd1923a450edc8cb}\label{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a247b087b54cc7ba4fd1923a450edc8cb}} 
+\index{BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}!calcdUMean@{calcdUMean}}
+\index{calcdUMean@{calcdUMean}!BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}}
+\doxysubsubsection{\texorpdfstring{calcdUMean()}{calcdUMean()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::calcd\+U\+Mean (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{element,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+X\+Mean,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+Y\+Mean }\end{DoxyParamCaption})}
+
+
+
+Definition at line 950 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_afa47551126c9e08163063e19ce0829fc}\label{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_afa47551126c9e08163063e19ce0829fc}} 
+\index{BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}!calcTotalEnergy@{calcTotalEnergy}}
+\index{calcTotalEnergy@{calcTotalEnergy}!BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}}
+\doxysubsubsection{\texorpdfstring{calcTotalEnergy()}{calcTotalEnergy()}}
+{\footnotesize\ttfamily double B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::calc\+Total\+Energy (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{U\+Minus,  }\item[{double}]{T,  }\item[{double}]{drhoX,  }\item[{double}]{drhoY }\end{DoxyParamCaption})}
+
+
+
+Definition at line 964 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a275f3c3d6c17be5d202df43ae6044b07}\label{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a275f3c3d6c17be5d202df43ae6044b07}} 
+\index{BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}!findMaxLxFConstantOnEdge@{findMaxLxFConstantOnEdge}}
+\index{findMaxLxFConstantOnEdge@{findMaxLxFConstantOnEdge}!BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}}
+\doxysubsubsection{\texorpdfstring{findMaxLxFConstantOnEdge()}{findMaxLxFConstantOnEdge()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::find\+Max\+Lx\+F\+Constant\+On\+Edge (\begin{DoxyParamCaption}\item[{int}]{element,  }\item[{int}]{edge }\end{DoxyParamCaption})}
+
+
+
+Definition at line 904 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_ab313d90c814e1701cd9f47567e3e9fc8}\label{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_ab313d90c814e1701cd9f47567e3e9fc8}} 
+\index{BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}!getdUPlus@{getdUPlus}}
+\index{getdUPlus@{getdUPlus}!BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}}
+\doxysubsubsection{\texorpdfstring{getdUPlus()}{getdUPlus()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::getd\+U\+Plus (\begin{DoxyParamCaption}\item[{int}]{edge,  }\item[{int}]{nG,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+X\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+Y\+Plus }\end{DoxyParamCaption})}
+
+
+
+Definition at line 935 of file B\+C\+Support\+Fncs.\+cpp.
+
+\mbox{\Hypertarget{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a02356fbd057e4c00a9632beb365dd23d}\label{namespace_b_c_support_fncs_1_1_n_s_f_eq_b_cs_a02356fbd057e4c00a9632beb365dd23d}} 
+\index{BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}!NSFEqFluxes@{NSFEqFluxes}}
+\index{NSFEqFluxes@{NSFEqFluxes}!BCSupportFncs::NSFEqBCs@{BCSupportFncs::NSFEqBCs}}
+\doxysubsubsection{\texorpdfstring{NSFEqFluxes()}{NSFEqFluxes()}}
+{\footnotesize\ttfamily void B\+C\+Support\+Fncs\+::\+N\+S\+F\+Eq\+B\+Cs\+::\+N\+S\+F\+Eq\+Fluxes (\begin{DoxyParamCaption}\item[{int}]{edge\+Id,  }\item[{std\+::vector$<$ double $>$ \&}]{Fluxes,  }\item[{double}]{T\+Plus,  }\item[{double}]{T\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{U\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+X\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+X\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+Y\+Plus,  }\item[{std\+::vector$<$ double $>$ \&}]{d\+U\+Y\+Minus,  }\item[{std\+::vector$<$ double $>$ \&}]{norm\+Vector }\end{DoxyParamCaption})}
+
+
+
+Definition at line 978 of file B\+C\+Support\+Fncs.\+cpp.
+

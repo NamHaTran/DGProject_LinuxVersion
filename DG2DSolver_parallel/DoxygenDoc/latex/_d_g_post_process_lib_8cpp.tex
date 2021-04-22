@@ -1,0 +1,87 @@
+\hypertarget{_d_g_post_process_lib_8cpp}{}\doxysection{/home/nam/\+Nam\+T\+H\+Folders/\+C\+P\+P\+Codes/\+D\+G\+Project\+\_\+\+Linux\+Version/\+D\+G2\+D\+Solver\+\_\+parallel/\+D\+G\+Post\+Process\+Lib.cpp File Reference}
+\label{_d_g_post_process_lib_8cpp}\index{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGPostProcessLib.cpp@{/home/nam/NamTHFolders/CPPCodes/DGProject\_LinuxVersion/DG2DSolver\_parallel/DGPostProcessLib.cpp}}
+{\ttfamily \#include \char`\"{}D\+G\+Post\+Process\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dynamic\+Var\+Declaration.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Aux\+Ultilities\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}D\+G\+Messages\+Lib.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include \char`\"{}D\+G\+I\+O\+Lib.\+h\char`\"{}}\newline
+Include dependency graph for D\+G\+Post\+Process\+Lib.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_d_g_post_process_lib_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacedebug_tool}{debug\+Tool}}
+\item 
+ \mbox{\hyperlink{namespace_d_g2_tecplot}{D\+G2\+Tecplot}}
+\item 
+ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs}}
+\item 
+ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_1_1patch}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::patch}}
+\item 
+ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_1_1wall}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::wall}}
+\item 
+ \mbox{\hyperlink{namespacepost_processing___surface}{post\+Processing\+\_\+\+Surface}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacedebug_tool_a49a0b6c68a61d1f7c2440ea1ba900f98}{debug\+Tool\+::check\+Elem\+Sur\+Pt}} (int ipoin)
+\item 
+void \mbox{\hyperlink{namespacedebug_tool_a12d460ddad2654d0d8868dff7dd596bd}{debug\+Tool\+::check\+Pts\+Sur\+Pt}} (int ipoin)
+\item 
+void \mbox{\hyperlink{namespacedebug_tool_ac28a62046ce049cdab861f6508cfd5a8}{debug\+Tool\+::check\+Elems\+Sur\+Elem}} (int ielem)
+\item 
+void \mbox{\hyperlink{namespacedebug_tool_a95e10132698d9c64551bbf64605c4b11}{debug\+Tool\+::check\+Elem\+Infor}} (int elem)
+\item 
+void \mbox{\hyperlink{namespacedebug_tool_aef967a3829bb8be73edd09fe04c2b58f}{debug\+Tool\+::check\+Point\+Value}} (int element)
+\item 
+void \mbox{\hyperlink{_d_g_post_process_lib_8cpp_a9a18cdbf7dc0e1de6decd77cf6f8364b}{reconstruct\+Latest\+Time}} ()
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_a1a4a104daf44dd9f987bc296685ac895}{D\+G2\+Tecplot\+::calc\+Node\+Values}} (int val\+Type)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_ad0c8f698d99ffb6e6375de223259b2fe}{D\+G2\+Tecplot\+::calc\+Node\+Values\+At\+BC}} (int pt\+At\+B\+C\+Id)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_a63481aba459429eca704e1ea80fef54f}{D\+G2\+Tecplot\+::calc\+Cell\+Centered\+Values}} (int val\+Type)
+\item 
+double \mbox{\hyperlink{namespace_d_g2_tecplot_a51b0b00ef9621d47b68fbe343163bf76}{D\+G2\+Tecplot\+::point\+Mean\+Value}} (int element, int val\+Type)
+\item 
+void \mbox{\hyperlink{namespace_d_g2_tecplot_a060536a1c490d449c2f3c9840eaf4ed4}{D\+G2\+Tecplot\+::export\+Node\+Data}} (int iter)
+\item 
+void \mbox{\hyperlink{namespace_d_g2_tecplot_acf166245111c3cbd05a9ca1241a73df9}{D\+G2\+Tecplot\+::export\+Cell\+Centered\+Data}} (int iter)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_1_1patch_ae7bb89c1e323f20dab010a011ace66ca}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::patch\+::in\+Flow}} (int element, int edge\+Grp, double a, double b)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_1_1patch_ac9bd458eba2aaced07f9fa455e9b4598}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::patch\+::out\+Flow}} (int element, int edge\+Grp, double a, double b)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_1_1wall_a61fc2e126d8ae8a492116279c78808f7}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::wall\+::no\+Slip\+Iso\+Thermal}} (int element, int edge\+Grp, double a, double b)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_1_1wall_a0e4b7cc91303b303aeaa65969b6657d3}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::wall\+::no\+Slip\+Adiabatic}} (int element, double a, double b)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{namespace_d_g2_tecplot_1_1calc_node_value_at_b_c_child_funcs_ac0d6fe6a82422bf265f11247c97ceeac}{D\+G2\+Tecplot\+::calc\+Node\+Value\+At\+B\+C\+Child\+Funcs\+::\+Symmetry}} (int element, int edge, double a, double b)
+\item 
+void \mbox{\hyperlink{namespacepost_processing___surface_acdc7a30b86e0cdbe8e7921ee9d949e09}{post\+Processing\+\_\+\+Surface\+::write\+Vars\+At\+Wall}} (std\+::string Loc)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_d_g_post_process_lib_8cpp_a9a18cdbf7dc0e1de6decd77cf6f8364b}\label{_d_g_post_process_lib_8cpp_a9a18cdbf7dc0e1de6decd77cf6f8364b}} 
+\index{DGPostProcessLib.cpp@{DGPostProcessLib.cpp}!reconstructLatestTime@{reconstructLatestTime}}
+\index{reconstructLatestTime@{reconstructLatestTime}!DGPostProcessLib.cpp@{DGPostProcessLib.cpp}}
+\doxysubsubsection{\texorpdfstring{reconstructLatestTime()}{reconstructLatestTime()}}
+{\footnotesize\ttfamily void reconstruct\+Latest\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 116 of file D\+G\+Post\+Process\+Lib.\+cpp.
+
