@@ -192,4 +192,315 @@ namespace parallelFuncs_Gen
         }
         return edgeId;
     }
+
+    /**
+     * @brief Function calculates sum of int variable over all processors and send back result to all processors.
+     * @param var: variable needed to sum.
+     * @return
+     */
+    int sumIntOverProcs(int var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        int result(0);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            int recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_INT, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                result+=recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Function finds min of int variable over all processors and send back result to all processors.
+     * @param var: variable needed to find min.
+     * @return
+     */
+    int minIntOverProcs(int var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        int result(1e9);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            int recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_INT, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                //Operator
+                if (recv<result)
+                    result=recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Function finds max of int variable over all processors and send back result to all processors.
+     * @param var: variable needed to find max.
+     * @return
+     */
+    int maxIntOverProcs(int var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        int result(-1e9);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            int recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_INT, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                //Operator
+                if (recv>result)
+                    result=recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_INT, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Function calculates sum of double variable over all processors and send back result to all processors.
+     * @param var: variable needed to sum.
+     * @return
+     */
+    double sumDoubleOverProcs(double var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        double result(0);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            double recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_DOUBLE, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                result=recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_DOUBLE, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Function finds min of double variable over all processors and send back result to all processors.
+     * @param var: variable needed to find min.
+     * @return
+     */
+    double minDoubleOverProcs(double var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        double result(1e9);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            double recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_DOUBLE, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                //Operator
+                if (recv<result)
+                    result=recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_DOUBLE, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Function finds max of double variable over all processors and send back result to all processors.
+     * @param var: variable needed to find max.
+     * @return
+     */
+    double maxDoubleOverProcs(double var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        double result(1e9);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            double recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_DOUBLE, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                //Operator
+                if (recv>result)
+                    result=recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_DOUBLE, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
+
+    /**
+     * @brief Function calculates 'OR' operator of variable over all processors and send back result to all processors.
+     * @param var: variable needed to do 'OR'.
+     * @return
+     */
+    bool bool_OR_OverProcs(bool var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        bool result(false);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            bool recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_CXX_BOOL, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                //Operator
+                result=result||recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_CXX_BOOL, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_CXX_BOOL, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_CXX_BOOL, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+        return result;
+    }
+
+    /**
+     * @brief Function calculates 'AND' operator of variable over all processors and send back result to all processors.
+     * @param var: variable needed to do 'AND'.
+     * @return
+     */
+    bool bool_AND_OverProcs(bool var)
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        bool result(false);
+        if (systemVar::currentProc==0)
+        {
+            result=var;
+            bool recv;
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Recv(&recv, 1, MPI_CXX_BOOL, irank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                //Operator
+                result=result&&recv;
+            }
+        }
+        else {
+            MPI_Send(&var, 1, MPI_CXX_BOOL, 0, 0, MPI_COMM_WORLD);
+        }
+
+        //send back result to all processors
+        if (systemVar::currentProc==0)
+        {
+            for (int irank=1;irank<systemVar::totalProc;irank++) {
+                MPI_Send(&result, 1, MPI_CXX_BOOL, irank, 0, MPI_COMM_WORLD);
+            }
+        }
+        else {
+            MPI_Recv(&result, 1, MPI_CXX_BOOL, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        return result;
+    }
 }

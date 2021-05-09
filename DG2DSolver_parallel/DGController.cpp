@@ -9,7 +9,6 @@
 #include "DGAuxUltilitiesLib.h"
 #include <iostream>
 #include "dynamicVarDeclaration.h"
-#include "DGLimiterLib.h"
 #include "./parallelFunctions/generalParallelFuncs.h"
 #include "./parallelFunctions/parallelVariables.h"
 
@@ -300,9 +299,9 @@ void PreProcessing()
 	MshReader::meshProcess();
 
     /*RESIZE ARRAYS*/
-    auxUlti::resizeDGArrays();
-    parallelFuncs_Gen::resizeMeshParallelBuffers();
+    auxUlti::resizeRequiredArrays();
 
+    //Synch mesh data
     for (int ivertex=0;ivertex<4;ivertex++)
     {
         parallelFuncs_Gen::sendReceiveMeshData(ivertex,1,parallelBuffer::xCoor);

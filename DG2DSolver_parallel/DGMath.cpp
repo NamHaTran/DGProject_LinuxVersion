@@ -1492,6 +1492,24 @@ void volumeGauss(int nGauss)
         return outVal;
     }
 
+    /**
+     * @brief Function calculates auxiliary variables at abitrary point.
+     * @param element: element Id
+     * @param a: Point's coordinates
+     * @param b: Point's coordinates
+     * @param valType: id of variables
+     * @param dir: direction, 1 for Ox, 2 for Oy
+     *
+     * Id	|keyWord	|
+     * -----|-----------|
+     * 1    |(mu)dRho	|
+     * 2    |(mu)dRhou	|
+     * 3    |(mu)dRhov	|
+     * 4    |(mu)dRhoE	|
+     * 5    |dRho		|
+     *
+     * @return
+     */
     double pointAuxValue(int element, double a, double b, int valType, int dir)
     {
         /* ValType la id cua bien can tinh:
@@ -1508,10 +1526,19 @@ void volumeGauss(int nGauss)
         Value = auxUlti::getElementAuxValuesOfOrder(element, valType, dir);
 
         math::basisFc(a, b, auxUlti::checkType(element));
-        for (int order = 0; order <= mathVar::orderElem; order++)
+
+        double theta2(1.0);
+        //If mass diffusion = ON, apply limiter to div(rho)
+        if (flowProperties::massDiffusion && valType==5)
         {
-            out += Value[order] * mathVar::B[order];
+            theta2=theta2Arr[element];
         }
+
+        for (int order = 1; order <= mathVar::orderElem; order++)
+        {
+            out += Value[order] * mathVar::B[order] * theta2;
+        }
+        out+=Value[0];
 
         return out;
     }
@@ -1543,6 +1570,11 @@ void volumeGauss(int nGauss)
         return out;
     }
 
+    /**
+     * @brief Function calculates thermal conductivity
+     * @param muVal: dynamic viscosity \f$\mu\f$
+     * @return
+     */
     double calcThermalConductivity(double muVal)
     {
         double k(0.0);
@@ -1550,17 +1582,42 @@ void volumeGauss(int nGauss)
         return k;
     }
 
+    /**
+     * @brief Function calculates devivative of T from derivative of conservative variables.
+     * @param dRhoE: div of total energy \f$\nabla (\rho E)\f$
+     * @param dRho: div of density \f$\nabla (\rho)\f$
+     * @param rhoE: total energy \f$\rho E\f$
+     * @param rho: density \f$\rho\f$
+     * @return
+     */
     double calcDivTFromAuxVariable(double dRhoE, double dRho, double rhoE, double rho)
     {
         //Dung cach cua Thay, coi u^2 la constant. Vi dang tinh cho bien phu la S = mu*div(U) nen gia tri nay ma mu*divT
         return ((dRhoE-dRho*rhoE/rho)/(rho*material::Cv));
     }
 
+    /**
+     * @brief Function calculate Mean Free Path
+     * @param mu: dynamic viscosity \f$\mu\f$
+     * @param rho: density \f$\rho\f$
+     * @param T: temperature T
+     * @return
+     */
     double calcMeanFreePath(double mu, double rho, double T)
     {
         return (mu*pow(3.1416/(2*material::R*T),0.5)/rho);
     }
 
+    /**
+     * @brief Function solve quadratic equation.
+     *
+     * Form of equation: \f$Ax^2 + Bx + C = 0\f$
+     *
+     * @param A: coefficient
+     * @param B: coefficient
+     * @param C: coefficient
+     * @return
+     */
     std::tuple<bool, double, double> solvQuadraticEq(double A, double B, double C)
     {
         double delta(B*B - 4 * A*C), root1(0.0), root2(0.0);
@@ -1608,6 +1665,20 @@ void volumeGauss(int nGauss)
         return output;
     }
 
+    /**
+     * @brief Function calculates value of auxiliary variable at cell's center.
+     * @param element: element Id
+     * @param valType: id of variables
+     * @param dir: direction, 1 for Ox, 2 for Oy
+     * Id	|keyWord	|
+     * -----|-----------|
+     * 1    |(mu)dRho	|
+     * 2    |(mu)dRhou	|
+     * 3    |(mu)dRhov	|
+     * 4    |(mu)dRhoE	|
+     * 5    |dRho		|
+     * @return
+     */
     double centerAuxValue(int element, int valType, int dir)
     {
         double xC(-1.0 / 3.0), yC(1.0 / 3.0), output(0.0);
@@ -1628,6 +1699,13 @@ void volumeGauss(int nGauss)
         return output;
     }
 
+    /**
+     * @brief Function maps a point in standard coordinates system to real coordinates system.
+     * @param element: element Id
+     * @param aCoor: point's coordinate in standard coordinates system
+     * @param bCoor: point's coordinate in standard coordinates system
+     * @return
+     */
     std::tuple<double, double> directMapping(int element, double aCoor, double bCoor)
     {
         int elemType(auxUlti::checkType(element));
@@ -1654,6 +1732,14 @@ void volumeGauss(int nGauss)
         return std::make_tuple(xCoor, yCoor);
     }
 
+    /**
+     * @brief Function maps a point in real coordinates system to standard coordinates system (old version).
+     * @param edge: edge Id
+     * @param element: element Id
+     * @param xCoor: point's coordinate in real coordinates system
+     * @param yCoor: point's coordinate in real coordinates system
+     * @return
+     */
     std::tuple<double, double> mappingRealToStd(int edge, int element, double xCoor, double yCoor)
     {
         double xA(0.0), xB(0.0), xC(0.0),
@@ -1708,6 +1794,13 @@ void volumeGauss(int nGauss)
         return std::make_tuple(aCoor, bCoor);
     }
 
+    /**
+     * @brief Function maps a point in real coordinates system to standard coordinates system (current version).
+     * @param element: element Id
+     * @param xCoor: point's coordinate in real coordinates system
+     * @param yCoor: point's coordinate in real coordinates system
+     * @return
+     */
     std::tuple<double, double> inverseMapping(int element, double xCoor, double yCoor)
     {
         int elemType(auxUlti::checkType(element));
@@ -3133,26 +3226,41 @@ void volumeGauss(int nGauss)
 
         math::basisFc(a, b, auxUlti::checkType(element));
 
+        double theta2(1.0);
+        //If mass diffusion = ON, apply limiter to div(rho)
+        if (flowProperties::massDiffusion)
+        {
+            theta2=theta2Arr[element];
+        }
+
         if (systemVar::auxVariables==1)
         {
             if (dir==1)
             {
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder];
+                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder]*theta2;
                     dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder];
                     dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder];
                     dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder];
                 }
+                dU[0] += BR1Vars::rhoX[element][0];
+                dU[1] += BR1Vars::rhouX[element][0];
+                dU[2] += BR1Vars::rhovX[element][0];
+                dU[3] += BR1Vars::rhoEX[element][0];
             }
             else {
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder];
+                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder]*theta2;
                     dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder];
                     dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder];
                     dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder];
                 }
+                dU[0] += BR1Vars::rhoY[element][0];
+                dU[1] += BR1Vars::rhouY[element][0];
+                dU[2] += BR1Vars::rhovY[element][0];
+                dU[3] += BR1Vars::rhoEY[element][0];
             }
         }
         else if (systemVar::auxVariables==2)

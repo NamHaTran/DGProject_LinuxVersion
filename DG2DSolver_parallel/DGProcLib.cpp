@@ -9,7 +9,6 @@
 #include <algorithm>
 #include "DGIOLib.h"
 #include <iostream>
-#include "DGLimiterLib.h"
 #include <math.h>
 #include <mpi.h>
 #include "NonEquilibriumBCsLib.h"
@@ -21,6 +20,10 @@
 
 //Debug
 #include "debuggingFuncs.h"
+
+//Limiter
+#include "./limiters/limiterController.h"
+#include "./limiters/mathFunctions.h"
 
 
 namespace meshParam
@@ -348,7 +351,12 @@ namespace process
         /* Khong apply limiter o buoc nay*/
         limiter::mathForLimiter::getNeighborElements();
         limitVal::numOfLimitCell = 0;
-        limiter::limiter_1Step();
+
+        // limiter::limiter_1OutterStep(); -> cause crash becase of very large u and v values
+        // Nguyen nhan vi ham mass diffusion limiter dung chung BR1Vars::rhoX va BR1Vars::rhoY voi ham giai pt phu S = mu(div(U))
+        // Nen xay ra conflict la mass diffusion limiter luu div(rho) va khi giai pt phu thi luu mu*div(rho)
+
+        limiter::limiter_1InnerStep();
     }
 
     /*Ham lam cac thu tuc truoc khi ket thuc 1 iteration*/
@@ -700,7 +708,7 @@ namespace process
 
         if (systemVar::parallelMode)
         {
-            parallelFuncs_GaussPt::sendReceiveSurfGaussArray(surfaceFields::T,surfaceFields::T);
+            parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::T,surfaceFields::T);
         }
     }
 
@@ -923,7 +931,7 @@ namespace process
 
         if (systemVar::parallelMode)
         {
-            parallelFuncs_GaussPt::sendReceiveSurfGaussArray(surfaceFields::rho,surfaceFields::rho);
+            parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::rho,surfaceFields::rho);
         }
     }
 
@@ -2361,15 +2369,15 @@ namespace process
 
             if (systemVar::parallelMode && flowProperties::viscous)
             {
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhoX, surfaceFields::dRhoX);
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhouX, surfaceFields::dRhouX);
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhovX, surfaceFields::dRhovX);
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhoEX, surfaceFields::dRhoEX);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhoX, surfaceFields::dRhoX);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhouX, surfaceFields::dRhouX);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhovX, surfaceFields::dRhovX);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhoEX, surfaceFields::dRhoEX);
 
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhoY, surfaceFields::dRhoY);
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhouY, surfaceFields::dRhouY);
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhovY, surfaceFields::dRhovY);
-                parallelFuncs_GaussPt::sendRecvSurfaceBCGaussPtArray(surfaceFields::dRhoEY, surfaceFields::dRhoEY);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhoY, surfaceFields::dRhoY);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhouY, surfaceFields::dRhouY);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhovY, surfaceFields::dRhovY);
+                parallelFuncs_GaussPt::sendRecvSurfGaussArray(surfaceFields::dRhoEY, surfaceFields::dRhoEY);
             }
         }
 
@@ -3047,6 +3055,7 @@ namespace process
 			uVal = rhou[element][0] / rho[element][0];
 			vVal = rhov[element][0] / rho[element][0];
 
+            /*
             if (flowProperties::massDiffusion)
             {
                 //tai firstIter da dat dt=0
@@ -3060,11 +3069,11 @@ namespace process
             {
                 TVal = math::CalcTFromConsvVar(rho[element][0], rhou[element][0], rhov[element][0], rhoE[element][0]);
                 muVal = math::CalcVisCoef(TVal);
-            }
+            }*/
 
             /* Dung T convective*/
-            //TVal = math::CalcTFromConsvVar(rho[element][0], rhou[element][0], rhov[element][0], rhoE[element][0]);
-            //muVal = math::CalcVisCoef(TVal);
+            TVal = math::CalcTFromConsvVar(rho[element][0], rhou[element][0], rhov[element][0], rhoE[element][0]);
+            muVal = math::CalcVisCoef(TVal);
 
             velocity = sqrt(pow(uVal, 2) + pow(vVal, 2));
 			aSound = math::CalcSpeedOfSound(TVal);
@@ -3217,7 +3226,7 @@ namespace process
                 process::auxEq::solveDivRho();
             }
 
-            limiter::limiter_1Step();
+            limiter::limiter_1InnerStep();
 
             //COMPUTE GAUSS VALUES AND INTERFACES VALUES
 			process::calcVolumeGaussValues();
@@ -3266,6 +3275,8 @@ namespace process
 
             //UPDATE TIME VARYING BC
             updateTimeVaryingBCs();
+
+            limiter::limiter_1OutterStep();
 		}
 
         namespace parallel {

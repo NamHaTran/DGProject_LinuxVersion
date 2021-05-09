@@ -35,6 +35,9 @@
 
 #include "./boundaryConditions/readBCInfor/readSymmetryBC.h"
 
+//Limiters
+#include "./limiters/massDiffusion.h"
+
 namespace IO
 {
     /**
@@ -1648,6 +1651,24 @@ namespace IO
         }
     }
 
+    void write1DBoolVectorToFile(std::string location, std::string fileName, bool *vector, int length)
+    {
+        std::ofstream FileFlux((location+"/"+fileName).c_str());
+        if (FileFlux)
+        {
+            FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<length<<"\n"<<"{\n";
+            for (int irow=0; irow<length; irow++)
+            {
+                FileFlux<<vector[irow]<<"\n";
+            }
+            FileFlux<<"}\n";
+        }
+        else
+        {
+            std::cout<<"Cannot open file at location "<<(location+"/"+fileName)<<" to write.\n";
+        }
+    }
+
     namespace loadSettingFiles
     {
         void loadConstants()
@@ -1772,7 +1793,7 @@ namespace IO
 
             if (!flowProperties::massDiffusion)
             {
-                material::massDiffusion::DmCoeff=0.0;
+                //material::massDiffusion::DmCoeff=0.0;
             }
         }
 

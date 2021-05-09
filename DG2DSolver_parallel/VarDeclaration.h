@@ -7,10 +7,14 @@
 
 namespace systemVar
 {
+    //! Working directory
 	extern std::string wD;
+    //! Name of submitted case
 	extern std::string caseName;
 	extern std::string pwd;
+    //! Inputed comamnd
 	extern std::string cmd;
+    //! Flag of 'end' command
 	extern bool endKey;
 
     //! Courant number
@@ -76,11 +80,15 @@ namespace meshVar
     //! Number of edges per element (default is 4)
     extern const int nedel;
 
-	/*Elements surrounding points*/
-    extern std::vector<int> esup1, esup2;
+    //! Array supports for finding elements surrounding point
+    extern std::vector<int> esup1,
+    //! Array supports for finding elements surrounding point
+    esup2;
 
-	/*Points surrounding points*/
-	extern std::vector<int> psup1, psup2;
+    //! Array supports for finding points surrounding point
+    extern std::vector<int> psup1,
+    //! Array supports for finding points surrounding point
+    psup2;
 
     //! Variables help to save mesh data, can be used for normalVector, MasterElemOfEdge, ineled
     extern int inpoedCount;
@@ -88,7 +96,7 @@ namespace meshVar
     //! Number of boundary edge
     extern int numBCEdges;
 
-    //Number of BC groups
+    //! Number of BC groups
     extern int numBCGrp;
 }
 
@@ -110,7 +118,20 @@ namespace mathVar
 
 namespace material
 {
-	extern double gamma, R, Pr, As, Ts, Cp, Cv;
+    //! Heat capacity ratio, is the ratio of the heat capacity at constant pressure (Cp) to heat capacity at constant volume (Cv)
+    extern double gamma,
+    //! Ideal gas constant
+    R,
+    //! Prandtl number, is the ratio of momentum diffusivity to thermal diffusivity
+    Pr,
+    //! Coefficient of Sutherland model
+    As,
+    //! Reference Temperature of Sutherland model
+    Ts,
+    //! Heat capacity at constant pressure
+    Cp,
+    //! Heat capacity at constant volume
+    Cv;
     namespace massDiffusion {
     extern
     //coefficient of self-diffusion

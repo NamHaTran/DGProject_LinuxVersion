@@ -79,6 +79,8 @@ namespace IO
 
     void write1DIntVectorToFile(std::string location, std::string fileName, int *vector, int length);
 
+    void write1DBoolVectorToFile(std::string location, std::string fileName, bool *vector, int length);
+
     void writeResiduals(int iter, double rhoRes, double rhouRes, double rhovRes, double rhoERes);
 
 	namespace importCase {

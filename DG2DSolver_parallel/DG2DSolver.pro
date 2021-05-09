@@ -21,7 +21,6 @@ SOURCES += \
     DGAuxUltilitiesLib.cpp \
     DGController.cpp \
     DGIOLib.cpp \
-    DGLimiterLib.cpp \
     DGMath.cpp \
     DGMeshReaderLib.cpp \
     DGMessagesLib.cpp \
@@ -46,11 +45,20 @@ SOURCES += \
     boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.cpp \
     boundaryConditions/symmetry.cpp \
     boundaryConditions/zeroGradient.cpp \
+    debuggingFuncs.cpp \
     dynamicVarDeclaration.cpp \
     VarDeclaration.cpp \
+    limiters/detectTroubleCells.cpp \
+    limiters/limiterController.cpp \
+    limiters/massDiffusion.cpp \
+    limiters/mathFunctions.cpp \
+    limiters/pAdaptive.cpp \
+    limiters/parallelFuncs.cpp \
+    limiters/positivityPreserving.cpp \
+    limiters/varsOfLimiters.cpp \
+    parallelFunctions/GaussPointData.cpp \
     parallelFunctions/cellData.cpp \
     parallelFunctions/generalParallelFuncs.cpp \
-	parallelFunctions/GaussPointData.cpp \
     parallelFunctions/parallelVariables.cpp
 
 # Default rules for deployment.
@@ -64,7 +72,6 @@ HEADERS += \
     DGAuxUltilitiesLib.h \
     DGController.h \
     DGIOLib.h \
-    DGLimiterLib.h \
     DGMath.h \
     DGMeshReaderLib.h \
     DGMessagesLib.h \
@@ -89,11 +96,20 @@ HEADERS += \
     boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.h \
     boundaryConditions/symmetry.h \
     boundaryConditions/zeroGradient.h \
+    debuggingFuncs.h \
     dynamicVarDeclaration.h \
     VarDeclaration.h \
+    limiters/detectTroubleCell.h \
+    limiters/limiterController.h \
+    limiters/massDiffusion.h \
+    limiters/mathFunctions.h \
+    limiters/pAdaptive.h \
+    limiters/parallelFuncs.h \
+    limiters/positivityPreserving.h \
+    limiters/varsOfLimiters.h \
+    parallelFunctions/GaussPointData.h \
     parallelFunctions/cellData.h \
     parallelFunctions/generalParallelFuncs.h \
-	parallelFunctions/GaussPointData.h \
     parallelFunctions/parallelVariables.h
 
 # MPI Settings

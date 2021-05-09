@@ -16,7 +16,9 @@ namespace meshVar
 
     /*Edges of element*/
     //number of row is 4 because of default quad element
+    //! Array contents edges of element. Adress1 is element's Id, adress2 is edge's order in element (maximum is 4 for quad element).
     extern int **inedel;
+    //! Array contents elements which share an edge. Adress1 is edge's Id, adress2 is only 0 or 1, 0 is master cell, 1 is slave cell.
     extern int **ineled;
 
     extern double **Points;

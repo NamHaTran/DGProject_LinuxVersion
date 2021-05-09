@@ -12,9 +12,13 @@
 #include <fstream>
 #include <sstream>
 #include <mpi.h>
+
 #include "./parallelFunctions/generalParallelFuncs.h"
 #include "./parallelFunctions/parallelVariables.h"
 #include "./parallelFunctions/GaussPointData.h"
+
+//Limiter Header
+#include "./limiters/massDiffusion.h"
 
 #include <iostream>
 
@@ -834,6 +838,14 @@ namespace auxUlti
         }
     }
 
+    void initialize1DBoolArray(bool*Array, int row, bool initialValue)
+    {
+        for (int i=0; i<row; i++)
+        {
+         Array[i]=initialValue;
+        }
+    }
+
     double** resize2DArray(int row, int column, double initialValue)
 	{
         /*Ham tao mang 2D gom cac o nho lien tuc (contiguous memory location)*/
@@ -1624,5 +1636,21 @@ namespace auxUlti
         meshVar::ineled = auxUlti::resize2DIntArray(meshVar::nelem2D*4,5,0);
 
         SurfaceBCFields::localGlobalBCEdgesMatching = new int [meshVar::nelem1D];
+    }
+
+    /**
+     * @brief Function resizes necessary arrays before moving to processing stage
+     */
+    void resizeRequiredArrays()
+    {
+        auxUlti::resizeDGArrays();
+        parallelFuncs_Gen::resizeMeshParallelBuffers();
+
+        //Resize arrays need for mass diffusion limiter
+        limiter::massDiffusion::markerOfTrbCellAtMatchedBC = new bool [meshVar::numBCEdges];
+        auxUlti::initialize1DBoolArray(limiter::massDiffusion::markerOfTrbCellAtMatchedBC, meshVar::numBCEdges, false);
+        limiter::massDiffusion::markerOfTrbCellAtMatchedBC_buffer = new bool [meshVar::numBCEdges];
+        auxUlti::initialize1DBoolArray(limiter::massDiffusion::markerOfTrbCellAtMatchedBC_buffer, meshVar::numBCEdges, false);
+
     }
 }

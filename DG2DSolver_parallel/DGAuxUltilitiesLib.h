@@ -85,6 +85,8 @@ namespace auxUlti
 
     void initialize1DIntArray(int*Array, int row, int initialValue);
 
+    void initialize1DBoolArray(bool*Array, int row, bool initialValue);
+
 	/*Function resize 2D array type double*/
     double** resize2DArray(int row, int column, double initialValue);
 
@@ -179,5 +181,7 @@ namespace auxUlti
     void resizeTemporaryArrays();
 
     int lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord);
+
+    void resizeRequiredArrays();
 }
 #endif // DGAUXULTILITIESLIB_H_INCLUDED
