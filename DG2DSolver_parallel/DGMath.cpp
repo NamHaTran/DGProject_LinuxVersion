@@ -1528,8 +1528,8 @@ void volumeGauss(int nGauss)
         math::basisFc(a, b, auxUlti::checkType(element));
 
         double theta2(1.0);
-        //If mass diffusion = ON, apply limiter to div(rho)
-        if (flowProperties::massDiffusion && valType==5)
+        //If mass diffusion = ON, apply limiter to All auxiliary variables //div(rho)
+        if (flowProperties::massDiffusion) //&& valType==5
         {
             theta2=theta2Arr[element];
         }

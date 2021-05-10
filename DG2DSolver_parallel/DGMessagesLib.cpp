@@ -12,6 +12,8 @@
 #include <chrono>
 #include <ctime>
 
+#include "./limiters/massDiffusion/massDiffusion.h"
+
 namespace message
 {
 	std::string headerFile()
@@ -245,14 +247,35 @@ To convert unv mesh format to DG2D readable format, do following task step by st
         if (mathVar::orderElem!=0)
         {
             std::cout<<"\nLimiter settings:\n";
-            if (limitVal::limiterName.size() > 0)
+
+            std::cout << "    - Selected limiter(s): ";
+            if (limitVal::PositivityPreserving)
+                std::cout<<" (Positivity Preserving)";
+            if (limitVal::PAdaptive)
+                std::cout<<" (P Adaptive)";
+            if (limitVal::massDiffusion)
+                std::cout<<" (Mass Diffusion Based)";
+            std::cout << "\n";
+
+            if (limitVal::massDiffusion||limitVal::PAdaptive||limitVal::PositivityPreserving)
             {
-                std::cout << "  - Selected limiter(s): ";
-                for (int i = 0; i < static_cast<int>(limitVal::limiterName.size()); i++)
+                std::cout << "    - Limiter(s) setting: \n";
+                if (limitVal::PositivityPreserving)
                 {
-                    std::cout << limitVal::limiterName[i] << " ";
+                    std::cout<<"       + Positivity Preserving:\n";
+                    if (limitVal::PositivityPreservingSettings::version==1)
+                        std::cout<<"           Version full\n";
+                    else
+                        std::cout<<"           Version           simplified\n";
                 }
-                std::cout << "\n";
+                if (limitVal::massDiffusion)
+                {
+                    std::cout<<"       + Positivity Preserving:\n"
+                            <<"           maxIter           "<<limiter::massDiffusion::maxIter<<"\n"
+                            <<"           Co                "<<limiter::massDiffusion::pseudoCo<<"\n"
+                            <<"           DmCoeff           "<<limiter::massDiffusion::DmCoeff<<"\n"
+                            <<"\n";
+                }
             }
         }
     }

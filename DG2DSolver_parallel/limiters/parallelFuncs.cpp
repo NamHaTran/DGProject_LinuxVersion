@@ -6,7 +6,7 @@
 #include "./parallelFunctions/generalParallelFuncs.h"
 #include "DGAuxUltilitiesLib.h"
 
-#include "./limiters/massDiffusion.h"
+#include "./limiters/massDiffusion/massDiffusion.h"
 
 //Debug
 #include <iostream>

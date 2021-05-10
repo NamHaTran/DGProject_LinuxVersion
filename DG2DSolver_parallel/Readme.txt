@@ -51,3 +51,9 @@ Bản backup 09/05/2021:
 - Update hàm mass difusion limiter: về vơ bản đã chạy được, hiện tại đang trong giai đoạn test và tối ưu hóa code. Cần phải test thêm về tác dụng của limiter này trong trường hợp Kn - 0.05 và 0.1 (đã chạy tốt với Kn = 0.01, có thể chạy với max Co = 0.01, lúc trước 0.001 vẫn gây crash).
 - Bổ sung một số update nhỏ ở phần hiển thị limiter setting.
 - Code được update lên github vào ngày 09/05/2021
+
+Bản backup 10/05/2021:
+- Update hàm đọc limiter setting để đọc mass diffuson setting.
+- Update hàm show setting của limiter.
+- Modify hàm tính pointAuxValue để apply limiter vào cả 4 biến Sm = div(U) khi mass diffusion = ON.
+- Update code lên github cùng ngày.

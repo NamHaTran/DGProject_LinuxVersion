@@ -18,7 +18,7 @@
 #include "./parallelFunctions/GaussPointData.h"
 
 //Limiter Header
-#include "./limiters/massDiffusion.h"
+#include "./limiters/massDiffusion/massDiffusion.h"
 
 #include <iostream>
 

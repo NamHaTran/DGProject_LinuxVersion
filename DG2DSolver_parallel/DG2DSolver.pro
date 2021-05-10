@@ -50,11 +50,11 @@ SOURCES += \
     VarDeclaration.cpp \
     limiters/detectTroubleCells.cpp \
     limiters/limiterController.cpp \
-    limiters/massDiffusion.cpp \
+    limiters/massDiffusion/massDiffusion.cpp \
     limiters/mathFunctions.cpp \
-    limiters/pAdaptive.cpp \
+    limiters/pAdaptive/pAdaptive.cpp \
     limiters/parallelFuncs.cpp \
-    limiters/positivityPreserving.cpp \
+    limiters/positivityPreserving/positivityPreserving.cpp \
     limiters/varsOfLimiters.cpp \
     parallelFunctions/GaussPointData.cpp \
     parallelFunctions/cellData.cpp \
@@ -101,11 +101,11 @@ HEADERS += \
     VarDeclaration.h \
     limiters/detectTroubleCell.h \
     limiters/limiterController.h \
-    limiters/massDiffusion.h \
+    limiters/massDiffusion/massDiffusion.h \
     limiters/mathFunctions.h \
-    limiters/pAdaptive.h \
+    limiters/pAdaptive/pAdaptive.h \
     limiters/parallelFuncs.h \
-    limiters/positivityPreserving.h \
+    limiters/positivityPreserving/positivityPreserving.h \
     limiters/varsOfLimiters.h \
     parallelFunctions/GaussPointData.h \
     parallelFunctions/cellData.h \

@@ -22,9 +22,6 @@ namespace IO
     /*Function reads number of total processes in DGOPtions*/
     void readNumberOfCores();
 
-	/*Function read informations of limiters*/
-	void loadLimiterSettings();
-
 	/*User's guide:
 	This function returns datas of type double and type int read from files.
 	Input arguments:

@@ -12,6 +12,8 @@
 #include "./parallelFunctions/generalParallelFuncs.h"
 #include "./parallelFunctions/parallelVariables.h"
 
+#include "./limiters/limiterController.h"
+
 void Executer()
 {
     /*Functions run only at rank 0:
@@ -275,7 +277,7 @@ void PreProcessing()
 {
     /*LOAD CONSTANTS*/
     IO::loadSettingFiles::loadConstants();
-    IO::loadLimiterSettings();
+    limiter::IOLimiter::readSelectedLimiters();
 
     std::string readWriteMode;
     if (systemVar::parallelMode)
