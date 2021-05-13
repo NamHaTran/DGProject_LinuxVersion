@@ -109,8 +109,11 @@ namespace limiter
             }
 
             //Read settings of each limiter
-            limiter::IOMassDiff::readSetting();
-            limiter::IOPositivity::readSetting();
+			if (limitVal::massDiffusion)
+				limiter::IOMassDiff::readSetting();
+				
+			if (limitVal::PositivityPreserving)
+				limiter::IOPositivity::readSetting();
         }
     }
 }

@@ -124,18 +124,49 @@ namespace material
     R,
     //! Prandtl number, is the ratio of momentum diffusivity to thermal diffusivity
     Pr,
-    //! Coefficient of Sutherland model
-    As,
-    //! Reference Temperature of Sutherland model
-    Ts,
     //! Heat capacity at constant pressure
     Cp,
     //! Heat capacity at constant volume
     Cv;
     namespace massDiffusion {
-    extern
-    //coefficient of self-diffusion
-    double DmCoeff;
+        extern
+        //! Coefficient of self-diffusion
+        double DmCoeff;
+    }
+
+    namespace viscosityCoeff {
+        namespace Sutherland {
+            extern double
+            //! Coefficient of Sutherland model
+            As,
+            //! Reference Temperature of Sutherland model
+            Ts;
+        }
+
+        namespace powerLaw_VHS {
+            extern double
+            //! Mass of 1 mole of gas used in Power Law - VHS model (Argon 39.948g/mol)
+            molMass,
+            //! Boltzmann constant
+            kBoltzmann,
+            //! Temperature exponent used in Power Law - VHS model
+            omega,
+            //! Reference temperature used in Power Law - VHS model
+            TRef,
+            //! Molecule diameter used in Power Law - VHS model
+            dRef;
+        }
+
+        namespace constant {
+            //! Constant mu
+            extern double mu;
+        }
+    }
+
+    namespace viscousityModel {
+        extern bool constant,
+        power_VHS,
+        sutherland;
     }
 }
 

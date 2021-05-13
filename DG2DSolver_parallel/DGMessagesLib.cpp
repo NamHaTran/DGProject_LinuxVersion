@@ -187,7 +187,31 @@ To convert unv mesh format to DG2D readable format, do following task step by st
 
         if (flowProperties::viscous)
         {
-            std::cout<<"    - Flow is viscous.\n";
+            std::cout<<"    - Flow is viscous. Viscosity model is ";
+            if (material::viscousityModel::sutherland)
+            {
+                std::cout<<"Sutherland.\n";
+                std::cout<<"       + Coefficients:\n"
+                        <<"           As                "<<material::viscosityCoeff::Sutherland::As<<"\n"
+                        <<"           Ts                "<<material::viscosityCoeff::Sutherland::Ts<<"\n"
+                        <<"\n";
+            }
+            else if (material::viscousityModel::power_VHS)
+            {
+                std::cout<<"Power Law (bases on Very-Hard-Sphere model).\n";
+                std::cout<<"       + Coefficients:\n"
+                        <<"           molMass           "<<material::viscosityCoeff::powerLaw_VHS::molMass<<" (g/mol)\n"
+                        <<"           omega             "<<material::viscosityCoeff::powerLaw_VHS::omega<<"\n"
+                        <<"           TRef              "<<material::viscosityCoeff::powerLaw_VHS::TRef<<" (K)\n"
+                        <<"           dRef              "<<material::viscosityCoeff::powerLaw_VHS::dRef<<" (m)\n"
+                        <<"\n";
+            }
+            else if (material::viscousityModel::constant)
+            {
+                 std::cout<<"constant.\n";
+                 std::cout<<"       + Coefficients:\n"
+                        <<"           mu                "<<material::viscosityCoeff::constant::mu<<"\n";
+            }
         }
         else {
             std::cout<<"    - Flow is inviscid.\n";
@@ -244,38 +268,35 @@ To convert unv mesh format to DG2D readable format, do following task step by st
         }
         std::cout<<"    - Flux type for diffusive flux: Central flux.\n";
 
-        if (mathVar::orderElem!=0)
+
+        std::cout<<"\nLimiter settings:\n";
+        std::cout << "    - Selected limiter(s): ";
+        if (limitVal::PositivityPreserving)
+            std::cout<<" (Positivity Preserving)";
+        if (limitVal::PAdaptive)
+            std::cout<<" (P Adaptive)";
+        if (limitVal::massDiffusion)
+            std::cout<<" (Mass Diffusion Based)";
+        std::cout << "\n";
+
+        if (limitVal::massDiffusion||limitVal::PAdaptive||limitVal::PositivityPreserving)
         {
-            std::cout<<"\nLimiter settings:\n";
-
-            std::cout << "    - Selected limiter(s): ";
+            std::cout << "    - Limiter(s) setting: \n";
             if (limitVal::PositivityPreserving)
-                std::cout<<" (Positivity Preserving)";
-            if (limitVal::PAdaptive)
-                std::cout<<" (P Adaptive)";
-            if (limitVal::massDiffusion)
-                std::cout<<" (Mass Diffusion Based)";
-            std::cout << "\n";
-
-            if (limitVal::massDiffusion||limitVal::PAdaptive||limitVal::PositivityPreserving)
             {
-                std::cout << "    - Limiter(s) setting: \n";
-                if (limitVal::PositivityPreserving)
-                {
-                    std::cout<<"       + Positivity Preserving:\n";
-                    if (limitVal::PositivityPreservingSettings::version==1)
-                        std::cout<<"           Version full\n";
-                    else
-                        std::cout<<"           Version           simplified\n";
-                }
-                if (limitVal::massDiffusion)
-                {
-                    std::cout<<"       + Positivity Preserving:\n"
-                            <<"           maxIter           "<<limiter::massDiffusion::maxIter<<"\n"
-                            <<"           Co                "<<limiter::massDiffusion::pseudoCo<<"\n"
-                            <<"           DmCoeff           "<<limiter::massDiffusion::DmCoeff<<"\n"
-                            <<"\n";
-                }
+                std::cout<<"       + Positivity Preserving:\n";
+                if (limitVal::PositivityPreservingSettings::version==1)
+                    std::cout<<"           Version full\n";
+                else
+                    std::cout<<"           Version           simplified\n";
+            }
+            if (limitVal::massDiffusion)
+            {
+                std::cout<<"       + Positivity Preserving:\n"
+                        <<"           maxIter           "<<limiter::massDiffusion::maxIter<<"\n"
+                        <<"           Co                "<<limiter::massDiffusion::pseudoCo<<"\n"
+                        <<"           DmCoeff           "<<limiter::massDiffusion::DmCoeff<<"\n"
+                        <<"\n";
             }
         }
     }

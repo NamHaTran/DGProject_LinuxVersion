@@ -57,3 +57,10 @@ Bản backup 10/05/2021:
 - Update hàm show setting của limiter.
 - Modify hàm tính pointAuxValue để apply limiter vào cả 4 biến Sm = div(U) khi mass diffusion = ON.
 - Update code lên github cùng ngày.
+
+Bản backup 13/05/2021:
+- Update mô hình viscosity: thêm mô hình power law.
+- Update hàm post process để xuất kết quả T khi dùng mô hình nhớt power law.
+- Mô hình power law không dùng mode giải T implicit được.
+- Fix bug nhỏ nhưng nghiêm trọng trong hàm tính convective/diffusive flux (hàm process::NSFEq::calcSurfaceFlux())
+- Update code lên github cùng ngày.

@@ -81,11 +81,38 @@ namespace mathVar
 
 namespace material
 {
-	double gamma(1.4), R(287.0), Pr(0.72), As(0.001), Ts(110.4), Cp(0.0), Cv(0.0);
+    double gamma(1.4), R(287.0), Pr(0.72), Cp(0.0), Cv(0.0);
     namespace massDiffusion {
-    double
-    //coefficient of self-diffusion
-    DmCoeff(0.0);
+        double
+        //coefficient of self-diffusion
+        DmCoeff(0.0);
+    }
+
+    namespace viscosityCoeff {
+        namespace Sutherland {
+            double
+            As(0.001),
+            Ts(110.4);
+        }
+
+        namespace powerLaw_VHS {
+            double
+            molMass(0.0),
+            kBoltzmann(1.380649e-23),
+            omega(0.0),
+            TRef(0.0),
+            dRef(3.595e-10);
+        }
+
+        namespace constant {
+            double mu(0.0);
+        }
+    }
+
+    namespace viscousityModel {
+        bool constant(false),
+        power_VHS(false),
+        sutherland(false);
     }
 }
 

@@ -409,7 +409,8 @@ namespace DG2Tecplot
             {
                 double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
                         dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                out = material::Cv*math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+                out = material::Cv*math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
+                                                                    math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal));
             }
             else
             {
@@ -426,7 +427,8 @@ namespace DG2Tecplot
             {
                 double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
                         dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                out = math::CalcP(math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
+                out = math::CalcP(math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
+                                                                   math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal)), rhoVal);
             }
             else
             {
@@ -443,7 +445,8 @@ namespace DG2Tecplot
             {
                 double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
                         dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                out = math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+                out = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
+                                                       math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal));
             }
             else
             {
@@ -466,7 +469,8 @@ namespace DG2Tecplot
             {
                 double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
                         dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                TVal = math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
+                TVal = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
+                                                        math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal));
             }
             else
             {

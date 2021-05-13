@@ -61,7 +61,7 @@ namespace limiter
                 bool runFlag(true);
                 do {
                     //Synch cell status
-                    limiter_parallelFuncs::massDiff::synchCellStatus();
+                    //limiter_parallelFuncs::massDiff::synchCellStatus();
 
                     //Giai pt NSF mo rong bang TVDRK3
                     for (int iRKOrder = 1; iRKOrder <= 3; iRKOrder++)
@@ -74,7 +74,7 @@ namespace limiter
                     }
 
                     //Reset markerOfTrbCellAtMatchedBC
-                    auxUlti::initialize1DBoolArray(limiter::massDiffusion::markerOfTrbCellAtMatchedBC, meshVar::numBCEdges, false);
+                    //auxUlti::initialize1DBoolArray(limiter::massDiffusion::markerOfTrbCellAtMatchedBC, meshVar::numBCEdges, false);
 
                     std::tie(runFlag, totalNumTrbCells)=limiter::massDiffusion::checkRunning();
                     iter++;
@@ -111,6 +111,7 @@ namespace limiter
                     trouble=true;
 
                     //Check xem co trouble cell co edge la bien match hay khong, neu co thi moi active cac ham synch data
+                    /*
                     int elemType(auxUlti::checkType(nelem)), edgeId(-1);
                     for (int i=0; i<elemType; i++)
                     {
@@ -124,7 +125,7 @@ namespace limiter
                         {
                             limiter::massDiffusion::markerOfTrbCellAtMatchedBC[auxUlti::getAdressOfBCEdgesOnBCValsArray(edgeId)]=false;
                         }
-                    }
+                    }*/
                 }
                 else
                     limitVal::troubleCellsMarker[nelem]=false;
@@ -155,16 +156,17 @@ namespace limiter
             for (int nelem=0; nelem<meshVar::nelem2D; nelem++)
             {
                 //Condition cua trouble cell la min_rho va min_rhoE phai > 0
-                double minRho(limiter::massDiffusion::mathFuncs::calcMinUWOLimiter(nelem,1)), minRhoe(0.0);
-                std::tie(minRhoe,std::ignore)=limiter::positivityPreserving::mathFuncs::calcMinMeanRhoe(nelem,1.0);
+                double minRho(limiter::massDiffusion::mathFuncs::calcMinUWOLimiter(nelem,1)), meanRhoe(0.0);
+                std::tie(std::ignore,meanRhoe)=limiter::positivityPreserving::mathFuncs::calcMinMeanRhoe(nelem,1.0);
 
-                if (minRho<0 || minRhoe<0)
+                if (minRho<0 || meanRhoe<0)
                 {
                     limitVal::troubleCellsMarker[nelem]=true;
                     numTroubleCells++;
                     run=true;
 
                     //Check xem co trouble cell co edge la bien match hay khong, neu co thi moi active cac ham synch data
+                    /*
                     int elemType(auxUlti::checkType(nelem)), edgeId(-1);
                     for (int i=0; i<elemType; i++)
                     {
@@ -178,7 +180,7 @@ namespace limiter
                         {
                             limiter::massDiffusion::markerOfTrbCellAtMatchedBC[auxUlti::getAdressOfBCEdgesOnBCValsArray(edgeId)]=false;
                         }
-                    }
+                    }*/
                 }
                 else
                 {
@@ -885,6 +887,60 @@ namespace limiter
                     counter++;
                 }
                 return min;
+            }
+
+            double calcMaxAbsGradRhoOnEdges(int element)
+            {
+                double aG(0.0), bG(0.0), max(1e-15), val(0.0);
+
+                //Compute rho at edge DA
+                aG = -1;
+                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                {
+                    bG = mathVar::xGaussSur[nG];
+
+                    //Tinh do lon cua grad(rho)
+                    val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);
+                    if (val>max)
+                        max=val;
+                }
+                //Compute rho at edge BC
+                aG = 1;
+                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                {
+                    bG = mathVar::xGaussSur[nG];
+                    val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);
+                    if (val>max)
+                        max=val;
+                }
+                //Compute rho at edge AB
+                bG = -1;
+                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                {
+                    aG = mathVar::xGaussSur[nG];
+                    val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);
+                    if (val>max)
+                        max=val;
+                }
+                //Compute rho at edge CD
+                bG = 1;
+                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                {
+                    aG = mathVar::xGaussSur[nG];
+                    val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);
+                    if (val>max)
+                        max=val;
+                }
+                return max;
+            }
+
+            double calcMeanAbsGradRho(int element)
+            {
+                return
+                        (pow(
+                             pow(BR1Vars::rhoX[element][0],2)+
+                             pow(BR1Vars::rhoY[element][0],2)
+                             ,0.5));
             }
         }
     }

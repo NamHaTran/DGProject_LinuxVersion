@@ -973,12 +973,40 @@ void volumeGauss(int nGauss)
     double CalcVisCoef(double T)
     {
         double mu(0.0);
-        mu = material::As*pow(T, 1.5) / (T + material::Ts);
+        if (material::viscousityModel::sutherland)
+        {
+            mu = material::viscosityCoeff::Sutherland::As*pow(T, 1.5) / (T + material::viscosityCoeff::Sutherland::Ts);
+        }
+        else if (material::viscousityModel::power_VHS)
+        {
+            double Avogadro(6.02214076e23); //Note, molMass is g/mol
+            double muRef(
+                        15*pow((3.14*(material::viscosityCoeff::powerLaw_VHS::molMass/(Avogadro*1000))*
+                                material::viscosityCoeff::powerLaw_VHS::kBoltzmann*
+                                material::viscosityCoeff::powerLaw_VHS::TRef),
+                               0.5)
+                        /
+                        (2*3.14*
+                         pow(material::viscosityCoeff::powerLaw_VHS::dRef,2)*
+                         (5-2*material::viscosityCoeff::powerLaw_VHS::omega)*
+                         (7-2*material::viscosityCoeff::powerLaw_VHS::omega)
+                         )
+                        );
+
+            mu = muRef*pow(T/material::viscosityCoeff::powerLaw_VHS::TRef,
+                           material::viscosityCoeff::powerLaw_VHS::omega);
+        }
+        else if (material::viscousityModel::constant)
+        {
+            mu = material::viscosityCoeff::constant::mu;
+        }
+
         if (mu!=mu)
         {
             std::cout << "Negative T = " << T << std::endl;
             exit(1);
         }
+
         return mu;
     }
 
@@ -1027,12 +1055,12 @@ void volumeGauss(int nGauss)
             B2=2*(u*Ax+v*Ay);
             B3=u*u+v*v-2*Em;
             std::vector<double> polynomialCoeffs{
-                B1*pow(material::As,2)+2*material::Cv,
-                        -material::As*B2,
-                        4*material::Cv*material::Ts+B3,
-                        -material::As*B2*material::Ts,
-                        2*material::Cv*pow(material::Ts,2)+2*B3*material::Ts,
-                        B3*pow(material::Ts,2)
+                B1*pow(material::viscosityCoeff::Sutherland::As,2)+2*material::Cv,
+                        -material::viscosityCoeff::Sutherland::As*B2,
+                        4*material::Cv*material::viscosityCoeff::Sutherland::Ts+B3,
+                        -material::viscosityCoeff::Sutherland::As*B2*material::viscosityCoeff::Sutherland::Ts,
+                        2*material::Cv*pow(material::viscosityCoeff::Sutherland::Ts,2)+2*B3*material::viscosityCoeff::Sutherland::Ts,
+                        B3*pow(material::viscosityCoeff::Sutherland::Ts,2)
             };
             //compute initial T
             //TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
@@ -1112,12 +1140,12 @@ void volumeGauss(int nGauss)
         B2=2*(u*Ax+v*Ay);
         B3=u*u+v*v-2*Em;
         std::vector<double> polynomialCoeffs{
-            B1*pow(material::As,2)+2*material::Cv,
-                    -material::As*B2,
-                    4*material::Cv*material::Ts+B3,
-                    -material::As*B2*material::Ts,
-                    2*material::Cv*pow(material::Ts,2)+2*B3*material::Ts,
-                    B3*pow(material::Ts,2)
+            B1*pow(material::viscosityCoeff::Sutherland::As,2)+2*material::Cv,
+                    -material::viscosityCoeff::Sutherland::As*B2,
+                    4*material::Cv*material::viscosityCoeff::Sutherland::Ts+B3,
+                    -material::viscosityCoeff::Sutherland::As*B2*material::viscosityCoeff::Sutherland::Ts,
+                    2*material::Cv*pow(material::viscosityCoeff::Sutherland::Ts,2)+2*B3*material::viscosityCoeff::Sutherland::Ts,
+                    B3*pow(material::viscosityCoeff::Sutherland::Ts,2)
         };
         //compute initial T
         TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
@@ -2605,7 +2633,7 @@ void volumeGauss(int nGauss)
             LxFConst[iedge]=*max_element(CArray.begin(), CArray.end());
             //-----------------------------------------------
         }
-    }//end of namespace numericalFluxes
+    }
 
     namespace inviscidTerms
     {
@@ -2629,7 +2657,7 @@ void volumeGauss(int nGauss)
             }
             return std::make_tuple(term1, term2, term3, term4);
         }
-    }//end of namespace invicidTerms
+    }
 
     namespace viscousTerms
     {

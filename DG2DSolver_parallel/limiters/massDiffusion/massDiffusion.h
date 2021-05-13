@@ -63,6 +63,10 @@ namespace limiter
             double pointRho0(int element, double a, double b);
 
             double calcMinUWOLimiter(int element, int type);
+
+            double calcMaxAbsGradRhoOnEdges(int element);
+
+            double calcMeanAbsGradRho(int element);
         }
     }
 

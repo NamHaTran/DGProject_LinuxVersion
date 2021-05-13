@@ -2243,22 +2243,22 @@ namespace process
                             surfaceFields::dRhoX[iedge][nG]=dUXMaster[0];
                             surfaceFields::dRhouX[iedge][nG]=dUXMaster[1];
                             surfaceFields::dRhovX[iedge][nG]=dUXMaster[2];
-                            surfaceFields::dRhoEX[iedge][nG]=dUXMaster[2];
+                            surfaceFields::dRhoEX[iedge][nG]=dUXMaster[3];
 
                             surfaceFields::dRhoX[iedge][mathVar::nGauss+nG+1]=dUXSlave[0];
                             surfaceFields::dRhouX[iedge][mathVar::nGauss+nG+1]=dUXSlave[1];
                             surfaceFields::dRhovX[iedge][mathVar::nGauss+nG+1]=dUXSlave[2];
-                            surfaceFields::dRhoEX[iedge][mathVar::nGauss+nG+1]=dUXSlave[2];
+                            surfaceFields::dRhoEX[iedge][mathVar::nGauss+nG+1]=dUXSlave[3];
 
                             surfaceFields::dRhoY[iedge][nG]=dUYMaster[0];
                             surfaceFields::dRhouY[iedge][nG]=dUYMaster[1];
                             surfaceFields::dRhovY[iedge][nG]=dUYMaster[2];
-                            surfaceFields::dRhoEY[iedge][nG]=dUYMaster[2];
+                            surfaceFields::dRhoEY[iedge][nG]=dUYMaster[3];
 
                             surfaceFields::dRhoY[iedge][mathVar::nGauss+nG+1]=dUYSlave[0];
                             surfaceFields::dRhouY[iedge][mathVar::nGauss+nG+1]=dUYSlave[1];
                             surfaceFields::dRhovY[iedge][mathVar::nGauss+nG+1]=dUYSlave[2];
-                            surfaceFields::dRhoEY[iedge][mathVar::nGauss+nG+1]=dUYSlave[2];
+                            surfaceFields::dRhoEY[iedge][mathVar::nGauss+nG+1]=dUYSlave[3];
                         }
 
                         /* Voi ham calcLocalInviscidFlux, neu flux type la LxF hoac central, cac bien

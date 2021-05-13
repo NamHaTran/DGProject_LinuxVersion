@@ -425,11 +425,11 @@ namespace nonequilibriumBCs
             vC=rhovC/rhoC;
 
             //1. Smoluchowski temperature jump-----------------------------------------------------------------------------
-            double AT(material::As*pow(3.1416/(2*material::R),0.5)/rhoBC),
+            double AT(material::viscosityCoeff::Sutherland::As*pow(3.1416/(2*material::R),0.5)/rhoBC),
                     BT(2*material::gamma*(2-bcValues::sigmaT)/(bcValues::sigmaT*material::Pr*(material::gamma+1)));
             double ATT(delta+AT*BT),
-                    BTT(material::Ts*delta-TWall*delta-AT*BT*TC),
-                    CTT(-TWall*material::Ts*delta), T1, T2;
+                    BTT(material::viscosityCoeff::Sutherland::Ts*delta-TWall*delta-AT*BT*TC),
+                    CTT(-TWall*material::viscosityCoeff::Sutherland::Ts*delta), T1, T2;
 
             bool realSolution(false);
 

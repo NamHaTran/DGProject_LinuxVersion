@@ -638,10 +638,11 @@ namespace IO
 		double dataDbl(0.0);
         int dataInt(0);
 		std::string dataStr("abc");
+        /*
         if (systemVar::currentProc==0)
         {
             std::cout << "	Reading " << fileName <<"\n";
-        }
+        }*/
 
         std::string FileLoc(direction + "/" + fileName);
 		std::ifstream FileFlux(FileLoc.c_str());
@@ -1652,23 +1653,119 @@ namespace IO
             /*Read Material*/
             std::string MatfileName("Material.txt");
             std::string MatLoc;
+            std::string visModel;
             MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
-            std::string MatkeyWordsDouble[6] = { "gammaRatio", "gasConstant", "PrandtlNumber", "SutherlandAs", "SutherlandTs" , "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {};
-            double MatoutDB[6] = {};
+            std::string MatkeyWordsDouble[4] = { "gammaRatio", "gasConstant", "PrandtlNumber", "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {"viscosity"};
+            double MatoutDB[4] = {};
             int MatoutInt[1] = {};
             bool MatoutBool[1] = {};
             std::string MatoutStr[1] = {};
 
-            readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 6, 0, 0, 0);
+            readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 4, 0, 0, 1);
             material::gamma = MatoutDB[0];
             material::R = MatoutDB[1];
             material::Pr = MatoutDB[2];
-            material::As = MatoutDB[3];
-            material::Ts = MatoutDB[4];
-            material::massDiffusion::DmCoeff = MatoutDB[5];
+            material::massDiffusion::DmCoeff = MatoutDB[3];
 
             material::Cp = material::R*material::gamma / (material::gamma - 1);
             material::Cv = material::Cp - material::R;
+
+            visModel=MatoutStr[0];
+            //Read viscosity settings
+            if (visModel.compare("Sutherland")==0)
+            {
+                material::viscousityModel::sutherland=true;
+
+                const int doubleArrSize(2);
+                const int intArrSize(1);
+                const int boolArrSize(1);
+                const int strArrSize(1);
+
+                //Intput so luong cac bien can doc o day
+                int numDbl(2),
+                        numInt(0),
+                        numBool(0),
+                        numStr(0);
+                std::string
+                        keyWordsDouble[doubleArrSize] = { "As", "Ts" },
+                        keyWordsInt[intArrSize] = {},
+                        keyWordsBool[boolArrSize] = {},
+                        keyWordsStr[strArrSize] = {};
+
+                double outDB[doubleArrSize] = {};
+                int outInt[intArrSize] = {};
+                bool outBool[boolArrSize] = {};
+                std::string outStr[strArrSize] = {};
+
+                IO::readDataFile(MatfileName, MatLoc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr,
+                                 outDB, outInt, outBool, outStr,
+                                 numDbl, numInt, numBool, numStr);
+                material::viscosityCoeff::Sutherland::As=outDB[0];
+                material::viscosityCoeff::Sutherland::Ts=outDB[1];
+            }
+            else if (visModel.compare("powerLaw_VHS")==0)
+            {
+                material::viscousityModel::power_VHS=true;
+
+                const int doubleArrSize(4);
+                const int intArrSize(1);
+                const int boolArrSize(1);
+                const int strArrSize(1);
+
+                //Intput so luong cac bien can doc o day
+                int numDbl(4),
+                        numInt(0),
+                        numBool(0),
+                        numStr(0);
+                std::string
+                        keyWordsDouble[doubleArrSize] = { "molMass", "omega", "Tref", "dRef" },
+                        keyWordsInt[intArrSize] = {},
+                        keyWordsBool[boolArrSize] = {},
+                        keyWordsStr[strArrSize] = {};
+
+                double outDB[doubleArrSize] = {};
+                int outInt[intArrSize] = {};
+                bool outBool[boolArrSize] = {};
+                std::string outStr[strArrSize] = {};
+
+                IO::readDataFile(MatfileName, MatLoc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr,
+                                 outDB, outInt, outBool, outStr,
+                                 numDbl, numInt, numBool, numStr);
+                material::viscosityCoeff::powerLaw_VHS::molMass=outDB[0];
+                material::viscosityCoeff::powerLaw_VHS::omega=outDB[1];
+                material::viscosityCoeff::powerLaw_VHS::TRef=outDB[2];
+                material::viscosityCoeff::powerLaw_VHS::dRef=outDB[3];
+            }
+            else if (visModel.compare("constant")==0)
+            {
+                material::viscousityModel::constant=true;
+
+                const int doubleArrSize(1);
+                const int intArrSize(1);
+                const int boolArrSize(1);
+                const int strArrSize(1);
+
+                //Intput so luong cac bien can doc o day
+                int numDbl(1),
+                        numInt(0),
+                        numBool(0),
+                        numStr(0);
+                std::string
+                        keyWordsDouble[doubleArrSize] = { "mu" },
+                        keyWordsInt[intArrSize] = {},
+                        keyWordsBool[boolArrSize] = {},
+                        keyWordsStr[strArrSize] = {};
+
+                double outDB[doubleArrSize] = {};
+                int outInt[intArrSize] = {};
+                bool outBool[boolArrSize] = {};
+                std::string outStr[strArrSize] = {};
+
+                IO::readDataFile(MatfileName, MatLoc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr,
+                                 outDB, outInt, outBool, outStr,
+                                 numDbl, numInt, numBool, numStr);
+                material::viscosityCoeff::constant::mu=outDB[0];
+            }
         }
 
         void FlowProperties()
@@ -1690,8 +1787,8 @@ namespace IO
             /*Neu set dong la inviscid, modify As va Ts bang 0*/
             if (!flowProperties::viscous)
             {
-                material::As=0.0;
-                material::Ts=0.0;
+                material::viscosityCoeff::Sutherland::As=0.0;
+                material::viscosityCoeff::Sutherland::Ts=0.0;
                 /*Khong turn on massDiffusion cho dong inviscid*/
                 if (flowProperties::massDiffusion)
                 {
