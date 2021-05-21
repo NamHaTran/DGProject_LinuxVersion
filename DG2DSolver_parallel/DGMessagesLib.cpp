@@ -14,6 +14,9 @@
 
 #include "./limiters/massDiffusion/massDiffusion.h"
 
+//Durst model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
+
 namespace message
 {
 	std::string headerFile()
@@ -48,19 +51,22 @@ namespace message
 
 	void writeLog(std::string location, std::string caseName, std::string str)
 	{
-		std::string strTime(getTime());
-		std::string logFile(location + "\\log_" + caseName + ".txt");
-		std::ofstream logFlux(logFile.c_str(), std::ios_base::app | std::ios_base::out);
+        if (systemVar::currentProc==0)
+        {
+            std::string strTime(getTime());
+            std::string logFile(location + "\\log_" + caseName + ".txt");
+            std::ofstream logFlux(logFile.c_str(), std::ios_base::app | std::ios_base::out);
 
-		//Get time
-		std::string crash_time(message::getTime());
+            //Get time
+            std::string crash_time(message::getTime());
 
-		std::cout << "ERROR: " << str << std::endl;
-		if (systemVar::wrtLog==true)
-		{
-			logFlux << "log was created at " << crash_time << std::endl << str << std::endl;
-		}
-		std::cout << "DGSolver will exit after you hit return.\n";
+            std::cout << "ERROR: " << str << std::endl;
+            if (systemVar::wrtLog==true)
+            {
+                logFlux << "log was created at " << crash_time << std::endl << str << std::endl;
+            }
+            std::cout << "DGSolver will exit after you hit return.\n";
+        }
 		exit(EXIT_FAILURE);
 	}
 
@@ -219,18 +225,13 @@ To convert unv mesh format to DG2D readable format, do following task step by st
 
         if (flowProperties::massDiffusion)
         {
-            std::cout<<"    - Mass diffusion is on. Dm = "<<material::massDiffusion::DmCoeff;
-            if (DGSchemes::solveTImplicitly)
-            {
-                std::cout<<". Solving T method is implicit.\n";
-            }
-            else
-            {
-                std::cout<<". Solving T method is explicit.\n";
-            }
+            std::cout<<"    - Self diffusion is on:\n"
+                    <<"       + Type of Extened NEF Equations: ";
+            if (extNSF_Durst::enable)
+                std::cout<<"Durst model.\n";
         }
         else {
-            std::cout<<"    - Mass diffusion is off.\n";
+            std::cout<<"    - Self diffusion is off.\n";
         }
 
         std::cout<<"\nBoundary conditions settings:\n";

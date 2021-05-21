@@ -38,6 +38,10 @@
 //Limiters
 #include "./limiters/limiterController.h"
 
+
+//Extended NSF model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
+
 namespace IO
 {
     /**
@@ -1510,9 +1514,9 @@ namespace IO
         if (FileFlux)
         {
             FileFlux<<message::headerFile()<<fileName<<"\n"<<"NumberOfEntities "<<vector.size()<<"\n"<<"{\n";
-            for (int irow=0; irow<vector.size(); irow++)
+            for (int irow=0; irow<static_cast<int>(vector.size()); irow++)
             {
-                for (int icol=0; icol<vector[irow].size(); icol++)
+                for (int icol=0; icol<static_cast<int>(vector[irow].size()); icol++)
                 {
                     FileFlux<<vector[irow][icol]<<" ";
                 }
@@ -1596,8 +1600,8 @@ namespace IO
         {
             IO::loadSettingFiles::DGOptions();
             IO::loadSettingFiles::DGSchemes();
-            limiter::IOLimiter::readSelectedLimiters();
-            IO::loadSettingFiles::TBounds();
+            //limiter::IOLimiter::readSelectedLimiters();
+            //IO::loadSettingFiles::TBounds();
         }
 
         void DGOptions()
@@ -1655,17 +1659,16 @@ namespace IO
             std::string MatLoc;
             std::string visModel;
             MatLoc = systemVar::wD + "/CASES/" + systemVar::caseName + "/Constant";
-            std::string MatkeyWordsDouble[4] = { "gammaRatio", "gasConstant", "PrandtlNumber", "DmCoef"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {"viscosity"};
+            std::string MatkeyWordsDouble[3] = { "gammaRatio", "gasConstant", "PrandtlNumber"}, MatkeyWordsInt[1] = {}, MatkeyWordsBool[1] = {}, MatkeyWordsStr[1] = {"viscosity"};
             double MatoutDB[4] = {};
             int MatoutInt[1] = {};
             bool MatoutBool[1] = {};
             std::string MatoutStr[1] = {};
 
-            readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 4, 0, 0, 1);
+            readDataFile(MatfileName, MatLoc, MatkeyWordsDouble, MatkeyWordsInt, MatkeyWordsBool, MatkeyWordsStr, MatoutDB, MatoutInt, MatoutBool, MatoutStr, 3, 0, 0, 1);
             material::gamma = MatoutDB[0];
             material::R = MatoutDB[1];
             material::Pr = MatoutDB[2];
-            material::massDiffusion::DmCoeff = MatoutDB[3];
 
             material::Cp = material::R*material::gamma / (material::gamma - 1);
             material::Cv = material::Cp - material::R;
@@ -1773,7 +1776,7 @@ namespace IO
             /*Read FlowProperties*/
             std::string fileName("FlowProperties.txt");
             std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-            std::string keyWordsDouble[1] = {}, keyWordsInt[1] = {}, keyWordsBool[2] = {"Viscosity", "MassDiffusion"}, keyWordsStr[1] = {};
+            std::string keyWordsDouble[1] = {}, keyWordsInt[1] = {}, keyWordsBool[2] = {"Viscosity", "SelfDiffusion"}, keyWordsStr[1] = {};
             double outDB[1] = {};
             int outInt[1] = {};
             bool outBool[2] = {};
@@ -1794,13 +1797,16 @@ namespace IO
                 {
                     flowProperties::massDiffusion=false;
                     if (systemVar::currentProc==0)
-                        std::cout<<"Warning! DGSolver detected that flow properties are set to inviscid and mass diffusion ON. This is unphysical and DGSolver will turn off mass diffusion.\n";
+                        std::cout<<"Warning! DGSolver detected that flow properties are set to inviscid and Self diffusion ON. This is unphysical and DGSolver will turn off mass diffusion.\n";
                 }
             }
 
-            if (!flowProperties::massDiffusion)
+            else
             {
-                //material::massDiffusion::DmCoeff=0.0;
+                if (flowProperties::massDiffusion)
+                {
+                    IO::loadSettingFiles::massDiffSettings();
+                }
             }
         }
 
@@ -1816,13 +1822,13 @@ namespace IO
             /*Read DGSchemes*/
             std::string fileName=("DGSchemes.txt");
             std::string Loc=(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-            std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[3] = {"convectiveFlux","diffusiveTermScheme","solveTMethod"};
+            std::string DGSchemeskeyWordsDouble[1] = {}, DGSchemeskeyWordsInt[1] = {}, DGSchemeskeyWordsBool[1] = {}, DGSchemeskeyWordsStr[3] = {"convectiveFlux","diffusiveTermScheme"};
             double DGSchemesoutDB[1] = {};
             int DGSchemesoutInt[1] = {};
             bool DGSchemesoutBool[1] = {};
-            std::string DGSchemesoutStr[3] = {};
+            std::string DGSchemesoutStr[2] = {};
 
-            readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 3);
+            readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 2);
 
             //Convective Term
             //Khong su dung central flux cho convective term!!!
@@ -1860,20 +1866,6 @@ namespace IO
                 std::string str0("diffusiveTermScheme '"+DGSchemesoutStr[1]+"' is not a diffusion scheme.");
                 message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
             }
-
-            //Solve T method
-            if (DGSchemesoutStr[2].compare("implicit")==0)
-            {
-                DGSchemes::solveTImplicitly=true;
-            }
-            else if (DGSchemesoutStr[2].compare("explicit")==0)
-            {
-                DGSchemes::solveTImplicitly=false;
-            }
-            else {
-                std::string str0("solveTMethod '"+DGSchemesoutStr[2]+"' is not available.");
-                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
-            }
         }
 
         void TBounds()
@@ -1902,6 +1894,40 @@ namespace IO
             readDataFile(fileName, loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, numOfDouble, -numOfInt, -numOfBool, -numOfStr);
             limitVal::TUp = outDB[0];
             limitVal::TDwn = outDB[1];
+        }
+
+        void massDiffSettings()
+        {
+            //Input do dai cua cac array o day
+            const int numOfInt(1),
+                    numOfDouble(1),
+                    numOfBool(1),
+                    numOfStr(1);
+
+            /*Read FlowProperties*/
+            std::string fileName("FlowProperties.txt");
+            std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
+            std::string keyWordsDouble[numOfDouble] = {}, keyWordsInt[numOfInt] = {}, keyWordsBool[numOfBool] = {}, keyWordsStr[numOfStr] = {"Model"};
+            double outDB[numOfDouble] = {};
+            int outInt[numOfInt] = {};
+            bool outBool[numOfBool] = {};
+            std::string outStr[numOfStr] = {};
+
+            /*NOTE: trong ham readDataFile, 4 argument cuoi cung la so luong variable trong file can phai doc tuong ung voi kieu du lieu:
+             * double, int, bool, string.
+             * Neu kieu du lieu nao khong co data can doc, them dau '-' vao phia truoc ten bien, vi du:
+             * readDataFile(..., numOfDouble, -numOfInt, -numOfBool, -numOfStr) ----> chi doc bien co kieu du lieu double
+            */
+            readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, -numOfDouble, -numOfInt, -numOfBool, numOfStr);
+
+            if (outStr[0].compare("Durst")==0)
+            {
+                extNSF_Durst::enable=true;
+            }
+            else {
+                std::string str0("Model '"+outStr[0]+"' of FlowProperties>SelfDiffusionSetting is not a available.");
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
+            }
         }
     }
 

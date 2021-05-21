@@ -104,6 +104,8 @@ namespace IO
         void LimiterSettings();
 
         void TBounds();
+
+        void massDiffSettings();
     }
 
     namespace readVectorBC {

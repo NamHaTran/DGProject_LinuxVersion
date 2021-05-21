@@ -82,11 +82,6 @@ namespace mathVar
 namespace material
 {
     double gamma(1.4), R(287.0), Pr(0.72), Cp(0.0), Cv(0.0);
-    namespace massDiffusion {
-        double
-        //coefficient of self-diffusion
-        DmCoeff(0.0);
-    }
 
     namespace viscosityCoeff {
         namespace Sutherland {

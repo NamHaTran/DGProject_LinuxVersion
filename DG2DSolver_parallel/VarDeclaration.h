@@ -128,11 +128,6 @@ namespace material
     Cp,
     //! Heat capacity at constant volume
     Cv;
-    namespace massDiffusion {
-        extern
-        //! Coefficient of self-diffusion
-        double DmCoeff;
-    }
 
     namespace viscosityCoeff {
         namespace Sutherland {

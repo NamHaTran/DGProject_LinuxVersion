@@ -266,7 +266,7 @@ namespace DG2Tecplot
 			{
 				localValue = 0.0;
 				elemSurPt = auxUlti::postProcess::getElementsSurroundingPoint(ipoint);
-				numElemSurPt = elemSurPt.size();
+                numElemSurPt = static_cast<int>(elemSurPt.size());
 				for (int nelem = 0; nelem < numElemSurPt; nelem++)
 				{
 					elemId = elemSurPt[nelem];
@@ -333,7 +333,7 @@ namespace DG2Tecplot
 			BCEdgeId = SurfaceBCFields::BCPointsInfor[ptAtBCId][iedge];
 			BCElem = meshVar::MasterElemOfEdge[BCEdgeId];
 			int edgeGrp(auxUlti::getGrpOfEdge(BCEdgeId));
-			int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]), method(meshVar::BoundaryType[edgeGrp - 1][2]);
+            int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
 
 			std::tie(a, b) = auxUlti::postProcess::findPointCoorInStandardSpace(BCEdgeId, BCElem);
 
@@ -405,17 +405,7 @@ namespace DG2Tecplot
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
                 rhoEVal(rhoE[element][0]);
-            if (flowProperties::massDiffusion)
-            {
-                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
-                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                out = material::Cv*math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
-                                                                    math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal));
-            }
-            else
-            {
-                out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-            }
+            out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
         }
         else if (valType == 5)  //p
         {
@@ -423,17 +413,7 @@ namespace DG2Tecplot
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
                 rhoEVal(rhoE[element][0]);
-            if (flowProperties::massDiffusion)
-            {
-                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
-                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                out = math::CalcP(math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
-                                                                   math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal)), rhoVal);
-            }
-            else
-            {
-                out = math::CalcP(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal), rhoVal);
-            }
+            out = math::CalcP(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal), rhoVal);
         }
         else if (valType == 6)  //T
         {
@@ -441,22 +421,7 @@ namespace DG2Tecplot
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
                 rhoEVal(rhoE[element][0]);
-            if (flowProperties::massDiffusion)
-            {
-                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
-                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                out = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
-                                                       math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal));
-            }
-            else
-            {
-                out = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-            }
-            if (out < 0)
-            {
-                std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
-                exit(1);
-            }
+            out = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
         }
         else if (valType == 7)  //mu
         {
@@ -464,22 +429,7 @@ namespace DG2Tecplot
                 rhouVal(rhou[element][0]),
                 rhovVal(rhov[element][0]),
                 rhoEVal(rhoE[element][0]);
-            double TVal(0.0);
-            if (flowProperties::massDiffusion)
-            {
-                double dRhoX(BR1Vars::massDiffusion::rhoX[element][0]),
-                        dRhoY(BR1Vars::massDiffusion::rhoY[element][0]);
-                TVal = math::CalcTFromConsvVar_massDiff(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY,
-                                                        math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal));
-            }
-            else
-            {
-                TVal = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-            }
-            if ((TVal<0) && fabs(TVal) < 0.001)
-            {
-                TVal = fabs(TVal);
-            }
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
             out = math::CalcVisCoef(TVal);
             if (out < 0 || out != out)
             {
@@ -489,21 +439,11 @@ namespace DG2Tecplot
         }
         else if (valType == 10)  //rho
         {
-            if (flowProperties::viscous && flowProperties::massDiffusion)
-                out= BR1Vars::massDiffusion::rhoX[element][0];
-            else if (flowProperties::viscous && !flowProperties::massDiffusion)
-                out= BR1Vars::rhoX[element][0];
-            else
-                out=0;
+            out= BR1Vars::rhoX[element][0];
         }
         else if (valType == 11)  //rho
         {
-            if (flowProperties::viscous && flowProperties::massDiffusion)
-                out= BR1Vars::massDiffusion::rhoY[element][0];
-            else if (flowProperties::viscous && !flowProperties::massDiffusion)
-                out= BR1Vars::rhoY[element][0];
-            else
-                out=0;
+            out= BR1Vars::rhoY[element][0];
         }
         return out;
     }

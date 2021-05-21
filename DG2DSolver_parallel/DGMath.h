@@ -61,15 +61,6 @@ namespace math
 	/*Function calculates T from rho, rhou, rhov, rhoE (ver 2)*/
 	double CalcTFromConsvVar(double rho, double rhou, double rhov, double rhoE);
 
-    /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion using option setup in file DGSchemes*/
-    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy, double T_old);
-
-    /*Function calculates T from rho, rhou, rhov, rhoE, muRhoX, muRhoY in case of mass diffusion explicitly*/
-    double CalcTFromConsvVar_massDiff_explicit(double rho, double rhou, double rhov, double rhoE, double muRhox, double muRhoy);
-
-    /*Function calculates T from rho, rhou, rhov, rhoE, rhoX, rhoY in case of mass diffusion implicitly*/
-    double CalcTFromConsvVar_massDiff_implicit(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy);
-
     /*Calculate mean free path*/
     double calcMeanFreePath(double mu, double rho, double T);
 
@@ -354,13 +345,13 @@ namespace math
 		[tau_xx	    tau_xy		Qx]
 		[tau_yx	    tau_yy		Qy]
 		*/
-        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy, double TVal);
+        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);
 
 		/*Function calculates heat flux terms Qx, Qy*/
 		std::tuple<double, double> calcHeatFluxTerms(double dTx, double dTy, double k);
 
 		/*Function calculates viscous terms of NSF equation from Stress and Heat flux matrix returned from calcStressTensorAndHeatFlux function*/
-        std::tuple<double, double, double, double> calcViscousTermsFromStressHeatFluxMatrix(std::vector< std::vector<double> > &StressHeatFlux, double uVal, double vVal, double dRho, int dir);
+        std::tuple<double, double, double, double> calcViscousTermsFromStressHeatFluxMatrix(std::vector< std::vector<double> > &StressHeatFlux, double uVal, double vVal, int dir);
 	}
 
 	namespace geometricOp
@@ -407,10 +398,6 @@ namespace math
 	}
 
 	double calcMaxT(int element);
-
-    namespace massDiffusionFncs {
-    double calcTotalVelocity(double rho, double advecV, double mudRho);
-    }
 
     /**
      * @brief Function calculates value at surface Gauss point on (+) side (side of input element Id).

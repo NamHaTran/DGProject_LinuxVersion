@@ -145,12 +145,6 @@ double **rhoY = new double*[1];
 double **rhouY = new double*[1];
 double **rhovY = new double*[1];
 double **rhoEY = new double*[1];
-
-    namespace massDiffusion {
-    /* Bien phu Sm = div(rho) de giai mass diffusion*/
-    double **rhoX = new double*[1];
-    double **rhoY = new double*[1];
-    }
 }
 
 namespace BR2Vars {

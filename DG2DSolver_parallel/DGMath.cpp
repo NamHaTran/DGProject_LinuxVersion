@@ -1038,143 +1038,6 @@ void volumeGauss(int nGauss)
         return out;
     }
 
-    double CalcTFromConsvVar_massDiff(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy, double T_old)
-    {
-        //Ham nay giai T theo option duoc setup o file DGSchemes
-        //Bien T_old can khi giai T bang pp explicit
-        double TFinal;
-        if (DGSchemes::solveTImplicitly)
-        {
-            //Em is total energy with total velocity (um), not advective velocity (u)
-            double T(0.0), Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
-                    u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
-            std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
-            Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
-            Ay=material::massDiffusion::DmCoeff*rhoy/(rho*rho);
-            B1=Ax*Ax+Ay*Ay;
-            B2=2*(u*Ax+v*Ay);
-            B3=u*u+v*v-2*Em;
-            std::vector<double> polynomialCoeffs{
-                B1*pow(material::viscosityCoeff::Sutherland::As,2)+2*material::Cv,
-                        -material::viscosityCoeff::Sutherland::As*B2,
-                        4*material::Cv*material::viscosityCoeff::Sutherland::Ts+B3,
-                        -material::viscosityCoeff::Sutherland::As*B2*material::viscosityCoeff::Sutherland::Ts,
-                        2*material::Cv*pow(material::viscosityCoeff::Sutherland::Ts,2)+2*B3*material::viscosityCoeff::Sutherland::Ts,
-                        B3*pow(material::viscosityCoeff::Sutherland::Ts,2)
-            };
-            //compute initial T
-            //TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
-            //Solve T
-            T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,T_old);
-            if (T!=T || T<0)
-            {
-                //std::cout<<"Failed to solve T\n";
-                //exit(1);
-                //mathVar::solveTFailed=true;
-                TFinal=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
-            }
-            else {
-                TFinal=T;
-            }
-        }
-        else
-        {
-            double mu(math::CalcVisCoef(T_old));
-            double rhou_m(rhou-material::massDiffusion::DmCoeff*rhox*mu/rho),
-                    rhov_m(rhov-material::massDiffusion::DmCoeff*rhoy*mu/rho);
-            double T_m((rhoE-0.5*(rhou_m*rhou_m+rhov_m*rhov_m)/rho)/(material::Cv*rho)),
-                    T((rhoE-0.5*(rhou*rhou+rhov*rhov)/rho)/(material::Cv*rho));
-            if (T_m<0)
-            {
-                TFinal=T;
-            }
-            else
-            {
-                TFinal=T_m;
-            }
-        }
-
-        //Bound T
-        if (TFinal < limitVal::TDwn)
-        {
-            return limitVal::TDwn;
-        }
-        else if (TFinal > limitVal::TUp)
-        {
-            return limitVal::TUp;
-        }
-        else
-        {
-            return TFinal;
-        }
-    }
-
-    double CalcTFromConsvVar_massDiff_explicit(double rho, double rhou, double rhov, double rhoE, double muRhox, double muRhoy)
-    {
-        /* Ham giai T khi mass diffusion on, explicitly
-        */
-        double rhou_m(rhou-material::massDiffusion::DmCoeff*muRhox/rho),
-                rhov_m(rhov-material::massDiffusion::DmCoeff*muRhoy/rho);
-        double T_m((rhoE-0.5*(rhou_m*rhou_m+rhov_m*rhov_m)/rho)/(material::Cv*rho)),
-                T((rhoE-0.5*(rhou*rhou+rhov*rhov)/rho)/(material::Cv*rho));
-        if (T_m<0)
-        {
-            return T;
-        }
-        else
-        {
-            return T_m;
-        }
-    }
-
-    double CalcTFromConsvVar_massDiff_implicit(double rho, double rhou, double rhov, double rhoE, double rhox, double rhoy)
-    {
-        //Ham nay chi giai T bang pp implicit
-        //Em is total energy with total velocity (um), not advective velocity (u)
-        double T(0.0), TFinal, TIni, Ax(0.0), Ay(0.0), B1(0.0), B2(0.0), B3(0.0),
-                u(rhou/rho), v(rhov/rho), Em(rhoE/rho);
-        std::vector<double> polynomialPower{3.0, 2.5, 2, 1.5, 1, 0};
-        Ax=material::massDiffusion::DmCoeff*rhox/(rho*rho);
-        Ay=material::massDiffusion::DmCoeff*rhoy/(rho*rho);
-        B1=Ax*Ax+Ay*Ay;
-        B2=2*(u*Ax+v*Ay);
-        B3=u*u+v*v-2*Em;
-        std::vector<double> polynomialCoeffs{
-            B1*pow(material::viscosityCoeff::Sutherland::As,2)+2*material::Cv,
-                    -material::viscosityCoeff::Sutherland::As*B2,
-                    4*material::Cv*material::viscosityCoeff::Sutherland::Ts+B3,
-                    -material::viscosityCoeff::Sutherland::As*B2*material::viscosityCoeff::Sutherland::Ts,
-                    2*material::Cv*pow(material::viscosityCoeff::Sutherland::Ts,2)+2*B3*material::viscosityCoeff::Sutherland::Ts,
-                    B3*pow(material::viscosityCoeff::Sutherland::Ts,2)
-        };
-        //compute initial T
-        TIni=math::CalcTFromConsvVar(rho,rhou,rhov,rhoE);
-        //Solve T
-        T=math::solvePolynomialsEq::NewtonRaphson(polynomialPower,polynomialCoeffs,TIni);
-        if (T!=T || T<0)
-        {
-            //mathVar::solveTFailed=true;
-            TFinal=TIni;
-        }
-        else {
-            TFinal=T;
-        }
-
-        //Bound T
-        if (TFinal < limitVal::TDwn)
-        {
-            return limitVal::TDwn;
-        }
-        else if (TFinal > limitVal::TUp)
-        {
-            return limitVal::TUp;
-        }
-        else
-        {
-            return TFinal;
-        }
-    }
-
     double CalcP(double T, double rho)
     {
         double p = T * (material::R*rho);
@@ -1287,16 +1150,7 @@ void volumeGauss(int nGauss)
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-                if (flowProperties::massDiffusion)
-                {
-                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,5,2));
-                    out = material::Cv*math::CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
-                }
-                else
-                {
                     out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-                }
             }
             else if (valType == 5)  //p
             {
@@ -1304,16 +1158,7 @@ void volumeGauss(int nGauss)
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-                if (flowProperties::massDiffusion)
-                {
-                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,5,2));
-                    out = math::CalcP(CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY), rhoVal);
-                }
-                else
-                {
                     out = math::CalcP(CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal), rhoVal);
-                }
             }
             else if (valType == 6)  //T
             {
@@ -1322,21 +1167,7 @@ void volumeGauss(int nGauss)
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
 
-                if (flowProperties::massDiffusion)
-                {
-                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,5,2));
-                    out = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
-                }
-                else
-                {
                     out = CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-                }
-                if (out < 0)
-                {
-                    std::cout << "Negative T" << out << " at cell " << element + meshVar::nelem1D + 1 << std::endl;
-                    exit(1);
-                }
             }
             else if (valType == 7)  //mu
             {
@@ -1344,21 +1175,8 @@ void volumeGauss(int nGauss)
                     rhouVal(math::calcConsvVarWthLimiter(element, a, b, 2)),
                     rhovVal(math::calcConsvVarWthLimiter(element, a, b, 3)),
                     rhoEVal(math::calcConsvVarWthLimiter(element, a, b, 4));
-                double TVal(0.0);
-                if (flowProperties::massDiffusion)
-                {
-                    double dRhoX(math::pointAuxValue(element,a,b,5,1)),
-                            dRhoY(math::pointAuxValue(element,a,b,5,2));
-                    TVal = CalcTFromConsvVar_massDiff_implicit(rhoVal, rhouVal, rhovVal, rhoEVal, dRhoX, dRhoY);
-                }
-                else
-                {
-                    TVal = CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
-                }
-                if ((TVal<0) && fabs(TVal) < 0.001)
-                {
-                    TVal = fabs(TVal);
-                }
+                double TVal(CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
                 out = math::CalcVisCoef(TVal);
                 if (out < 0 || out != out)
                 {
@@ -1484,7 +1302,7 @@ void volumeGauss(int nGauss)
 
     std::vector<double> vectorSum(std::vector<double> &a, std::vector<double> &b)
     {
-        static int size(a.size());
+        static int size(static_cast<int>(a.size()));
         std::vector<double> out(size, 0.0);
         for (int i = 0; i < size; i++)
         {
@@ -1545,7 +1363,6 @@ void volumeGauss(int nGauss)
          * 2: (mu)dRhou
          * 3: (mu)dRhov
          * 4: (mu)dRhoE
-         * 5: dRho --> day la bien phu khi mass diffusion on: Sm = div(rho)
         */
 
         double out(0.0);
@@ -1555,16 +1372,9 @@ void volumeGauss(int nGauss)
 
         math::basisFc(a, b, auxUlti::checkType(element));
 
-        double theta2(1.0);
-        //If mass diffusion = ON, apply limiter to All auxiliary variables //div(rho)
-        if (flowProperties::massDiffusion) //&& valType==5
-        {
-            theta2=theta2Arr[element];
-        }
-
         for (int order = 1; order <= mathVar::orderElem; order++)
         {
-            out += Value[order] * mathVar::B[order] * theta2;
+            out += Value[order] * mathVar::B[order];
         }
         out+=Value[0];
 
@@ -2102,7 +1912,7 @@ void volumeGauss(int nGauss)
 
     double vectorNorm(std::vector<double> vector)
     {
-        int size(vector.size());
+        int size(static_cast<int>(vector.size()));
         double norm(0.0);
         for (int i = 0; i < size; i++)
         {
@@ -2114,7 +1924,7 @@ void volumeGauss(int nGauss)
 
     std::vector<double> traceOfMatrix(std::vector<std::vector<double>> &M)
     {
-        int size(M.size());
+        int size(static_cast<int>(M.size()));
         std::vector<double> trace(size,0.0);
         for (int i=0; i<size;i++)
         {
@@ -2174,7 +1984,7 @@ void volumeGauss(int nGauss)
 
     std::vector<std::vector<double>> transposeDoubleMatrix(std::vector<std::vector<double>> &M)
     {
-        int rowNum(M.size()), colNum(M[0].size());
+        int rowNum(static_cast<int>(M.size())), colNum(static_cast<int>(M[0].size()));
         std::vector<std::vector<double>> MT(colNum,std::vector<double>(rowNum));
         for (int row=0; row<rowNum; row++)
         {
@@ -2189,7 +1999,7 @@ void volumeGauss(int nGauss)
     namespace tensorMath {
         std::vector<double> tensorVectorDotProduct(std::vector<std::vector<double>>&S, std::vector<double>&V)
         {
-            int size(V.size());
+            int size(static_cast<int>(V.size()));
             std::vector<double> Product(size,0.0);
             for (int i=0; i<size; i++)
             {
@@ -2203,7 +2013,7 @@ void volumeGauss(int nGauss)
 
         std::vector<double> vectorTensorDotProduct(std::vector<double>&V, std::vector<std::vector<double>>&S)
         {
-            int size(V.size());
+            int size(static_cast<int>(V.size()));
             std::vector<double> Product(size,0.0);
             for (int i=0; i<size; i++)
             {
@@ -2217,7 +2027,7 @@ void volumeGauss(int nGauss)
 
         std::vector<std::vector<double>> sumOf2Tensor(std::vector<std::vector<double>>&S1, std::vector<std::vector<double>>&S2, int coefOfS1, int coefOfS2)
         {
-            int rowNum(S1.size()), colNum(S1[0].size());
+            int rowNum(static_cast<int>(S1.size())), colNum(static_cast<int>(S1[0].size()));
             std::vector<std::vector<double>> sum(rowNum,std::vector<double>(colNum));
             for (int row=0; row<rowNum; row++)
             {
@@ -2231,7 +2041,7 @@ void volumeGauss(int nGauss)
 
         std::vector<double> sumOf2Vector(std::vector<double>&V1, std::vector<double>&V2, int coefOfV1, int coefOfV2)
         {
-            int rowNum(V1.size());
+            int rowNum(static_cast<int>(V1.size()));
             std::vector<double> sum(rowNum,0.0);
             for (int row=0; row<rowNum; row++)
             {
@@ -2242,7 +2052,7 @@ void volumeGauss(int nGauss)
 
         std::vector<std::vector<double>> numberTensorProduct(double num, std::vector<std::vector<double>>&S)
         {
-            int rowNum(S.size()), colNum(S[0].size());
+            int rowNum(static_cast<int>(S.size())), colNum(static_cast<int>(S[0].size()));
             std::vector<std::vector<double>> product(rowNum,std::vector<double>(colNum));
             for (int row=0; row<rowNum; row++)
             {
@@ -2256,7 +2066,7 @@ void volumeGauss(int nGauss)
 
         std::vector<double> numberVectorProduct(double num, std::vector<double>&V)
         {
-            int rowNum(V.size());
+            int rowNum(static_cast<int>(V.size()));
             std::vector<double> product(rowNum,0.0);
             for (int row=0; row<rowNum; row++)
             {
@@ -2451,7 +2261,7 @@ void volumeGauss(int nGauss)
             double rhoMs(pow(rhoM,0.5)), rhoPs(pow(rhoP,0.5));
 
             double
-                    rho = rhoMs*rhoPs,
+                    //rho = rhoMs*rhoPs,
                     u   = (rhoMs*uM + rhoPs*uP)/(rhoMs + rhoPs),
                     v   = (rhoMs*vM + rhoPs*vP)/(rhoMs + rhoPs),
                     H   = (rhoMs*HM + rhoPs*HP)/(rhoMs + rhoPs),
@@ -2538,7 +2348,7 @@ void volumeGauss(int nGauss)
             double rhoMs(pow(rhoM,0.5)), rhoPs(pow(rhoP,0.5));
 
             double
-                    rho = rhoMs*rhoPs,
+                    //rho = rhoMs*rhoPs,
                     u   = (rhoMs*uM + rhoPs*uP)/(rhoMs + rhoPs),
                     v   = (rhoMs*vM + rhoPs*vP)/(rhoMs + rhoPs),
                     H   = (rhoMs*HM + rhoPs*HP)/(rhoMs + rhoPs),
@@ -2661,7 +2471,7 @@ void volumeGauss(int nGauss)
 
     namespace viscousTerms
     {
-        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy, double TVal)
+        std::vector<std::vector<double>> calcStressTensorAndHeatFlux(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy)
         {
             /*Output matrix has form:
             [tauXx		tauXy		Qx]
@@ -2682,14 +2492,7 @@ void volumeGauss(int nGauss)
             rhouVal = U[1];
             rhovVal = U[2];
 
-            if (flowProperties::massDiffusion)
-            {
-                rhoEVal=rhoVal*material::Cv*TVal+0.5*(rhouVal*rhouVal+rhovVal*rhovVal)/rhoVal;
-            }
-            else
-            {
-                rhoEVal = U[3];
-            }
+            rhoEVal = U[3];
 
             uVal = rhouVal / rhoVal;
             vVal = rhovVal / rhoVal;
@@ -2784,7 +2587,7 @@ void volumeGauss(int nGauss)
             return std::make_tuple(Qx, Qy);
         }
 
-        std::tuple<double, double, double, double> calcViscousTermsFromStressHeatFluxMatrix(std::vector< std::vector<double> > &StressHeatFlux, double uVal, double vVal, double nudRho, int dir)
+        std::tuple<double, double, double, double> calcViscousTermsFromStressHeatFluxMatrix(std::vector< std::vector<double> > &StressHeatFlux, double uVal, double vVal, int dir)
         {
             /*StressHeatFlux is 2D array contents stress and heat flux component, has the following form:
             [tauXx		tauXy		Qx]
@@ -2802,13 +2605,7 @@ void volumeGauss(int nGauss)
             if (dir==1)
             {
                 /*1. Ox direction*/
-                if (flowProperties::massDiffusion)
-                {
-                    viscTerm1 = -material::massDiffusion::DmCoeff*nudRho;
-                }
-                else {
-                    viscTerm1=0.0;
-                }
+                viscTerm1=0.0;
                 viscTerm2 = tauXx;
                 viscTerm3 = tauXy;
                 viscTerm4 = tauXx * uVal + tauXy * vVal + Qx;
@@ -2816,13 +2613,7 @@ void volumeGauss(int nGauss)
             else if (dir==2)
             {
                 /*2. Oy direction*/
-                if (flowProperties::massDiffusion)
-                {
-                    viscTerm1 = -material::massDiffusion::DmCoeff*nudRho;
-                }
-                else {
-                    viscTerm1=0.0;
-                }
+                viscTerm1=0.0;
                 viscTerm2 = tauXy;
                 viscTerm3 = tauYy;
                 viscTerm4 = tauXy * uVal + tauYy * vVal + Qy;
@@ -3192,7 +2983,7 @@ void volumeGauss(int nGauss)
 
     int findIndex(int number, std::vector<int> InArray)
     {
-        int index(0), size(InArray.size());
+        int index(0), size(static_cast<int>(InArray.size()));
         for (int i = 0; i < size; i++)
         {
             if (number == InArray[i])
@@ -3210,7 +3001,7 @@ void volumeGauss(int nGauss)
 
     int findIndex_double(double number, std::vector<double> InArray)
     {
-        int index(0), size(InArray.size());
+        int index(0), size(static_cast<int>(InArray.size()));
         for (int i = 0; i < size; i++)
         {
             if (fabs(InArray[i]-number)<1e-10)
@@ -3254,20 +3045,13 @@ void volumeGauss(int nGauss)
 
         math::basisFc(a, b, auxUlti::checkType(element));
 
-        double theta2(1.0);
-        //If mass diffusion = ON, apply limiter to div(rho)
-        if (flowProperties::massDiffusion)
-        {
-            theta2=theta2Arr[element];
-        }
-
         if (systemVar::auxVariables==1)
         {
             if (dir==1)
             {
                 for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder]*theta2;
+                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder];
                     dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder];
                     dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder];
                     dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder];
@@ -3280,7 +3064,7 @@ void volumeGauss(int nGauss)
             else {
                 for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder]*theta2;
+                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder];
                     dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder];
                     dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder];
                     dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder];
@@ -3524,14 +3308,6 @@ void volumeGauss(int nGauss)
             out += Value[order] * mathVar::B[order];
         }
         return out;
-    }
-    }
-
-    namespace massDiffusionFncs {
-    double calcTotalVelocity(double rho, double advecV, double mudRho)
-    {
-        //dRho here is mu*d(rho)/d(x,y)
-        return (advecV-material::massDiffusion::DmCoeff*mudRho/(rho*rho));
     }
     }
 

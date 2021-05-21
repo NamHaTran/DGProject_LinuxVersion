@@ -64,3 +64,8 @@ Bản backup 13/05/2021:
 - Mô hình power law không dùng mode giải T implicit được.
 - Fix bug nhỏ nhưng nghiêm trọng trong hàm tính convective/diffusive flux (hàm process::NSFEq::calcSurfaceFlux())
 - Update code lên github cùng ngày.
+
+Bản backup 22/05/2021:
+- Đổi hoàn toàn sang mô hình Extended NSF Durst.
+- Cần modify lại điều kiện biên vận tốc tại wall: vận tốc convection vẫn như classical NSF, vận tốc diffusion pháp tuyến với wall bằng 0.
+- MÔ HÌNH DURST CHẠY OK KHÔNG BỊ CRASHHHHHHHH! REESE-GREENSHIELD LÀ HÀNG ĐỂUUUUUU.

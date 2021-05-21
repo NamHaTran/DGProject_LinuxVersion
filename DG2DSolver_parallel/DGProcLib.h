@@ -98,27 +98,6 @@ namespace process
         use only for auxilary equation*/
         std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny);
         }
-        namespace massDiffusion
-        {
-        namespace BR1 {
-            void solveDivRho();
-
-            void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy);
-
-            void calcVolumeIntegralTerms(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhoVolIntY);
-
-            void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhoSurfIntY);
-
-            void getGaussVectorOfRho(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhoFluxY);
-        }
-        namespace BR2 {
-            void calcVolDivRho(int element);
-
-            void calcSurDivRho(int element);
-
-            void solveDivRho();
-        }
-        }
 
         namespace BR2 {
             void calcVolDivU(int element);
@@ -161,9 +140,9 @@ namespace process
 		/*Function applies input ddtSchemme to solve time marching*/
 		std::vector<double> solveTimeMarching(int element, std::vector<double> &ddtArr, std::vector<double> &UnArr, int RKOrder, int varType);
 
-        void calcLocalInviscidFlux(std::vector<double> &UG, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &UL, std::vector<double> &n, double drhoX, double drhoY, double T);
+        void calcLocalInviscidFlux(std::vector<double> &UG, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &UL, std::vector<double> &n, double T);
 
-        void calcLocalViscousFlux(std::vector<double> &UG, std::vector<double> &dUX, std::vector<double> &dUY, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &n, double T);
+        void calcLocalViscousFlux(std::vector<double> &UG, std::vector<double> &dUX, std::vector<double> &dUY, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &n);
 
         void calcSurfaceFlux();
 	}

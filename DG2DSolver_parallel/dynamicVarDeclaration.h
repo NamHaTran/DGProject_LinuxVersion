@@ -156,12 +156,6 @@ extern double **rhoY;
 extern double **rhouY;
 extern double **rhovY;
 extern double **rhoEY;
-
-    namespace massDiffusion {
-    /* Bien phu Sm = div(rho) de giai mass diffusion*/
-    extern double **rhoX;
-    extern double **rhoY;
-    }
 }
 
 namespace BR2Vars {

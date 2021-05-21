@@ -416,13 +416,6 @@ namespace auxUlti
                     Out[iorder] = BR1Vars::rhoEX[element][iorder];
                 }
             }
-            else if (type == 5)  //d(rho)x -> mass diffusion ON
-            {
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-                {
-                    Out[iorder] = BR1Vars::massDiffusion::rhoX[element][iorder];
-                }
-            }
         }
         else if (dir==2)  //Oy direction
         {
@@ -452,13 +445,6 @@ namespace auxUlti
                 for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
                 {
                     Out[iorder] = BR1Vars::rhoEY[element][iorder];
-                }
-            }
-            else if (type == 5)  //d(rho)y -> mass diffusion ON
-            {
-                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
-                {
-                    Out[iorder] = BR1Vars::massDiffusion::rhoY[element][iorder];
                 }
             }
         }
@@ -906,7 +892,7 @@ namespace auxUlti
 
     void addRowTo2DIntArray(std::vector<std::vector<int>> &Array, int numCol)
 	{
-        int length(Array.size());
+        int length(static_cast<int>(Array.size()));
 		Array.push_back(std::vector<int>());
         for (int icol = 0; icol < numCol; icol++)
 		{
@@ -916,7 +902,7 @@ namespace auxUlti
 
     void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol)
 	{
-		int length(Array.size());
+        int length(static_cast<int>(Array.size()));
 		Array.push_back(std::vector<double>());
         for (int icol = 0; icol < numCol; icol++)
 		{
@@ -1073,12 +1059,6 @@ namespace auxUlti
                 BR1Vars::rhouY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
                 BR1Vars::rhovY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
                 BR1Vars::rhoEY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-
-                if (flowProperties::massDiffusion)
-                {
-                    BR1Vars::massDiffusion::rhoX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-                    BR1Vars::massDiffusion::rhoY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
-                }
             }
             else if (systemVar::auxVariables==2)
             {
