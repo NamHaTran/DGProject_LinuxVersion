@@ -1672,6 +1672,7 @@ namespace process
             std::tie(FLocalX[0], FLocalX[1], FLocalX[2], FLocalX[3]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeat, UL[1]/UL[0], UL[2]/UL[0], 1);
             std::tie(FLocalY[0], FLocalY[1], FLocalY[2], FLocalY[3]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeat, UL[1]/UL[0], UL[2]/UL[0], 2);
 
+            // DURST MODEL -------------------------------------------------------------------------
             //Correct Diffusive Term of NSF Eqns
             //Theo mo hinh Durst
             if (extNSF_Durst::enable)
@@ -1687,6 +1688,7 @@ namespace process
                     FLocalY[i] = FLocalY[i] + diffTerms[1][i];
                 }
             }
+            // DURST MODEL -------------------------------------------------------------------------
         }
 
         void calcSurfaceFlux()
@@ -2024,11 +2026,8 @@ namespace process
 				SurfIntTerm4(mathVar::orderElem + 1, 0.0);
 
 			/*Volume integral term===========================================================================*/
-            /*Chi excute neu order > 0*/
             if (mathVar::orderElem>0)
-            {
                 process::NSFEq::calcVolumeIntegralTerms(element, VolIntTerm1, VolIntTerm2, VolIntTerm3, VolIntTerm4);
-            }
 			
 			/*Surface integral term===========================================================================*/
 			process::NSFEq::calcSurfaceIntegralTerms(element, SurfIntTerm1, SurfIntTerm2, SurfIntTerm3, SurfIntTerm4);
@@ -2061,14 +2060,14 @@ namespace process
                 umVal(0.0),
                 vmVal(0.0),
                 totalE(0.0),
-                a(0.0),b(0.0),muVal(0.0);
+                a(0.0),b(0.0);//muVal(0.0);
 
             std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
 			uVal = rhouVal / rhoVal;
 			vVal = rhovVal / rhoVal;
             totalE = rhoEVal / rhoVal;
             pVal = math::CalcP(volumeFields::T[element][nanb], rhoVal);
-            muVal=math::CalcVisCoef(volumeFields::T[element][nanb]);
+            //muVal=math::CalcVisCoef(volumeFields::T[element][nanb]);
 
             umVal=uVal;
             vmVal=vVal;
@@ -2122,6 +2121,8 @@ namespace process
             std::tie(ViscousTerm[0][0], ViscousTerm[1][0], ViscousTerm[2][0], ViscousTerm[3][0]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, 1);
             std::tie(ViscousTerm[0][1], ViscousTerm[1][1], ViscousTerm[2][1], ViscousTerm[3][1]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, 2);
 
+
+            // DURST MODEL -------------------------------------------------------------------------
             //Correct Diffusive Term of NSF Eqns
             //Theo mo hinh Durst
             if (extNSF_Durst::enable)
@@ -2130,13 +2131,15 @@ namespace process
                 std::vector<std::vector<double>> diffTerms(2, std::vector<double>(4, 0.0));
 
                 extNSF_Durst::correctViscousTerms(diffTerms,vectorU,vectordUx,vectordUy);
-
+                //Add to classical diffusive terms
                 for (int i=0; i<4; i++)
                 {
                     ViscousTerm[i][0] = ViscousTerm[i][0] + diffTerms[0][i];
                     ViscousTerm[i][1] = ViscousTerm[i][1] + diffTerms[1][i];
                 }
             }
+            // DURST MODEL -------------------------------------------------------------------------
+
             return ViscousTerm;
 		}
 
@@ -2312,6 +2315,14 @@ namespace process
             VolIntTerm2[0] = 0;
             VolIntTerm3[0] = 0;
             VolIntTerm4[0] = 0;
+
+            // DURST MODEL -------------------------------------------------------------------------
+            //Correct Volume integral if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                extNSF_Durst::correctEnergyEqnVolIntTerm(element,VolIntTerm4);
+            }
+            // DURST MODEL -------------------------------------------------------------------------
 		}
 
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4)

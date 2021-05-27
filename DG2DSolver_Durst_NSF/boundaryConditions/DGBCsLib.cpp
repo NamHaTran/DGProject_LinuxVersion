@@ -191,11 +191,11 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
         bool inflow(BCSupportFncs::checkInflow(UMean[1]/UMean[0], UMean[2]/UMean[0],norm[0],norm[1]));
 
         //Correct grad(priVars)
-        BCSupportFncs::correctPriVarsGrad(edgeGrp,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UMinus,TMinus,norm,inflow);
+        BCSupportFncs::correctPriVarsGrad(edge, edgeGrp,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UPlus,UMinus,TPlus,TMinus,norm,inflow);
 
         //Reconstruct grad(U)
-        BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TPlus); //Correct bang TPlus de tranh shock
-        BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TPlus); //Correct bang TPlus de tranh shock
+        BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TMinus); //Correct bang TPlus de tranh shock
+        BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TMinus); //Correct bang TPlus de tranh shock
     }
 
     BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);

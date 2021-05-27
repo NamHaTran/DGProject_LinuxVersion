@@ -15,6 +15,8 @@ namespace extNSF_Durst {
     std::vector<std::vector<double>> calcSelfDiffusionTensor(std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);
 
     double calcDiffusionStressComponent(int index, double fstTerm, double sndTerm);
+
+    void correctEnergyEqnVolIntTerm(int element, std::vector<double> &VolIntTerm4);
 }
 
 #endif // FRANZDURSTMODEL_H

@@ -13,7 +13,7 @@ namespace BCSupportFncs
 
     void correctPriVars(int edge, int edgeGrp, std::vector<double> &priVarsM, const std::vector<double> &priVarsP, const std::vector<double> &priVarsMean, const std::vector<double> &n, bool inflow);
 
-    void correctPriVarsGrad(int edgeGrp, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UM, double TM, const std::vector<double> &n, bool inflow);
+    void correctPriVarsGrad(int edge, int edgeGrp, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UP, const std::vector<double> &UM,  double TP, double TM, const std::vector<double> &n, bool inflow);
 
     void correctDensity(std::vector<double> &priVarsM, int edgeGrp, const std::vector<double> &priVarsP);
 

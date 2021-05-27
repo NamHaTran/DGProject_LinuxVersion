@@ -2,13 +2,17 @@
 #include <math.h>
 #include "DGMath.h"
 #include "VarDeclaration.h"
+#include "dynamicVarDeclaration.h"
+#include "DGAuxUltilitiesLib.h"
 
 
 /* GHI CHU:
  * Cac ham trong source code chinh da modified de include model Durst la:
- * process::NSFEq::calcLocalViscousFlux;
- * std::vector<std::vector<double>>calcGaussViscousTerm;
+ * process::NSFEq::calcLocalViscousFlux;        ------> tinh local viscous term (dung cho surface)
+ * process::NSFEq::calcVolumeIntegralTerms;     ------> them term tinh Tich phan cua Kinetic Energy Flux do self-diffusion
+ * BCSupportFncs::correctPriVarsGrad;           ------> correct gradient de drop thanh phan diffusion velocity vuong goc wall
  *
+ * Keyword trong code: DURST MODEL
 */
 namespace extNSF_Durst {
     /*Variables*/
@@ -171,5 +175,218 @@ namespace extNSF_Durst {
         }
         return tau;
     }
+
+    void correctEnergyEqnVolIntTerm(int element, std::vector<double> &EnergyEqnVolIntTerm)
+    {
+        double a(0.0), b(0.0);
+        double Int(0.0), EcOrder(0.0), dBx(0.0), dBy(0.0),
+                rhoVal, rhouVal, rhovVal, rhoEVal, uVal, vVal, TVal,
+                drhox, drhoy, drhoux, drhouy, drhovx, drhovy, drhoEx, drhoEy,
+                dux, duy, dvx, dvy, dEx, dEy, dTx, dTy;
+        int elemType(auxUlti::checkType(element));
+
+        std::vector<double> dUx(4, 0.0),
+                        dUy(4, 0.0);
+
+        std::vector<std::vector<double>>
+                mDx(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                mDy(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+
+        //Calculate Self-Diffusion Flux at all Gauss Points
+        for (int na = 0; na <= mathVar::nGauss; na++)
+        {
+            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            {
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+
+                rhoVal=volumeFields::rhoVolGauss[element][nanb];
+                rhouVal=volumeFields::rhouVolGauss[element][nanb];
+                rhovVal=volumeFields::rhovVolGauss[element][nanb];
+                rhoEVal=volumeFields::rhoEVolGauss[element][nanb];
+
+                uVal=rhouVal/rhoVal;
+                vVal=rhovVal/rhoVal;
+                TVal=math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal);
+
+                //Tinh dao ham
+                dUx=math::pointSVars(0,element,a,b,1,1);
+                dUy=math::pointSVars(0,element,a,b,2,1);
+
+                drhox = dUx[0];
+                drhoy = dUy[0];
+
+                drhoux = dUx[1];
+                drhouy = dUy[1];
+
+                drhovx = dUx[2];
+                drhovy = dUy[2];
+
+                drhoEx = dUx[3];
+                drhoEy = dUy[3];
+
+                dux = math::calcRhouvEDeriv(drhoux, drhox, rhouVal, rhoVal);
+                duy = math::calcRhouvEDeriv(drhouy, drhoy, rhouVal, rhoVal);
+
+                dvx = math::calcRhouvEDeriv(drhovx, drhox, rhovVal, rhoVal);
+                dvy = math::calcRhouvEDeriv(drhovy, drhoy, rhovVal, rhoVal);
+
+                dEx = math::calcRhouvEDeriv(drhoEx, drhox, rhoEVal, rhoVal);
+                dEy = math::calcRhouvEDeriv(drhoEy, drhoy, rhoEVal, rhoVal);
+
+                dTx = math::calcTDeriv(dEx, dux, dvx, uVal, vVal);
+                dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
+
+                //Term mD
+                mDx[na][nb] = -(drhox/rhoVal + dTx/(2*TVal));
+                mDy[na][nb] = -(drhoy/rhoVal + dTy/(2*TVal));
+            }
+        }
+
+        for (int order1 = 0; order1 <= mathVar::orderElem; order1++)
+        {
+            double sumB(0.0), rhoOrder(rho[element][order1]);
+            std::vector<std::vector<double>> A(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+
+            //Avoid dividing by zero
+            if (fabs(rhoOrder)<systemVar::epsilon)
+            {
+                if (rhoOrder>0)
+                    rhoOrder=systemVar::epsilon;
+                else
+                    rhoOrder=-systemVar::epsilon;
+            }
+
+            EcOrder=-0.5*(rhou[element][order1]*rhou[element][order1] + rhov[element][order1]*rhov[element][order1])/rhoOrder;
+
+            for (int na = 0; na <= mathVar::nGauss; na++)
+            {
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                {
+                    //Reset sumB
+                    sumB=0.0;
+
+                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    for (int order2 = 0; order2 <= mathVar::orderElem; order2++)
+                    {
+                        if (elemType==3)
+                            sumB += mathVar::BPts_Tri[order2][nanb];
+                        else if (elemType==4)
+                            sumB += mathVar::BPts_Quad[order2][nanb];
+                    }
+                    dBx = math::Calc_dBxdBy(element, order1, na, nb, 1);
+                    dBy = math::Calc_dBxdBy(element, order1, na, nb, 2);
+
+                    //Calculate Gauss values
+                    A[na][nb]=EcOrder*sumB*(dBx*mDx[na][nb] + dBy*mDy[na][nb]);
+                }
+            }
+
+            Int = math::volumeInte(A, element);
+
+            EnergyEqnVolIntTerm[order1] = EnergyEqnVolIntTerm[order1] + Int;
+        }
+    }
+
+    /*
+    void correctEnergyEqnVolIntTerm(int element, std::vector<double> &EnergyEqnVolIntTerm)
+    {
+        double a(0.0), b(0.0),
+                rhoVal(0.0), rhouVal(0.0), rhovVal(0.0), rhoEVal(0.0), uVal(0.0), vVal(0.0), TVal,
+                drhox(0.0), drhoy(0.0), drhoux(0.0), drhouy(0.0), drhovx(0.0), drhovy(0.0), drhoEx(0.0), drhoEy(0.0), dEx(0.0), dEy(0.0), dTx(0.0), dTy(0.0),
+                dux(0.0), duy(0.0), dvx(0.0), dvy(0.0),
+                muVal(0.0);
+
+        std::vector<double> dUx(4, 0.0),
+                dUy(4, 0.0);
+
+        std::vector<std::vector<double>>
+                mDx(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                mDy(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                dEkX(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                dEkY(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+
+        //Calculate Gauss Points
+        for (int na = 0; na <= mathVar::nGauss; na++)
+        {
+            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            {
+                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+
+                rhoVal=volumeFields::rhoVolGauss[element][nanb];
+                rhouVal=volumeFields::rhouVolGauss[element][nanb];
+                rhovVal=volumeFields::rhovVolGauss[element][nanb];
+                rhoEVal=volumeFields::rhoEVolGauss[element][nanb];
+
+                uVal=rhouVal/rhoVal;
+                vVal=rhovVal/rhoVal;
+                TVal=math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal);
+                muVal=math::CalcVisCoef(TVal);
+
+                //Tinh dao ham
+                dUx=math::pointSVars(0,element,a,b,1,1);
+                dUy=math::pointSVars(0,element,a,b,2,1);
+
+                drhox = dUx[0];
+                drhoy = dUy[0];
+
+                drhoux = dUx[1];
+                drhouy = dUy[1];
+
+                drhovx = dUx[2];
+                drhovy = dUy[2];
+
+                drhoEx = dUx[3];
+                drhoEy = dUy[3];
+
+                dux = math::calcRhouvEDeriv(drhoux, drhox, rhouVal, rhoVal);
+                duy = math::calcRhouvEDeriv(drhouy, drhoy, rhouVal, rhoVal);
+
+                dvx = math::calcRhouvEDeriv(drhovx, drhox, rhovVal, rhoVal);
+                dvy = math::calcRhouvEDeriv(drhovy, drhoy, rhovVal, rhoVal);
+
+                dEx = math::calcRhouvEDeriv(drhoEx, drhox, rhoEVal, rhoVal);
+                dEy = math::calcRhouvEDeriv(drhoEy, drhoy, rhoEVal, rhoVal);
+
+                dTx = math::calcTDeriv(dEx, dux, dvx, uVal, vVal);
+                dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
+
+                //Term mD
+                mDx[na][nb] = -(drhox/rhoVal + dTx/(2*TVal));
+                mDy[na][nb] = -(drhoy/rhoVal + dTy/(2*TVal));
+
+                //Term div(Ek)
+                dEkX[na][nb] = (uVal*dux + vVal*dvx)/muVal;
+                dEkY[na][nb] = (uVal*duy + vVal*dvy)/muVal;
+            }
+        }
+
+        //Calculate Integrals
+        std::vector<std::vector<double>> A(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+        double B(0.0), Int(0.0);
+
+        for (int order = 0; order <= mathVar::orderElem; order++)
+        {
+            for (int na = 0; na <= mathVar::nGauss; na++)
+            {
+                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                {
+                    //Calculate Basis funcs
+                    std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
+                    math::basisFc(a, b, auxUlti::checkType(element));
+                    B = mathVar::B[order];
+
+                    //Calculate Gauss values
+                    A[na][nb]=B*dEkX[na][nb]*mDx[na][nb] + B*dEkY[na][nb]*mDy[na][nb];
+                }
+            }
+
+            Int = math::volumeInte(A, element);
+
+            EnergyEqnVolIntTerm[order] = EnergyEqnVolIntTerm[order] - Int;
+        }
+    }
+    */
 }
 

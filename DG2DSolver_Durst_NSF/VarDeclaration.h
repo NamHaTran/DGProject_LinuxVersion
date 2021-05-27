@@ -38,6 +38,7 @@ namespace systemVar
     extern int ddtScheme;
 
 	//constant for limiter
+    //! Machine zero
 	extern double epsilon;
 
     extern int iterCount, savingCout, loadConstCount;

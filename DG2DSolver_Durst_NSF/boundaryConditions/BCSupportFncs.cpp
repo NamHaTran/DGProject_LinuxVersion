@@ -17,6 +17,10 @@
 #include "fixedValue.h"
 #include "bcVariables.h"
 
+//Durst model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
+#include "./extNSFEqns/FranzDurst/boundaryConditions.h"
+
 namespace BCSupportFncs
 {
     bool checkInflow(double u, double v, double nx, double ny)
@@ -75,16 +79,14 @@ namespace BCSupportFncs
 
         double du, dv, dE, dT,
                 drho(dU[0]), drhou(dU[1]), drhov(dU[2]), drhoE(dU[3]),
-                rho(U[0]),rhou(U[1]),rhov(U[2]),rhoE(U[3]);
-                //mu(math::CalcVisCoef(T));
+                rho(U[0]),rhou(U[1]),rhov(U[2]),rhoE(U[3]),
+                mu(math::CalcVisCoef(T));
 
         //Remove mu
-        /*
         drho=drho/mu;
         drhou=drhou/mu;
         drhov=drhov/mu;
         drhoE=drhoE/mu;
-        */
 
         du = math::calcRhouvEDeriv(drhou, drho, rhou, rho);
         dv = math::calcRhouvEDeriv(drhov, drho, rhov, rho);
@@ -105,7 +107,7 @@ namespace BCSupportFncs
                 dv(priVars[2]),
                 dT(priVars[4]), dE(0.0),
                 rho(U[0]), u(U[1]/U[0]), v(U[2]/U[0]), E(U[3]/U[0]),
-                mu(1.0);//math::CalcVisCoef(T)
+                mu(math::CalcVisCoef(T));
 
         dU[0]=drho*mu;
         dU[1]=(du*rho+drho*u)*mu;
@@ -177,7 +179,7 @@ namespace BCSupportFncs
             BCSupportFncs::correctDensity(priVarsM,edgeGrp,priVarsP);
     }
 
-    void correctPriVarsGrad(int edgeGrp, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UM, double TM, const std::vector<double> &n, bool inflow)
+    void correctPriVarsGrad(int edge, int edgeGrp, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UP, const std::vector<double> &UM, double TP, double TM, const std::vector<double> &n, bool inflow)
     {
         /* priVars[0]=rho;
         priVars[1]=u;
@@ -186,12 +188,13 @@ namespace BCSupportFncs
         priVars[4]=T;
         */
 
-        double //rhoP(priVarsP[0]),
+        double drhoXP(dpriVarsXP[0]),
                 duXP(dpriVarsXP[1]),
                 dvXP(dpriVarsXP[2]),
                 dpXP(dpriVarsXP[3]),
                 dTXP(dpriVarsXP[4]),
 
+                drhoYP(dpriVarsYP[0]),
                 duYP(dpriVarsYP[1]),
                 dvYP(dpriVarsYP[2]),
                 dpYP(dpriVarsYP[3]),
@@ -234,9 +237,20 @@ namespace BCSupportFncs
         //Correct grad(p)
         std::tie(dpXM,dpYM)=correctPressureGrad(edgeGrp,dpXP,dpYP,inflow,n);
 
-        //Correct drho
         drhoXM=((dpXM/material::R)-dTXM*rhoM)/TM;
         drhoYM=((dpYM/material::R)-dTYM*rhoM)/TM;
+
+        //DURST MODEL------------------------------------------------------------
+        //Correct drho
+        if (extNSF_Durst::enable)
+        {
+            bcForExtNSF_Durst::dropNormDiffVel(edge,edgeGrp,drhoXM,drhoYM,drhoXP,drhoYP,
+                                               0.5*(UP[0]+UM[0]),
+                                               0.5*(dTXP+dTXM),
+                                               0.5*(dTYP+dTYM),
+                                               n);
+        }
+        //-----------------------------------------------------------------------
 
         dpriVarsXM[0]=drhoXM;
         dpriVarsXM[1]=duXM;
