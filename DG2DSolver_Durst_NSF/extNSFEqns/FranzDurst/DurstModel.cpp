@@ -243,7 +243,8 @@ namespace extNSF_Durst {
             }
         }
 
-        for (int order1 = 0; order1 <= mathVar::orderElem; order1++)
+        //Order1 bat dau tu 1 vi khi order=0, div(phi)=0 nen tich phan bang 0
+        for (int order1 = 1; order1 <= mathVar::orderElem; order1++)
         {
             double sumB(0.0), rhoOrder(rho[element][order1]);
             std::vector<std::vector<double>> A(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
@@ -257,7 +258,8 @@ namespace extNSF_Durst {
                     rhoOrder=-systemVar::epsilon;
             }
 
-            EcOrder=-0.5*(rhou[element][order1]*rhou[element][order1] + rhov[element][order1]*rhov[element][order1])/rhoOrder;
+            //EcOrder phai nhan voi theta2 de tranh tich phan co gia tri unphysical o vi tri co strong discontinuity
+            EcOrder=(-0.5*(rhou[element][order1]*rhou[element][order1] + rhov[element][order1]*rhov[element][order1])/rhoOrder)*theta2Arr[element];
 
             for (int na = 0; na <= mathVar::nGauss; na++)
             {
