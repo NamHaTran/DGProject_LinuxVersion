@@ -22,6 +22,9 @@
 #include <iostream>
 #include "debuggingFuncs.h"
 
+//Durst Model
+#include "./extNSFEqns/FranzDurst/boundaryConditions.h"
+
 /* NOTES:
 - All boundary functions must return numerical fluxes (rho, rhou, rhov, rhoE fluxes) at surface Gauss points!
 */
@@ -96,10 +99,10 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
     BCSupportFncs::auxilaryBCs::calcUMean(element,UMean);
 
     //Decode plus pri vars from UPlus (khong can tinh lai TPlus)
-    BCSupportFncs::decompseU(priVarsPlus,UPlus,0,0,0,false);
+    BCSupportFncs::decompseU(priVarsPlus,UPlus,false);
 
     //Decode mean pri vars from UMean (khong can tinh lai TMean)
-    BCSupportFncs::decompseU(priVarsMean,UMean,0,0,0,false);
+    BCSupportFncs::decompseU(priVarsMean,UMean,false);
 
     //Cap nhat TPlus va pPlus vao priVarsPlus
     priVarsPlus[4] = surfaceFields::T[edge][nG];
@@ -198,7 +201,17 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
         BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TMinus); //Correct bang TPlus de tranh shock
     }
 
+    //DURST MODEL-------------------------------------------------------
+    //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::needToRemoveDiffTerm ve true
+    bcForExtNSF_Durst::checkConditionToAddDiffTerms(edge);
+    //DURST MODEL-------------------------------------------------------
+
     BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
+
+    //DURST MODEL-------------------------------------------------------
+    //Reset lai extNSF_Durst::needToRemoveDiffTerm
+    bcForExtNSF_Durst::resetNeedToRemoveDiffTermFlag();
+    //DURST MODEL-------------------------------------------------------
 }
 
 /**

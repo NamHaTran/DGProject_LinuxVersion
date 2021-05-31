@@ -12,3 +12,6 @@ Bản backup 27/05/2021:
 Bản backup 28/05/2021:
 - Cải thiện hiệu suất của mô hình Durst: nhân hệ số theta2 của positivity preserving limiter vào command tính Ec_order trong hàm correctEnergyEqnVolIntTerm() vì ở bậc cao, Ec_order có thể có giá trị unphysical ở vùng có strong discontinuity -> làm solver mất ổn định.
 - Sau khi cải thiện, solver có thể chạy mô hình Durst Kn=0.01 ở số Co = 0.1 (lúc trước chỉ chạy được ở Co < 0.03).
+
+Bản backup 31/05/2021:
+- Sửa bug lưu mDx và mDy vào array bị sai vị trí. Bug này làm case Kn=0.05 và 0.1 bị sai nặng vì ở vùng số Kn này ảnh hưởng của diffusive flux mD khá lớn.

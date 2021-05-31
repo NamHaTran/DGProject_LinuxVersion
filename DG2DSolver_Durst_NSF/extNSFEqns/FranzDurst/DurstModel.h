@@ -1,11 +1,14 @@
-#ifndef FRANZDURSTMODEL_H
-#define FRANZDURSTMODEL_H
+#ifndef DURSTMODEL_H
+#define DURSTMODEL_H
 #include <tuple>
 #include <vector>
 
 namespace extNSF_Durst {
     /*Variables*/
-    extern bool enable;
+    extern bool
+    enable,
+    diffusionAtWall,
+    needToRemoveDiffTerm;
 
 
     void correctViscousTerms(std::vector<std::vector<double>> &diffTerms, std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);
@@ -19,4 +22,4 @@ namespace extNSF_Durst {
     void correctEnergyEqnVolIntTerm(int element, std::vector<double> &VolIntTerm4);
 }
 
-#endif // FRANZDURSTMODEL_H
+#endif // DURSTMODEL_H

@@ -5,6 +5,7 @@
 #include "dynamicVarDeclaration.h"
 #include "./boundaryConditions/bcVariables.h"
 #include "DGMath.h"
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
 
 namespace bcForExtNSF_Durst {
 double tempdTx(0.0), tempdTy(0.0);
@@ -37,5 +38,30 @@ double tempdTx(0.0), tempdTy(0.0);
             dRhoXM = 2*dRhoBCx-dRhoXP;
             dRhoYM = 2*dRhoBCy-dRhoYP;
         }
+    }
+
+    void checkConditionToAddDiffTerms(int edge)
+    {
+        int edgeGrp(auxUlti::getGrpOfEdge(edge));
+        int UType(bcValues::UBcType[edgeGrp - 1]);
+
+        //Neu khong cho self diffusion tai wall
+        if (!extNSF_Durst::diffusionAtWall)
+        {
+            //Neu edge dang set la wall
+            if (UType==BCVars::velocityBCId::noSlip
+                    || UType==BCVars::velocityBCId::movingWall
+                    || UType==BCVars::velocityBCId::slipWall)
+                //Thi remove diff terms
+                extNSF_Durst::needToRemoveDiffTerm=true;
+            else
+                extNSF_Durst::needToRemoveDiffTerm=false;
+        }
+    }
+
+    void resetNeedToRemoveDiffTermFlag()
+    {
+        //Mac du khong can phai tao function nhung van tao de tranh viec quen reset
+        extNSF_Durst::needToRemoveDiffTerm=false;
     }
 }

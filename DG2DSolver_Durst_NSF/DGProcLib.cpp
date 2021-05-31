@@ -1672,23 +1672,29 @@ namespace process
             std::tie(FLocalX[0], FLocalX[1], FLocalX[2], FLocalX[3]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeat, UL[1]/UL[0], UL[2]/UL[0], 1);
             std::tie(FLocalY[0], FLocalY[1], FLocalY[2], FLocalY[3]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeat, UL[1]/UL[0], UL[2]/UL[0], 2);
 
-            // DURST MODEL -------------------------------------------------------------------------
+            //DURST MODEL ------------------------------------------------------------------------------
             //Correct Diffusive Term of NSF Eqns
             //Theo mo hinh Durst
             if (extNSF_Durst::enable)
             {
-                //SD=self diffusion
+                double c(1.0);
+
+                //Chi khi nao mode diffusionAtWall la No (khong cho phep diffusion at wall)
+                //Va flag needToRemoveDiffTerm dang True thi moi remove Diff Terms
+                if (!extNSF_Durst::diffusionAtWall && extNSF_Durst::needToRemoveDiffTerm)
+                    c=0.0;
+
                 std::vector<std::vector<double>> diffTerms(2, std::vector<double>(4, 0.0));
 
                 extNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY);
                 //Add to classical diffusive terms
                 for (int i=0; i<4; i++)
                 {
-                    FLocalX[i] = FLocalX[i] + diffTerms[0][i];
-                    FLocalY[i] = FLocalY[i] + diffTerms[1][i];
+                    FLocalX[i] = FLocalX[i] + c*diffTerms[0][i];
+                    FLocalY[i] = FLocalY[i] + c*diffTerms[1][i];
                 }
             }
-            // DURST MODEL -------------------------------------------------------------------------
+            //DURST MODEL ------------------------------------------------------------------------------
         }
 
         void calcSurfaceFlux()
@@ -2121,8 +2127,6 @@ namespace process
             std::tie(ViscousTerm[0][0], ViscousTerm[1][0], ViscousTerm[2][0], ViscousTerm[3][0]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, 1);
             std::tie(ViscousTerm[0][1], ViscousTerm[1][1], ViscousTerm[2][1], ViscousTerm[3][1]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeatFlux, uVal, vVal, 2);
 
-
-            // DURST MODEL -------------------------------------------------------------------------
             //Correct Diffusive Term of NSF Eqns
             //Theo mo hinh Durst
             if (extNSF_Durst::enable)
@@ -2138,7 +2142,6 @@ namespace process
                     ViscousTerm[i][1] = ViscousTerm[i][1] + diffTerms[1][i];
                 }
             }
-            // DURST MODEL -------------------------------------------------------------------------
 
             return ViscousTerm;
 		}
@@ -2316,13 +2319,11 @@ namespace process
             VolIntTerm3[0] = 0;
             VolIntTerm4[0] = 0;
 
-            // DURST MODEL -------------------------------------------------------------------------
             //Correct Volume integral if Durst model is enabled
             if (extNSF_Durst::enable)
             {
                 extNSF_Durst::correctEnergyEqnVolIntTerm(element,VolIntTerm4);
             }
-            // DURST MODEL -------------------------------------------------------------------------
 		}
 
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4)

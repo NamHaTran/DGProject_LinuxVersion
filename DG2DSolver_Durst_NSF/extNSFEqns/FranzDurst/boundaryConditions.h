@@ -10,5 +10,9 @@ tempdTx,
 tempdTy;
 
 void dropNormDiffVel(int edge, int edgeGrp, double &dRhoXM, double &dRhoYM, double dRhoXP, double dRhoYP, double rhoBC, double dTBCx, double dTBCy, const std::vector<double> &n);
+
+void checkConditionToAddDiffTerms(int edge);
+
+void resetNeedToRemoveDiffTermFlag();
 }
 #endif // BOUNDARYCONDITIONS_H

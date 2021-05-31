@@ -214,7 +214,7 @@ To convert unv mesh format to DG2D readable format, do following task step by st
             }
             else if (material::viscousityModel::constant)
             {
-                 std::cout<<"constant.\n";
+                 std::cout<<"Constant Viscosity.\n";
                  std::cout<<"       + Coefficients:\n"
                         <<"           mu                "<<material::viscosityCoeff::constant::mu<<"\n";
             }
@@ -229,6 +229,12 @@ To convert unv mesh format to DG2D readable format, do following task step by st
                     <<"       + Type of Extened NEF Equations: ";
             if (extNSF_Durst::enable)
                 std::cout<<"Durst model.\n";
+
+            std::cout<<"       + Allow Self-Diffusion at Wall: ";
+            if (extNSF_Durst::diffusionAtWall)
+                std::cout<<"Yes.\n";
+            else
+                std::cout<<"No.\n";
         }
         else {
             std::cout<<"    - Self diffusion is off.\n";

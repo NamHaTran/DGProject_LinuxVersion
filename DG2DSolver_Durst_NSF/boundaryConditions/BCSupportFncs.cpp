@@ -45,7 +45,7 @@ namespace BCSupportFncs
         return inflow;
     }
 
-    void decompseU(std::vector<double> &priVars, const std::vector<double> &U, double rhoX, double rhoY, double iniT, bool calcT)
+    void decompseU(std::vector<double> &priVars, const std::vector<double> &U, bool calcT)
     {
         /* Ham decompose primary vars tu conservative vars (U). Trong truong ho
          * mass diffusion, U

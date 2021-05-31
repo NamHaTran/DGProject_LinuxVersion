@@ -1790,8 +1790,8 @@ namespace IO
             /*Neu set dong la inviscid, modify As va Ts bang 0*/
             if (!flowProperties::viscous)
             {
-                material::viscosityCoeff::Sutherland::As=0.0;
-                material::viscosityCoeff::Sutherland::Ts=0.0;
+                //material::viscosityCoeff::Sutherland::As=0.0;
+                //material::viscosityCoeff::Sutherland::Ts=0.0;
                 /*Khong turn on massDiffusion cho dong inviscid*/
                 if (flowProperties::massDiffusion)
                 {
@@ -1907,7 +1907,7 @@ namespace IO
             /*Read FlowProperties*/
             std::string fileName("FlowProperties.txt");
             std::string Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-            std::string keyWordsDouble[numOfDouble] = {}, keyWordsInt[numOfInt] = {}, keyWordsBool[numOfBool] = {}, keyWordsStr[numOfStr] = {"Model"};
+            std::string keyWordsDouble[numOfDouble] = {}, keyWordsInt[numOfInt] = {}, keyWordsBool[numOfBool] = {"SelfDiffusionAtWall"}, keyWordsStr[numOfStr] = {"Model"};
             double outDB[numOfDouble] = {};
             int outInt[numOfInt] = {};
             bool outBool[numOfBool] = {};
@@ -1918,7 +1918,7 @@ namespace IO
              * Neu kieu du lieu nao khong co data can doc, them dau '-' vao phia truoc ten bien, vi du:
              * readDataFile(..., numOfDouble, -numOfInt, -numOfBool, -numOfStr) ----> chi doc bien co kieu du lieu double
             */
-            readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, -numOfDouble, -numOfInt, -numOfBool, numOfStr);
+            readDataFile(fileName, Loc, keyWordsDouble, keyWordsInt, keyWordsBool, keyWordsStr, outDB, outInt, outBool, outStr, -numOfDouble, -numOfInt, numOfBool, numOfStr);
 
             if (outStr[0].compare("Durst")==0)
             {
@@ -1928,6 +1928,8 @@ namespace IO
                 std::string str0("Model '"+outStr[0]+"' of FlowProperties>SelfDiffusionSetting is not a available.");
                 message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
             }
+
+            extNSF_Durst::diffusionAtWall=outBool[0];
         }
     }
 
