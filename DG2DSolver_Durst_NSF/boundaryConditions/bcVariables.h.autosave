@@ -8,6 +8,10 @@ namespace BCVars {
     DirichletAppMethPStrong, NewmannAppMethGradPStrong,
     DirichletAppMethGeneralBCStrong, NewmannAppMethGradGeneralBCStrong;
 
+    extern bool correctRho;
+    
+    bool 
+
     namespace generalBCId {
         static constexpr int symmetry = 7;
         static constexpr int matched = 10;

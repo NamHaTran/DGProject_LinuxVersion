@@ -439,11 +439,23 @@ namespace DG2Tecplot
         }
         else if (valType == 10)  //rho
         {
-            out= BR1Vars::rhoX[element][0];
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
+            out= BR1Vars::rhoX[element][0]/math::CalcVisCoef(TVal);
         }
         else if (valType == 11)  //rho
         {
-            out= BR1Vars::rhoY[element][0];
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
+            out= BR1Vars::rhoY[element][0]/math::CalcVisCoef(TVal);
         }
         return out;
     }

@@ -38,6 +38,22 @@ double tempdTx(0.0), tempdTy(0.0);
             dRhoXM = 2*dRhoBCx-dRhoXP;
             dRhoYM = 2*dRhoBCy-dRhoYP;
         }
+
+        //Vi du
+        //DURST MODEL------------------------------------------------------------
+        //Correct drho
+        /*
+        if (extNSF_Durst::enable)
+        {
+            //Chi khi nao mode diffusionAtWall la Yes thi moi correct grad(rho) term de remove normal diffusive velocity
+            if (extNSF_Durst::diffusionAtWall)
+                bcForExtNSF_Durst::dropNormDiffVel(edge,edgeGrp,drhoXM,drhoYM,drhoXP,drhoYP,
+                                               0.5*(UP[0]+UM[0]),
+                                               0.5*(dTXP+dTXM),
+                                               0.5*(dTYP+dTYM),
+                                               n);
+        }*/
+        //-----------------------------------------------------------------------
     }
 
     void checkConditionToAddDiffTerms(int edge)

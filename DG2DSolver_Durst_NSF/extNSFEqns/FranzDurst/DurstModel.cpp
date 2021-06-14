@@ -8,10 +8,11 @@
 
 /* GHI CHU:
  * Cac ham trong source code chinh da modified de include model Durst la:
- * process::NSFEq::calcLocalViscousFlux;        ------> tinh local viscous term (dung cho surface)
- * process::NSFEq::calcVolumeIntegralTerms;     ------> them term tinh Tich phan cua Kinetic Energy Flux do self-diffusion
- * BCSupportFncs::correctPriVarsGrad;           ------> correct gradient de drop thanh phan diffusion velocity vuong goc wall
- * NSFEqBCsForNormalBoundary trong ham NSFEqBCsImplement
+ * process::NSFEq::calcLocalViscousFlux;                    ------> tinh local viscous term (dung cho surface)
+ * process::NSFEq::calcVolumeIntegralTerms;                 ------> them term tinh Tich phan cua Kinetic Energy Flux do self-diffusion
+ * NSFEqBCsForNormalBoundary trong ham NSFEqBCsImplement    ------> setup flag de xac dinh co turn of self-diffusion tai wall khong
+ * process::NSFEq::calcSurfaceFlux                          ------> setup flag de xac dinh co turn of self-diffusion tai wall khong
+ * process::NSFEq::calcVolumeIntegralTerms                  ------> setup flag de xac dinh co turn of self-diffusion tai wall khong
  *
  * Keyword trong code: DURST MODEL
 */
@@ -20,6 +21,8 @@ namespace extNSF_Durst {
     bool enable(false),
         diffusionAtWall(false),
         needToRemoveDiffTerm(false);
+    double Dm(1.0);
+
 
     void correctViscousTerms(std::vector<std::vector<double>> &diffTerms, std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy)
     {
@@ -128,10 +131,22 @@ namespace extNSF_Durst {
         dTx = math::calcTDeriv(dEx, dux, dvx, uVal, vVal);
         dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
 
-        /*Self mass diffusion term*/
+        /*selfDiffusionTensor:
+        [mDx    tauXx		tauXy		Qx]
+        [mDy    tauYx		tauYy		Qy]
+
+        Details:
+        mDx             (selfDiffusionTensor[0][0])
+        mDy             (selfDiffusionTensor[1][0])
+        tauXy           (selfDiffusionTensor[0][2])
+        tauXx           (selfDiffusionTensor[0][1])
+        tauYy           (selfDiffusionTensor[1][2])
+        Qx              (selfDiffusionTensor[0][3])
+        Qy              (selfDiffusionTensor[1][3])
+        */
         //Luu y cac dao ham deu da nhan mu
-        mDx = -(drhox/rhoVal + dTx/(2*TVal));
-        mDy = -(drhoy/rhoVal + dTy/(2*TVal));
+        mDx = -extNSF_Durst::Dm*(drhox/rhoVal + dTx/(2*TVal));
+        mDy = -extNSF_Durst::Dm*(drhoy/rhoVal + dTy/(2*TVal));
         OutputMatrix[0][0]=mDx;
         OutputMatrix[1][0]=mDy;
 
@@ -251,8 +266,8 @@ namespace extNSF_Durst {
                 dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
 
                 //Term mD
-                mDx[na][nb] = -(drhox/rhoVal + dTx/(2*TVal));
-                mDy[na][nb] = -(drhoy/rhoVal + dTy/(2*TVal));
+                mDx[na][nb] = -extNSF_Durst::Dm*(drhox/rhoVal + dTx/(2*TVal));
+                mDy[na][nb] = -extNSF_Durst::Dm*(drhoy/rhoVal + dTy/(2*TVal));
             }
         }
 

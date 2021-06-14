@@ -7,7 +7,4 @@ namespace BCVars {
     DirichletAppMethTStrong(bcSize,false), NewmannAppMethGradTStrong(bcSize,false),
     DirichletAppMethPStrong(bcSize,false), NewmannAppMethGradPStrong(bcSize,false),
     DirichletAppMethGeneralBCStrong(bcSize,false), NewmannAppMethGradGeneralBCStrong(bcSize,false);
-
-    //Flags
-    bool correctRho(false);
 }

@@ -2282,13 +2282,24 @@ namespace IO
                                                 readZeroGradP(FileFlux,bcGrp);
 
                                                 //Turn on correctRho
-                                                BCVars::correctRho=true;
+                                                //BCVars::correctRho=true;
 
                                                 check_bc[i]=true;
                                                 bcIndex++;
                                                 goto label;
                                             }
+                                            else if ((str0.compare("zeroGradRhoUncorrectP") == 0))
+                                            {
+                                                bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::zeroGradRhoUncorrectP;
+                                                readZeroGradP(FileFlux,bcGrp);
 
+                                                //Turn on correctRho
+                                                //BCVars::correctRho=true;
+
+                                                check_bc[i]=true;
+                                                bcIndex++;
+                                                goto label;
+                                            }
 
                                             else
                                             {

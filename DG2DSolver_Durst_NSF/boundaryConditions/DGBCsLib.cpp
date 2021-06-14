@@ -134,8 +134,6 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
 
     //Save U+ and U- at boundary to arrays
     auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
-    /* UMinus va Plus o day trong tr.hop mass diffusion ON la Uconvective.
-     * Utotal se duoc correct tu Uconvective o phan apply BC cua pt NSF*/
 }
 
 void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edge, int edgeGrp, int nG)
@@ -177,6 +175,11 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
     //Tinh TMean
     TMean = math::calcMeanPriVar(element,1);
 
+    //DURST MODEL-------------------------------------------------------
+    //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::needToRemoveDiffTerm ve true
+    bcForExtNSF_Durst::checkConditionToAddDiffTerms(edge);
+    //DURST MODEL-------------------------------------------------------
+
     if (flowProperties::viscous)
     {
         //Tinh dUX/dUY plus
@@ -197,14 +200,9 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
         BCSupportFncs::correctPriVarsGrad(edge, edgeGrp,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UPlus,UMinus,TPlus,TMinus,norm,inflow);
 
         //Reconstruct grad(U)
-        BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TMinus); //Correct bang TPlus de tranh shock
-        BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TMinus); //Correct bang TPlus de tranh shock
+        BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TMinus);
+        BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TMinus);
     }
-
-    //DURST MODEL-------------------------------------------------------
-    //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::needToRemoveDiffTerm ve true
-    bcForExtNSF_Durst::checkConditionToAddDiffTerms(edge);
-    //DURST MODEL-------------------------------------------------------
 
     BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
 

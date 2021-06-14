@@ -9,6 +9,7 @@ namespace extNSF_Durst {
     enable,
     diffusionAtWall,
     needToRemoveDiffTerm;
+    extern double Dm;
 
 
     void correctViscousTerms(std::vector<std::vector<double>> &diffTerms, std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);

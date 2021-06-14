@@ -15,3 +15,7 @@ Bản backup 28/05/2021:
 
 Bản backup 31/05/2021:
 - Sửa bug lưu mDx và mDy vào array bị sai vị trí. Bug này làm case Kn=0.05 và 0.1 bị sai nặng vì ở vùng số Kn này ảnh hưởng của diffusive flux mD khá lớn.
+
+Bản backup 14/06/2021:
+- Add thêm điều kiện biên zeroGradRhoUncorrectP cho file p, điều kiện biên này apply rho- = rho+ và grad(rho)- = grad(rho)+, không correct p theo phương trình khí lý tưởng. Điều kiện biên này giúp tính grad(rho) tại biên wall tốt hơn (khí bị nén ở sát wall nên gradient theo chiều hướng về wall, còn với điều kiện biên interpFrmDensity, chiều gradient sát wall bị ngược lại).
+- Add thêm hệ số Dm = 1/Sc vào thành phần self diffusion (1.32 đối với Argon). Điều này làm ảnh hưởng của self diffusion mạnh hơn. Nếu dùng như original formula của tài liệu cho mô hình Durst, effect của self diffusion không đủ mạnh để tạo ra khác biệt giữa mô hình Classical và Durst.

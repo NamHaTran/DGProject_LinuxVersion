@@ -17,6 +17,8 @@ namespace BCSupportFncs
 
     void correctDensity(std::vector<double> &priVarsM, int edgeGrp, const std::vector<double> &priVarsP);
 
+    std::tuple<double, double> correctDensityGrad(int edgeGrp, double dpMX, double dpMY, double dTMX, double dTMY, double dRhoPX, double dRhoPY, const std::vector<double> &UM, double TM, const std::vector<double> &n);
+
     std::tuple <double, double> correctVelocity(int edge, int edgeGrp, double uP, double uMean, double vP, double vMean, const std::vector<double> &n, bool inflow);
 
     std::tuple <double, double> correctVelocityGrad(int edgeGrp, double duXP, double duYP, bool inflow, const std::vector<double> &n);

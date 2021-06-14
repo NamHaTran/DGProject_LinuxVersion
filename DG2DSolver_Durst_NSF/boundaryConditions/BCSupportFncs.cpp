@@ -153,30 +153,26 @@ namespace BCSupportFncs
         pM = correctPressure(edge,edgeGrp,pP,pMean,inflow);
         TM = correctTemperature(edge,edgeGrp,TP,TMean,inflow);
 
-        //Correct rhoM theo pM va TM
-        //Giai rho theo ideal gas
-        rhoM=pM/(material::R*TM);
-
         priVarsM[0]=rhoM;
         priVarsM[1]=uM;
         priVarsM[2]=vM;
         priVarsM[3]=pM;
         priVarsM[4]=TM;
 
+        //Vi ham correct rho lay gia tri tu priVarsM nen phai luu gia tri vao priVarsM roi moi chay ham correctRho
+        BCSupportFncs::correctDensity(priVarsM,edgeGrp,priVarsP);
+
         //Bound T and p
         if (priVarsM[4]>limitVal::TUp)
         {
             priVarsM[4]=limitVal::TUp;
-            priVarsM[3]=math::CalcP(limitVal::TUp,priVarsM[0]);
+            //priVarsM[3]=math::CalcP(limitVal::TUp,priVarsM[0]);
         }
         else if (priVarsM[4]<limitVal::TDwn)
         {
             priVarsM[4]=limitVal::TDwn;
-            priVarsM[3]=math::CalcP(limitVal::TDwn,priVarsM[0]);
+            //priVarsM[3]=math::CalcP(limitVal::TDwn,priVarsM[0]);
         }
-
-        if (BCVars::correctRho)
-            BCSupportFncs::correctDensity(priVarsM,edgeGrp,priVarsP);
     }
 
     void correctPriVarsGrad(int edge, int edgeGrp, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UP, const std::vector<double> &UM, double TP, double TM, const std::vector<double> &n, bool inflow)
@@ -237,21 +233,10 @@ namespace BCSupportFncs
         //Correct grad(p)
         std::tie(dpXM,dpYM)=correctPressureGrad(edgeGrp,dpXP,dpYP,inflow,n);
 
-        drhoXM=((dpXM/material::R)-dTXM*rhoM)/TM;
-        drhoYM=((dpYM/material::R)-dTYM*rhoM)/TM;
+        //Correct grad(rho)
+        std::tie(drhoXM, drhoYM)=correctDensityGrad(edgeGrp, dpXM, dpYM, dTXM, dTYM, drhoXP, drhoYP, UM, TM, n);
 
-        //DURST MODEL------------------------------------------------------------
-        //Correct drho
-        if (extNSF_Durst::enable)
-        {
-            bcForExtNSF_Durst::dropNormDiffVel(edge,edgeGrp,drhoXM,drhoYM,drhoXP,drhoYP,
-                                               0.5*(UP[0]+UM[0]),
-                                               0.5*(dTXP+dTXM),
-                                               0.5*(dTYP+dTYM),
-                                               n);
-        }
-        //-----------------------------------------------------------------------
-
+        //Save to output array
         dpriVarsXM[0]=drhoXM;
         dpriVarsXM[1]=duXM;
         dpriVarsXM[2]=dvXM;
@@ -745,6 +730,12 @@ namespace BCSupportFncs
                 pM = zeroGradient_scalar(pP); //==> update lai p theo TM va rhoP o ngoai ham nay
             }
             break;
+        case BCVars::pressureBCId::zeroGradRhoUncorrectP:
+            {
+                //zeroGradRho
+                pM = zeroGradient_scalar(pP); //==> update lai p theo TM va rhoP o ngoai ham nay
+            }
+            break;
         default:
             {
                 std::cout<<"Warning! Unknow pressure boudary type Id = "<<pType<<".\n";
@@ -837,6 +828,13 @@ namespace BCSupportFncs
                 zeroGradient_correctGrad(dpM,dpP,n,isStrong);
             }
             break;
+        case BCVars::pressureBCId::zeroGradRhoUncorrectP:
+            {
+                //Test BC
+                //zeroGradient_correctGrad(dpM,dpP,n,isStrong);
+                dpM=dpP;
+            }
+            break;
         default:
             {
                 std::cout<<"Warning! Unknow pressure boudary type Id = "<<pType<<" .\n";
@@ -850,11 +848,40 @@ namespace BCSupportFncs
     void correctDensity(std::vector<double> &priVarsM, int edgeGrp, const std::vector<double> &priVarsP)
     {
         double rhoP(priVarsP[0]);
-        if (bcValues::pBcType[edgeGrp - 1]==BCVars::pressureBCId::interpFrmDensity)
+
+        //General: Correct rhoM theo pM va TM theo ideal gas
+        priVarsM[0]=priVarsM[3]/(material::R*priVarsM[4]);
+
+        //Correct rho theo tung dieu kien rieng biet
+        int pType(bcValues::pBcType[edgeGrp - 1]);
+        if (pType==BCVars::pressureBCId::interpFrmDensity)
         {
             priVarsM[0]=rhoP;
-            priVarsM[3]=math::CalcP(priVarsM[4],priVarsM[0]);
         }
+        else if (pType==BCVars::pressureBCId::zeroGradRhoUncorrectP)
+        {
+            priVarsM[0]=rhoP;
+        }
+    }
+
+    std::tuple<double, double> correctDensityGrad(int edgeGrp, double dpMX, double dpMY, double dTMX, double dTMY, double dRhoPX, double dRhoPY, const std::vector<double> &UM, double TM, const std::vector<double> &n)
+    {
+        std::vector<double> drhoP{dRhoPX, dRhoPY}, drhoM(2, 0.0);
+
+        //General, follow perfect gas equation
+        drhoM[0]=((dpMX/material::R)-dTMX*UM[0])/TM;
+        drhoM[1]=((dpMY/material::R)-dTMY*UM[0])/TM;
+
+        //Modify grad(rho) theo tung dieu kien rieng biet
+        int pType(bcValues::pBcType[edgeGrp - 1]);
+        if (pType==BCVars::pressureBCId::zeroGradRhoUncorrectP)
+        {
+            drhoM=drhoP;
+            //bool isStrong(BCVars::NewmannAppMethGradPStrong[edgeGrp-1]);
+            //zeroGradient_correctGrad(drhoM,drhoP,n,isStrong);
+        }
+
+        return std::make_tuple(drhoM[0], drhoM[1]);
     }
 
     namespace auxilaryBCs {

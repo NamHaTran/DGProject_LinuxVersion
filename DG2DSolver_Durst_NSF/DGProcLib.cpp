@@ -1677,21 +1677,24 @@ namespace process
             //Theo mo hinh Durst
             if (extNSF_Durst::enable)
             {
-                double c(1.0);
+                std::vector<std::vector<double>> diffTerms(2, std::vector<double>(4, 0.0));
 
                 //Chi khi nao mode diffusionAtWall la No (khong cho phep diffusion at wall)
                 //Va flag needToRemoveDiffTerm dang True thi moi remove Diff Terms
                 if (!extNSF_Durst::diffusionAtWall && extNSF_Durst::needToRemoveDiffTerm)
-                    c=0.0;
+                {
+                    //Do nothing
+                }
+                else
+                {
+                    extNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY);
+                }
 
-                std::vector<std::vector<double>> diffTerms(2, std::vector<double>(4, 0.0));
-
-                extNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY);
                 //Add to classical diffusive terms
                 for (int i=0; i<4; i++)
                 {
-                    FLocalX[i] = FLocalX[i] + c*diffTerms[0][i];
-                    FLocalY[i] = FLocalY[i] + c*diffTerms[1][i];
+                    FLocalX[i] = FLocalX[i] + diffTerms[0][i];
+                    FLocalY[i] = FLocalY[i] + diffTerms[1][i];
                 }
             }
             //DURST MODEL ------------------------------------------------------------------------------
@@ -1732,6 +1735,10 @@ namespace process
                 bcGrp = auxUlti::getBCType(iedge);
                 if (bcGrp == 0)
                 {
+                    //DURST MODEL ------------------------------------------------------------------------------
+                    extNSF_Durst::needToRemoveDiffTerm=false;
+                    //DURST MODEL ------------------------------------------------------------------------------
+
                     std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
                     vectorn[0] = auxUlti::getNormVectorComp(masterCell, iedge, 1);
                     vectorn[1] = auxUlti::getNormVectorComp(masterCell, iedge, 2);
@@ -2245,6 +2252,10 @@ namespace process
 			/*User's guide:
 			All input array have form:
 			- number of rows: orderElem*/
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            extNSF_Durst::needToRemoveDiffTerm=false;
+            //DURST MODEL ------------------------------------------------------------------------------
 
 			std::vector<std::vector<double>> ViscousTerms(4, std::vector<double>(2, 0.0));
 			std::vector<std::vector<double>> InviscidTerms(4, std::vector<double>(2, 0.0));
