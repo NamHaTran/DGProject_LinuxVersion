@@ -14,6 +14,21 @@
 
 #include "./limiters/limiterController.h"
 
+//Non Equilibrium BCs
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.h"
+
+/**
+ * @brief Function excutes command.
+ *
+ * Functions run only at processor rank 0:
+ * - exportMeshToMetis
+ * - testMeshPartitionResult
+ * - decomposeCase
+ * - checkUnvReader
+ * - checkBCsHelper
+ * - reSubmit
+ * - mapResults
+ */
 void Executer()
 {
     /*Functions run only at rank 0:
@@ -183,6 +198,10 @@ void Executer()
     }
 }
 
+/**
+ * @brief Function checks whether inputted command is available
+ * @param cmd: inputted command
+ */
 void checkCommandLine(std::string cmd)
 {
     if (preProcessKey::checkUnvReader(cmd))
@@ -243,6 +262,9 @@ void checkCommandLine(std::string cmd)
     }
 }
 
+/**
+ * @brief Function does Processing
+ */
 void Processing()
 {
     //Setup case san sang de chay
@@ -273,6 +295,15 @@ void Processing()
 	}
 }
 
+/**
+ * @brief Function does Pre-Processing.
+ *
+ * - Read Mesh
+ * - Read Boundary Condition
+ * - Check information before running (require user's confirmation)
+ * - Calculate mesh's parameters
+ * - Resize data arrays
+ */
 void PreProcessing()
 {
     /*LOAD CONSTANTS*/

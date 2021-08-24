@@ -8,9 +8,20 @@ namespace extNSF_Durst {
     extern bool
     enable,
     diffusionAtWall,
-    needToRemoveDiffTerm;
-    extern double Dm;
+    needToRemoveDiffTerm,
 
+    massDiffModel_ChapmanEnskog,
+    massDiffModel_constant,
+
+    dropNormSelfDiffTerm,
+
+    isSymmetry;
+
+    extern double Dm,
+    blending,
+    realDm;
+
+    void applyBlendingFactorToDm();
 
     void correctViscousTerms(std::vector<std::vector<double>> &diffTerms, std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);
 
@@ -21,6 +32,10 @@ namespace extNSF_Durst {
     double calcDiffusionStressComponent(int index, double fstTerm, double sndTerm);
 
     void correctEnergyEqnVolIntTerm(int element, std::vector<double> &VolIntTerm4);
+
+    double calcSelfDiffFlux(double rho, double T, double gradRho, double gradT);
+
+    double calcDiffVelocity(std::vector<double> &U, std::vector<double> &dU);
 }
 
 #endif // DURSTMODEL_H

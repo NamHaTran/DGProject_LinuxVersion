@@ -16,6 +16,7 @@
 
 //Durst model
 #include "./extNSFEqns/FranzDurst/DurstModel.h"
+#include "./extNSFEqns/FranzDurst/IO.h"
 
 namespace message
 {
@@ -39,7 +40,7 @@ namespace message
 
 	std::string undfKeyW(std::string keyW, std::string location)
 	{
-		std::string str("Cannot find key word <" + keyW + "> at " + location);
+        std::string str("Cannot find key word <" + keyW + "> in " + location);
 		return str;
 	}
 
@@ -228,13 +229,10 @@ To convert unv mesh format to DG2D readable format, do following task step by st
             std::cout<<"    - Self diffusion is on:\n"
                     <<"       + Type of Extened NEF Equations: ";
             if (extNSF_Durst::enable)
+            {
                 std::cout<<"Durst model.\n";
-
-            std::cout<<"       + Allow Self-Diffusion at Wall: ";
-            if (extNSF_Durst::diffusionAtWall)
-                std::cout<<"Yes.\n";
-            else
-                std::cout<<"No.\n";
+                IO_Durst::showSettings();
+            }
         }
         else {
             std::cout<<"    - Self diffusion is off.\n";

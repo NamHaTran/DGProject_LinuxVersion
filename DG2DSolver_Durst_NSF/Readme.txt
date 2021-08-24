@@ -19,3 +19,22 @@ Bản backup 31/05/2021:
 Bản backup 14/06/2021:
 - Add thêm điều kiện biên zeroGradRhoUncorrectP cho file p, điều kiện biên này apply rho- = rho+ và grad(rho)- = grad(rho)+, không correct p theo phương trình khí lý tưởng. Điều kiện biên này giúp tính grad(rho) tại biên wall tốt hơn (khí bị nén ở sát wall nên gradient theo chiều hướng về wall, còn với điều kiện biên interpFrmDensity, chiều gradient sát wall bị ngược lại).
 - Add thêm hệ số Dm = 1/Sc vào thành phần self diffusion (1.32 đối với Argon). Điều này làm ảnh hưởng của self diffusion mạnh hơn. Nếu dùng như original formula của tài liệu cho mô hình Durst, effect của self diffusion không đủ mạnh để tạo ra khác biệt giữa mô hình Classical và Durst.
+
+Bản backup 24/08/2021:
+Mô hình Durst
+- Chốt điều kiện biên tại wall trong trường hợp self-diffusion
+	+ Vận tốc diffusion (gồm vận tốc do mass diffusion và thermophoresis (Sorret term)) theo phương pháp tuyến bằng 0.
+	+ Vận tốc diffusion do thermophoresis bằng 0 theo cả pháp tuyến và tiếp tuyến bền mặt (nên trong code, dTx và dTy set bằng 0 tại biên).
+	+ Điều kiện của T và rho giống classical NSF.
+
+Điều kiện biên
+- Add folder điều kiện biên custom, các điều kiện biên mới sau này có thể được thêm vào dưới dạng điều kiện biên custom.
+- Add điều kiện biên interior:
+	+ Với các field T, U: giá trị scalar và gradient phía - bằng giá trị phía +
+	+ Với field rho: giá trị scalar phía - bằng phía +. Giá trị gradient phía - thu được khi apply hàm zero normal gradient cho grad phía +.
+- Add bộ điều kiện biên non-equilibrium, hiện tại gồm điều kiện Maxwell slip và Smoluchowsky T Jump. Các điều kiện biên non-equilibrium sau này có thể được add vào tương tự như 2 đk biên trước.
+
+Fix bug
+- Fix bug giải kết quả 'nan' của hàm tìm hình chiếu vuông góc của cell centroid lên 1 cạnh.
+
+- Code update lên github cùng ngày.	

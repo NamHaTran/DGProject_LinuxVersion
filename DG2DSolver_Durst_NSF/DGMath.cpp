@@ -2873,14 +2873,33 @@ void volumeGauss(int nGauss)
         {
             //Project point A to edge BC
             double xN, yN;
-            double a((yB-yC)/(xB-xC)),
-                    b=(-((yB-yC)/(xB-xC))*xB+yB);
-            //Phuong trinh duong thang la y=ax+b
-            //Phuong trinh duong thang vuong goc la y=-x/a+bN
-            double bN(yA+xA/a);
-            //Toa do hinh chieu vuong goc cua A len BC
-            xN = (bN-b)/(a+1/a);
-            yN = a*xN+b;
+
+            if (xB==xC && yB!=yC)
+            {
+                xN = xB;
+                yN = yA;
+            }
+            else if (xB!=xC && yB==yC)
+            {
+                xN = xA;
+                yN = yB;
+            }
+            else if (xB!=xC && yB!=yC)
+            {
+                double a((yB-yC)/(xB-xC)),
+                        b=(-((yB-yC)/(xB-xC))*xB+yB);
+                //Phuong trinh duong thang la y=ax+b
+                //Phuong trinh duong thang vuong goc la y=-x/a+bN
+                double bN(yA+xA/a);
+                //Toa do hinh chieu vuong goc cua A len BC
+                xN = (bN-b)/(a+1/a);
+                yN = a*xN+b;
+            }
+            else
+            {
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, "Mesh error: 2 vertices of 1 edges are coincident.");
+            }
+
             return std::make_tuple(xN, yN);
         }
 

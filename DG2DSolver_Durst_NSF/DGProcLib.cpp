@@ -11,7 +11,6 @@
 #include <iostream>
 #include <math.h>
 #include <mpi.h>
-#include "NonEquilibriumBCsLib.h"
 #include "./boundaryConditions/BCSupportFncs.h"
 #include "./boundaryConditions/DGBCsLib.h"
 
@@ -27,7 +26,10 @@
 
 //Extended Navier-Stokes-Fourier model
 #include "./extNSFEqns/FranzDurst/DurstModel.h"
+#include "./extNSFEqns/FranzDurst/boundaryConditions.h"
 
+//Non equilibrium BCs
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.h"
 
 namespace meshParam
 {
@@ -269,7 +271,7 @@ namespace meshParam
      */
     void findNormProjectionOfCenterToBCEdge()
     {
-        int globleEdge(0), element(0), tempE;
+        int globleEdge(0), element(0);
         double xC, yC, x1, y1, x2, y2, xN, yN, aN, bN;
         for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
         {
@@ -277,7 +279,7 @@ namespace meshParam
             int bcType(meshVar::inpoed[globleEdge][3]);
             if (bcType==1) //type wall
             {
-                std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
+                std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
 
                 xC=meshVar::geoCenter[element][0];
                 yC=meshVar::geoCenter[element][1];
@@ -1685,6 +1687,18 @@ namespace process
                 {
                     //Do nothing
                 }
+                else if (
+                         //Chi khi nao mode diffusionAtWall la Yes (cho phep diffusion at wall)
+                         //Va flag dropNormSelfDiffTerm dang True thi moi remove normal Diff Terms (bang cach dung ham bcForExtNSF_Durst::dropNormSelfDiffTerm)
+                         (extNSF_Durst::diffusionAtWall && extNSF_Durst::dropNormSelfDiffTerm)
+
+                         //Hoac BC dang tinh flux la symmetry
+                         || (extNSF_Durst::isSymmetry)
+                         )
+                {
+                    bcForExtNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY,n);
+                }
+                //Cac truong hop khac: volume term va internal edge
                 else
                 {
                     extNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY);
@@ -2330,11 +2344,13 @@ namespace process
             VolIntTerm3[0] = 0;
             VolIntTerm4[0] = 0;
 
+            //DURST MODEL ------------------------------------------------------------------------------
             //Correct Volume integral if Durst model is enabled
             if (extNSF_Durst::enable)
             {
                 extNSF_Durst::correctEnergyEqnVolIntTerm(element,VolIntTerm4);
             }
+            //DURST MODEL ------------------------------------------------------------------------------
 		}
 
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4)
@@ -2778,7 +2794,7 @@ namespace process
 			}
 
             //UPDATE TIME VARYING BC
-            updateTimeVaryingBCs();
+            nonEquilibriumBCs::updateBCs();
 
             limiter::limiter_1OutterStep();
 		}

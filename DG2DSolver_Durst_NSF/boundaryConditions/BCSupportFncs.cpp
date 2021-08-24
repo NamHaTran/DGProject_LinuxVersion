@@ -21,6 +21,29 @@
 #include "./extNSFEqns/FranzDurst/DurstModel.h"
 #include "./extNSFEqns/FranzDurst/boundaryConditions.h"
 
+//Custom boundary conditions
+//Key word: Custom_Boundary_Conditions
+
+//1. zeroRhoGradUncorectP
+#include "./customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h"
+#include "./customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.h"
+
+//2. zeroRhoGradUncorectP
+#include "./customBCs/reflectRhoGrad/p_reflectRhoGrad.h"
+#include "./customBCs/reflectRhoGrad/rho_reflectRhoGrad.h"
+
+//3. interiorSide
+#include "./customBCs/interiorSide/p_interiorSide.h"
+#include "./customBCs/interiorSide/T_interiorSide.h"
+#include "./customBCs/interiorSide/u_interiorSide.h"
+#include "./customBCs/interiorSide/rho_interiorSide.h"
+
+//4. MaxwellSlip
+#include "./customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h"
+
+//5. SmoluchowskyTJump
+#include "./customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h"
+
 namespace BCSupportFncs
 {
     bool checkInflow(double u, double v, double nx, double ny)
@@ -137,7 +160,7 @@ namespace BCSupportFncs
         priVars[4]=T;
         */
 
-        double rhoP(priVarsP[0]),
+        double //rhoP(priVarsP[0]),
                 uP(priVarsP[1]),
                 vP(priVarsP[2]),
                 pP(priVarsP[3]),
@@ -149,9 +172,10 @@ namespace BCSupportFncs
         double rhoM(0.0), uM(0.0), vM(0.0), pM(0.0), TM(0.0);
 
         //Correct u, v, T, p
-        std::tie(uM, vM) = correctVelocity(edge,edgeGrp,uP,uMean,vP,vMean,n,inflow);
+        //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien non equilibrium
         pM = correctPressure(edge,edgeGrp,pP,pMean,inflow);
         TM = correctTemperature(edge,edgeGrp,TP,TMean,inflow);
+        std::tie(uM, vM) = correctVelocity(edge,edgeGrp,uP,uMean,vP,vMean,n,inflow);
 
         priVarsM[0]=rhoM;
         priVarsM[1]=uM;
@@ -209,7 +233,7 @@ namespace BCSupportFncs
                 dpYMean(dpriVarsYMean[3]),
                 dTYMean(dpriVarsYMean[4]);
                         */
-        double rhoM(UM[0]),
+        double //rhoM(UM[0]),
 
                 drhoXM(0.0),
                 duXM(0.0),
@@ -223,14 +247,16 @@ namespace BCSupportFncs
                 dpYM(0.0),
                 dTYM(0.0);
 
+        //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien non equilibrium
+        //Correct grad(T)
+        std::tie(dTXM,dTYM)=correctTemperatureGrad(edgeGrp,dTXP,dTYP,inflow,n);
+
         //Correct grad(u)
         std::tie(duXM,duYM)=correctVelocityGrad(edgeGrp,duXP,duYP,inflow,n);
         std::tie(dvXM,dvYM)=correctVelocityGrad(edgeGrp,dvXP,dvYP,inflow,n);
 
-        //Correct grad(T)
-        std::tie(dTXM,dTYM)=correctTemperatureGrad(edgeGrp,dTXP,dTYP,inflow,n);
-
         //Correct grad(p)
+        //Co the khong can thiet!
         std::tie(dpXM,dpYM)=correctPressureGrad(edgeGrp,dpXP,dpYP,inflow,n);
 
         //Correct grad(rho)
@@ -346,6 +372,23 @@ namespace BCSupportFncs
                 zeroGradient_vector(UM,UP);
             }
             break;
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //interiorSide
+        case BCVars::velocityBCId::interiorSide:
+            {
+                interiorSide::correctU(UM,UP);
+            }
+            break;
+        //Maxwell Slip
+        case BCVars::velocityBCId::MaxwellSlip:
+            {
+                //Giong fixedValue
+                fixedValue_vector(UM,UP,UBC,isStrong);
+            }
+            break;
+//------//Custom_Boundary_Conditions----------------------------------------
+
         case BCVars::generalBCId::matched:
             {
                 //matched BC
@@ -453,6 +496,23 @@ namespace BCSupportFncs
                 zeroGradient_correctGrad(duM,duP,n,isStrong);
             }
             break;
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //interiorSide
+        case BCVars::velocityBCId::interiorSide:
+            {
+                interiorSide::correctGradU(duM,duP);
+            }
+            break;
+        //Maxwell Slip
+        case BCVars::velocityBCId::MaxwellSlip:
+            {
+                //Giong fixedValue
+                duM=duP;
+            }
+            break;
+//------//Custom_Boundary_Conditions----------------------------------------
+
         case BCVars::generalBCId::matched:
             {
                 //matched BC
@@ -545,6 +605,21 @@ namespace BCSupportFncs
                 TM = fixedValue_scalar(TP,TBC,isStrong);
             }
             break;
+//------//Custom_Boundary_Conditions----------------------------------------
+        //interiorSide
+        case BCVars::temperatureBCId::interiorSide:
+            {
+                interiorSide::correctT(TM,TP);
+            }
+            break;
+        //Smoluchowsky Jump
+        case BCVars::temperatureBCId::SmoluchowskyTJump:
+            {
+                //Giong fixedValue
+                TM = fixedValue_scalar(TP,TBC,isStrong);
+            }
+            break;
+//------//Custom_Boundary_Conditions----------------------------------------
         case BCVars::generalBCId::matched:
             {
                 //matched BC
@@ -636,6 +711,23 @@ namespace BCSupportFncs
                 dTM=dTP;
             }
             break;
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //interiorSide
+        case BCVars::temperatureBCId::interiorSide:
+            {
+                interiorSide::correctGradT(dTM,dTP);
+            }
+            break;
+        //Smoluchowsky Jump
+        case BCVars::temperatureBCId::SmoluchowskyTJump:
+            {
+                //Giong fixedValue
+                dTM=dTP;
+            }
+            break;
+//------//Custom_Boundary_Conditions----------------------------------------
+
         case BCVars::generalBCId::matched:
             {
                 //matched BC
@@ -726,16 +818,31 @@ namespace BCSupportFncs
             break;
         case BCVars::pressureBCId::interpFrmDensity:
             {
-                //zeroGradRho
                 pM = zeroGradient_scalar(pP); //==> update lai p theo TM va rhoP o ngoai ham nay
             }
             break;
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //zeroGradRhoUncorrectP
         case BCVars::pressureBCId::zeroGradRhoUncorrectP:
             {
-                //zeroGradRho
-                pM = zeroGradient_scalar(pP); //==> update lai p theo TM va rhoP o ngoai ham nay
+                zeroRhoGradUncorectP::correctP(pM,pP);
             }
             break;
+            //zeroGradRhoUncorrectP
+        case BCVars::pressureBCId::reflectGradRho:
+            {
+                reflectRhoGrad::correctP(pM,pP);
+            }
+            break;
+        case BCVars::pressureBCId::interiorSide:
+            {
+                interiorSide::correctP(pM,pP);
+            }
+            break;
+//------//Custom_Boundary_Conditions----------------------------------------
+
+
         default:
             {
                 std::cout<<"Warning! Unknow pressure boudary type Id = "<<pType<<".\n";
@@ -828,13 +935,30 @@ namespace BCSupportFncs
                 zeroGradient_correctGrad(dpM,dpP,n,isStrong);
             }
             break;
+
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //zeroGradRhoUncorrectP
         case BCVars::pressureBCId::zeroGradRhoUncorrectP:
             {
-                //Test BC
-                //zeroGradient_correctGrad(dpM,dpP,n,isStrong);
-                dpM=dpP;
+                zeroRhoGradUncorectP::correctGradP(dpM,dpP);
             }
             break;
+        //reflectGradRho
+        case BCVars::pressureBCId::reflectGradRho:
+            {
+                reflectRhoGrad::correctGradP(dpM,dpP);
+            }
+            break;
+        //interiorSide
+        case BCVars::pressureBCId::interiorSide:
+            {
+                interiorSide::correctGradP(dpM,dpP);
+            }
+            break;
+//------//Custom_Boundary_Conditions----------------------------------------
+
+
         default:
             {
                 std::cout<<"Warning! Unknow pressure boudary type Id = "<<pType<<" .\n";
@@ -858,28 +982,53 @@ namespace BCSupportFncs
         {
             priVarsM[0]=rhoP;
         }
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //zeroGradRhoUncorrectP
         else if (pType==BCVars::pressureBCId::zeroGradRhoUncorrectP)
         {
-            priVarsM[0]=rhoP;
+            zeroRhoGradUncorectP::correctRho(priVarsM[0],rhoP);
         }
+        //interiorSide
+        else if (pType==BCVars::pressureBCId::interiorSide)
+        {
+            interiorSide::correctRho(priVarsM[0],rhoP);
+        }
+//------//Custom_Boundary_Conditions----------------------------------------
     }
 
     std::tuple<double, double> correctDensityGrad(int edgeGrp, double dpMX, double dpMY, double dTMX, double dTMY, double dRhoPX, double dRhoPY, const std::vector<double> &UM, double TM, const std::vector<double> &n)
     {
         std::vector<double> drhoP{dRhoPX, dRhoPY}, drhoM(2, 0.0);
 
-        //General, follow perfect gas equation
+        //General, dRho- = dRho+ (don't follow perfect gas equation)
+        drhoM[0] = dRhoPX;
+        drhoM[1] = dRhoPY;
+        /*
         drhoM[0]=((dpMX/material::R)-dTMX*UM[0])/TM;
-        drhoM[1]=((dpMY/material::R)-dTMY*UM[0])/TM;
+        drhoM[1]=((dpMY/material::R)-dTMY*UM[0])/TM;*/
 
         //Modify grad(rho) theo tung dieu kien rieng biet
         int pType(bcValues::pBcType[edgeGrp - 1]);
+        bool isStrong(BCVars::NewmannAppMethGradPStrong[edgeGrp-1]);
+
+//------//Custom_Boundary_Conditions----------------------------------------
+        //zeroGradRhoUncorrectP
         if (pType==BCVars::pressureBCId::zeroGradRhoUncorrectP)
         {
-            drhoM=drhoP;
-            //bool isStrong(BCVars::NewmannAppMethGradPStrong[edgeGrp-1]);
-            //zeroGradient_correctGrad(drhoM,drhoP,n,isStrong);
+            zeroRhoGradUncorectP::correctGradRho(drhoM, drhoP);
         }
+        //reflectGradRho
+        else if (pType==BCVars::pressureBCId::reflectGradRho)
+        {
+            reflectRhoGrad::correctGradRho(edgeGrp, drhoM, drhoP, n);
+        }
+        //interiorSide
+        else if (pType==BCVars::pressureBCId::interiorSide)
+        {
+            interiorSide::correctGradRho(drhoM, drhoP, n, isStrong);
+        }
+//------//Custom_Boundary_Conditions----------------------------------------
 
         return std::make_tuple(drhoM[0], drhoM[1]);
     }
@@ -1006,6 +1155,10 @@ namespace BCSupportFncs
 
         //double umP, vmP;
 
+        //Correct rhoEM = rhoEP following Mengaldo
+        //double rhoEM_org(UMinus[4]); //Backup
+        //UMinus[4]=UPlus[4];
+
         /* Voi ham calcLocalInviscidFlux, neu flux type la LxF hoac central, cac bien
          * invisFluxLocalXMaster,.., ULMaster,.. deu luu gia tri tai he toa do global.
          * Neu flux type la Roe hoac HLL, cac bien nay luu gia tri tai he local.
@@ -1014,6 +1167,9 @@ namespace BCSupportFncs
         process::NSFEq::calcLocalInviscidFlux(UPlus,invisFluxLocalXPlus,invisFluxLocalYPlus,ULPlus,normVector,TPlus);
         process::NSFEq::calcLocalInviscidFlux(UMinus,invisFluxLocalXMinus,invisFluxLocalYMinus,ULMinus,normVector,TMinus);
 
+
+        //Recover rhoEM before calculating viscous term
+        //UMinus[4]=rhoEM_org;
 
         /* Voi ham calcLocalViscousFlux, vi flux type luon la central, cac bien
          * invisFluxLocalXMaster,.., ULMaster,.. deu luu gia tri tai he toa do global.

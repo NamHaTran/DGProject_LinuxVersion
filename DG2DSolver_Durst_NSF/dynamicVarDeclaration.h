@@ -260,16 +260,12 @@ namespace SurfaceBCFields
 {
     //extern int **BCPointsInfor;
     extern std::vector<std::vector<int>> BCPointsInfor;
-    /*
-     * - 2 fields SurfaceBCFields::TBC, SurfaceBCFields::uBC va SurfaceBCFields::vBC dung de
-     * luu gia tri TJump, uSlip va vSlip khi dung dieu kien bien temperatureJump va slip.
-     * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
-     * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
-    */
+
     extern double *TBc;
     extern double *uBc;
     extern double *vBc;
     extern double *pBc;
+
     extern int *localGlobalBCEdgesMatching;
 
     /*Derivatives*/

@@ -4,6 +4,7 @@
 #include "VarDeclaration.h"
 #include "dynamicVarDeclaration.h"
 #include "DGAuxUltilitiesLib.h"
+#include <tuple>
 
 
 /* GHI CHU:
@@ -13,6 +14,10 @@
  * NSFEqBCsForNormalBoundary trong ham NSFEqBCsImplement    ------> setup flag de xac dinh co turn of self-diffusion tai wall khong
  * process::NSFEq::calcSurfaceFlux                          ------> setup flag de xac dinh co turn of self-diffusion tai wall khong
  * process::NSFEq::calcVolumeIntegralTerms                  ------> setup flag de xac dinh co turn of self-diffusion tai wall khong
+ * message::showCaseInformations                            ------> Show Durst mode settings
+ * IO::loadSettingFiles::massDiffSettings                   ------> Load settings
+ * symmetryBC_NSFEqs                                        ------> setup flag de xac dinh BC dang tinh la symmetry. Flag nay de turn on ham correct flux tai symmetry
+ *
  *
  * Keyword trong code: DURST MODEL
 */
@@ -20,9 +25,23 @@ namespace extNSF_Durst {
     /*Variables*/
     bool enable(false),
         diffusionAtWall(false),
-        needToRemoveDiffTerm(false);
-    double Dm(1.0);
+        needToRemoveDiffTerm(false),
 
+        massDiffModel_ChapmanEnskog(false),
+        massDiffModel_constant(false),
+
+        dropNormSelfDiffTerm(false),
+
+        isSymmetry(false);
+
+    double Dm(1.32),
+        blending(0.5),
+        realDm(1.32);
+
+    void applyBlendingFactorToDm()
+    {
+        extNSF_Durst::realDm=(extNSF_Durst::Dm - 1.0)*extNSF_Durst::blending + 1.0;
+    }
 
     void correctViscousTerms(std::vector<std::vector<double>> &diffTerms, std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy)
     {
@@ -145,8 +164,11 @@ namespace extNSF_Durst {
         Qy              (selfDiffusionTensor[1][3])
         */
         //Luu y cac dao ham deu da nhan mu
-        mDx = -extNSF_Durst::Dm*(drhox/rhoVal + dTx/(2*TVal));
-        mDy = -extNSF_Durst::Dm*(drhoy/rhoVal + dTy/(2*TVal));
+        //mDx = -extNSF_Durst::Dm*(drhox/rhoVal + dTx/(TVal));
+        //mDy = -extNSF_Durst::Dm*(drhoy/rhoVal + dTy/(TVal));
+        mDx = extNSF_Durst::calcSelfDiffFlux(rhoVal,TVal,drhox,dTx);
+        mDy = extNSF_Durst::calcSelfDiffFlux(rhoVal,TVal,drhoy,dTy);
+
         OutputMatrix[0][0]=mDx;
         OutputMatrix[1][0]=mDy;
 
@@ -266,8 +288,10 @@ namespace extNSF_Durst {
                 dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
 
                 //Term mD
-                mDx[na][nb] = -extNSF_Durst::Dm*(drhox/rhoVal + dTx/(2*TVal));
-                mDy[na][nb] = -extNSF_Durst::Dm*(drhoy/rhoVal + dTy/(2*TVal));
+                //mDx[na][nb] = -extNSF_Durst::Dm*(drhox/rhoVal + dTx/(TVal));
+                //mDy[na][nb] = -extNSF_Durst::Dm*(drhoy/rhoVal + dTy/(TVal));
+                mDx[na][nb] = extNSF_Durst::calcSelfDiffFlux(rhoVal,TVal,drhox,dTx);
+                mDy[na][nb] = extNSF_Durst::calcSelfDiffFlux(rhoVal,TVal,drhoy,dTy);
             }
         }
 
@@ -316,6 +340,50 @@ namespace extNSF_Durst {
 
             EnergyEqnVolIntTerm[order1] = EnergyEqnVolIntTerm[order1] + Int;
         }
+    }
+
+    double calcSelfDiffFlux(double rho, double T, double gradRho, double gradT)
+    {
+        extNSF_Durst::applyBlendingFactorToDm();
+        return (-extNSF_Durst::realDm*(gradRho/rho + gradT/(T)));
+    }
+
+    double calcDiffVelocity(std::vector<double> &U, std::vector<double> &dU)
+    {
+        double du(0.0), dv(0.0), dE(0.0), rhouVal(0.0), rhovVal, rhoVal(0.0), rhoEVal(0.0), TVal;
+        double drho(0.0),
+            drhou(0.0),
+            drhov(0.0),
+            drhoE(0.0),
+            dT(0.0);
+        double vD(0.0);
+
+        double uVal(0.0), vVal(0.0), eVal(0.0);
+
+        rhoVal = U[0];
+        rhouVal = U[1];
+        rhovVal = U[2];
+        rhoEVal = U[3];
+
+        TVal = math::CalcTFromConsvVar(rhoVal,rhouVal,rhovVal,rhoEVal);
+        eVal = material::Cv*TVal;
+
+        uVal = rhouVal / rhoVal;
+        vVal = rhovVal / rhoVal;
+
+        drho = dU[0];
+        drhou = dU[1];
+        drhov = dU[2];
+        drhoE = dU[3];
+
+        du = math::calcRhouvEDeriv(drhou, drho, rhouVal, rhoVal);
+        dv = math::calcRhouvEDeriv(drhov, drho, rhovVal, rhoVal);
+        dE = math::calcRhouvEDeriv(drhoE, drho, rhoEVal, rhoVal);
+        dT = math::calcTDeriv(dE, du, dv, uVal, vVal);
+
+        vD = extNSF_Durst::calcSelfDiffFlux(rhoVal,TVal,drho,dT)/rhoVal;
+
+        return vD;
     }
 }
 

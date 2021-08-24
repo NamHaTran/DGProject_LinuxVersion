@@ -10,6 +10,9 @@
 #include <fstream>
 #include "DGIOLib.h"
 
+//Extended Navier-Stokes-Fourier model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
+
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin)
@@ -132,12 +135,14 @@ void reconstructLatestTime()
     rhou = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhov = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhoE = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+
     SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
     auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
     SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
     auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
     SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
     auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
+
     auxUlti::initialize1DArray(theta1Arr, meshVar::nelem2D, 1.0);
     theta2Arr=new double[meshVar::nelem2D];
     auxUlti::initialize1DArray(theta2Arr, meshVar::nelem2D, 1.0);
@@ -391,13 +396,61 @@ namespace DG2Tecplot
         {
             double rhoVal(rho[element][0]),
                 rhouVal(rhou[element][0]);
-            out = rhouVal / rhoVal;
+
+            out=(rhouVal / rhoVal); //convective velocity
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Velocity if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                double vD(0.0);
+                std::vector<double> U(4, 0.0), dU(4, 0.0);
+                U[0]=rho[element][0];
+                U[1]=rhou[element][0];
+                U[2]=rhov[element][0];
+                U[3]=rhoE[element][0];
+
+                dU[0]=BR1Vars::rhoX[element][0];
+                dU[1]=BR1Vars::rhouX[element][0];
+                dU[2]=BR1Vars::rhovX[element][0];
+                dU[3]=BR1Vars::rhoEX[element][0];
+
+                vD=extNSF_Durst::calcDiffVelocity(U,dU);
+
+                //Corect velocity
+                out = out + vD;
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
         }
         else if (valType == 3)  //v
         {
             double rhoVal(rho[element][0]),
                 rhovVal(rhov[element][0]);
-            out = rhovVal / rhoVal;
+
+            out = (rhovVal / rhoVal); //convective velocity
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Velocity if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                double vD(0.0);
+                std::vector<double> U(4, 0.0), dU(4, 0.0);
+                U[0]=rho[element][0];
+                U[1]=rhou[element][0];
+                U[2]=rhov[element][0];
+                U[3]=rhoE[element][0];
+
+                dU[0]=BR1Vars::rhoY[element][0];
+                dU[1]=BR1Vars::rhouY[element][0];
+                dU[2]=BR1Vars::rhovY[element][0];
+                dU[3]=BR1Vars::rhoEY[element][0];
+
+                vD=extNSF_Durst::calcDiffVelocity(U,dU);
+
+                //Corect velocity
+                out = out + vD;
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
         }
         else if (valType == 4)  //e
         {

@@ -19,6 +19,12 @@ namespace BCVars {
         static constexpr int fixedValue = 1;
         static constexpr int inletOutlet = 4;
         static constexpr int zeroGradRhoUncorrectP = 12;
+
+        //Custom BC reflectGradRho
+        static constexpr int reflectGradRho = 13;
+
+        //Custom BC interiorSide (add 22/07/2021)
+        static constexpr int interiorSide = 14;
     }
 
     namespace temperatureBCId {
@@ -26,6 +32,12 @@ namespace BCVars {
         static constexpr int zeroGrad = 2;
         static constexpr int fixedValue = 1;
         static constexpr int inletOutlet = 4;
+
+        //Custom BC interiorSide (add 22/07/2021)
+        static constexpr int interiorSide = 14;
+
+        //Custom BC SmoluchowskyTJump (add 22/07/2021)
+        static constexpr int SmoluchowskyTJump = 15;
     }
 
     namespace velocityBCId {
@@ -35,6 +47,12 @@ namespace BCVars {
         static constexpr int slipWall = 5;
         static constexpr int inletOutlet = 4;
         static constexpr int zeroGrad = 6;
+
+        //Custom BC interiorSide (add 22/07/2021)
+        static constexpr int interiorSide = 14;
+
+        //Custom BC MaxwellSlip (add 19/07/2021)
+        static constexpr int MaxwellSlip = 15;
     }
 }
 #endif // BCVARIABLES_H

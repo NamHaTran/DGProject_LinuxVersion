@@ -998,15 +998,6 @@ namespace auxUlti
         rhovResArr = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
         rhoEResArr = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-        /*Surface BC fields---------------------------------------------------------------------------*/
-        SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
-        SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
-        SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
-        SurfaceBCFields::pBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::pBc, meshVar::numBCEdges, 0.0);
         meshVar::distanceFromCentroidToBCEdge = new double [meshVar::numBCEdges];
 
         /*
@@ -1144,9 +1135,19 @@ namespace auxUlti
         mathVar::GaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
         mathVar::wGaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
 
-        //For Maxwell-Smoluchowsky BC
+        //For Non Equilibrium BCs
         meshVar::normProjectionOfCenterToBCEdge_realSysCoor = auxUlti::resize2DArray(meshVar::numBCEdges, 2,0.0);
         meshVar::normProjectionOfCenterToBCEdge_standardSysCoor = auxUlti::resize2DArray(meshVar::numBCEdges, 2,0.0);
+
+        //SurfaceBCFields
+        SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
+        SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
+        SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, iniValues::TIni);
+        SurfaceBCFields::pBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::pBc, meshVar::numBCEdges, iniValues::pIni);
 	}
 
     int getAdressOfBCEdgesOnBCValsArray(int globalEdgeId)
@@ -1548,6 +1549,9 @@ namespace auxUlti
         }
     }
 
+    /**
+     * @brief Function gets command inputted from terminal.
+     */
     void getCommand()
     {
         if (systemVar::currentProc==0)

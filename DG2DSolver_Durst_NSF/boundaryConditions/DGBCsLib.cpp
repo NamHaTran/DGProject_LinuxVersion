@@ -178,6 +178,8 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
     //DURST MODEL-------------------------------------------------------
     //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::needToRemoveDiffTerm ve true
     bcForExtNSF_Durst::checkConditionToAddDiffTerms(edge);
+    //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::dropNormSelfDiffTerm ve true
+    bcForExtNSF_Durst::checkConditionToDropNormSelfDiffTerm(edge);
     //DURST MODEL-------------------------------------------------------
 
     if (flowProperties::viscous)
@@ -209,6 +211,8 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
     //DURST MODEL-------------------------------------------------------
     //Reset lai extNSF_Durst::needToRemoveDiffTerm
     bcForExtNSF_Durst::resetNeedToRemoveDiffTermFlag();
+    //Reset lai extNSF_Durst::dropNormSelfDiffTerm
+    bcForExtNSF_Durst::resetNeedToDropNormSelfDiffTermFlag();
     //DURST MODEL-------------------------------------------------------
 }
 
