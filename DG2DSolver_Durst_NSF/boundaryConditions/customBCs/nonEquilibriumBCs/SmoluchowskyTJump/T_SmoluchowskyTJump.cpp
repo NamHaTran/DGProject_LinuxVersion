@@ -12,7 +12,8 @@
 #include <math.h>
 #include <iostream>
 
-#include ".././nonEqmBCsGenFuncs.h"
+#include ".././nonEqmBCs_GenFuncs.h"
+#include ".././nonEqmBCs_Vars.h"
 
 namespace SmoluchowskyTJump {
     void T_IO(int bcGrp, std::ifstream &FileFlux)
@@ -50,22 +51,22 @@ namespace SmoluchowskyTJump {
         readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethTStrong);
     }
 
-    /*
-    void correctT(int edge, int edgeGrp, double &varM, double varP)
+    void correctT(int edge, int edgeGrp, int nG, double &varM, double varP)
     {
         //Apply boundary condition
         bool isStrong(BCVars::DirichletAppMethTStrong[edgeGrp-1]);
         varM = fixedValue_scalar(varP,
-                SurfaceBCFields::TBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)],
+                nonEqmSurfaceField::TBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG],
                 isStrong);
     }
 
+    /*
     void correctGradT(std::vector<double> &gradM, const std::vector<double> &gradP)
     {
         gradM=gradP;
     }*/
 
-    void calcTJump_DGTypeExplicit(int edge, int edgeGrp)
+    void calcTJump_DGTypeExplicit(int edge, int edgeGrp, int nG)
     {
         int element(0), tempE(0), localEdgeId(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
         std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(edge);
@@ -80,10 +81,9 @@ namespace SmoluchowskyTJump {
         nx = auxUlti::getNormVectorComp(element, edge, 1);
         ny = auxUlti::getNormVectorComp(element, edge, 2);
 
-        //Tinh gia tri tai normal projection cua center xuong BC
         double a(0.0), b(0.0);
-        a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][0];
-        b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][1];
+        //Tinh toa do diem Gauss dang xet
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
         double rhoBC(math::pointValue(element,a,b,1,2)),
                 rhouBC(math::pointValue(element,a,b,2,2)),
@@ -127,10 +127,10 @@ namespace SmoluchowskyTJump {
             TJump=TVal;
         }
         //Update to surfaceBCfields
-        SurfaceBCFields::TBc[localEdgeId]=TJump;
+        nonEqmSurfaceField::TBc[localEdgeId][nG] = TJump;
     }
 
-    void calcTJump_FDMTypeImplicit(int edge, int edgeGrp)
+    void calcTJump_FDMTypeImplicit(int edge, int edgeGrp, int nG)
     {
         //Dieu kien bien Maxwell-Smoluchowski
 
@@ -142,26 +142,40 @@ namespace SmoluchowskyTJump {
                 rhovC(rhov[element][0]),
                 rhoEC(rhoE[element][0]),
                 TVal(SurfaceBCFields::TBc[localEdgeId]),
-                delta(meshVar::distanceFromCentroidToBCEdge[localEdgeId]);
+                delta(meshVar::distanceFromGaussPtsToCentroid[localEdgeId][nG]);
 
         double TWall(bcValues::TBCFixed[edgeGrp - 1]), TJump(0.0), a, b;
 
-        //Tinh gia tri tai normal projection cua center xuong BC
-        a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][0];
-        b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][1];
+        double
+                nx = auxUlti::getNormVectorComp(element, edge, 1),
+                ny = auxUlti::getNormVectorComp(element, edge, 2);
+
+        //Lay vector don vi (C)->(Gauss)
+        double
+                ix(meshVar::GaussPtsOnBCEdge_unitVector_x[localEdgeId][nG]),
+                iy(meshVar::GaussPtsOnBCEdge_unitVector_y[localEdgeId][nG]);
+
+        //Tinh dot product i.n
+        double iDotn(nx*ix+ny*iy);
+
+        //Tinh toa do diem Gauss dang xet
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
         double rhoBC(math::pointValue(element,a,b,1,2));
 
         //Gia tri trung binh (tai centroid)
-        TC=math::CalcTFromConsvVar(rhoC,rhouC,rhovC,rhoEC);
+        TC=math::CalcTFromConsvVar(rhoC,rhouC,rhovC,rhoEC)*iDotn;
 
         //1. Smoluchowski temperature jump-----------------------------------------------------------------------------
         /* Note: term dT/dn, normal gradient component of T, is approximated by backward finite difference method
-         *                                  dT/dn = (TJump - TC)/delta
+         *                                  dT/dn = ((TJump - TC)/delta)*(i dot n)
          * with
          *      TJump: temperature at wall (face of cell)
          *      TC: temperature at cell centroid
-         *      delta: distance from centroid to normal projection of itself to wall
+         *      delta: distance from centroid to surface Gauss point
+         *      i dot n: dot product of i and n
+         * Multiply (i dot n) into parentheses to get original form:
+         *                                  dT/dn = (TJump*(i dot n) - TC*(i dot n))/delta
          */
         double AT(material::viscosityCoeff::Sutherland::As*pow(3.1416/(2*material::R),0.5)/rhoBC),
                 BT(2*material::gamma*(2-bcValues::sigmaT)/(bcValues::sigmaT*material::Pr*(material::gamma+1)));
@@ -176,11 +190,11 @@ namespace SmoluchowskyTJump {
         {
             if (T1>0)
             {
-                TJump=T1;
+                TJump=T1/iDotn;
             }
             else
             {
-                TJump=T2;
+                TJump=T2/iDotn;
             }
         }
         else
@@ -188,6 +202,6 @@ namespace SmoluchowskyTJump {
             TJump=TVal;
         }
         //Update to surfaceBCfields
-        SurfaceBCFields::TBc[localEdgeId]=TJump;
+        nonEqmSurfaceField::TBc[localEdgeId][nG] = TJump;
     }
 }

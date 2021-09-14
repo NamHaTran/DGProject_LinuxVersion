@@ -37,4 +37,22 @@ Mô hình Durst
 Fix bug
 - Fix bug giải kết quả 'nan' của hàm tìm hình chiếu vuông góc của cell centroid lên 1 cạnh.
 
-- Code update lên github cùng ngày.	
+- Code update lên github cùng ngày.
+
+Bản backup 14/09/2021:
+Điều kiện biên
+- Update điều kiện biên Maxwell và Smoluchowsky:
+	+ Đổi cách lưu surfaceField data, mảng lưu giá trị T và U tại surface giờ là nonEqmSurfaceField, lưu giá trị tại từng điểm Gauss trên edge.
+	+ Giá trị T và U tính từ đk biên nonequilibrium tại từng edge giờ là giá trị tại từng điểm Gauss, chứ không phải là giá trị tại hình chiếu vuông góc của centroid xuống edge nữa.
+	+ Update hàm giải đk biên. Trong đó đạo hàm tại các điểm Gauss được tính bằng (phi_Gauss - phi_C)*(dot(i,n))/delta, với
+		* phi là biến đang xét. phi_Gauss là biến đang xét tại điểm Gauss trên surface, có thể là biến hoặc giá trị có sẵn.
+		* dot(i,n) là dot product của i (vector đơn vị chỉ phương của đoạn thẳng C_GaussPt) và n (vector pháp tuyến đơn vị của edge).
+		* delta là độ dài đoạn C_GaussPt.
+	Phương pháp này giúp bậc chính xác của kết quả tính tăng lên theo bậc của bài toán và số điểm Gauss, thay vì chỉ là bậc 1 như trước (giá trị T, U tại các điểm Gauss được coi như bằng giá trị T, U tại hình chiếu của centroid xuống cạnh).
+	+ Update hàm đọc file *surface.txt, có thể bỏ qua nếu file không tồn tại, hoặc đọc kết quả từ file theo format cũ rồi tính giá trị trung bình và phân phối lại giá trị này tới các điểm Gauss trên cạnh. Update này giúp có thể chạy tiếp từ kết quả tính từ version cũ của code mà không bị conflict.
+	+ Update thêm 1 số hàm xử lý hình học mới cần cho nonequilibrium BC.
+Fix bug
+- Fix bug nhỏ về chính tả trong message output ra terminal.
+
+- Code update lên github cùng ngày.
+	

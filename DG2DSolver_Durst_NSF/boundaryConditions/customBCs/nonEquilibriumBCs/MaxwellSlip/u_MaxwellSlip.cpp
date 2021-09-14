@@ -11,7 +11,8 @@
 #include <math.h>
 #include <iostream>
 
-#include ".././nonEqmBCsGenFuncs.h"
+#include ".././nonEqmBCs_GenFuncs.h"
+#include ".././nonEqmBCs_Vars.h"
 
 namespace MaxwellSlip {
     void u_IO(int bcGrp, std::ifstream &FileFlux)
@@ -50,23 +51,23 @@ namespace MaxwellSlip {
         readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
     }
 
-    /*
-    void correctU(int edge, int edgeGrp, std::vector<double> &varM, std::vector<double> varP)
+    void correctU(int edge, int edgeGrp, int nG, std::vector<double> &varM, std::vector<double> varP)
     {
         //Apply boundary condition
         bool isStrong(BCVars::DirichletAppMethUStrong[edgeGrp -1]);
         std::vector<double> UBC{
-                    SurfaceBCFields::uBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)],    //uSlip
-                    SurfaceBCFields::vBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)]};   //vSlip
+                    nonEqmSurfaceField::uBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG],    //uSlip
+                    nonEqmSurfaceField::vBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG]};   //vSlip
         fixedValue_vector(varM,varP,UBC,isStrong);
     }
 
+    /*
     void correctGradU(std::vector<double> &gradM, const std::vector<double> &gradP)
     {
         gradM=gradP;
     }*/
 
-    void calcUSlip_DGTypeExplicit(int edge, int edgeGrp)
+    void calcUSlip_DGTypeExplicit(int edge, int edgeGrp, int nG)
     {
         int element(0), tempE(0), localEdgeId(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
         std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(edge);
@@ -76,15 +77,14 @@ namespace MaxwellSlip {
         double dux(0.0), duy(0.0), dvx(0.0), dvy(0.0), lambda(0.0), dEx, dEy,
                 muVal(0.0), nx, ny, dTx, dTy;
 
-        double TJump(SurfaceBCFields::TBc[localEdgeId]),
+        double TJump(nonEqmSurfaceField::TBc[localEdgeId][nG]),
         uWall(bcValues::uBCFixed[edgeGrp - 1]), vWall(bcValues::vBCFixed[edgeGrp - 1]);
         nx = auxUlti::getNormVectorComp(element, edge, 1);
         ny = auxUlti::getNormVectorComp(element, edge, 2);
 
-        //Tinh gia tri tai normal projection cua center xuong BC
         double a(0.0), b(0.0);
-        a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][0];
-        b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][1];
+        //Tinh toa do diem Gauss dang xet
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
         double rhoBC(math::pointValue(element,a,b,1,2)),
                 rhouBC(math::pointValue(element,a,b,2,2)),
@@ -152,12 +152,12 @@ namespace MaxwellSlip {
                 uSlip=uWall-c*lambda*SdotndotPImc[0]/muVal-(3/4)*SdotDivT[0]*muVal/(rhoBC*TJump)-c*lambda*div_n_Sdotu[0],
                 vSlip=vWall-c*lambda*SdotndotPImc[1]/muVal-(3/4)*SdotDivT[1]*muVal/(rhoBC*TJump)-c*lambda*div_n_Sdotu[1];
 
-        //Update arrays
-        SurfaceBCFields::uBc[localEdgeId]=uSlip;
-        SurfaceBCFields::vBc[localEdgeId]=vSlip;
+        //Update arrays        
+        nonEqmSurfaceField::uBc[localEdgeId][nG] = uSlip;
+        nonEqmSurfaceField::vBc[localEdgeId][nG] = vSlip;
     }
 
-    void calcUSlip_FDMTypeImplicit(int edge, int edgeGrp)
+    void calcUSlip_FDMTypeImplicit(int edge, int edgeGrp, int nG)
     {
         //Dieu kien bien Maxwell-Smoluchowski
 
@@ -170,18 +170,25 @@ namespace MaxwellSlip {
                 rhouC(rhou[element][0]),
                 rhovC(rhov[element][0]),
                 rhoEC(rhoE[element][0]),
-                delta(meshVar::distanceFromCentroidToBCEdge[localEdgeId]),
+                delta(meshVar::distanceFromGaussPtsToCentroid[localEdgeId][nG]),
                 muVal(0.0), nx, ny, dTx, dTy,dTn;
 
         double TJump(0.0), uWall(bcValues::uBCFixed[edgeGrp - 1]), vWall(bcValues::vBCFixed[edgeGrp - 1]), a, b;
 
-        //Tinh gia tri tai normal projection cua center xuong BC
-        a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][0];
-        b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[localEdgeId][1];
+        //Tinh toa do diem Gauss dang xet
+        std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
 
         double rhoBC(math::pointValue(element,a,b,1,2));
         nx = auxUlti::getNormVectorComp(element, edge, 1);
         ny = auxUlti::getNormVectorComp(element, edge, 2);
+
+        //Lay vector don vi (C)->(Gauss)
+        double
+                ix(meshVar::GaussPtsOnBCEdge_unitVector_x[localEdgeId][nG]),
+                iy(meshVar::GaussPtsOnBCEdge_unitVector_y[localEdgeId][nG]);
+
+        //Tinh dot product i.n
+        double iDotn(nx*ix+ny*iy);
 
         //Gia tri trung binh (tai centroid)
         TC=math::CalcTFromConsvVar(rhoC,rhouC,rhovC,rhoEC);
@@ -189,10 +196,10 @@ namespace MaxwellSlip {
         vC=rhovC/rhoC;
 
         //Lay gia tri TJump trong array
-        TJump=SurfaceBCFields::TBc[localEdgeId];
+        TJump=nonEqmSurfaceField::TBc[localEdgeId][nG];
 
         //Gia tri normal gradient (by following Finite Difference Method)
-        dTn=(TJump-TC)/delta;
+        dTn=(TJump-TC)*iDotn/delta;
 
         //Tinh cac thanh phan dao ham theo 2 phuong
         dTx=dTn*nx;
@@ -203,15 +210,18 @@ namespace MaxwellSlip {
 
         //2. Maxwell slip velocity--------------------------------------------------------
         /* Note: term dU/dn, normal gradient component of U(u, v), is approximated by backward finite difference method
-         *                                  dU/dn = (USlip - UC)/delta
+         *                                  dU/dn = ((USlip - UC)/delta)*(i dot n)
          * with
          *      USlip: velocity at wall (face of cell)
          *      UC: velocity at cell centroid
-         *      delta: distance from centroid to normal projection of itself to wall
+         *      delta: distance from centroid to surface Gauss point
+         *      i dot n: dot product of i and n
+         * Multiply (i dot n) into parentheses to get original form:
+         *                                  dU/dn = (USlip*(i dot n) - UC*(i dot n))/delta
          */
 
-        uC=uC/delta;
-        vC=vC/delta;
+        uC=uC*iDotn/delta;
+        vC=vC*iDotn/delta;
 
         //Transformation tensor components
         double S11(1-nx*nx),
@@ -267,11 +277,11 @@ namespace MaxwellSlip {
 
         //Giai uSlip, vSlip
         double uSlip, vSlip;
-        vSlip=(F6-F4*F3/F1)/(F5-F4*F2/F1);
-        uSlip=(F3-F2*vSlip)/F1;
+        vSlip=(F6-F4*F3/F1)/((F5-F4*F2/F1)*iDotn);
+        uSlip=(F3-F2*vSlip)/(F1*iDotn);
 
         //Update
-        SurfaceBCFields::uBc[localEdgeId]=uSlip;
-        SurfaceBCFields::vBc[localEdgeId]=vSlip;
+        nonEqmSurfaceField::uBc[localEdgeId][nG] = uSlip;
+        nonEqmSurfaceField::vBc[localEdgeId][nG] = vSlip;
     }
 }

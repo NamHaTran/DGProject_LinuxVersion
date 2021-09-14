@@ -151,7 +151,7 @@ namespace BCSupportFncs
         U[3]=rho*(material::Cv*T+0.5*(u*u+v*v));
     }
 
-    void correctPriVars(int edge, int edgeGrp, std::vector<double> &priVarsM, const std::vector<double> &priVarsP, const std::vector<double> &priVarsMean, const std::vector<double> &n, bool inflow)
+    void correctPriVars(int edge, int edgeGrp, int nG, std::vector<double> &priVarsM, const std::vector<double> &priVarsP, const std::vector<double> &priVarsMean, const std::vector<double> &n, bool inflow)
     {
         /* priVars[0]=rho;
         priVars[1]=u;
@@ -174,8 +174,8 @@ namespace BCSupportFncs
         //Correct u, v, T, p
         //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien non equilibrium
         pM = correctPressure(edge,edgeGrp,pP,pMean,inflow);
-        TM = correctTemperature(edge,edgeGrp,TP,TMean,inflow);
-        std::tie(uM, vM) = correctVelocity(edge,edgeGrp,uP,uMean,vP,vMean,n,inflow);
+        TM = correctTemperature(edge,edgeGrp,nG,TP,TMean,inflow);
+        std::tie(uM, vM) = correctVelocity(edge,edgeGrp,nG,uP,uMean,vP,vMean,n,inflow);
 
         priVarsM[0]=rhoM;
         priVarsM[1]=uM;
@@ -199,7 +199,7 @@ namespace BCSupportFncs
         }
     }
 
-    void correctPriVarsGrad(int edge, int edgeGrp, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UP, const std::vector<double> &UM, double TP, double TM, const std::vector<double> &n, bool inflow)
+    void correctPriVarsGrad(int edge, int edgeGrp, int nG, std::vector<double> &dpriVarsXM, std::vector<double> &dpriVarsYM, const std::vector<double> &dpriVarsXP, const std::vector<double> &dpriVarsYP, const std::vector<double> &UP, const std::vector<double> &UM, double TP, double TM, const std::vector<double> &n, bool inflow)
     {
         /* priVars[0]=rho;
         priVars[1]=u;
@@ -249,11 +249,11 @@ namespace BCSupportFncs
 
         //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien non equilibrium
         //Correct grad(T)
-        std::tie(dTXM,dTYM)=correctTemperatureGrad(edgeGrp,dTXP,dTYP,inflow,n);
+        std::tie(dTXM,dTYM)=correctTemperatureGrad(edgeGrp,nG,dTXP,dTYP,inflow,n);
 
         //Correct grad(u)
-        std::tie(duXM,duYM)=correctVelocityGrad(edgeGrp,duXP,duYP,inflow,n);
-        std::tie(dvXM,dvYM)=correctVelocityGrad(edgeGrp,dvXP,dvYP,inflow,n);
+        std::tie(duXM,duYM)=correctVelocityGrad(edgeGrp,nG,duXP,duYP,inflow,n);
+        std::tie(dvXM,dvYM)=correctVelocityGrad(edgeGrp,nG,dvXP,dvYP,inflow,n);
 
         //Correct grad(p)
         //Co the khong can thiet!
@@ -276,7 +276,7 @@ namespace BCSupportFncs
         dpriVarsYM[4]=dTYM;
     }
 
-    std::tuple <double, double> correctVelocity(int edge, int edgeGrp, double uP, double uMean, double vP, double vMean, const std::vector<double> &n, bool inflow)
+    std::tuple <double, double> correctVelocity(int edge, int edgeGrp, int nG, double uP, double uMean, double vP, double vMean, const std::vector<double> &n, bool inflow)
     {
         //Ham correct gia tri bien U tai BC theo dieu kien bien
         /* Velocity boundary conditions:
@@ -383,8 +383,7 @@ namespace BCSupportFncs
         //Maxwell Slip
         case BCVars::velocityBCId::MaxwellSlip:
             {
-                //Giong fixedValue
-                fixedValue_vector(UM,UP,UBC,isStrong);
+                MaxwellSlip::correctU(edge,edgeGrp,nG,UM,UP);
             }
             break;
 //------//Custom_Boundary_Conditions----------------------------------------
@@ -404,7 +403,7 @@ namespace BCSupportFncs
         return std::make_tuple(UM[0],UM[1]);
     }
 
-    std::tuple <double, double> correctVelocityGrad(int edgeGrp, double duXP, double duYP, bool inflow, const std::vector<double> &n)
+    std::tuple <double, double> correctVelocityGrad(int edgeGrp, int nG, double duXP, double duYP, bool inflow, const std::vector<double> &n)
     {
         //Ham correct gia tri bien U tai BC theo dieu kien bien
         /* Velocity boundary conditions:
@@ -528,7 +527,7 @@ namespace BCSupportFncs
         return std::make_tuple(duM[0],duM[1]);
     }
 
-    double correctTemperature(int edge, int edgeGrp, double TP, double TMean, bool inflow)
+    double correctTemperature(int edge, int edgeGrp, int nG, double TP, double TMean, bool inflow)
     {
         //Ham correct gia tri bien T tai BC theo dieu kien bien
         /* Temperature boundary conditions:
@@ -615,8 +614,7 @@ namespace BCSupportFncs
         //Smoluchowsky Jump
         case BCVars::temperatureBCId::SmoluchowskyTJump:
             {
-                //Giong fixedValue
-                TM = fixedValue_scalar(TP,TBC,isStrong);
+                SmoluchowskyTJump::correctT(edge,edgeGrp,nG,TM,TP);
             }
             break;
 //------//Custom_Boundary_Conditions----------------------------------------
@@ -635,7 +633,7 @@ namespace BCSupportFncs
         return TM;
     }
 
-    std::tuple<double, double> correctTemperatureGrad(int edgeGrp, double dTXP, double dTYP, bool inflow, const std::vector<double> &n)
+    std::tuple<double, double> correctTemperatureGrad(int edgeGrp, int nG, double dTXP, double dTYP, bool inflow, const std::vector<double> &n)
     {
         //Ham correct gia tri bien dT tai BC theo dieu kien bien.
         /* Temperature boundary conditions:

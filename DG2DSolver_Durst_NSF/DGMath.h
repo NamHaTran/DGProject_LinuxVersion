@@ -389,6 +389,9 @@ namespace math
         std::vector<int> sortVerticesCCW(std::vector<int> verticesId, std::vector<double> angle);
 
         double calcAngleOfPoint(double xOrig,double yOrig,double xPoint,double yPoint);
+
+        //Vector 12, (1)------>(2)
+        std::tuple<double, double> calcUnitVectorOf2Points(double xPt1, double yPt1, double xPt2, double yPt2);
 	}
 
 	namespace residualManipulation

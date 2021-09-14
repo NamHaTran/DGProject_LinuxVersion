@@ -25,6 +25,14 @@ namespace auxUlti
 	/*Function return true if considering element is master of considering edge, otherwise it return false*/
 	bool checkMaster(int elem, int edge);
 
+    /**
+     * @brief Function check boundary type of edge (wall, patch, symmetry, matched).
+     *
+     * @param edgeId: global edge Id.
+     * @return Id of BC type (compare to meshVar::BCTypeID Ids to determine BC Type).
+     */
+    int checkBCTypeOfEdge(int edgeId);
+
 	/*Function gets normal vector component (nx or ny) from normalVector array*/
 	double getNormVectorComp(int elem, int edge, int dir);
 
@@ -180,7 +188,7 @@ namespace auxUlti
 
     void resizeTemporaryArrays();
 
-    int lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord);
+    std::tuple<int, bool> lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord);
 
     void resizeRequiredArrays();
 }

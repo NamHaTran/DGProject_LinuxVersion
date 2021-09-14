@@ -15,7 +15,8 @@
 #include "./limiters/limiterController.h"
 
 //Non Equilibrium BCs
-#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.h"
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h"
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h"
 
 /**
  * @brief Function excutes command.
@@ -333,6 +334,7 @@ void PreProcessing()
 
     /*RESIZE ARRAYS*/
     auxUlti::resizeRequiredArrays();
+    nonEquilibriumBCs::resizeSurfaceFields();
 
     //Synch mesh data
     for (int ivertex=0;ivertex<4;ivertex++)
@@ -351,15 +353,18 @@ void PreProcessing()
 	meshParam::calcCellMetrics();
     meshParam::calcEdgeLength();
 
-    //Ham nay tinh khoang cach tu centroid cua cell tai BC den BC
-    meshParam::calcDistanceFromCenterToBCEdge();
-
 	/*CALCULATE COORDINATES DERIVATIVES*/
 	meshParam::derivCoordinates();
     auxUlti::mappingEdges();
 
     /*Ham tim hinh chieu vuong goc cua center den BCEdge*/
     meshParam::findNormProjectionOfCenterToBCEdge();
+
+    //Tinh khoang cach tu centroid cua cell tai BC den BC
+    meshParam::calcDistanceFromCenterToBCEdge();
+
+    //Tinh khoang cach tu centroid cua cell tai BC den diem Gauss tren BC
+    geometricOp::findGaussPtsOnWallParameters();
 
 	systemVar::runPreProcess = true;
 }

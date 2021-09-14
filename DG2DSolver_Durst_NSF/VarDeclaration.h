@@ -124,6 +124,22 @@ namespace meshVar
 
     //! Number of BC groups
     extern int numBCGrp;
+
+    namespace BCTypeID {
+    //NOTE: DO NOT CHANGE THESE NUMBERS!!!
+
+        //! Id determines type wall for an edge
+        static constexpr int wall = 1;
+
+        //! Id determines type patch for an edge
+        static constexpr int patch = 2;
+
+        //! Id determines type symmetry for an edge
+        static constexpr int symmetry = 3;
+
+        //! Id determines type matched for an edge
+        static constexpr int matched = 4;
+    }
 }
 
 namespace mathVar

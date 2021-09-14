@@ -29,7 +29,7 @@
 #include "boundaryConditions/readBCInfor/BCReader.h"
 
 //Non equilibrium BCs
-#include "boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.h"
+#include "boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h"
 
 namespace IO
 {
@@ -129,7 +129,7 @@ namespace IO
             bool startToRead(false);
 
             //Doc so luong points (line dau tien cua file)
-            meshVar::npoin=auxUlti::lookForDataOfKeyword(ptLoc,"NumberOfEntities");
+            std::tie(meshVar::npoin,std::ignore)=auxUlti::lookForDataOfKeyword(ptLoc,"NumberOfEntities");
 
             //Resize mang meshVar::Points
             meshVar::Points = auxUlti::resize2DArray(meshVar::npoin,3,0.0);
@@ -179,7 +179,7 @@ namespace IO
             bool startToRead(false);
 
             //Doc so luong element 1D
-            meshVar::nelem1D=auxUlti::lookForDataOfKeyword(Elem1DLoc,"NumberOfEntities");
+            std::tie(meshVar::nelem1D,std::ignore)=auxUlti::lookForDataOfKeyword(Elem1DLoc,"NumberOfEntities");
 
             //Resize mang meshVar::Elements1D
             meshVar::Elements1D = auxUlti::resize2DIntArray(meshVar::nelem1D,3,-1);
@@ -229,7 +229,7 @@ namespace IO
             bool startToRead(false);
 
             //Doc so luong element 2D
-            meshVar::nelem2D=auxUlti::lookForDataOfKeyword(Elem2DLoc,"NumberOfEntities");
+            std::tie(meshVar::nelem2D,std::ignore)=auxUlti::lookForDataOfKeyword(Elem2DLoc,"NumberOfEntities");
 
             //Resize mang meshVar::Elements2D
             meshVar::Elements2D = auxUlti::resize2DIntArray(meshVar::nelem2D,4,-1);
@@ -278,7 +278,7 @@ namespace IO
             int boundIndex(0);
 			std::string line(" "), keyWord(" ");
             //Doc so luong boundary
-            meshVar::nBc=auxUlti::lookForDataOfKeyword(bcLoc,"NumberOfEntities");
+            std::tie(meshVar::nBc,std::ignore)=auxUlti::lookForDataOfKeyword(bcLoc,"NumberOfEntities");
 			
 			//bien nBc se tang them 1 (vi them 1 bien matched) khi readingMode parallel
             if (mode.compare("p")==0)
@@ -321,19 +321,19 @@ namespace IO
 							{
 								if (str2.compare("wall") == 0)
 								{
-									meshVar::BoundaryType[boundIndex - 1][1] = 1;  //type 1 is wall
+                                    meshVar::BoundaryType[boundIndex - 1][1] = meshVar::BCTypeID::wall;  //type 1 is wall
 								}
 								else if (str2.compare("patch") == 0)
 								{
-									meshVar::BoundaryType[boundIndex - 1][1] = 2;  //type 2 is patch
+                                    meshVar::BoundaryType[boundIndex - 1][1] = meshVar::BCTypeID::patch;  //type 2 is patch
 								}
 								else if (str2.compare("symmetry") == 0)
 								{
-									meshVar::BoundaryType[boundIndex - 1][1] = 3;  //type 3 is symmetry
+                                    meshVar::BoundaryType[boundIndex - 1][1] = meshVar::BCTypeID::symmetry;  //type 3 is symmetry
 								}
                                 else if (str2.compare("matched") == 0)
                                 {
-                                    meshVar::BoundaryType[boundIndex - 1][1] = 4;  //type 4 is matched (boundary condition type for parallel computing)
+                                    meshVar::BoundaryType[boundIndex - 1][1] = meshVar::BCTypeID::matched;  //type 4 is matched (boundary condition type for parallel computing)
                                 }
 								else
 								{
@@ -372,7 +372,7 @@ namespace IO
             {
                 std::string line("");
                 int counter = 0;
-                meshConnectionLength=auxUlti::lookForDataOfKeyword(mshConnect,"NumberOfEntities");
+                std::tie(meshConnectionLength,std::ignore)=auxUlti::lookForDataOfKeyword(mshConnect,"NumberOfEntities");
                 meshVar::meshConnection = auxUlti::resize2DIntArray(meshConnectionLength,3,0);
 
                 while (std::getline(mshConnectFlux, line))
@@ -419,7 +419,7 @@ namespace IO
             {
                 std::string line("");
                 int counter = 0;
-                systemVar::sendRecvOrder_length=auxUlti::lookForDataOfKeyword(sendRecvOrderLoc,"NumberOfEntities");
+                std::tie(systemVar::sendRecvOrder_length,std::ignore)=auxUlti::lookForDataOfKeyword(sendRecvOrderLoc,"NumberOfEntities");
                 systemVar::sendRecvOrder = auxUlti::resize2DIntArray(systemVar::sendRecvOrder_length,2,0);
 
                 while (std::getline(sendRecvOrderFlux, line))
@@ -802,7 +802,7 @@ namespace IO
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
-            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            std::tie(length,std::ignore)=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
             array=auxUlti::resize2DArray(length,column,0.0);
 
             while (std::getline(Flux, line))
@@ -858,7 +858,7 @@ namespace IO
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
-            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            std::tie(length,std::ignore)=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
             array=auxUlti::resize2DIntArray(length,column,0);
 
             while (std::getline(Flux, line))
@@ -914,7 +914,7 @@ namespace IO
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
-            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            std::tie(length,std::ignore)=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
             array = new double [length];
 
             while (std::getline(Flux, line))
@@ -967,7 +967,7 @@ namespace IO
             std::string line(" "), checkStr;
             int iElem(0);
             bool startToRead(false);
-            length=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
+            std::tie(length,std::ignore)=auxUlti::lookForDataOfKeyword(location,"NumberOfEntities");
             array = new int [length];
 
             while (std::getline(Flux, line))
@@ -1135,7 +1135,7 @@ namespace IO
 		/*end of saving conservative variables*/
 
         //Non Equilibrium: write surface values
-        nonEquilibriumBCs::writeSurfaceValues(Loc);
+        nonEquilibriumBCs_IO::writeSurfaceValues(Loc);
 
         //Write variables on wall
         postProcessing_Surface::writeVarsAtWall(Loc);
@@ -1207,7 +1207,7 @@ namespace IO
         IO::readDiscretedFields(Loc,"rhoE.txt",rhoE);
 
         //Non Equilibrium: read surface values
-        nonEquilibriumBCs::readSurfaceValues(Loc);
+        nonEquilibriumBCs_IO::readSurfaceValues(Loc);
 
 		//Read residual norm coeffs
 		fileName = "ResidualNormCoeffs.txt";

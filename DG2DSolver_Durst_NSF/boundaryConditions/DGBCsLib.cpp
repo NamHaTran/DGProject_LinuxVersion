@@ -116,7 +116,7 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
     bool inflow(BCSupportFncs::checkInflow(priVarsMean[1], priVarsMean[2],n[0],n[1]));
 
     //Correct priVarsMinus
-    BCSupportFncs::correctPriVars(edge, edgeGrp, priVarsMinus, priVarsPlus, priVarsMean, n, inflow);
+    BCSupportFncs::correctPriVars(edge, edgeGrp, nG, priVarsMinus, priVarsPlus, priVarsMean, n, inflow);
 
     //Save TM
     surfaceFields::T[edge][nG+mathVar::nGauss+1]=priVarsMinus[4];
@@ -199,7 +199,7 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
         bool inflow(BCSupportFncs::checkInflow(UMean[1]/UMean[0], UMean[2]/UMean[0],norm[0],norm[1]));
 
         //Correct grad(priVars)
-        BCSupportFncs::correctPriVarsGrad(edge, edgeGrp,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UPlus,UMinus,TPlus,TMinus,norm,inflow);
+        BCSupportFncs::correctPriVarsGrad(edge,edgeGrp,nG,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UPlus,UMinus,TPlus,TMinus,norm,inflow);
 
         //Reconstruct grad(U)
         BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TMinus);

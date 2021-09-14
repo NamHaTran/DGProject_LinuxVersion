@@ -31,17 +31,11 @@ double tempdTx(0.0), tempdTy(0.0);
 
     void checkConditionToDropNormSelfDiffTerm(int edge)
     {
-        int edgeGrp(auxUlti::getGrpOfEdge(edge));
-        int UType(bcValues::UBcType[edgeGrp - 1]);
-
         //Neu cho self diffusion tai wall
         if (extNSF_Durst::diffusionAtWall)
         {
-            //Neu edge dang set la wall
-            if (UType==BCVars::velocityBCId::noSlip
-                    || UType==BCVars::velocityBCId::movingWall
-                    || UType==BCVars::velocityBCId::slipWall)
-                //Thi remove diff terms
+            //Neu edge dang set la wall thi remove diff terms
+            if (auxUlti::checkBCTypeOfEdge(edge) == meshVar::BCTypeID::wall)
                 extNSF_Durst::dropNormSelfDiffTerm=true;
             else
                 extNSF_Durst::dropNormSelfDiffTerm=false;

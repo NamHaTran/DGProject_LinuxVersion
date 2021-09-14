@@ -13,6 +13,9 @@
 //Extended Navier-Stokes-Fourier model
 #include "./extNSFEqns/FranzDurst/DurstModel.h"
 
+//Nonequilibrium BCs
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h"
+
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin)
@@ -1114,23 +1117,26 @@ namespace postProcessing_Surface {
             for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
             {
                 globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-                int bcType(meshVar::inpoed[globleEdge][3]);
-                if (bcType==1) //type wall
+                int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+                if (bcType==meshVar::BCTypeID::wall) //type wall
                 {
-                    //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
-                    std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
-                    a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][0];
-                    b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][1];
-                    rhoBC=math::pointValue(element,a,b,1,2);
+                    for (int nG=0; nG<mathVar::nGauss+1; nG++)
+                    {
+                        //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
+                        std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
+                        //Get Gauss point's coordinates
+                        std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
+                        rhoBC=math::pointValue(element,a,b,1,2);
 
-                    FileFlux
-                              <<meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][0]<<" "
-                              <<meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][1]<<" "
-                              <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge],rhoBC)<<" "
-                              <<SurfaceBCFields::TBc[ilocalEdge]<<" "
-                              <<SurfaceBCFields::uBc[ilocalEdge]<<" "
-                              <<SurfaceBCFields::vBc[ilocalEdge]<<" "
-                              <<"\n";
+                        FileFlux
+                                  <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                  <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                  <<math::CalcP(nonEqmSurfaceField::TBc[ilocalEdge][nG],rhoBC)<<" "
+                                  <<nonEqmSurfaceField::TBc[ilocalEdge][nG]<<" "
+                                  <<nonEqmSurfaceField::uBc[ilocalEdge][nG]<<" "
+                                  <<nonEqmSurfaceField::vBc[ilocalEdge][nG]<<" "
+                                  <<"\n";
+                    }
                 }
             }
         }

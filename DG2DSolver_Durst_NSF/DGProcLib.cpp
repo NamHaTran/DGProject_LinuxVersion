@@ -29,7 +29,7 @@
 #include "./extNSFEqns/FranzDurst/boundaryConditions.h"
 
 //Non equilibrium BCs
-#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.h"
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h"
 
 namespace meshParam
 {
@@ -257,8 +257,8 @@ namespace meshParam
         for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
         {
             globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-            int bcType(meshVar::inpoed[globleEdge][3]);
-            if (bcType==1) //type wall
+            int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+            if (bcType==meshVar::BCTypeID::wall) //type wall
             {
                 std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
                 meshVar::distanceFromCentroidToBCEdge[ilocalEdge]=math::geometricOp::calcDistanceFromCenterToEdge(element,globleEdge);
@@ -276,8 +276,8 @@ namespace meshParam
         for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
         {
             globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-            int bcType(meshVar::inpoed[globleEdge][3]);
-            if (bcType==1) //type wall
+            int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+            if (bcType==meshVar::BCTypeID::wall) //type wall
             {
                 std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
 

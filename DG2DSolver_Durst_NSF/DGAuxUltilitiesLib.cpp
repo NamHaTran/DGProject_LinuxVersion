@@ -189,11 +189,12 @@ namespace auxUlti
 		return std::make_tuple(a, b);
 	}
 
-    int lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord)
+    std::tuple<int, bool> lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord)
     {
         std::ifstream FileFlux(fileLoc.c_str());
         std::string line(" "), keyWord;
-        int length(0);
+        int num(0);
+        bool keywordAvail(false);
         while (std::getline(FileFlux, line))
         {
             std::istringstream line2str(line);
@@ -211,12 +212,13 @@ namespace auxUlti
                 std::istringstream strdata(ptr[1]);
                 if (ptr[0].compare(inputKeyWord) == 0)
                 {
-                    strdata >> length;
+                    strdata >> num;
+                    keywordAvail=true;
                     break;
                 }
             }
         }
-        return length;
+        return std::make_tuple(num,keywordAvail);
     }
 
 	std::tuple<double, double> getGaussSurfCoorMaster(int edge, int elem, int nG)
@@ -1547,6 +1549,11 @@ namespace auxUlti
         {
             return false;
         }
+    }
+
+    int checkBCTypeOfEdge(int edgeId)
+    {
+        return (meshVar::inpoed[edgeId][3]);
     }
 
     /**

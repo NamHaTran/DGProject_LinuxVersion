@@ -36,14 +36,16 @@ SOURCES += \
     boundaryConditions/customBCs/interiorSide/u_interiorSide.cpp \
     boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp \
     boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp \
-    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp \
     boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp \
     boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.cpp \
     boundaryConditions/fixedValue.cpp \
     boundaryConditions/matched.cpp \
-    boundaryConditions/readBCInfor/BCReader.cpp \
+	boundaryConditions/readBCInfor/BCReader.cpp \
     boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.cpp \
     boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.cpp \
     boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.cpp \
@@ -102,14 +104,16 @@ HEADERS += \
     boundaryConditions/customBCs/interiorSide/u_interiorSide.h \
     boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h \
     boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h \
-    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCsGenFuncs.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h \
     boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h \
     boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.h \
     boundaryConditions/fixedValue.h \
     boundaryConditions/matched.h \
-    boundaryConditions/readBCInfor/BCReader.h \
+	boundaryConditions/readBCInfor/BCReader.h \
     boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h \
     boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.h \
     boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.h \

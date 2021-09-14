@@ -2831,8 +2831,17 @@ void volumeGauss(int nGauss)
         }
 
         double calDistBetween2Points(double xPt1, double yPt1, double xPt2, double yPt2) {
-            double length(sqrt(pow(xPt1 - xPt2, 2) + pow(yPt1 - yPt2, 2)));
-            return length;
+            return (sqrt(pow(xPt1 - xPt2, 2) + pow(yPt1 - yPt2, 2)));
+        }
+
+        std::tuple<double, double> calcUnitVectorOf2Points(double xPt1, double yPt1, double xPt2, double yPt2)
+        {
+            double length(sqrt(pow(xPt2 - xPt1, 2) + pow(yPt2 - yPt1, 2)));
+            return std::make_tuple
+                    (
+                        (xPt2 - xPt1)/length,
+                        (yPt2 - yPt1)/length
+                    );
         }
 
         double calPolygonPerimeter(std::vector<double> &xCoor, std::vector<double> &yCoor, int numOfEdge) {
