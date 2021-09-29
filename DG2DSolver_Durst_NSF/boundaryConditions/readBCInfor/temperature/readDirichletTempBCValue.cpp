@@ -23,7 +23,7 @@ void readFixedValueT(std::ifstream &FileFlux, int bcGrp)
     }
 
     //read U/gradU application method
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethTStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethTStrong,"T");
     //readGradUAppMeth(FileFlux,bcGrp,NewmannAppMethGradUStrong);
 }
 
@@ -56,5 +56,5 @@ void readTemperatureJump(std::ifstream &FileFlux, int bcGrp)
         Stream2 >> bcValues::TBCFixed[bcGrp - 1];
     }
 
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethTStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethTStrong,"T");
 }

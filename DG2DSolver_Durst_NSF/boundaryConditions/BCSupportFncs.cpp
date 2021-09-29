@@ -44,6 +44,10 @@
 //5. SmoluchowskyTJump
 #include "./customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h"
 
+//6. zeroRhoGradUncorectP
+#include "./customBCs/zeroRhoGrad/p_zeroRhoGrad.h"
+#include "./customBCs/zeroRhoGrad/rho_zeroRhoGrad.h"
+
 namespace BCSupportFncs
 {
     bool checkInflow(double u, double v, double nx, double ny)
@@ -172,7 +176,7 @@ namespace BCSupportFncs
         double rhoM(0.0), uM(0.0), vM(0.0), pM(0.0), TM(0.0);
 
         //Correct u, v, T, p
-        //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien non equilibrium
+        //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien nonequilibrium
         pM = correctPressure(edge,edgeGrp,pP,pMean,inflow);
         TM = correctTemperature(edge,edgeGrp,nG,TP,TMean,inflow);
         std::tie(uM, vM) = correctVelocity(edge,edgeGrp,nG,uP,uMean,vP,vMean,n,inflow);
@@ -838,6 +842,11 @@ namespace BCSupportFncs
                 interiorSide::correctP(pM,pP);
             }
             break;
+        case BCVars::pressureBCId::zeroRhoGrad:
+            {
+                zeroRhoGrad::correctP(pM,pP);
+            }
+            break;
 //------//Custom_Boundary_Conditions----------------------------------------
 
 
@@ -954,6 +963,12 @@ namespace BCSupportFncs
                 interiorSide::correctGradP(dpM,dpP);
             }
             break;
+        //interiorSide
+        case BCVars::pressureBCId::zeroRhoGrad:
+            {
+                zeroRhoGrad::correctGradP(dpM,dpP);
+            }
+            break;
 //------//Custom_Boundary_Conditions----------------------------------------
 
 
@@ -992,6 +1007,11 @@ namespace BCSupportFncs
         {
             interiorSide::correctRho(priVarsM[0],rhoP);
         }
+        //zeroRhoGrad
+        else if (pType==BCVars::pressureBCId::zeroRhoGrad)
+        {
+            zeroRhoGrad::correctRho(priVarsM[0],rhoP);
+        }
 //------//Custom_Boundary_Conditions----------------------------------------
     }
 
@@ -1024,7 +1044,12 @@ namespace BCSupportFncs
         //interiorSide
         else if (pType==BCVars::pressureBCId::interiorSide)
         {
-            interiorSide::correctGradRho(drhoM, drhoP, n, isStrong);
+            interiorSide::correctGradRho(drhoM, drhoP);
+        }
+        //zeroRhoGrad
+        else if (pType==BCVars::pressureBCId::zeroRhoGrad)
+        {
+            zeroRhoGrad::correctGradRho(drhoM, drhoP, n, isStrong);
         }
 //------//Custom_Boundary_Conditions----------------------------------------
 

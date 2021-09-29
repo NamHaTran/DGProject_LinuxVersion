@@ -23,6 +23,6 @@ void readFixedValueP(std::ifstream &FileFlux, int bcGrp)
     }
 
     //read U/gradU application method
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethPStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethPStrong, "p");
     //readGradUAppMeth(FileFlux,bcGrp,NewmannAppMethGradUStrong);
 }

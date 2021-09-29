@@ -22,6 +22,9 @@
 #include <iostream>
 #include "debuggingFuncs.h"
 
+//Durst Model
+#include "./extNSFEqns/FranzDurst/boundaryConditions.h"
+
 /* NOTES:
 - All boundary functions must return numerical fluxes (rho, rhou, rhov, rhoE fluxes) at surface Gauss points!
 */
@@ -96,10 +99,10 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
     BCSupportFncs::auxilaryBCs::calcUMean(element,UMean);
 
     //Decode plus pri vars from UPlus (khong can tinh lai TPlus)
-    BCSupportFncs::decompseU(priVarsPlus,UPlus,0,0,0,false);
+    BCSupportFncs::decompseU(priVarsPlus,UPlus,false);
 
     //Decode mean pri vars from UMean (khong can tinh lai TMean)
-    BCSupportFncs::decompseU(priVarsMean,UMean,0,0,0,false);
+    BCSupportFncs::decompseU(priVarsMean,UMean,false);
 
     //Cap nhat TPlus va pPlus vao priVarsPlus
     priVarsPlus[4] = surfaceFields::T[edge][nG];
@@ -113,7 +116,7 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
     bool inflow(BCSupportFncs::checkInflow(priVarsMean[1], priVarsMean[2],n[0],n[1]));
 
     //Correct priVarsMinus
-    BCSupportFncs::correctPriVars(edge, edgeGrp, priVarsMinus, priVarsPlus, priVarsMean, n, inflow);
+    BCSupportFncs::correctPriVars(edge, edgeGrp, nG, priVarsMinus, priVarsPlus, priVarsMean, n, inflow);
 
     //Save TM
     surfaceFields::T[edge][nG+mathVar::nGauss+1]=priVarsMinus[4];
@@ -131,8 +134,6 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
 
     //Save U+ and U- at boundary to arrays
     auxUlti::saveUAtBCToSurfaceFields(edge,nG,UPlus,UMinus);
-    /* UMinus va Plus o day trong tr.hop mass diffusion ON la Uconvective.
-     * Utotal se duoc correct tu Uconvective o phan apply BC cua pt NSF*/
 }
 
 void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edge, int edgeGrp, int nG)
@@ -174,6 +175,13 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
     //Tinh TMean
     TMean = math::calcMeanPriVar(element,1);
 
+    //DURST MODEL-------------------------------------------------------
+    //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::needToRemoveDiffTerm ve true
+    bcForExtNSF_Durst::checkConditionToAddDiffTerms(edge);
+    //Kiem tra xem edge dang tinh co phai la wall khong, neu co se switch extNSF_Durst::dropNormSelfDiffTerm ve true
+    bcForExtNSF_Durst::checkConditionToDropNormSelfDiffTerm(edge);
+    //DURST MODEL-------------------------------------------------------
+
     if (flowProperties::viscous)
     {
         //Tinh dUX/dUY plus
@@ -191,14 +199,21 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
         bool inflow(BCSupportFncs::checkInflow(UMean[1]/UMean[0], UMean[2]/UMean[0],norm[0],norm[1]));
 
         //Correct grad(priVars)
-        BCSupportFncs::correctPriVarsGrad(edgeGrp,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UMinus,TMinus,norm,inflow);
+        BCSupportFncs::correctPriVarsGrad(edge,edgeGrp,nG,dpriXMinus,dpriYMinus,dpriXPlus,dpriYPlus,UPlus,UMinus,TPlus,TMinus,norm,inflow);
 
         //Reconstruct grad(U)
-        BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TPlus); //Correct bang TPlus de tranh shock
-        BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TPlus); //Correct bang TPlus de tranh shock
+        BCSupportFncs::reconstructdU(dUXMinus,dpriXMinus,UMinus,TMinus);
+        BCSupportFncs::reconstructdU(dUYMinus,dpriYMinus,UMinus,TMinus);
     }
 
     BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, TPlus, TMinus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
+
+    //DURST MODEL-------------------------------------------------------
+    //Reset lai extNSF_Durst::needToRemoveDiffTerm
+    bcForExtNSF_Durst::resetNeedToRemoveDiffTermFlag();
+    //Reset lai extNSF_Durst::dropNormSelfDiffTerm
+    bcForExtNSF_Durst::resetNeedToDropNormSelfDiffTermFlag();
+    //DURST MODEL-------------------------------------------------------
 }
 
 /**

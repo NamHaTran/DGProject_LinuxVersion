@@ -41,6 +41,8 @@ SOURCES += \
     boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp \
     boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp \
     boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp \
+	boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp \
+    boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.cpp \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.cpp \
     boundaryConditions/fixedValue.cpp \
@@ -109,6 +111,8 @@ HEADERS += \
     boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h \
     boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h \
     boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h \
+	boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h \
+    boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h \
     boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.h \
     boundaryConditions/fixedValue.h \

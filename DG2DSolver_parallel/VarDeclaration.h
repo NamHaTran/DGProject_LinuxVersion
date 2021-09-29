@@ -21,9 +21,18 @@ namespace systemVar
     extern double CFL;
     //! Total time
     extern double Ttime;
-    //! write interval
+    //! Write interval
     extern int wrtI;
-	extern bool wrtLog, loadSavedCase, initializedOrNot, runPreProcess;
+
+    extern bool
+    //! Flag of log writting (set to true to write log)
+    wrtLog,
+    //! Flag of running case from saved sata (set to true to run case from saved data)
+    loadSavedCase,
+    //! Flag of initializing case (true if case has been initialized)
+    initializedOrNot,
+    //! Flag of running Pre-Processing (true if Pre-Processing has been ran)
+    runPreProcess;
 
     /*! Type of time discretization scheme
      * Time discretization scheme	|Key word	|index		|
@@ -38,12 +47,29 @@ namespace systemVar
     extern int ddtScheme;
 
 	//constant for limiter
+    //! Machine zero
 	extern double epsilon;
 
-    extern int iterCount, savingCout, loadConstCount;
-	extern double rhoResNorm, rhouResNorm, rhovResNorm, rhoEResNorm;
+    extern int
+    //! Counter of iteration
+    iterCount,
+    //! Counter of max iteration to save case
+    savingCout,
+    //! Counter of max iteration to read constant
+    loadConstCount;
+
+    extern double
+    //! Normalized residual of \f$\rho\f$
+    rhoResNorm,
+    //! Normalized residual of \f$\rho u\f$
+    rhouResNorm,
+    //! Normalized residual of \f$\rho v\f$
+    rhovResNorm,
+    //! Normalized residual of \f$\rho E\f$
+    rhoEResNorm;
 
     //1: BR1, 2: BR2
+    //! Index to determine type of BR (Bassy-Rebay) method to calculate auxiliary variables, 1 is BR1, 2 is BR2
     extern int auxVariables;
 
     //For parallel computing
@@ -98,6 +124,22 @@ namespace meshVar
 
     //! Number of BC groups
     extern int numBCGrp;
+
+    namespace BCTypeID {
+    //NOTE: DO NOT CHANGE THESE NUMBERS!!!
+
+        //! Id determines type wall for an edge
+        static constexpr int wall = 1;
+
+        //! Id determines type patch for an edge
+        static constexpr int patch = 2;
+
+        //! Id determines type symmetry for an edge
+        static constexpr int symmetry = 3;
+
+        //! Id determines type matched for an edge
+        static constexpr int matched = 4;
+    }
 }
 
 namespace mathVar

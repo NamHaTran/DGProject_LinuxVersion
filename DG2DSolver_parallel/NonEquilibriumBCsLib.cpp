@@ -1,3 +1,5 @@
+//OLD!!!
+
 #include "NonEquilibriumBCsLib.h"
 #include "DGMath.h"
 #include "VarDeclaration.h"
@@ -88,18 +90,18 @@ namespace nonequilibriumBCs
             dvy=dvn*ny;
 
             //1. Smoluchowski temperature jump-----------------------------------------------------------------------------
-            muVal=math::CalcVisCoef(TVal);
+            //muVal=math::CalcVisCoef(TVal);
 
-            lambda=math::calcMeanFreePath(muVal,rhoBC,TVal);
+            //lambda=math::calcMeanFreePath(muVal,rhoBC,TVal);
             aConst=(2-bcValues::sigmaT)*2*material::gamma*lambda/(bcValues::sigmaT*material::Pr*(material::gamma+1));
 
             TJump=TWall-aConst*dTn;
             if (TJump<0)
             {
-                TJump=TVal;
+                //TJump=TVal;
             }
             //Update to surfaceBCfields
-            SurfaceBCFields::TBc[localEdgeId]=TJump;
+            //SurfaceBCFields::TBc[localEdgeId]=TJump;
 
             //2. Maxwell slip velocity--------------------------------------------------------
             //Tinh lai gia tri muVal va lambda tu TJump moi cap nhat
@@ -203,7 +205,7 @@ namespace nonequilibriumBCs
             TJump=TWall-aConst*dTn;
             if (TJump<0)
             {
-                TJump=TVal;
+                //TJump=TVal;
             }
             //Update to surfaceBCfields
             SurfaceBCFields::TBc[localEdgeId]=TJump;
@@ -404,7 +406,7 @@ namespace nonequilibriumBCs
                     rhouC(rhou[element][0]),
                     rhovC(rhov[element][0]),
                     rhoEC(rhoE[element][0]),
-                    TVal(SurfaceBCFields::TBc[localEdgeId]),
+                    //TVal(SurfaceBCFields::TBc[localEdgeId]),
                     delta(meshVar::distanceFromCentroidToBCEdge[localEdgeId]),
                     muVal(0.0), nx, ny, dTx, dTy,dTn;
 
@@ -447,7 +449,7 @@ namespace nonequilibriumBCs
             }
             else
             {
-                TJump=TVal;
+                //TJump=TVal;
             }
             //Update to surfaceBCfields
             SurfaceBCFields::TBc[localEdgeId]=TJump;

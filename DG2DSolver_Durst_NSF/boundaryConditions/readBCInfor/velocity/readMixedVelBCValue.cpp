@@ -24,6 +24,6 @@ void readInletOutletU(std::ifstream &FileFlux, int bcGrp)
     }
 
     //read U/gradU application method
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
-    readGradUAppMeth(FileFlux,bcGrp,BCVars::NewmannAppMethGradUStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong,"U");
+    readGradUAppMeth(FileFlux,bcGrp,BCVars::NewmannAppMethGradUStrong,"U");
 }

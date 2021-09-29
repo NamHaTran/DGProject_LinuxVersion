@@ -11,6 +11,9 @@
 #include "debuggingFuncs.h"
 #include <iostream>
 
+//Durst Model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
+
 // symmetry
 /*
 void symmetry_vector(std::vector<double> &vectorM, const std::vector<double> &vectorP,  const std::vector<double> &n)
@@ -67,9 +70,13 @@ void symmetryBC_auxEqs(std::vector <std::vector<double>> &Fluxes, int element, i
     }
     else
     {
+        /*
         double tang(-UPlus[1]*ny+UPlus[2]*nx);
         UMinus[1]=-tang*ny;
-        UMinus[2]=tang*nx;
+        UMinus[2]=tang*nx;*/
+
+        UMinus[1] = UPlus[1] - (UPlus[1] * nx + UPlus[2] * ny)*nx;
+        UMinus[2] = UPlus[2] - (UPlus[1] * nx + UPlus[2] * ny)*ny;
     }
 
     UMinus[3] = UPlus[3];
@@ -120,7 +127,7 @@ void symmetryBC_NSFEqs(std::vector<double> &Fluxes, int element, int edge, int e
         //BCSupportFncs::NSFEqBCs::calcdUMean(edge,element,dUXPlus,dUYPlus);
     }
 
-    double tangGrad(0.0);
+    //double tangGrad(0.0);
 
     if (BCVars::NewmannAppMethGradGeneralBCStrong[edgeGrp-1])
     {
@@ -134,12 +141,24 @@ void symmetryBC_NSFEqs(std::vector<double> &Fluxes, int element, int edge, int e
     {
         for (int i = 0; i < 4; i++)
         {
+            /*
             tangGrad = -dUXPlus[i]*ny+dUYPlus[i]*nx;
             dUXMinus[i]=-tangGrad*ny;
-            dUYMinus[i]=tangGrad*nx;
+            dUYMinus[i]=tangGrad*nx;*/
+            dUXMinus[i] = dUXPlus[i] - (dUXPlus[i] * nx + dUYPlus[i] * ny)*nx;
+            dUYMinus[i] = dUYPlus[i] - (dUXPlus[i] * nx + dUYPlus[i] * ny)*ny;
         }
     }
 
+    //DURST MODEL-------------------------------------------------------
+    //Set flag isSymmetry to True to correct self-diffusive flux at symmetry BC
+    extNSF_Durst::isSymmetry=true;
+    //DURST MODEL-------------------------------------------------------
 
     BCSupportFncs::NSFEqBCs::NSFEqFluxes(edge, Fluxes, TPlus, TPlus, UPlus, UMinus, dUXPlus, dUXMinus, dUYPlus, dUYMinus, norm);
+
+    //DURST MODEL-------------------------------------------------------
+    //Reset flag isSymmetry
+    extNSF_Durst::isSymmetry=false;
+    //DURST MODEL-------------------------------------------------------
 }

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 
-void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod)
+void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod, std::string fileName)
 {
     std::string tempStr(""), line;
     std::getline(FileFlux, line);
@@ -13,7 +13,7 @@ void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod
     stream >> tempStr;
     if ((tempStr.compare("UAppMethod") != 0))
     {
-        message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'UAppMethod' in file U/group " + std::to_string(bcGrp) + ".\n");
+        message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'UAppMethod' in file "+fileName+"/group " + std::to_string(bcGrp) + ".\n");
     }
     else
     {
@@ -29,12 +29,12 @@ void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod
         }
         else
         {
-            message::writeLog(systemVar::pwd, systemVar::caseName, "Unknow method " +tempStr+ " of UAppMethod in file U/group " + std::to_string(bcGrp) + ".\n");
+            message::writeLog(systemVar::pwd, systemVar::caseName, "Unknow method " +tempStr+ " of UAppMethod in file "+fileName+"/group " + std::to_string(bcGrp) + ".\n");
         }
     }
 }
 
-void readGradUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &gradUMethod)
+void readGradUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &gradUMethod, std::string fileName)
 {
     std::string tempStr(""), line;
     std::getline(FileFlux, line);
@@ -43,7 +43,7 @@ void readGradUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &gra
     stream >> tempStr;
     if ((tempStr.compare("gradUAppMethod") != 0))
     {
-        message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'gradUAppMethod' in file U/group " + std::to_string(bcGrp) + ".\n");
+        message::writeLog(systemVar::pwd, systemVar::caseName, "Cannot find key word 'gradUAppMethod' in file "+fileName+"/group " + std::to_string(bcGrp) + ".\n");
     }
     else
     {
@@ -59,7 +59,7 @@ void readGradUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &gra
         }
         else
         {
-            message::writeLog(systemVar::pwd, systemVar::caseName, "Unknow method " +tempStr+ " of gradUAppMethod in file U/group " + std::to_string(bcGrp) + ".\n");
+            message::writeLog(systemVar::pwd, systemVar::caseName, "Unknow method " +tempStr+ " of gradUAppMethod in file "+fileName+"/group " + std::to_string(bcGrp) + ".\n");
         }
     }
 }

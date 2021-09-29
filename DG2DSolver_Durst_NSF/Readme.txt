@@ -55,4 +55,18 @@ Fix bug
 - Fix bug nhỏ về chính tả trong message output ra terminal.
 
 - Code update lên github cùng ngày.
-	
+
+
+Bản backup 29/09/2021:
+Điều kiện biên
+- Update điều kiện biên Smoluchowsky:
+	+ Thêm hàm SmoluchowskyTJump::calcTJump_FDMTypeSemiImplicit để giải điều kiện biên Smoluchowsky theo cách semi-implicit. Trong đó hệ số nhớt được tính từ TJump cũ bằng hàm tính hệ số nhớt, vì vậy hàm semi-implicit này có thể dùng cho mọi mô hình nhớt.
+	+ Hàm SmoluchowskyTJump::calcTJump_FDMTypeSemiImplicit là hàm được dùng trong hàm nonEquilibriumBCs::updateBCs thay cho hàm calcTJump_FDMTypeImplicit (gây sai số khi dùng với mô hình nhớt khác Sutherland).
+- Update điều kiện biên của mô hình ENSE DURST:
+	+ Tại biên wall, sau khi tính các term grad(T) và grad(rho), phải gán grad(T)=0 (BỎ SORRET TERM trong thành phần self-diffusion tại wall). 
+	+ Sau khi tính self-diffusion flux tại phía Minus của wall, phải reflect vector flux này lại bằng hàm bcForExtNSF_Durst::removeNormTermOfVector để remove thành phần self-diffusion flux vuông góc wall.
+	+ Chú ý rằng phải reflect self-diffusion flux chứ không phải reflect grad(rho) hay grad(T). Luôn reflect self-diffusion flux trong mọi trường hợp, kể cả trường hợp self-diffusion flux theo phương vuông góc wall hướng ra khỏi wall (dot product của self-diffusion flux là vector pháp tuyến n < 0).
+	+ Cách apply điều kiện biên tại wall này đã được test trên case cylinder Kn=0.05 và cho kết quả tốt, đồng thời case khá ổn định và có thể chạy với Max Co = 0.2.
+- Add điều kiện biên zeroRhoGrad để triệt tiêu normal grad(rho) tại wall (không quan trọng).
+
+- Code update lên github cùng ngày.

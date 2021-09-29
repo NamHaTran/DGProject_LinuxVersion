@@ -15,7 +15,7 @@ void readNoSlipU(std::ifstream &FileFlux, int bcGrp)
     bcValues::wBCFixed[bcGrp - 1] = 0.0;
 
     //read U/gradU application method
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong,"U");
     //readGradUAppMeth(FileFlux,bcGrp,NewmannAppMethGradUStrong);
 }
 
@@ -35,7 +35,7 @@ void readFixedValueU(std::ifstream &FileFlux, int bcGrp)
     }
 
     //read U/gradU application method
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong,"U");
     //readGradUAppMeth(FileFlux,bcGrp,NewmannAppMethGradUStrong);
 }
 
@@ -69,6 +69,6 @@ void readMaxwellSlipU(std::ifstream &FileFlux, int bcGrp)
     }
 
     //read U/gradU application method
-    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
+    readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong,"U");
     //readGradUAppMeth(FileFlux,bcGrp,NewmannAppMethGradUStrong);
 }

@@ -1207,7 +1207,7 @@ void volumeGauss(int nGauss)
         return out;
     }
 
-    double vectorDotProduct(std::vector<double> &a, std::vector<double> &b)
+    double vectorDotProduct(const std::vector<double> &a, const std::vector<double> &b)
     {
         double out(0.0);
         out = a[0] * b[0] + a[1] * b[1];
@@ -1372,9 +1372,16 @@ void volumeGauss(int nGauss)
 
         math::basisFc(a, b, auxUlti::checkType(element));
 
+        //Limiter
+        double theta(1.0);
+        if (flowProperties::massDiffusion)
+        {
+            theta=theta1Arr[element]*theta2Arr[element];
+        }
+
         for (int order = 1; order <= mathVar::orderElem; order++)
         {
-            out += Value[order] * mathVar::B[order];
+            out += Value[order] * mathVar::B[order]*theta;
         }
         out+=Value[0];
 
@@ -1385,6 +1392,7 @@ void volumeGauss(int nGauss)
     {
         double out(0.0);
         std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+
         if (dir==1)  //Ox direction
         {
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
@@ -1401,10 +1409,19 @@ void volumeGauss(int nGauss)
         }
 
         math::basisFc(a, b, auxUlti::checkType(element));
-        for (int order = 0; order <= mathVar::orderElem; order++)
+        //Limiter
+        double theta(1.0);
+        if (flowProperties::massDiffusion)
         {
-            out += Value[order] * mathVar::B[order];
+            theta=theta1Arr[element]*theta2Arr[element];
         }
+
+        for (int order = 1; order <= mathVar::orderElem; order++)
+        {
+            out += Value[order] * mathVar::B[order]*theta;
+        }
+        out += Value[0];
+
         return out;
     }
 
@@ -3072,6 +3089,12 @@ void volumeGauss(int nGauss)
         std::vector<double> dU(4, 0.0);
 
         math::basisFc(a, b, auxUlti::checkType(element));
+        //Limiter
+        double theta(1.0);
+        if (flowProperties::massDiffusion)
+        {
+            theta=theta1Arr[element]*theta2Arr[element];
+        }
 
         if (systemVar::auxVariables==1)
         {
@@ -3079,10 +3102,10 @@ void volumeGauss(int nGauss)
             {
                 for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder];
-                    dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder];
-                    dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder];
-                    dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder];
+                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder]*theta;
                 }
                 dU[0] += BR1Vars::rhoX[element][0];
                 dU[1] += BR1Vars::rhouX[element][0];
@@ -3092,10 +3115,10 @@ void volumeGauss(int nGauss)
             else {
                 for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder];
-                    dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder];
-                    dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder];
-                    dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder];
+                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder]*theta;
                 }
                 dU[0] += BR1Vars::rhoY[element][0];
                 dU[1] += BR1Vars::rhouY[element][0];

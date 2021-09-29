@@ -11,7 +11,6 @@
 #include <iostream>
 #include <math.h>
 #include <mpi.h>
-#include "NonEquilibriumBCsLib.h"
 #include "./boundaryConditions/BCSupportFncs.h"
 #include "./boundaryConditions/DGBCsLib.h"
 
@@ -27,7 +26,10 @@
 
 //Extended Navier-Stokes-Fourier model
 #include "./extNSFEqns/FranzDurst/DurstModel.h"
+#include "./extNSFEqns/FranzDurst/boundaryConditions.h"
 
+//Non equilibrium BCs
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h"
 
 namespace meshParam
 {
@@ -255,8 +257,8 @@ namespace meshParam
         for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
         {
             globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-            int bcType(meshVar::inpoed[globleEdge][3]);
-            if (bcType==1) //type wall
+            int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+            if (bcType==meshVar::BCTypeID::wall) //type wall
             {
                 std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
                 meshVar::distanceFromCentroidToBCEdge[ilocalEdge]=math::geometricOp::calcDistanceFromCenterToEdge(element,globleEdge);
@@ -269,15 +271,15 @@ namespace meshParam
      */
     void findNormProjectionOfCenterToBCEdge()
     {
-        int globleEdge(0), element(0), tempE;
+        int globleEdge(0), element(0);
         double xC, yC, x1, y1, x2, y2, xN, yN, aN, bN;
         for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
         {
             globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-            int bcType(meshVar::inpoed[globleEdge][3]);
-            if (bcType==1) //type wall
+            int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+            if (bcType==meshVar::BCTypeID::wall) //type wall
             {
-                std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
+                std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
 
                 xC=meshVar::geoCenter[element][0];
                 yC=meshVar::geoCenter[element][1];
@@ -1672,14 +1674,36 @@ namespace process
             std::tie(FLocalX[0], FLocalX[1], FLocalX[2], FLocalX[3]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeat, UL[1]/UL[0], UL[2]/UL[0], 1);
             std::tie(FLocalY[0], FLocalY[1], FLocalY[2], FLocalY[3]) = math::viscousTerms::calcViscousTermsFromStressHeatFluxMatrix(StressHeat, UL[1]/UL[0], UL[2]/UL[0], 2);
 
+            //DURST MODEL ------------------------------------------------------------------------------
             //Correct Diffusive Term of NSF Eqns
             //Theo mo hinh Durst
             if (extNSF_Durst::enable)
             {
-                //SD=self diffusion
                 std::vector<std::vector<double>> diffTerms(2, std::vector<double>(4, 0.0));
 
-                extNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY);
+                //Chi khi nao mode diffusionAtWall la No (khong cho phep diffusion at wall)
+                //Va flag needToRemoveDiffTerm dang True thi moi remove Diff Terms
+                if (!extNSF_Durst::diffusionAtWall && extNSF_Durst::needToRemoveDiffTerm)
+                {
+                    //Do nothing
+                }
+                else if (
+                         //Chi khi nao mode diffusionAtWall la Yes (cho phep diffusion at wall)
+                         //Va flag dropNormSelfDiffTerm dang True thi moi remove normal Diff Terms (bang cach dung ham bcForExtNSF_Durst::dropNormSelfDiffTerm)
+                         (extNSF_Durst::diffusionAtWall && extNSF_Durst::dropNormSelfDiffTerm)
+
+                         //Hoac BC dang tinh flux la symmetry
+                         || (extNSF_Durst::isSymmetry)
+                         )
+                {
+                    bcForExtNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY,n);
+                }
+                //Cac truong hop khac: volume term va internal edge
+                else
+                {
+                    extNSF_Durst::correctViscousTerms(diffTerms,UL,dULocalX,dULocalY);
+                }
+
                 //Add to classical diffusive terms
                 for (int i=0; i<4; i++)
                 {
@@ -1687,6 +1711,7 @@ namespace process
                     FLocalY[i] = FLocalY[i] + diffTerms[1][i];
                 }
             }
+            //DURST MODEL ------------------------------------------------------------------------------
         }
 
         void calcSurfaceFlux()
@@ -1724,6 +1749,10 @@ namespace process
                 bcGrp = auxUlti::getBCType(iedge);
                 if (bcGrp == 0)
                 {
+                    //DURST MODEL ------------------------------------------------------------------------------
+                    extNSF_Durst::needToRemoveDiffTerm=false;
+                    //DURST MODEL ------------------------------------------------------------------------------
+
                     std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
                     vectorn[0] = auxUlti::getNormVectorComp(masterCell, iedge, 1);
                     vectorn[1] = auxUlti::getNormVectorComp(masterCell, iedge, 2);
@@ -2024,11 +2053,8 @@ namespace process
 				SurfIntTerm4(mathVar::orderElem + 1, 0.0);
 
 			/*Volume integral term===========================================================================*/
-            /*Chi excute neu order > 0*/
             if (mathVar::orderElem>0)
-            {
                 process::NSFEq::calcVolumeIntegralTerms(element, VolIntTerm1, VolIntTerm2, VolIntTerm3, VolIntTerm4);
-            }
 			
 			/*Surface integral term===========================================================================*/
 			process::NSFEq::calcSurfaceIntegralTerms(element, SurfIntTerm1, SurfIntTerm2, SurfIntTerm3, SurfIntTerm4);
@@ -2061,14 +2087,14 @@ namespace process
                 umVal(0.0),
                 vmVal(0.0),
                 totalE(0.0),
-                a(0.0),b(0.0),muVal(0.0);
+                a(0.0),b(0.0);//muVal(0.0);
 
             std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
 			uVal = rhouVal / rhoVal;
 			vVal = rhovVal / rhoVal;
             totalE = rhoEVal / rhoVal;
             pVal = math::CalcP(volumeFields::T[element][nanb], rhoVal);
-            muVal=math::CalcVisCoef(volumeFields::T[element][nanb]);
+            //muVal=math::CalcVisCoef(volumeFields::T[element][nanb]);
 
             umVal=uVal;
             vmVal=vVal;
@@ -2130,13 +2156,14 @@ namespace process
                 std::vector<std::vector<double>> diffTerms(2, std::vector<double>(4, 0.0));
 
                 extNSF_Durst::correctViscousTerms(diffTerms,vectorU,vectordUx,vectordUy);
-
+                //Add to classical diffusive terms
                 for (int i=0; i<4; i++)
                 {
                     ViscousTerm[i][0] = ViscousTerm[i][0] + diffTerms[0][i];
                     ViscousTerm[i][1] = ViscousTerm[i][1] + diffTerms[1][i];
                 }
             }
+
             return ViscousTerm;
 		}
 
@@ -2240,6 +2267,10 @@ namespace process
 			All input array have form:
 			- number of rows: orderElem*/
 
+            //DURST MODEL ------------------------------------------------------------------------------
+            extNSF_Durst::needToRemoveDiffTerm=false;
+            //DURST MODEL ------------------------------------------------------------------------------
+
 			std::vector<std::vector<double>> ViscousTerms(4, std::vector<double>(2, 0.0));
 			std::vector<std::vector<double>> InviscidTerms(4, std::vector<double>(2, 0.0));
 			//std::vector<double> VolInt(4, 0.0);
@@ -2312,6 +2343,14 @@ namespace process
             VolIntTerm2[0] = 0;
             VolIntTerm3[0] = 0;
             VolIntTerm4[0] = 0;
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Volume integral if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                extNSF_Durst::correctEnergyEqnVolIntTerm(element,VolIntTerm4);
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
 		}
 
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4)
@@ -2755,7 +2794,7 @@ namespace process
 			}
 
             //UPDATE TIME VARYING BC
-            updateTimeVaryingBCs();
+            nonEquilibriumBCs::updateBCs();
 
             limiter::limiter_1OutterStep();
 		}

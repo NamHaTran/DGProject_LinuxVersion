@@ -30,8 +30,24 @@ SOURCES += \
     boundaryConditions/BCSupportFncs.cpp \
     boundaryConditions/DGBCsLib.cpp \
     boundaryConditions/bcVariables.cpp \
+    boundaryConditions/customBCs/interiorSide/T_interiorSide.cpp \
+    boundaryConditions/customBCs/interiorSide/p_interiorSide.cpp \
+    boundaryConditions/customBCs/interiorSide/rho_interiorSide.cpp \
+    boundaryConditions/customBCs/interiorSide/u_interiorSide.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp \
+    boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp \
+    boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp \
+    boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp \
+    boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.cpp \
+    boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp \
+    boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.cpp \
     boundaryConditions/fixedValue.cpp \
     boundaryConditions/matched.cpp \
+    boundaryConditions/readBCInfor/BCReader.cpp \
     boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.cpp \
     boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.cpp \
     boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.cpp \
@@ -49,6 +65,8 @@ SOURCES += \
     dynamicVarDeclaration.cpp \
     VarDeclaration.cpp \
     extNSFEqns/FranzDurst/DurstModel.cpp \
+    extNSFEqns/FranzDurst/IO.cpp \
+    extNSFEqns/FranzDurst/boundaryConditions.cpp \
     limiters/detectTroubleCells.cpp \
     limiters/limiterController.cpp \
     limiters/massDiffusion/massDiffusion.cpp \
@@ -82,8 +100,24 @@ HEADERS += \
     boundaryConditions/BCSupportFncs.h \
     boundaryConditions/DGBCsLib.h \
     boundaryConditions/bcVariables.h \
+    boundaryConditions/customBCs/interiorSide/T_interiorSide.h \
+    boundaryConditions/customBCs/interiorSide/p_interiorSide.h \
+    boundaryConditions/customBCs/interiorSide/rho_interiorSide.h \
+    boundaryConditions/customBCs/interiorSide/u_interiorSide.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h \
+    boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h \
+    boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h \
+    boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h \
+    boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h \
+    boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h \
+    boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h \
+    boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.h \
     boundaryConditions/fixedValue.h \
     boundaryConditions/matched.h \
+    boundaryConditions/readBCInfor/BCReader.h \
     boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h \
     boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.h \
     boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.h \
@@ -101,6 +135,8 @@ HEADERS += \
     dynamicVarDeclaration.h \
     VarDeclaration.h \
     extNSFEqns/FranzDurst/DurstModel.h \
+    extNSFEqns/FranzDurst/IO.h \
+    extNSFEqns/FranzDurst/boundaryConditions.h \
     limiters/detectTroubleCell.h \
     limiters/limiterController.h \
     limiters/massDiffusion/massDiffusion.h \

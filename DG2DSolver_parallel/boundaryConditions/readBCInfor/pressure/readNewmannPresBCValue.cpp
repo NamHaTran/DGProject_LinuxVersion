@@ -10,5 +10,5 @@
 void readZeroGradP(std::ifstream &FileFlux, int bcGrp)
 {
     //readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
-    readGradUAppMeth(FileFlux,bcGrp,BCVars::NewmannAppMethGradPStrong);
+    readGradUAppMeth(FileFlux,bcGrp,BCVars::NewmannAppMethGradPStrong,"p");
 }

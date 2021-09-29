@@ -111,7 +111,7 @@ namespace math
     double pointDerivRho(int element, double a, double b, int dir);
 
 	/*Function calculates dot product of 2 vectors*/
-	double vectorDotProduct(std::vector<double> &a, std::vector<double> &b);
+    double vectorDotProduct(const std::vector<double> &a, const std::vector<double> &b);
 
 	/*Function calculates values of primary and conservative variables on plus side and minus side of edge at arbitrary Gauss point
 	ValKind 1: primary variable

@@ -1207,7 +1207,7 @@ void volumeGauss(int nGauss)
         return out;
     }
 
-    double vectorDotProduct(std::vector<double> &a, std::vector<double> &b)
+    double vectorDotProduct(const std::vector<double> &a, const std::vector<double> &b)
     {
         double out(0.0);
         out = a[0] * b[0] + a[1] * b[1];
@@ -1372,9 +1372,16 @@ void volumeGauss(int nGauss)
 
         math::basisFc(a, b, auxUlti::checkType(element));
 
+        //Limiter
+        double theta(1.0);
+        if (flowProperties::massDiffusion)
+        {
+            theta=theta1Arr[element]*theta2Arr[element];
+        }
+
         for (int order = 1; order <= mathVar::orderElem; order++)
         {
-            out += Value[order] * mathVar::B[order];
+            out += Value[order] * mathVar::B[order]*theta;
         }
         out+=Value[0];
 
@@ -1385,6 +1392,7 @@ void volumeGauss(int nGauss)
     {
         double out(0.0);
         std::vector<double> Value(mathVar::orderElem + 1, 0.0);
+
         if (dir==1)  //Ox direction
         {
             for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
@@ -1401,10 +1409,19 @@ void volumeGauss(int nGauss)
         }
 
         math::basisFc(a, b, auxUlti::checkType(element));
-        for (int order = 0; order <= mathVar::orderElem; order++)
+        //Limiter
+        double theta(1.0);
+        if (flowProperties::massDiffusion)
         {
-            out += Value[order] * mathVar::B[order];
+            theta=theta1Arr[element]*theta2Arr[element];
         }
+
+        for (int order = 1; order <= mathVar::orderElem; order++)
+        {
+            out += Value[order] * mathVar::B[order]*theta;
+        }
+        out += Value[0];
+
         return out;
     }
 
@@ -2831,8 +2848,17 @@ void volumeGauss(int nGauss)
         }
 
         double calDistBetween2Points(double xPt1, double yPt1, double xPt2, double yPt2) {
-            double length(sqrt(pow(xPt1 - xPt2, 2) + pow(yPt1 - yPt2, 2)));
-            return length;
+            return (sqrt(pow(xPt1 - xPt2, 2) + pow(yPt1 - yPt2, 2)));
+        }
+
+        std::tuple<double, double> calcUnitVectorOf2Points(double xPt1, double yPt1, double xPt2, double yPt2)
+        {
+            double length(sqrt(pow(xPt2 - xPt1, 2) + pow(yPt2 - yPt1, 2)));
+            return std::make_tuple
+                    (
+                        (xPt2 - xPt1)/length,
+                        (yPt2 - yPt1)/length
+                    );
         }
 
         double calPolygonPerimeter(std::vector<double> &xCoor, std::vector<double> &yCoor, int numOfEdge) {
@@ -2873,14 +2899,33 @@ void volumeGauss(int nGauss)
         {
             //Project point A to edge BC
             double xN, yN;
-            double a((yB-yC)/(xB-xC)),
-                    b=(-((yB-yC)/(xB-xC))*xB+yB);
-            //Phuong trinh duong thang la y=ax+b
-            //Phuong trinh duong thang vuong goc la y=-x/a+bN
-            double bN(yA+xA/a);
-            //Toa do hinh chieu vuong goc cua A len BC
-            xN = (bN-b)/(a+1/a);
-            yN = a*xN+b;
+
+            if (xB==xC && yB!=yC)
+            {
+                xN = xB;
+                yN = yA;
+            }
+            else if (xB!=xC && yB==yC)
+            {
+                xN = xA;
+                yN = yB;
+            }
+            else if (xB!=xC && yB!=yC)
+            {
+                double a((yB-yC)/(xB-xC)),
+                        b=(-((yB-yC)/(xB-xC))*xB+yB);
+                //Phuong trinh duong thang la y=ax+b
+                //Phuong trinh duong thang vuong goc la y=-x/a+bN
+                double bN(yA+xA/a);
+                //Toa do hinh chieu vuong goc cua A len BC
+                xN = (bN-b)/(a+1/a);
+                yN = a*xN+b;
+            }
+            else
+            {
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, "Mesh error: 2 vertices of 1 edges are coincident.");
+            }
+
             return std::make_tuple(xN, yN);
         }
 
@@ -3044,6 +3089,12 @@ void volumeGauss(int nGauss)
         std::vector<double> dU(4, 0.0);
 
         math::basisFc(a, b, auxUlti::checkType(element));
+        //Limiter
+        double theta(1.0);
+        if (flowProperties::massDiffusion)
+        {
+            theta=theta1Arr[element]*theta2Arr[element];
+        }
 
         if (systemVar::auxVariables==1)
         {
@@ -3051,10 +3102,10 @@ void volumeGauss(int nGauss)
             {
                 for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder];
-                    dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder];
-                    dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder];
-                    dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder];
+                    dU[0] += BR1Vars::rhoX[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[1] += BR1Vars::rhouX[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[2] += BR1Vars::rhovX[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[3] += BR1Vars::rhoEX[element][iorder]* mathVar::B[iorder]*theta;
                 }
                 dU[0] += BR1Vars::rhoX[element][0];
                 dU[1] += BR1Vars::rhouX[element][0];
@@ -3064,10 +3115,10 @@ void volumeGauss(int nGauss)
             else {
                 for (int iorder = 1; iorder <= mathVar::orderElem; iorder++)
                 {
-                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder];
-                    dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder];
-                    dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder];
-                    dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder];
+                    dU[0] += BR1Vars::rhoY[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[1] += BR1Vars::rhouY[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[2] += BR1Vars::rhovY[element][iorder]* mathVar::B[iorder]*theta;
+                    dU[3] += BR1Vars::rhoEY[element][iorder]* mathVar::B[iorder]*theta;
                 }
                 dU[0] += BR1Vars::rhoY[element][0];
                 dU[1] += BR1Vars::rhouY[element][0];

@@ -189,11 +189,12 @@ namespace auxUlti
 		return std::make_tuple(a, b);
 	}
 
-    int lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord)
+    std::tuple<int, bool> lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord)
     {
         std::ifstream FileFlux(fileLoc.c_str());
         std::string line(" "), keyWord;
-        int length(0);
+        int num(0);
+        bool keywordAvail(false);
         while (std::getline(FileFlux, line))
         {
             std::istringstream line2str(line);
@@ -211,12 +212,13 @@ namespace auxUlti
                 std::istringstream strdata(ptr[1]);
                 if (ptr[0].compare(inputKeyWord) == 0)
                 {
-                    strdata >> length;
+                    strdata >> num;
+                    keywordAvail=true;
                     break;
                 }
             }
         }
-        return length;
+        return std::make_tuple(num,keywordAvail);
     }
 
 	std::tuple<double, double> getGaussSurfCoorMaster(int edge, int elem, int nG)
@@ -998,15 +1000,6 @@ namespace auxUlti
         rhovResArr = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
         rhoEResArr = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-        /*Surface BC fields---------------------------------------------------------------------------*/
-        SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
-        SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
-        SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
-        SurfaceBCFields::pBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::pBc, meshVar::numBCEdges, 0.0);
         meshVar::distanceFromCentroidToBCEdge = new double [meshVar::numBCEdges];
 
         /*
@@ -1144,9 +1137,19 @@ namespace auxUlti
         mathVar::GaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
         mathVar::wGaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
 
-        //For Maxwell-Smoluchowsky BC
+        //For Non Equilibrium BCs
         meshVar::normProjectionOfCenterToBCEdge_realSysCoor = auxUlti::resize2DArray(meshVar::numBCEdges, 2,0.0);
         meshVar::normProjectionOfCenterToBCEdge_standardSysCoor = auxUlti::resize2DArray(meshVar::numBCEdges, 2,0.0);
+
+        //SurfaceBCFields
+        SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
+        SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
+        SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, iniValues::TIni);
+        SurfaceBCFields::pBc = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(SurfaceBCFields::pBc, meshVar::numBCEdges, iniValues::pIni);
 	}
 
     int getAdressOfBCEdgesOnBCValsArray(int globalEdgeId)
@@ -1548,6 +1551,14 @@ namespace auxUlti
         }
     }
 
+    int checkBCTypeOfEdge(int edgeId)
+    {
+        return (meshVar::inpoed[edgeId][3]);
+    }
+
+    /**
+     * @brief Function gets command inputted from terminal.
+     */
     void getCommand()
     {
         if (systemVar::currentProc==0)

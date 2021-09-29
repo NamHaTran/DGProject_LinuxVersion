@@ -107,14 +107,5 @@ namespace IO
 
         void massDiffSettings();
     }
-
-    namespace readVectorBC {
-        void u(std::string mode);
-    }
-
-    namespace readScalarBC {
-        void p(std::string mode);
-        void T(std::string mode);
-    }
 }
 #endif // DGIOLIB_H_INCLUDED

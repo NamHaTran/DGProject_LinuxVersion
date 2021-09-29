@@ -11,7 +11,7 @@
  * @param bcGrp: group ID of boundary.
  * @param UMethod: flag of application method (returned value).
  */
-void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod);
+void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod, std::string fileName);
 /**
  * @brief Function reads application method of field grad(p, T, U).
  *
@@ -21,6 +21,6 @@ void readUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &UMethod
  * @param bcGrp: group ID of boundary.
  * @param UMethod: flag of application method (returned value).
  */
-void readGradUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &gradUMethod);
+void readGradUAppMeth(std::ifstream &FileFlux, int bcGrp, std::vector<bool> &gradUMethod, std::string fileName);
 
 #endif // SUPPORTREADINGBCFUNCS_H

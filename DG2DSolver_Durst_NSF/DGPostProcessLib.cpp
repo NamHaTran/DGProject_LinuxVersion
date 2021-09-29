@@ -1128,14 +1128,24 @@ namespace postProcessing_Surface {
                         std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
                         rhoBC=math::pointValue(element,a,b,1,2);
 
-                        FileFlux
-                                  <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
-                                  <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
-                                  <<math::CalcP(nonEqmSurfaceField::TBc[ilocalEdge][nG],rhoBC)<<" "
-                                  <<nonEqmSurfaceField::TBc[ilocalEdge][nG]<<" "
-                                  <<nonEqmSurfaceField::uBc[ilocalEdge][nG]<<" "
-                                  <<nonEqmSurfaceField::vBc[ilocalEdge][nG]<<" "
-                                  <<"\n";
+                        if (auxUlti::checkTimeVaryingBCAvailable())
+                            FileFlux
+                                      <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                      <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                      <<math::CalcP(nonEqmSurfaceField::TBc[ilocalEdge][nG],rhoBC)<<" "
+                                      <<nonEqmSurfaceField::TBc[ilocalEdge][nG]<<" "
+                                      <<nonEqmSurfaceField::uBc[ilocalEdge][nG]<<" "
+                                      <<nonEqmSurfaceField::vBc[ilocalEdge][nG]<<" "
+                                      <<"\n";
+                        else
+                            FileFlux
+                                      <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                      <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                      <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge],rhoBC)<<" "
+                                      <<SurfaceBCFields::TBc[ilocalEdge]<<" "
+                                      <<SurfaceBCFields::uBc[ilocalEdge]<<" "
+                                      <<SurfaceBCFields::vBc[ilocalEdge]<<" "
+                                      <<"\n";
                     }
                 }
             }

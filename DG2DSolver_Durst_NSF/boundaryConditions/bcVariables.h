@@ -1,4 +1,4 @@
-#ifndef BCVARIABLES_H
+ #ifndef BCVARIABLES_H
 #define BCVARIABLES_H
 #include <vector>
 namespace BCVars {
@@ -25,6 +25,9 @@ namespace BCVars {
 
         //Custom BC interiorSide (add 22/07/2021)
         static constexpr int interiorSide = 14;
+
+        //Custom BC reflectGradRho (add 23/09/2021)
+        static constexpr int zeroRhoGrad = 15;
     }
 
     namespace temperatureBCId {

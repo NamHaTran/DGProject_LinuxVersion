@@ -10,6 +10,12 @@
 #include <fstream>
 #include "DGIOLib.h"
 
+//Extended Navier-Stokes-Fourier model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
+
+//Nonequilibrium BCs
+#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h"
+
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin)
@@ -132,12 +138,14 @@ void reconstructLatestTime()
     rhou = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhov = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhoE = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+
     SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
     auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
     SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
     auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
     SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
     auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
+
     auxUlti::initialize1DArray(theta1Arr, meshVar::nelem2D, 1.0);
     theta2Arr=new double[meshVar::nelem2D];
     auxUlti::initialize1DArray(theta2Arr, meshVar::nelem2D, 1.0);
@@ -391,13 +399,61 @@ namespace DG2Tecplot
         {
             double rhoVal(rho[element][0]),
                 rhouVal(rhou[element][0]);
-            out = rhouVal / rhoVal;
+
+            out=(rhouVal / rhoVal); //convective velocity
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Velocity if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                double vD(0.0);
+                std::vector<double> U(4, 0.0), dU(4, 0.0);
+                U[0]=rho[element][0];
+                U[1]=rhou[element][0];
+                U[2]=rhov[element][0];
+                U[3]=rhoE[element][0];
+
+                dU[0]=BR1Vars::rhoX[element][0];
+                dU[1]=BR1Vars::rhouX[element][0];
+                dU[2]=BR1Vars::rhovX[element][0];
+                dU[3]=BR1Vars::rhoEX[element][0];
+
+                vD=extNSF_Durst::calcDiffVelocity(U,dU);
+
+                //Corect velocity
+                out = out + vD;
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
         }
         else if (valType == 3)  //v
         {
             double rhoVal(rho[element][0]),
                 rhovVal(rhov[element][0]);
-            out = rhovVal / rhoVal;
+
+            out = (rhovVal / rhoVal); //convective velocity
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Velocity if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                double vD(0.0);
+                std::vector<double> U(4, 0.0), dU(4, 0.0);
+                U[0]=rho[element][0];
+                U[1]=rhou[element][0];
+                U[2]=rhov[element][0];
+                U[3]=rhoE[element][0];
+
+                dU[0]=BR1Vars::rhoY[element][0];
+                dU[1]=BR1Vars::rhouY[element][0];
+                dU[2]=BR1Vars::rhovY[element][0];
+                dU[3]=BR1Vars::rhoEY[element][0];
+
+                vD=extNSF_Durst::calcDiffVelocity(U,dU);
+
+                //Corect velocity
+                out = out + vD;
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
         }
         else if (valType == 4)  //e
         {
@@ -439,11 +495,23 @@ namespace DG2Tecplot
         }
         else if (valType == 10)  //rho
         {
-            out= BR1Vars::rhoX[element][0];
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
+            out= BR1Vars::rhoX[element][0]/math::CalcVisCoef(TVal);
         }
         else if (valType == 11)  //rho
         {
-            out= BR1Vars::rhoY[element][0];
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
+            out= BR1Vars::rhoY[element][0]/math::CalcVisCoef(TVal);
         }
         return out;
     }
@@ -1049,23 +1117,36 @@ namespace postProcessing_Surface {
             for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
             {
                 globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-                int bcType(meshVar::inpoed[globleEdge][3]);
-                if (bcType==1) //type wall
+                int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+                if (bcType==meshVar::BCTypeID::wall) //type wall
                 {
-                    //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
-                    std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
-                    a=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][0];
-                    b=meshVar::normProjectionOfCenterToBCEdge_standardSysCoor[ilocalEdge][1];
-                    rhoBC=math::pointValue(element,a,b,1,2);
+                    for (int nG=0; nG<mathVar::nGauss+1; nG++)
+                    {
+                        //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
+                        std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
+                        //Get Gauss point's coordinates
+                        std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
+                        rhoBC=math::pointValue(element,a,b,1,2);
 
-                    FileFlux
-                              <<meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][0]<<" "
-                              <<meshVar::normProjectionOfCenterToBCEdge_realSysCoor[ilocalEdge][1]<<" "
-                              <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge],rhoBC)<<" "
-                              <<SurfaceBCFields::TBc[ilocalEdge]<<" "
-                              <<SurfaceBCFields::uBc[ilocalEdge]<<" "
-                              <<SurfaceBCFields::vBc[ilocalEdge]<<" "
-                              <<"\n";
+                        if (auxUlti::checkTimeVaryingBCAvailable())
+                            FileFlux
+                                      <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                      <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                      <<math::CalcP(nonEqmSurfaceField::TBc[ilocalEdge][nG],rhoBC)<<" "
+                                      <<nonEqmSurfaceField::TBc[ilocalEdge][nG]<<" "
+                                      <<nonEqmSurfaceField::uBc[ilocalEdge][nG]<<" "
+                                      <<nonEqmSurfaceField::vBc[ilocalEdge][nG]<<" "
+                                      <<"\n";
+                        else
+                            FileFlux
+                                      <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                      <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                      <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge],rhoBC)<<" "
+                                      <<SurfaceBCFields::TBc[ilocalEdge]<<" "
+                                      <<SurfaceBCFields::uBc[ilocalEdge]<<" "
+                                      <<SurfaceBCFields::vBc[ilocalEdge]<<" "
+                                      <<"\n";
+                    }
                 }
             }
         }

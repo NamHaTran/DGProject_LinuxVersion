@@ -345,7 +345,7 @@ namespace extNSF_Durst {
     double calcSelfDiffFlux(double rho, double T, double gradRho, double gradT)
     {
         extNSF_Durst::applyBlendingFactorToDm();
-        return (-extNSF_Durst::realDm*(gradRho/rho + gradT/(T)));
+        return (-extNSF_Durst::realDm*(gradRho/rho + gradT/(2*T)));
     }
 
     double calcDiffVelocity(std::vector<double> &U, std::vector<double> &dU)

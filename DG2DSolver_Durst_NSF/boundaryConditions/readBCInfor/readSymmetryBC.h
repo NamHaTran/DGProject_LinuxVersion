@@ -7,5 +7,5 @@
  * @param FileFlux: file flux to read.
  * @param bcGrp: group ID of boundary.
  */
-void readSymmetryBC(std::ifstream &FileFlux, int bcGrp);
+void readSymmetryBC(std::ifstream &FileFlux, int bcGrp, std::string fileName);
 #endif // READSYMMETRYBC_H
