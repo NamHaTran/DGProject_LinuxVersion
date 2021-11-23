@@ -70,3 +70,10 @@ Bản backup 29/09/2021:
 - Add điều kiện biên zeroRhoGrad để triệt tiêu normal grad(rho) tại wall (không quan trọng).
 
 - Code update lên github cùng ngày.
+
+
+Bản backup 23/11/2021:
+- Thêm scheme Euler cho time discretization. Với case cylinder Kn=0.1, chạy bằng Euler nhanh hơn, ổn định hơn và có thể dùng được HLLE flux.
+- Fix bug nhỏ về chính tả trong message output ra terminal.
+
+- Code update lên github cùng ngày.

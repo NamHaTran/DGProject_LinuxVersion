@@ -247,10 +247,18 @@ To convert unv mesh format to DG2D readable format, do following task step by st
             std::cout<<"    - All BCs are not varied with time.\n";
         }
 
+        std::cout<<"\nScheme settings:\n";
+        std::cout<<"    - Time discretization scheme: ";
+        if (systemVar::ddtScheme==1)
+            std::cout<<" Euler.\n";
+        else if (systemVar::ddtScheme==3)
+            std::cout<<" Total variation diminishing Runge-Kutta order 3.\n";
+
+
         //Show flux type
-        std::cout<<"\nDG scheme settings:\n";
-        std::cout<<"    - Flux type for auxilarity flux: Central flux.\n";
-        std::cout<<"    - Flux type for convective flux: ";
+        std::cout<<"    - Flux schemes: \n";
+        std::cout<<"       + Flux type of auxiliary flux: Central flux.\n";
+        std::cout<<"       + Flux type of convective flux: ";
         if (DGSchemes::fluxControl::LxF)
         {
             std::cout<<"Lax-Friedrichs flux.\n";
@@ -271,7 +279,7 @@ To convert unv mesh format to DG2D readable format, do following task step by st
         {
             std::cout<<"Central flux.\n";
         }
-        std::cout<<"    - Flux type for diffusive flux: Central flux.\n";
+        std::cout<<"       + Flux type of diffusive flux: Central flux.\n";
 
 
         std::cout<<"\nLimiter settings:\n";

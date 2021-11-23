@@ -1922,7 +1922,7 @@ namespace process
             }
         }
 
-		void solveNSFEquation(int RKOrder)
+        void solveNSFEquation_TVDRK(int RKOrder)
 		{
 			std::vector<double> rhoError(meshVar::nelem2D, 1.0),
 				rhouError(meshVar::nelem2D, 1.0),
@@ -2029,6 +2029,88 @@ namespace process
 				}
 			}
 		}
+
+        void solveNSFEquation_Euler()
+        {
+            std::vector<double> rhoError(meshVar::nelem2D, 1.0),
+                rhouError(meshVar::nelem2D, 1.0),
+                rhovError(meshVar::nelem2D, 1.0),
+                rhoEError(meshVar::nelem2D, 1.0);
+
+            //std::vector<std::vector<double>> StiffMatrix(mathVar::orderElem + 1, std::vector<double>(mathVar::orderElem + 1, 0.0));
+            std::vector<double>
+                RHSTerm1(mathVar::orderElem + 1, 0.0),
+                RHSTerm2(mathVar::orderElem + 1, 0.0),
+                RHSTerm3(mathVar::orderElem + 1, 0.0),
+                RHSTerm4(mathVar::orderElem + 1, 0.0),
+
+                ddtRhoVector(mathVar::orderElem + 1, 0.0),
+                ddtRhouVector(mathVar::orderElem + 1, 0.0),
+                ddtRhovVector(mathVar::orderElem + 1, 0.0),
+                ddtRhoEVector(mathVar::orderElem + 1, 0.0),
+
+                rhoVectorN(mathVar::orderElem + 1, 0.0),
+                rhouVectorN(mathVar::orderElem + 1, 0.0),
+                rhovVectorN(mathVar::orderElem + 1, 0.0),
+                rhoEVectorN(mathVar::orderElem + 1, 0.0),
+
+                UnVector(mathVar::orderElem + 1, 0.0);
+
+            for (int nelement = 0; nelement < meshVar::nelem2D; nelement++)
+            {
+                //2) Calculate Right hand side terms
+                process::NSFEq::CalcRHSTerm(nelement, RHSTerm1, RHSTerm2, RHSTerm3, RHSTerm4);
+
+                //3) Solve for time derivartives of conservative variables
+                for (int iorder = 0; iorder <= mathVar::orderElem; iorder++)
+                {
+                    ddtRhoVector[iorder] = RHSTerm1[iorder] / stiffMatrixCoeffs[nelement][iorder];
+                    ddtRhouVector[iorder] = RHSTerm2[iorder] / stiffMatrixCoeffs[nelement][iorder];
+                    ddtRhovVector[iorder] = RHSTerm3[iorder] / stiffMatrixCoeffs[nelement][iorder];
+                    ddtRhoEVector[iorder] = RHSTerm4[iorder] / stiffMatrixCoeffs[nelement][iorder];
+
+                    rhoResArr[nelement][iorder] = ddtRhoVector[iorder];
+                    rhouResArr[nelement][iorder] = ddtRhouVector[iorder];
+                    rhovResArr[nelement][iorder] = ddtRhovVector[iorder];
+                    rhoEResArr[nelement][iorder] = ddtRhoEVector[iorder];
+                }
+
+                //4) Solve time marching
+                //rho
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    UnVector[order] = rho[nelement][order];
+                }
+                rhoVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhoVector, UnVector, 1, 1);
+                //rhou
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    UnVector[order] = rhou[nelement][order];
+                }
+                rhouVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhouVector, UnVector, 1, 2);
+                //rhov
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    UnVector[order] = rhov[nelement][order];
+                }
+                rhovVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhovVector, UnVector, 1, 3);
+                //rhoE
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    UnVector[order] = rhoE[nelement][order];
+                }
+                rhoEVectorN = process::NSFEq::solveTimeMarching(nelement, ddtRhoEVector, UnVector, 1, 4);
+
+                //5) Save results to conservative variables arrays
+                for (int order = 0; order <= mathVar::orderElem; order++)
+                {
+                    rhoN[nelement][order] = rhoVectorN[order];
+                    rhouN[nelement][order] = rhouVectorN[order];
+                    rhovN[nelement][order] = rhovVectorN[order];
+                    rhoEN[nelement][order] = rhoEVectorN[order];
+                }
+            }
+        }
 
 		void updateVariables()
 		{
@@ -2582,6 +2664,22 @@ namespace process
 
 	namespace timeDiscretization
 	{
+        void solveTimeEq()
+        {
+            if (systemVar::ddtScheme==1)
+            {
+                process::timeDiscretization::Euler();
+            }
+            else if (systemVar::ddtScheme==2)
+            {
+                //not support
+            }
+            else if (systemVar::ddtScheme==3)
+            {
+                process::timeDiscretization::TVDRK3();
+            }
+        }
+
 		void calcGlobalTimeStep()
 		{
             if (systemVar::firstIter)
@@ -2771,11 +2869,11 @@ namespace process
 
 			//SOLVE NSF EQUATION
             process::NSFEq::calcSurfaceFlux();
-            process::NSFEq::solveNSFEquation(RKOrder);
+            process::NSFEq::solveNSFEquation_TVDRK(RKOrder);
 		}
 
         /**
-         * @brief Function solves 1 time steps of DG workflow
+         * @brief Function solves 1 time steps of DG workflow TVDRK (otal Variation Diminishing Runge-Kutta) time discretization
          */
 		void TVDRK3()
 		{
@@ -2798,6 +2896,57 @@ namespace process
 
             limiter::limiter_1OutterStep();
 		}
+
+        /**
+         * @brief Function solves 1 time steps of DG workflow by using Euler time discretization
+         */
+        void Euler()
+        {
+            rho0 = rho;
+            rhou0 = rhou;
+            rhov0 = rhov;
+            rhoE0 = rhoE;
+
+            //---------CALCULATION OF EACH EULER ITERATION---------//
+
+            limiter::limiter_1InnerStep();
+
+            //COMPUTE GAUSS VALUES AND INTERFACES VALUES
+            process::calcVolumeGaussValues();
+            process::calcValuesAtInterface();
+
+            //CALCULATE T
+            process::calcTGauss();
+
+            //SOLVE AUXILARY EQUATION
+            if (flowProperties::viscous)
+            {
+                process::auxEq::solveAuxEquation();
+            }
+            else
+            {
+                //Chay ham nay de update gia tri U tai surfaceBCFields
+                process::auxEq::updateSurfaceFieldsAtBC();
+            }
+
+            //Show warning
+            message::showWarning();
+
+            //SOLVE NSF EQUATION
+            process::NSFEq::calcSurfaceFlux();
+            process::NSFEq::solveNSFEquation_Euler();
+            //---------CALCULATION OF EACH EULER ITERATION---------//
+
+            rho = rhoN;
+            rhou = rhouN;
+            rhov = rhovN;
+            rhoE = rhoEN;
+
+            //UPDATE TIME VARYING BC
+            nonEquilibriumBCs::updateBCs();
+
+            limiter::limiter_1OutterStep();
+        }
 
         namespace parallel {
         void minTimeStep()

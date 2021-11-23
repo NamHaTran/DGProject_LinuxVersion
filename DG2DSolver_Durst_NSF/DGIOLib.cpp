@@ -1651,13 +1651,18 @@ namespace IO
             {
                 systemVar::ddtScheme = 1;
             }
+            /*
             else if (DGOptoutStr[0].compare("TVDRK2") == 0)
             {
                 systemVar::ddtScheme = 2;
-            }
+            }*/
             else if (DGOptoutStr[0].compare("TVDRK3") == 0)
             {
                 systemVar::ddtScheme = 3;
+            }
+            else {
+                std::string str0("ddtScheme '"+DGOptoutStr[0]+"' is not a time discretization scheme.");
+                message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, str0);
             }
 
             if (DGOptoutStr[1].compare("parallel") == 0)

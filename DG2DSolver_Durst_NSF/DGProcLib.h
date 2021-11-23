@@ -110,8 +110,10 @@ namespace process
 	{
         std::tuple<double, double> getInterfacesFluxes(int edge, int element, int nG, int mod, int valType);
 
+        void solveNSFEquation_Euler();
+
 		/*Function solves NSEF equation at all elements for conservative variables*/
-		void solveNSFEquation(int RKOrder);
+        void solveNSFEquation_TVDRK(int RKOrder);
 
 		/*Function calculates right hand side terms of all conservative variables at ONLY one order*/
 		void CalcRHSTerm(int element, std::vector<double> &term1RHS, std::vector<double> &term2RHS, std::vector<double> &term3RHS, std::vector<double> &term4RHS);
@@ -149,6 +151,10 @@ namespace process
 
 	namespace timeDiscretization
 	{
+        void solveTimeEq();
+
+        void Euler();
+
 		void calcGlobalTimeStep();
 
 		/*Function computes local time step*/
