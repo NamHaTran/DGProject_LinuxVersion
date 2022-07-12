@@ -59,7 +59,6 @@ SOURCES       = CommandCheck.cpp \
 		DGMessagesLib.cpp \
 		DGPostProcessLib.cpp \
 		DGProcLib.cpp \
-		NonEquilibriumBCsLib.cpp \
 		boundaryConditions/BCSupportFncs.cpp \
 		boundaryConditions/DGBCsLib.cpp \
 		boundaryConditions/bcVariables.cpp \
@@ -70,10 +69,12 @@ SOURCES       = CommandCheck.cpp \
 		boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp \
 		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp \
 		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp \
 		boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp \
 		boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.cpp \
 		boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp \
 		boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.cpp \
 		boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp \
@@ -123,7 +124,6 @@ OBJECTS       = CommandCheck.o \
 		DGMessagesLib.o \
 		DGPostProcessLib.o \
 		DGProcLib.o \
-		NonEquilibriumBCsLib.o \
 		BCSupportFncs.o \
 		DGBCsLib.o \
 		bcVariables.o \
@@ -134,10 +134,12 @@ OBJECTS       = CommandCheck.o \
 		u_MaxwellSlip.o \
 		T_SmoluchowskyTJump.o \
 		nonEqmBCs_GenFuncs.o \
-		nonEqmBCs_Maths.o \
-		nonEqmBCs_Vars.o \
 		p_reflectRhoGrad.o \
 		rho_reflectRhoGrad.o \
+		timeVaryingBCs_GenFuncs.o \
+		scalar_waveTransmissive.o \
+		supportFuncs_waveTransmissive.o \
+		vector_waveTransmissive.o \
 		p_zeroRhoGrad.o \
 		rho_zeroRhoGrad.o \
 		p_zeroRhoGradUncorrectP.o \
@@ -241,7 +243,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		DGMessagesLib.h \
 		DGPostProcessLib.h \
 		DGProcLib.h \
-		NonEquilibriumBCsLib.h \
 		boundaryConditions/BCSupportFncs.h \
 		boundaryConditions/DGBCsLib.h \
 		boundaryConditions/bcVariables.h \
@@ -252,10 +253,12 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h \
 		boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h \
 		boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h \
+		boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.h \
 		boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h \
 		boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h \
 		boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h \
@@ -304,7 +307,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		DGMessagesLib.cpp \
 		DGPostProcessLib.cpp \
 		DGProcLib.cpp \
-		NonEquilibriumBCsLib.cpp \
 		boundaryConditions/BCSupportFncs.cpp \
 		boundaryConditions/DGBCsLib.cpp \
 		boundaryConditions/bcVariables.cpp \
@@ -315,10 +317,12 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp \
 		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp \
 		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp \
 		boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp \
 		boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.cpp \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.cpp \
 		boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp \
 		boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.cpp \
 		boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp \
@@ -516,8 +520,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents CommandCheck.h ConstDeclaration.h DGAuxUltilitiesLib.h DGController.h DGIOLib.h DGMath.h DGMeshReaderLib.h DGMessagesLib.h DGPostProcessLib.h DGProcLib.h NonEquilibriumBCsLib.h boundaryConditions/BCSupportFncs.h boundaryConditions/DGBCsLib.h boundaryConditions/bcVariables.h boundaryConditions/customBCs/interiorSide/T_interiorSide.h boundaryConditions/customBCs/interiorSide/p_interiorSide.h boundaryConditions/customBCs/interiorSide/rho_interiorSide.h boundaryConditions/customBCs/interiorSide/u_interiorSide.h boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.h boundaryConditions/fixedValue.h boundaryConditions/matched.h boundaryConditions/readBCInfor/BCReader.h boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.h boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.h boundaryConditions/readBCInfor/readSymmetryBC.h boundaryConditions/readBCInfor/supportReadingBCFuncs.h boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.h boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.h boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.h boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.h boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.h boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.h boundaryConditions/symmetry.h boundaryConditions/zeroGradient.h debuggingFuncs.h dynamicVarDeclaration.h VarDeclaration.h extNSFEqns/FranzDurst/DurstModel.h extNSFEqns/FranzDurst/IO.h extNSFEqns/FranzDurst/boundaryConditions.h limiters/detectTroubleCell.h limiters/limiterController.h limiters/massDiffusion/massDiffusion.h limiters/mathFunctions.h limiters/pAdaptive/pAdaptive.h limiters/parallelFuncs.h limiters/positivityPreserving/positivityPreserving.h limiters/varsOfLimiters.h parallelFunctions/GaussPointData.h parallelFunctions/cellData.h parallelFunctions/generalParallelFuncs.h parallelFunctions/parallelVariables.h $(DISTDIR)/
-	$(COPY_FILE) --parents CommandCheck.cpp ConstDeclaration.cpp DG2D.cpp DGAuxUltilitiesLib.cpp DGController.cpp DGIOLib.cpp DGMath.cpp DGMeshReaderLib.cpp DGMessagesLib.cpp DGPostProcessLib.cpp DGProcLib.cpp NonEquilibriumBCsLib.cpp boundaryConditions/BCSupportFncs.cpp boundaryConditions/DGBCsLib.cpp boundaryConditions/bcVariables.cpp boundaryConditions/customBCs/interiorSide/T_interiorSide.cpp boundaryConditions/customBCs/interiorSide/p_interiorSide.cpp boundaryConditions/customBCs/interiorSide/rho_interiorSide.cpp boundaryConditions/customBCs/interiorSide/u_interiorSide.cpp boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.cpp boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.cpp boundaryConditions/fixedValue.cpp boundaryConditions/matched.cpp boundaryConditions/readBCInfor/BCReader.cpp boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.cpp boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.cpp boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.cpp boundaryConditions/readBCInfor/readSymmetryBC.cpp boundaryConditions/readBCInfor/supportReadingBCFuncs.cpp boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.cpp boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.cpp boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.cpp boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.cpp boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.cpp boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.cpp boundaryConditions/symmetry.cpp boundaryConditions/zeroGradient.cpp debuggingFuncs.cpp dynamicVarDeclaration.cpp VarDeclaration.cpp extNSFEqns/FranzDurst/DurstModel.cpp extNSFEqns/FranzDurst/IO.cpp extNSFEqns/FranzDurst/boundaryConditions.cpp limiters/detectTroubleCells.cpp limiters/limiterController.cpp limiters/massDiffusion/massDiffusion.cpp limiters/mathFunctions.cpp limiters/pAdaptive/pAdaptive.cpp limiters/parallelFuncs.cpp limiters/positivityPreserving/positivityPreserving.cpp limiters/varsOfLimiters.cpp parallelFunctions/GaussPointData.cpp parallelFunctions/cellData.cpp parallelFunctions/generalParallelFuncs.cpp parallelFunctions/parallelVariables.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents CommandCheck.h ConstDeclaration.h DGAuxUltilitiesLib.h DGController.h DGIOLib.h DGMath.h DGMeshReaderLib.h DGMessagesLib.h DGPostProcessLib.h DGProcLib.h boundaryConditions/BCSupportFncs.h boundaryConditions/DGBCsLib.h boundaryConditions/bcVariables.h boundaryConditions/customBCs/interiorSide/T_interiorSide.h boundaryConditions/customBCs/interiorSide/p_interiorSide.h boundaryConditions/customBCs/interiorSide/rho_interiorSide.h boundaryConditions/customBCs/interiorSide/u_interiorSide.h boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.h boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.h boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.h boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.h boundaryConditions/fixedValue.h boundaryConditions/matched.h boundaryConditions/readBCInfor/BCReader.h boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.h boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.h boundaryConditions/readBCInfor/readSymmetryBC.h boundaryConditions/readBCInfor/supportReadingBCFuncs.h boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.h boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.h boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.h boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.h boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.h boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.h boundaryConditions/symmetry.h boundaryConditions/zeroGradient.h debuggingFuncs.h dynamicVarDeclaration.h VarDeclaration.h extNSFEqns/FranzDurst/DurstModel.h extNSFEqns/FranzDurst/IO.h extNSFEqns/FranzDurst/boundaryConditions.h limiters/detectTroubleCell.h limiters/limiterController.h limiters/massDiffusion/massDiffusion.h limiters/mathFunctions.h limiters/pAdaptive/pAdaptive.h limiters/parallelFuncs.h limiters/positivityPreserving/positivityPreserving.h limiters/varsOfLimiters.h parallelFunctions/GaussPointData.h parallelFunctions/cellData.h parallelFunctions/generalParallelFuncs.h parallelFunctions/parallelVariables.h $(DISTDIR)/
+	$(COPY_FILE) --parents CommandCheck.cpp ConstDeclaration.cpp DG2D.cpp DGAuxUltilitiesLib.cpp DGController.cpp DGIOLib.cpp DGMath.cpp DGMeshReaderLib.cpp DGMessagesLib.cpp DGPostProcessLib.cpp DGProcLib.cpp boundaryConditions/BCSupportFncs.cpp boundaryConditions/DGBCsLib.cpp boundaryConditions/bcVariables.cpp boundaryConditions/customBCs/interiorSide/T_interiorSide.cpp boundaryConditions/customBCs/interiorSide/p_interiorSide.cpp boundaryConditions/customBCs/interiorSide/rho_interiorSide.cpp boundaryConditions/customBCs/interiorSide/u_interiorSide.cpp boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.cpp boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.cpp boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.cpp boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.cpp boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.cpp boundaryConditions/customBCs/zeroRhoGradUncorectP/p_zeroRhoGradUncorrectP.cpp boundaryConditions/customBCs/zeroRhoGradUncorectP/rho_zeroRhoGradUncorrectP.cpp boundaryConditions/fixedValue.cpp boundaryConditions/matched.cpp boundaryConditions/readBCInfor/BCReader.cpp boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.cpp boundaryConditions/readBCInfor/pressure/readMixedPresBCValue.cpp boundaryConditions/readBCInfor/pressure/readNewmannPresBCValue.cpp boundaryConditions/readBCInfor/readSymmetryBC.cpp boundaryConditions/readBCInfor/supportReadingBCFuncs.cpp boundaryConditions/readBCInfor/temperature/readDirichletTempBCValue.cpp boundaryConditions/readBCInfor/temperature/readMixedTempBCValue.cpp boundaryConditions/readBCInfor/temperature/readNewmannTempBCValue.cpp boundaryConditions/readBCInfor/velocity/readDirichletVelBCValue.cpp boundaryConditions/readBCInfor/velocity/readMixedVelBCValue.cpp boundaryConditions/readBCInfor/velocity/readNewmannVelBCValue.cpp boundaryConditions/symmetry.cpp boundaryConditions/zeroGradient.cpp debuggingFuncs.cpp dynamicVarDeclaration.cpp VarDeclaration.cpp extNSFEqns/FranzDurst/DurstModel.cpp extNSFEqns/FranzDurst/IO.cpp extNSFEqns/FranzDurst/boundaryConditions.cpp limiters/detectTroubleCells.cpp limiters/limiterController.cpp limiters/massDiffusion/massDiffusion.cpp limiters/mathFunctions.cpp limiters/pAdaptive/pAdaptive.cpp limiters/parallelFuncs.cpp limiters/positivityPreserving/positivityPreserving.cpp limiters/varsOfLimiters.cpp parallelFunctions/GaussPointData.cpp parallelFunctions/cellData.cpp parallelFunctions/generalParallelFuncs.cpp parallelFunctions/parallelVariables.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -585,6 +589,7 @@ DGController.o: DGController.cpp DGController.h \
 		DGIOLib.h \
 		DGMessagesLib.h \
 		DGMeshReaderLib.h \
+		DGMath.h \
 		DGPostProcessLib.h \
 		VarDeclaration.h \
 		ConstDeclaration.h \
@@ -596,7 +601,7 @@ DGController.o: DGController.cpp DGController.h \
 		parallelFunctions/parallelVariables.h \
 		limiters/limiterController.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h
+		extNSFEqns/FranzDurst/DurstModel.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DGController.o DGController.cpp
 
 DGIOLib.o: DGIOLib.cpp DGIOLib.h \
@@ -654,8 +659,7 @@ DGPostProcessLib.o: DGPostProcessLib.cpp DGPostProcessLib.h \
 		DGAuxUltilitiesLib.h \
 		DGMath.h \
 		DGIOLib.h \
-		extNSFEqns/FranzDurst/DurstModel.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h
+		extNSFEqns/FranzDurst/DurstModel.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DGPostProcessLib.o DGPostProcessLib.cpp
 
 DGProcLib.o: DGProcLib.cpp DGProcLib.h \
@@ -676,17 +680,9 @@ DGProcLib.o: DGProcLib.cpp DGProcLib.h \
 		limiters/mathFunctions.h \
 		extNSFEqns/FranzDurst/DurstModel.h \
 		extNSFEqns/FranzDurst/boundaryConditions.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h
+		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
+		boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DGProcLib.o DGProcLib.cpp
-
-NonEquilibriumBCsLib.o: NonEquilibriumBCsLib.cpp NonEquilibriumBCsLib.h \
-		DGMath.h \
-		VarDeclaration.h \
-		ConstDeclaration.h \
-		DGMessagesLib.h \
-		dynamicVarDeclaration.h \
-		DGAuxUltilitiesLib.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o NonEquilibriumBCsLib.o NonEquilibriumBCsLib.cpp
 
 BCSupportFncs.o: boundaryConditions/BCSupportFncs.cpp boundaryConditions/BCSupportFncs.h \
 		DGMath.h \
@@ -716,7 +712,10 @@ BCSupportFncs.o: boundaryConditions/BCSupportFncs.cpp boundaryConditions/BCSuppo
 		boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h \
 		boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h \
-		boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h
+		boundaryConditions/customBCs/zeroRhoGrad/rho_zeroRhoGrad.h \
+		boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BCSupportFncs.o boundaryConditions/BCSupportFncs.cpp
 
 DGBCsLib.o: boundaryConditions/DGBCsLib.cpp boundaryConditions/DGBCsLib.h \
@@ -783,7 +782,7 @@ u_MaxwellSlip.o: boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_Ma
 		dynamicVarDeclaration.h \
 		DGAuxUltilitiesLib.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h
+		extNSFEqns/FranzDurst/DurstModel.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o u_MaxwellSlip.o boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.cpp
 
 T_SmoluchowskyTJump.o: boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h \
@@ -796,12 +795,10 @@ T_SmoluchowskyTJump.o: boundaryConditions/customBCs/nonEquilibriumBCs/Smoluchows
 		DGMath.h \
 		dynamicVarDeclaration.h \
 		DGAuxUltilitiesLib.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h
+		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o T_SmoluchowskyTJump.o boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.cpp
 
 nonEqmBCs_GenFuncs.o: boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h \
 		DGAuxUltilitiesLib.h \
 		VarDeclaration.h \
 		ConstDeclaration.h \
@@ -812,19 +809,6 @@ nonEqmBCs_GenFuncs.o: boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_G
 		boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o nonEqmBCs_GenFuncs.o boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.cpp
-
-nonEqmBCs_Maths.o: boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h \
-		DGMath.h \
-		DGAuxUltilitiesLib.h \
-		VarDeclaration.h \
-		ConstDeclaration.h \
-		DGMessagesLib.h \
-		dynamicVarDeclaration.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o nonEqmBCs_Maths.o boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.cpp
-
-nonEqmBCs_Vars.o: boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o nonEqmBCs_Vars.o boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.cpp
 
 p_reflectRhoGrad.o: boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.cpp boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad.h \
 		VarDeclaration.h \
@@ -837,8 +821,53 @@ p_reflectRhoGrad.o: boundaryConditions/customBCs/reflectRhoGrad/p_reflectRhoGrad
 
 rho_reflectRhoGrad.o: boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.h \
 		boundaryConditions/zeroGradient.h \
-		boundaryConditions/bcVariables.h
+		boundaryConditions/bcVariables.h \
+		DGMath.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o rho_reflectRhoGrad.o boundaryConditions/customBCs/reflectRhoGrad/rho_reflectRhoGrad.cpp
+
+timeVaryingBCs_GenFuncs.o: boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.cpp boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h \
+		DGAuxUltilitiesLib.h \
+		VarDeclaration.h \
+		ConstDeclaration.h \
+		DGMessagesLib.h \
+		DGIOLib.h \
+		dynamicVarDeclaration.h \
+		boundaryConditions/bcVariables.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o timeVaryingBCs_GenFuncs.o boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.cpp
+
+scalar_waveTransmissive.o: boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.cpp boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h \
+		VarDeclaration.h \
+		ConstDeclaration.h \
+		DGMessagesLib.h \
+		dynamicVarDeclaration.h \
+		DGAuxUltilitiesLib.h \
+		DGMath.h \
+		boundaryConditions/bcVariables.h \
+		boundaryConditions/fixedValue.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o scalar_waveTransmissive.o boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.cpp
+
+supportFuncs_waveTransmissive.o: boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.cpp boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h \
+		VarDeclaration.h \
+		ConstDeclaration.h \
+		DGMessagesLib.h \
+		boundaryConditions/bcVariables.h \
+		boundaryConditions/readBCInfor/supportReadingBCFuncs.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o supportFuncs_waveTransmissive.o boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.cpp
+
+vector_waveTransmissive.o: boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.cpp boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h \
+		VarDeclaration.h \
+		ConstDeclaration.h \
+		DGMessagesLib.h \
+		dynamicVarDeclaration.h \
+		DGAuxUltilitiesLib.h \
+		DGMath.h \
+		boundaryConditions/bcVariables.h \
+		boundaryConditions/fixedValue.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o vector_waveTransmissive.o boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.cpp
 
 p_zeroRhoGrad.o: boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.cpp boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h \
 		VarDeclaration.h \
@@ -906,7 +935,8 @@ BCReader.o: boundaryConditions/readBCInfor/BCReader.cpp boundaryConditions/readB
 		boundaryConditions/customBCs/interiorSide/u_interiorSide.h \
 		boundaryConditions/customBCs/zeroRhoGrad/p_zeroRhoGrad.h \
 		boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h \
-		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h
+		boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h \
+		boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BCReader.o boundaryConditions/readBCInfor/BCReader.cpp
 
 readDirichletPresBCValue.o: boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.cpp boundaryConditions/readBCInfor/pressure/readDirichletPresBCValue.h \

@@ -20,7 +20,7 @@ void matchedBC_auxEqs(std::vector <std::vector<double>> &Fluxes, int edge, int n
 
     //Nhan mu vao vector flux truoc khi return
     muP=math::CalcVisCoef(surfaceFields::T[edge][nG]);
-    muM=math::CalcVisCoef(surfaceFields::T[edge][nG+mathVar::nGauss+1]);
+    muM=math::CalcVisCoef(surfaceFields::T[edge][nG+mathVar::nGauss1D+1]);
     for (int i = 0; i < 4; i++)
     {
         Fluxes[i][0] = UPlus[i]*muP;
@@ -38,7 +38,7 @@ void matchedBC_NSFEqs(std::vector<double> &Fluxes, int element, int edge, int nG
         dUXMinus(4, 0.0),
         dUYMinus(4, 0.0),
         norm(2, 0.0);
-    double TPlus(surfaceFields::T[edge][nG]), TMinus(surfaceFields::T[edge][nG+mathVar::nGauss+1]), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+    double TPlus(surfaceFields::T[edge][nG]), TMinus(surfaceFields::T[edge][nG+mathVar::nGauss1D+1]), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
     norm[0] = nx;
     norm[1] = ny;
 

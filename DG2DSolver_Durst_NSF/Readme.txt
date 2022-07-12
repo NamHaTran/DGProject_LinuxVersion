@@ -77,3 +77,9 @@ Bản backup 23/11/2021:
 - Fix bug nhỏ về chính tả trong message output ra terminal.
 
 - Code update lên github cùng ngày.
+
+
+Bản backup 12/7/2022:
+- Tách numberOfGaussPoints thành numberOfGaussPoints1D và numberOfGaussPoints2D.
+- Thêm nhóm điều kiện biên timeVaryingBCs để chứa các điều kiện biên thay đổi theo thời gian. Chuyển field lưu giá trị điều kiện biên của điều kiện nonEquilibriumBCs từ nonEqmSurfaceField sang SurfaceBCFields để thống nhất với các điều kiện biên thuộc nhóm timeVaryingBCs trong tương lai.
+- Thêm điều kiện biên waveTransmissive thuộc timeVaryingBCs. Hiện tại chạy OK với vector field U, nhưng bị crash khi chạy với scalar field.

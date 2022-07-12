@@ -1,6 +1,10 @@
 #ifndef DGPOSTPROCESSLIB_H_INCLUDED
 #define DGPOSTPROCESSLIB_H_INCLUDED
 #include <vector>
+#include <string>
+
+void reconstructLatestTime();
+
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin);
@@ -17,29 +21,35 @@ namespace DG2Tecplot
 
 	std::vector<double> calcNodeValuesAtBC(int ptAtBCId);
 
-    void calcCellCenteredValues(std::vector<double>&node_rho,std::vector<double>&node_p,std::vector<double>&node_T,std::vector<double>&node_u,std::vector<double>&node_v);
+	std::vector<double> calcCellCenteredValues(int valType);
+
+    double pointMeanValue(int element, int valType);
 
 	void exportNodeData(int iter);
 
-	void exportCellCenteredData(int iter);
+    void exportCellCenteredData(int iter);
 
 	namespace calcNodeValueAtBCChildFuncs
 	{
 		namespace patch
 		{
-			std::vector<double> inFlow(int element, int edgeGrp, int a, int b);
+            std::vector<double> inFlow(int element, int edgeGrp, double a, double b);
 
-			std::vector<double> outFlow(int element, int edgeGrp, int a, int b);
+            std::vector<double> outFlow(int element, int edgeGrp, double a, double b);
 		}
 
 		namespace wall
 		{
-			std::vector <double> noSlipIsoThermal(int element, int edgeGrp, int a, int b);
+            std::vector <double> noSlipIsoThermal(int element, int edgeGrp, double a, double b);
 
-			std::vector <double> noSlipAdiabatic(int element, int a, int b);
+            std::vector <double> noSlipAdiabatic(int element, double a, double b);
 		}
 
-		std::vector <double> Symmetry(int element, int edge, int a, int b);
+        std::vector <double> Symmetry(int element, int edge, double a, double b);
 	}
+}
+
+namespace postProcessing_Surface {
+    void writeVarsAtWall(std::string Loc);
 }
 #endif // DGPOSTPROCESSLIB_H_INCLUDED

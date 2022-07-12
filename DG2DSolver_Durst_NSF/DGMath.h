@@ -6,12 +6,10 @@
 namespace math
 {
     /*Function calculates Gauss values*/
-    void volumeGauss(int nGauss);
-    void surfaceGauss(int nGauss);
+    void getGaussCoeffs(double* xGauss, double* wGauss, int nGauss);
 
     /*Function calculates Gauss-Lobatto values*/
-    void volumeGaussLobatto(int nGauss);
-    void surfaceGaussLobatto(int nGauss);
+    void getGaussLobattoCoeffs(double* xGauss, double* wGauss, int nGauss);
 
 	/*Function calculates basis function*/
 	void basisFc(double a, double b, int elemType);
@@ -48,6 +46,8 @@ namespace math
 
 	/*Function solves system of linear equations by using Gauss-Seidel algorithm*/
 	std::vector<double> SolveSysEqs(std::vector< std::vector<double> > &a, std::vector<double> &b);
+
+    std::tuple<double,double> solveSys2Eqs(double *A, double *B);
 
 	/*Function calculates error for Gauss-Seidel algorithm*/
 	double errorGS(std::vector< std::vector<double> > &a, std::vector<double> &b, std::vector<double> &No);
@@ -392,6 +392,8 @@ namespace math
 
         //Vector 12, (1)------>(2)
         std::tuple<double, double> calcUnitVectorOf2Points(double xPt1, double yPt1, double xPt2, double yPt2);
+
+        void findGaussPtsOnWallParameters();
 	}
 
 	namespace residualManipulation

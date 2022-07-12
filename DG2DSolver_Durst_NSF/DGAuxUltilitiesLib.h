@@ -2,6 +2,7 @@
 #define DGAUXULTILITIESLIB_H_INCLUDED
 #include <tuple>
 #include <vector>
+#include <string>
 
 int calcArrId(int id1, int id2, int length);
 
@@ -76,6 +77,8 @@ namespace auxUlti
 
 	/*Function checks subsonic flow locally*/
 	bool checkSubSonicLocally(double TVal, double uVal, double vVal);
+
+    bool checkNonEqmBCAvailable();
 
     bool checkTimeVaryingBCAvailable();
 

@@ -4,57 +4,129 @@
 
 namespace meshVar
 {
-	std::vector<std::vector<double>> Points, normalVector;
-	std::vector<std::vector<int>> Elements1D, Elements2D, BoundaryType; ////BoundaryType: column 0 is boundary group (from 0), column 1 is boundary type (1, 2, 3, 4), column 3 is boundary method
-	std::vector<int>  markPointsAtBC, MasterElemOfEdge;
+    /*Edges informations*/
+    int **inpoed = new int*[1];
+    /* - Cot 0 va 1: 2 point cua edge
+     * - Cot 3: Kieu dieu kien bien cua edge (1: wall. 2: intFlow. 3: outFlow. 4: symmetry)
+     * - Cot 4: id cua edge trong vector Element1D (Element 1D chi bao gom cac edge tai boundary)
+    */
 
-	/*Gauss points on edges*/
-	std::vector<std::vector<double>>
-		edgeGaussPoints_a(1, std::vector<double>(1, 0.0)),
-		edgeGaussPoints_b(1, std::vector<double>(1, 0.0));
+    /*Elements surrounding element*/
+    int **esuel = new int*[1]; //Default is 4 faces
+
+    int **inpoel = new int*[1];
+
+    /*Edges of element*/
+    //column index is element index, each row in column contents index of edge belong to element, number of row is 4 because of default quad element
+    //column index is edge index, each row in column contents index of element which edge is belong to, row 3 contents pointer
+    int **inedel = new int*[1];
+    int **ineled = new int*[1];
+
+    double **Points = new double*[1]; //array nay resize trong ham loadMesh
+    double **normalVector = new double*[1];
+
+    int **Elements1D = new int*[1]; //array nay resize trong ham loadMesh
+    int **Elements2D = new int*[1]; //array nay resize trong ham loadMesh
+    int **BoundaryType = new int*[1]; //BoundaryType: column 0 is boundary group (from 0), column 1 is boundary type (1, 2, 3, 4), column 3 is boundary method
+    int *markPointsAtBC = new int[1];
+    int *MasterElemOfEdge = new int[1];
+
+    /*Gauss points on edges*/
+    double **edgeGaussPoints_a = new double*[1];
+    double **edgeGaussPoints_b = new double*[1];
 
 	/*Vector contents BC edges name and location of them on BC values arrays*/
-	std::vector<int>adressOfBCVals(0, 0);
-	std::vector<std::vector<int>>neighboringElements(1, std::vector<int>(1, 0));
+    //std::vector<int>adressOfBCVals(0, 0);
+    int **neighboringElements = new int*[1];
 
-    std::vector<std::vector<double>> geoCenter(0, std::vector<double>(2, 0.0));
-    std::vector<double> cellSize(0, 0.0), cellArea(0, 0.0), localCellSize(0, 0.0);
+    double **geoCenter = new double*[1];
+    double *cellSize = new double[1];
+    double *cellArea = new double[1];
+    double *localCellSize = new double[1];
 
     /*derivatives dx/da, dx/db, dy/da, dy/db*/
-    std::vector<std::vector<std::vector<double>>>dxa, dxb, dya, dyb;
+    //dxa,dxb ... la mang 3D, luu gia tri dao ham dxa, dxb ... tai moi diem Gauss
+    double **dxa = new double*[1];
+    double **dxb = new double*[1];
+    double **dya = new double*[1];
+    double **dyb = new double*[1];
 
     /*Jacobian*/
-    std::vector<std::vector<std::vector<double>>> J2D;
-    std::vector<double> J1D;
+    //J2D ban dau la mang 3D, luu gia tri Jacobi tai moi diem Gauss
+    double **J2D = new double*[1];
+    double *J1D;
+
+    /*Array needed for decomposing case*/
+    int *Elem2DlocalIdWithRank = new int[1];
+    int *rankOf2DElem = new int[1];
+    int **PointslocalIdWithRank = new int*[1];
+
+    /*Mesh connection*/
+    int **meshConnection = new int*[1];
+
+    /*For Maxwell-Smoluchowsky BC*/
+    double **normProjectionOfCenterToBCEdge_realSysCoor = new double*[1];
+    double **normProjectionOfCenterToBCEdge_standardSysCoor = new double*[1];
+    double *distanceFromCentroidToBCEdge = new double[1];
+
+    double **GaussPtsOnBCEdge_x = new double*[1];
+    double **GaussPtsOnBCEdge_y = new double*[1];
+    double **distanceFromGaussPtsToCentroid = new double*[1];
+
+    double **GaussPtsOnBCEdge_unitVector_x = new double*[1];
+    double **GaussPtsOnBCEdge_unitVector_y = new double*[1];
 }
 
 namespace mathVar {
-    std::vector<double> wGauss, xGauss, wGaussLobatto, xGaussLobatto, B, dBa, dBb;
-    std::vector<std::vector<std::vector<double>>> GaussPts, wGaussPts, GaussLobattoPts, wGaussLobattoPts,
-        BPts_Quad, dBaPts_Quad, dBbPts_Quad, BPts_Tri, dBaPts_Tri, dBbPts_Tri;
+    double *wGaussVol = new double[1];
+    double *xGaussVol = new double[1];
+    double *wGaussLobattoVol = new double[1];
+    double *xGaussLobattoVol = new double[1];
+
+    double *wGaussSur = new double[1];
+    double *xGaussSur = new double[1];
+    double *wGaussLobattoSur = new double[1];
+    double *xGaussLobattoSur = new double[1];
+
+    double *B = new double[1];
+    double *dBa = new double[1];
+    double *dBb = new double[1];
+
+    //std::vector<std::vector<std::vector<double>>> GaussPts, wGaussPts, GaussLobattoPts, wGaussLobattoPts,
+    //    BPts_Quad, dBaPts_Quad, dBbPts_Quad, BPts_Tri, dBaPts_Tri, dBbPts_Tri;
+    //Cac mang tren la mang 3D, chua cac gia tri tai tung diem Gauss cua 1 cell
+    double **GaussPts = new double*[1];
+    double **wGaussPts = new double*[1];
+    double **GaussLobattoPts = new double*[1];
+    double **wGaussLobattoPts = new double*[1];
+    double **BPts_Quad = new double*[1];
+    double **dBaPts_Quad = new double*[1];
+    double **dBbPts_Quad = new double*[1];
+    double **BPts_Tri = new double*[1];
+    double **dBaPts_Tri = new double*[1];
+    double **dBbPts_Tri = new double*[1];
 }
 
 /*Conservative variables declaration*/
-std::vector<std::vector<double>>
-rho(1, std::vector<double>(1, 0.0)),
-rhou(1, std::vector<double>(1, 0.0)),
-rhov(1, std::vector<double>(1, 0.0)),
-rhoE(1, std::vector<double>(1, 0.0)),
+double **rho = new double*[1];
+double **rhou = new double*[1];
+double **rhov = new double*[1];
+double **rhoE = new double*[1];
 
-rhoN(1, std::vector<double>(1, 0.0)),
-rhouN(1, std::vector<double>(1, 0.0)),
-rhovN(1, std::vector<double>(1, 0.0)),
-rhoEN(1, std::vector<double>(1, 0.0)),
+double **rhoN = new double*[1];
+double **rhouN = new double*[1];
+double **rhovN = new double*[1];
+double **rhoEN = new double*[1];
 
-rho0(1, std::vector<double>(1, 0.0)),
-rhou0(1, std::vector<double>(1, 0.0)),
-rhov0(1, std::vector<double>(1, 0.0)),
-rhoE0(1, std::vector<double>(1, 0.0)),
+double **rho0 = new double*[1];
+double **rhou0 = new double*[1];
+double **rhov0 = new double*[1];
+double **rhoE0 = new double*[1];
 
-rhoResArr(1, std::vector<double>(1, 0.0)),
-rhouResArr(1, std::vector<double>(1, 0.0)),
-rhovResArr(1, std::vector<double>(1, 0.0)),
-rhoEResArr(1, std::vector<double>(1, 0.0));
+double **rhoResArr = new double*[1];
+double **rhouResArr = new double*[1];
+double **rhovResArr = new double*[1];
+double **rhoEResArr = new double*[1];
 
 /*Primary variables declaration*/
 /*
@@ -70,136 +142,151 @@ mu(1, std::vector<double>(1, 0.0));
 /*Auxilary variables*/
 namespace BR1Vars {
 //X direction
-std::vector<std::vector<double>>
-rhoX(1, std::vector<double>(1, 0.0)),
-rhouX(1, std::vector<double>(1, 0.0)),
-rhovX(1, std::vector<double>(1, 0.0)),
-rhoEX(1, std::vector<double>(1, 0.0));
+double **rhoX = new double*[1];
+double **rhouX = new double*[1];
+double **rhovX = new double*[1];
+double **rhoEX = new double*[1];
 
 /*Y direction*/
-std::vector<std::vector<double>>
-rhoY(1, std::vector<double>(1, 0.0)),
-rhouY(1, std::vector<double>(1, 0.0)),
-rhovY(1, std::vector<double>(1, 0.0)),
-rhoEY(1, std::vector<double>(1, 0.0));
+double **rhoY = new double*[1];
+double **rhouY = new double*[1];
+double **rhovY = new double*[1];
+double **rhoEY = new double*[1];
 }
 
 namespace BR2Vars {
 //X direction
-std::vector<std::vector<double>>
-rhoXVol(1, std::vector<double>(1, 0.0)),
-rhouXVol(1, std::vector<double>(1, 0.0)),
-rhovXVol(1, std::vector<double>(1, 0.0)),
-rhoEXVol(1, std::vector<double>(1, 0.0));
+double **rhoXVol = new double*[1];
+double **rhouXVol = new double*[1];
+double **rhovXVol = new double*[1];
+double **rhoEXVol = new double*[1];
 
 /*Y direction*/
-std::vector<std::vector<double>>
-rhoYVol(1, std::vector<double>(1, 0.0)),
-rhouYVol(1, std::vector<double>(1, 0.0)),
-rhovYVol(1, std::vector<double>(1, 0.0)),
-rhoEYVol(1, std::vector<double>(1, 0.0));
+double **rhoYVol = new double*[1];
+double **rhouYVol = new double*[1];
+double **rhovYVol = new double*[1];
+double **rhoEYVol = new double*[1];
 
 //X direction
-std::vector<std::vector<double>>
-rhoXSurMaster(1, std::vector<double>(1, 0.0)),
-rhouXSurMaster(1, std::vector<double>(1, 0.0)),
-rhovXSurMaster(1, std::vector<double>(1, 0.0)),
-rhoEXSurMaster(1, std::vector<double>(1, 0.0)),
-rhoXSurSlave(1, std::vector<double>(1, 0.0)),
-rhouXSurSlave(1, std::vector<double>(1, 0.0)),
-rhovXSurSlave(1, std::vector<double>(1, 0.0)),
-rhoEXSurSlave(1, std::vector<double>(1, 0.0));
+double **rhoXSurMaster = new double*[1];
+double **rhouXSurMaster = new double*[1];
+double **rhovXSurMaster = new double*[1];
+double **rhoEXSurMaster = new double*[1];
+double **rhoXSurSlave = new double*[1];
+double **rhouXSurSlave = new double*[1];
+double **rhovXSurSlave = new double*[1];
+double **rhoEXSurSlave = new double*[1];
 
 /*Y direction*/
-std::vector<std::vector<double>>
-rhoYSurMaster(1, std::vector<double>(1, 0.0)),
-rhouYSurMaster(1, std::vector<double>(1, 0.0)),
-rhovYSurMaster(1, std::vector<double>(1, 0.0)),
-rhoEYSurMaster(1, std::vector<double>(1, 0.0)),
-rhoYSurSlave(1, std::vector<double>(1, 0.0)),
-rhouYSurSlave(1, std::vector<double>(1, 0.0)),
-rhovYSurSlave(1, std::vector<double>(1, 0.0)),
-rhoEYSurSlave(1, std::vector<double>(1, 0.0));
+double **rhoYSurMaster = new double*[1];
+double **rhouYSurMaster = new double*[1];
+double **rhovYSurMaster = new double*[1];
+double **rhoEYSurMaster = new double*[1];
+double **rhoYSurSlave = new double*[1];
+double **rhouYSurSlave = new double*[1];
+double **rhovYSurSlave = new double*[1];
+double **rhoEYSurSlave = new double*[1];
 }
 
 /*Interface conservative variables*/
 namespace surfaceFields {
-    std::vector<std::vector<double>>
-    rho(1, std::vector<double>(1, 0.0)),
-    rhou(1, std::vector<double>(1, 0.0)),
-    rhov(1, std::vector<double>(1, 0.0)),
-    rhoE(1, std::vector<double>(1, 0.0));
+    double **rho = new double*[1];
+    double **rhou = new double*[1];
+    double **rhov = new double*[1];
+    double **rhoE = new double*[1];
 
     /*Interface values*/
     //Auxilary equation
-    std::vector<std::vector<double>>
-    aux_rho(1, std::vector<double>(1, 0.0)),
-    aux_rhou(1, std::vector<double>(1, 0.0)),
-    aux_rhov(1, std::vector<double>(1, 0.0)),
-    aux_rhoE(1, std::vector<double>(1, 0.0));
+    double **aux_rho = new double*[1];
+    double **aux_rhou = new double*[1];
+    double **aux_rhov = new double*[1];
+    double **aux_rhoE = new double*[1];
 
     //NSF equation
-    //X direction
-    std::vector<std::vector<double>>
-    invis_rhoX(1, std::vector<double>(1, 0.0)),
-    invis_rhouX(1, std::vector<double>(1, 0.0)),
-    invis_rhovX(1, std::vector<double>(1, 0.0)),
-    invis_rhoEX(1, std::vector<double>(1, 0.0));
+    //inviscid/viscous flux
+    double **invis_rho = new double*[1];
+    double **invis_rhou = new double*[1];
+    double **invis_rhov = new double*[1];
+    double **invis_rhoE = new double*[1];
 
-    std::vector<std::vector<double>>
-    Vis_rhoX(1, std::vector<double>(1, 0.0)),
-    Vis_rhouX(1, std::vector<double>(1, 0.0)),
-    Vis_rhovX(1, std::vector<double>(1, 0.0)),
-    Vis_rhoEX(1, std::vector<double>(1, 0.0));
+    double **Vis_rho = new double*[1];
+    double **Vis_rhou = new double*[1];
+    double **Vis_rhov = new double*[1];
+    double **Vis_rhoE = new double*[1];
 
-    //Y direction
-    std::vector<std::vector<double>>
-    invis_rhoY(1, std::vector<double>(1, 0.0)),
-    invis_rhouY(1, std::vector<double>(1, 0.0)),
-    invis_rhovY(1, std::vector<double>(1, 0.0)),
-    invis_rhoEY(1, std::vector<double>(1, 0.0));
+    double **T = new double*[1];
 
-    std::vector<std::vector<double>>
-    Vis_rhoY(1, std::vector<double>(1, 0.0)),
-    Vis_rhouY(1, std::vector<double>(1, 0.0)),
-    Vis_rhovY(1, std::vector<double>(1, 0.0)),
-    Vis_rhoEY(1, std::vector<double>(1, 0.0));
-
-    std::vector<std::vector<double>> T(1, std::vector<double>(1, 0.0));
+    //Derivatives
+    //Ox
+    double **dRhoX = new double*[1];
+    double **dRhouX = new double*[1];
+    double **dRhovX = new double*[1];
+    double **dRhoEX = new double*[1];
+    //Oy
+    double **dRhoY = new double*[1];
+    double **dRhouY = new double*[1];
+    double **dRhovY = new double*[1];
+    double **dRhoEY = new double*[1];
 }
 
 namespace volumeFields {
     //Volume values
-    std::vector<std::vector<std::vector<double>>>
-    rhoVolGauss(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0))),
-    rhouVolGauss(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0))),
-    rhovVolGauss(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0))),
-    rhoEVolGauss(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0))),
-    drhoXVolGauss(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0))),
-    drhoYVolGauss(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0))),
-    T(1, std::vector<std::vector<double>>(1, std::vector<double>(1, 0.0)));
+    //Cac array cua volumeFields la 3D array
+    double **rhoVolGauss = new double*[1];
+    double **rhouVolGauss = new double*[1];
+    double **rhovVolGauss = new double*[1];
+    double **rhoEVolGauss = new double*[1];
+    double **drhoXVolGauss = new double*[1];
+    double **drhoYVolGauss = new double*[1];
+    double **T = new double*[1];
 }
 
 //Lax-Friedrich constant
-std::vector<double> LxFConst(1, 0.0);
-std::vector<double> DiffusiveFluxConst(1, 0.0);
+double *LxFConst = new double[1];
+double *DiffusiveFluxConst = new double[1];
 
 //StiffMatrixCoefficients
-std::vector<std::vector<double>>
-stiffMatrixCoeffs(1, std::vector<double>(1, 0.0));
+double **stiffMatrixCoeffs = new double*[1];
 
 //Limiting coefficients
-std::vector<double>
-theta1Arr(1, 1.0),
-theta2Arr(1, 1.0);
+double *theta1Arr = new double[1];
+double *theta2Arr = new double[1];
 
 namespace SurfaceBCFields
 {
-	std::vector<std::vector<double>> rhoBc(1, std::vector<double>(1, 0.0)),
-		rhouBc(1, std::vector<double>(1, 0.0)),
-		rhovBc(1, std::vector<double>(1, 0.0)),
-		rhoEBc(1, std::vector<double>(1, 0.0));
-	std::vector<std::vector<int>>BCPointsInfor;
+    //int **BCPointsInfor;
+    std::vector<std::vector<int>> BCPointsInfor;
+
+    //double *TBc = new double[1];
+    //double *uBc = new double[1];
+    //double *vBc = new double[1];
+    //double *pBc = new double[1];
+
+    double **TBc = new double*[1];
+    double **uBc = new double*[1];
+    double **vBc = new double*[1];
+    double **pBc = new double*[1];
+    double **rhoBc = new double*[1];
+
+    int *localGlobalBCEdgesMatching = new int[1];
+
+    /*
+    //Derivatives
+    //Ox
+    double **GaussDRhoX = new double*[1];
+    double **GaussDRhouX = new double*[1];
+    double **GaussDRhovX = new double*[1];
+    double **GaussDRhoEX = new double*[1];
+    //Oy
+    double **GaussDRhoY = new double*[1];
+    double **GaussDRhouY = new double*[1];
+    double **GaussDRhovY = new double*[1];
+    double **GaussDRhoEY = new double*[1];
+    */
+}
+
+namespace limitVal {
+    bool *troubleCellsMarker = new bool[1];
 }
 
 //for debugging
@@ -208,9 +295,4 @@ namespace debug
 	//std::vector<double>
 		//minRhoArr(1, 1.0),
 		//minRhoeArr(1, 1.0);
-}
-
-namespace limitVal
-{
-    std::vector<bool> troubleCellsMarker(1, false);
 }

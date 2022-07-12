@@ -92,9 +92,9 @@ namespace limiter
 
                 //Compute rho at all internal Gauss point
 
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
                         std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
                         rhoVal=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -106,7 +106,7 @@ namespace limiter
 
                 //Compute rho at edge DA
                 aG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     rhoVal=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -116,7 +116,7 @@ namespace limiter
                 }
                 //Compute rho at edge BC
                 aG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     rhoVal=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -126,7 +126,7 @@ namespace limiter
                 }
                 //Compute rho at edge AB
                 bG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     rhoVal=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -136,7 +136,7 @@ namespace limiter
                 }
                 //Compute rho at edge CD
                 bG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     rhoVal=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -176,9 +176,9 @@ namespace limiter
                 int counter(0);
 
                 //Compute rho at all internal Gauss point
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRhoeInVol(element,na,nb,theta1);
                         if (rhoeVal<min)
@@ -195,7 +195,7 @@ namespace limiter
 
                     //Compute rho at edge DA
                     aG = -1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         bG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);
@@ -206,7 +206,7 @@ namespace limiter
                     }
                     //Compute rho at edge BC
                     aG = 1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         bG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);
@@ -217,7 +217,7 @@ namespace limiter
                     }
                     //Compute rho at edge AB
                     bG = -1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         aG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);
@@ -229,7 +229,7 @@ namespace limiter
                     //Compute rho at edge CD
 
                     bG = 1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         aG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);
@@ -246,7 +246,7 @@ namespace limiter
 
                     //Compute rho at edge CA
                     aG = -1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         bG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);
@@ -257,7 +257,7 @@ namespace limiter
                     }
                     //Compute rho at edge BC
                     aG = 1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         bG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);
@@ -268,7 +268,7 @@ namespace limiter
                     }
                     //Compute rho at edge AB
                     bG = -1;
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         aG = mathVar::xGaussSur[nG];
                         rhoeVal=limiter::positivityPreserving::mathFuncs::calcRheOnSur(element,aG,bG,theta1);

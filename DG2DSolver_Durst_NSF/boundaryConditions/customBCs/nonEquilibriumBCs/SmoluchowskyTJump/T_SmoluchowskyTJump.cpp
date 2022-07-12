@@ -13,7 +13,6 @@
 #include <iostream>
 
 #include ".././nonEqmBCs_GenFuncs.h"
-#include ".././nonEqmBCs_Vars.h"
 
 namespace SmoluchowskyTJump {
     void T_IO(int bcGrp, std::ifstream &FileFlux)
@@ -56,7 +55,7 @@ namespace SmoluchowskyTJump {
         //Apply boundary condition
         bool isStrong(BCVars::DirichletAppMethTStrong[edgeGrp-1]);
         varM = fixedValue_scalar(varP,
-                nonEqmSurfaceField::TBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG],
+                SurfaceBCFields::TBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG],
                 isStrong);
     }
 
@@ -74,7 +73,7 @@ namespace SmoluchowskyTJump {
         //Tinh cac gia tri can thiet-----------------------------------------------------
         //Lay cac gia tri da luu
         double aConst(0.0), dux(0.0), duy(0.0), dvx(0.0), dvy(0.0), lambda(0.0), dEx, dEy,
-                TVal(SurfaceBCFields::TBc[localEdgeId]),
+                TVal(SurfaceBCFields::TBc[localEdgeId][nG]),
                 muVal(0.0), nx, ny, dTx, dTy,dTn;
 
         double TWall(bcValues::TBCFixed[edgeGrp - 1]), TJump(0.0);
@@ -127,7 +126,7 @@ namespace SmoluchowskyTJump {
             TJump=TVal;
         }
         //Update to surfaceBCfields
-        nonEqmSurfaceField::TBc[localEdgeId][nG] = TJump;
+        SurfaceBCFields::TBc[localEdgeId][nG] = TJump;
     }
 
     void calcTJump_FDMTypeImplicit(int edge, int edgeGrp, int nG)
@@ -141,7 +140,7 @@ namespace SmoluchowskyTJump {
                 rhouC(rhou[element][0]),
                 rhovC(rhov[element][0]),
                 rhoEC(rhoE[element][0]),
-                TVal(nonEqmSurfaceField::TBc[localEdgeId][nG]),
+                TVal(SurfaceBCFields::TBc[localEdgeId][nG]),
                 delta(meshVar::distanceFromGaussPtsToCentroid[localEdgeId][nG]);
 
         double TWall(bcValues::TBCFixed[edgeGrp - 1]), TJump(0.0), a, b;
@@ -200,7 +199,7 @@ namespace SmoluchowskyTJump {
             TJump=TVal;
         }
         //Update to surfaceBCfields
-        nonEqmSurfaceField::TBc[localEdgeId][nG] = TJump;
+        SurfaceBCFields::TBc[localEdgeId][nG] = TJump;
     }
 
 
@@ -215,10 +214,10 @@ namespace SmoluchowskyTJump {
                 rhouC(rhou[element][0]),
                 rhovC(rhov[element][0]),
                 rhoEC(rhoE[element][0]),
-                TVal(nonEqmSurfaceField::TBc[localEdgeId][nG]),
+                TVal(SurfaceBCFields::TBc[localEdgeId][nG]),
                 delta(meshVar::distanceFromGaussPtsToCentroid[localEdgeId][nG]);
 
-        double TWall(bcValues::TBCFixed[edgeGrp - 1]), TJump(nonEqmSurfaceField::TBc[localEdgeId][nG]), a, b;
+        double TWall(bcValues::TBCFixed[edgeGrp - 1]), TJump(SurfaceBCFields::TBc[localEdgeId][nG]), a, b;
 
         double
                 nx = auxUlti::getNormVectorComp(element, edge, 1),
@@ -265,6 +264,6 @@ namespace SmoluchowskyTJump {
             TJump=TVal;
         }
         //Update to surfaceBCfields
-        nonEqmSurfaceField::TBc[localEdgeId][nG] = TJump;
+        SurfaceBCFields::TBc[localEdgeId][nG] = TJump;
     }
 }

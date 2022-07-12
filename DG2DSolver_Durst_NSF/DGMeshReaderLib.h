@@ -2,6 +2,7 @@
 #define DGMESHREADERLIB_H_INCLUDED
 #include <tuple>  //Include this for returning multiple values in function
 #include <vector>
+#include <string>
 namespace MshReader
 {
 	/*Function creates matrixes which save mesh data get from files, by using EleSurPtProcess()*/

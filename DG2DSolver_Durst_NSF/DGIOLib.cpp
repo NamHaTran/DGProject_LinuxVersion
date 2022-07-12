@@ -1231,10 +1231,10 @@ namespace IO
         /*Read U*/  //U must be read first of all
         readVectorBC::u(mode);
 
-        /*Read T*/
+        /*Read p*/
         readScalarBC::p(mode);
 
-        /*Read p*/
+        /*Read T*/
         readScalarBC::T(mode);
 
         /*Tinh so Mach*/
@@ -1630,20 +1630,21 @@ namespace IO
             /*Read DGOptions*/
             std::string DGOptfileName("DGOptions.txt");
             std::string DGOptLoc(systemVar::wD + "/CASES/" + systemVar::caseName + "/System");
-            std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[4] = {"numberOfGaussPoints","orderOfAccuracy", "writeInterval","totalProcess"}, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[2] = {"ddtScheme", "runningMode"};
+            std::string DGOptkeyWordsDouble[2] = { "CourantNumber", "totalTime(s)" }, DGOptkeyWordsInt[5] = {"numberOfGaussPoints1D","numberOfGaussPoints2D","orderOfAccuracy", "writeInterval","totalProcess"}, DGOptkeyWordsBool[2] = { "writeLog", "loadSavedCase"}, DGOptkeyWordsStr[2] = {"ddtScheme", "runningMode"};
             double DGOptoutDB[2] = {};
-            int DGOptoutInt[4] = {};
+            int DGOptoutInt[5] = {};
             bool DGOptoutBool[2] = {};
             std::string DGOptoutStr[2] = {};
 
-            readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 4, 2, 2);
+            readDataFile(DGOptfileName, DGOptLoc, DGOptkeyWordsDouble, DGOptkeyWordsInt, DGOptkeyWordsBool, DGOptkeyWordsStr, DGOptoutDB, DGOptoutInt, DGOptoutBool, DGOptoutStr, 2, 5, 2, 2);
 
             systemVar::CFL = DGOptoutDB[0];
             systemVar::Ttime = DGOptoutDB[1];
-            mathVar::nGauss = DGOptoutInt[0];
-            mathVar::orderElem = DGOptoutInt[1];
-            systemVar::wrtI = DGOptoutInt[2];
-            systemVar::totalProc = DGOptoutInt[3];
+            mathVar::nGauss1D = DGOptoutInt[0];
+            mathVar::nGauss2D = DGOptoutInt[1];
+            mathVar::orderElem = DGOptoutInt[2];
+            systemVar::wrtI = DGOptoutInt[3];
+            systemVar::totalProc = DGOptoutInt[4];
             systemVar::wrtLog = DGOptoutBool[0];
             systemVar::loadSavedCase = DGOptoutBool[1];
 
@@ -1860,7 +1861,6 @@ namespace IO
             readDataFile(fileName, Loc, DGSchemeskeyWordsDouble, DGSchemeskeyWordsInt, DGSchemeskeyWordsBool, DGSchemeskeyWordsStr, DGSchemesoutDB, DGSchemesoutInt, DGSchemesoutBool, DGSchemesoutStr, 0, 0, 0, 2);
 
             //Convective Term
-            //Khong su dung central flux cho convective term!!!
             if (DGSchemesoutStr[0].compare("LxF")==0)
             {
                 DGSchemes::fluxControl::LxF=true;
@@ -1876,6 +1876,10 @@ namespace IO
             else if (DGSchemesoutStr[0].compare("HLLC")==0) //Hien tai chua cap nhat flux nay
             {
                 DGSchemes::fluxControl::HLLC=true;
+            }
+            else if (DGSchemesoutStr[0].compare("central")==0)
+            {
+                DGSchemes::fluxControl::central=true;
             }
             else {
                 std::string str0("convectiveFlux type "+DGSchemesoutStr[0]+"' is not available.");

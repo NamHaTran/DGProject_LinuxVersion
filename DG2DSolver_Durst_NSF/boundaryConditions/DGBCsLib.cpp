@@ -119,7 +119,7 @@ void auxEqBCsForNormalBoundary(std::vector<std::vector<double>> &Fluxes, int ele
     BCSupportFncs::correctPriVars(edge, edgeGrp, nG, priVarsMinus, priVarsPlus, priVarsMean, n, inflow);
 
     //Save TM
-    surfaceFields::T[edge][nG+mathVar::nGauss+1]=priVarsMinus[4];
+    surfaceFields::T[edge][nG+mathVar::nGauss1D+1]=priVarsMinus[4];
 
     //Reconstruct advective U
     BCSupportFncs::reconstructConvectiveU(UMinus,priVarsMinus);
@@ -158,7 +158,7 @@ void NSFEqBCsForNormalBoundary(std::vector<double> &Fluxes, int element, int edg
         dpriYMinus(4, 0.0),
 
         norm(2, 0.0);
-    double a(0.0), b(0.0), TPlus(surfaceFields::T[edge][nG]),TMinus(surfaceFields::T[edge][nG+mathVar::nGauss+1]), TMean(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
+    double a(0.0), b(0.0), TPlus(surfaceFields::T[edge][nG]),TMinus(surfaceFields::T[edge][nG+mathVar::nGauss1D+1]), TMean(0.0), nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
     std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, element, nG);
     norm[0] = nx;
     norm[1] = ny;
@@ -241,7 +241,7 @@ std::tuple<double, double> rhoBCsImplement(int edge, int nG)
     if (UType == BCVars::generalBCId::matched && TType == BCVars::generalBCId::matched && pType == BCVars::generalBCId::matched)
     {
         //int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
-        rhoM = surfaceFields::rho[edge][mathVar::nGauss+nG+1];
+        rhoM = surfaceFields::rho[edge][mathVar::nGauss1D+nG+1];
     }
     else
     {

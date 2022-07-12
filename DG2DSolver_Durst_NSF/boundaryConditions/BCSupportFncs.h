@@ -3,6 +3,8 @@
 #include <vector>
 namespace BCSupportFncs
 {
+    void calcBCValuesAtUnfixedValueBCs();
+
     /**
      * @brief Function checks inflow/outflow.
      *
@@ -96,7 +98,7 @@ namespace BCSupportFncs
 
     std::tuple<double, double> correctTemperatureGrad(int edgeGrp, int nG, double dTXP, double dTYP, bool inflow, const std::vector<double> &n);
 
-    double correctPressure(int edge, int edgeGrp, double pP, double pMean, bool inflow);
+    double correctPressure(int edge, int edgeGrp, int nG, double pP, double pMean, bool inflow);
 
     std::tuple<double, double> correctPressureGrad(int edgeGrp, double dpXP, double dpYP, bool inflow, const std::vector<double> &n);
 

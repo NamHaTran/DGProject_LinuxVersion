@@ -28,9 +28,3 @@ Wall
 	Type				noSlip
 }
  
-zeroGrad
-{
-	Group 4
-	Type				noSlip
-}
- 

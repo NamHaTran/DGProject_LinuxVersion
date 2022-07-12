@@ -180,8 +180,9 @@ To convert unv mesh format to DG2D readable format, do following task step by st
     {
         std::string runOrNot(" ");
         std::cout<<"\nCase settings:\n";
-        std::cout<<"    - Order of accuracy "<<mathVar::orderElem<<".\n";
-        std::cout<<"    - Number of Gauss points "<<mathVar::nGauss<<".\n";
+        std::cout<<"    - Order of accuracy: "<<mathVar::orderElem<<".\n";
+        std::cout<<"    - Number of Gauss points for surface integral: "<<mathVar::nGauss1D+1<<".\n";
+        std::cout<<"    - Number of Gauss points for volume integral: "<<(mathVar::nGauss2D+1)*(mathVar::nGauss2D+1)<<".\n";
 
         std::cout<<"\nFlow properties:\n";
         if (flowProperties::subsonic)

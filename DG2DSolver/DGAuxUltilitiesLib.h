@@ -2,6 +2,10 @@
 #define DGAUXULTILITIESLIB_H_INCLUDED
 #include <tuple>
 #include <vector>
+#include <string>
+
+int calcArrId(int id1, int id2, int length);
+
 namespace auxUlti
 {
 	/*Funtion finds order of edge respective to element*/
@@ -21,6 +25,14 @@ namespace auxUlti
 
 	/*Function return true if considering element is master of considering edge, otherwise it return false*/
 	bool checkMaster(int elem, int edge);
+
+    /**
+     * @brief Function check boundary type of edge (wall, patch, symmetry, matched).
+     *
+     * @param edgeId: global edge Id.
+     * @return Id of BC type (compare to meshVar::BCTypeID Ids to determine BC Type).
+     */
+    int checkBCTypeOfEdge(int edgeId);
 
 	/*Function gets normal vector component (nx or ny) from normalVector array*/
 	double getNormVectorComp(int elem, int edge, int dir);
@@ -66,14 +78,28 @@ namespace auxUlti
 	/*Function checks subsonic flow locally*/
 	bool checkSubSonicLocally(double TVal, double uVal, double vVal);
 
+    bool checkNonEqmBCAvailable();
+
+    bool checkTimeVaryingBCAvailable();
+
 	/*Function returns master element and servant element of edge*/
 	std::tuple<int, int> getMasterServantOfEdge(int edge);
 
 	//Function returns cell centroid coordinates and size (cell area)
 	std::tuple<double, double, double> getCellMetrics(int element);
 
+    //void resize1DArray(double*Array, int row, double initialValue);
+
+    //void resize1DIntArray(int*Array, int row, int initialValue);
+
+    void initialize1DArray(double*Array, int row, double initialValue);
+
+    void initialize1DIntArray(int*Array, int row, int initialValue);
+
+    void initialize1DBoolArray(bool*Array, int row, bool initialValue);
+
 	/*Function resize 2D array type double*/
-    void resize2DArray(std::vector<std::vector<double>> &Array, int row, int column);
+    double** resize2DArray(int row, int column, double initialValue);
 
 	/*Function resize 3D array*/
     void resize3DArray(std::vector<std::vector<std::vector<double>>> &Array, int direct1, int direct2, int direct3);
@@ -82,7 +108,7 @@ namespace auxUlti
 	void resizeDGArrays();
 
 	/*Function resize 2D array type int*/
-    void resize2DIntArray(std::vector<std::vector<int>> &Array, int row, int column);
+     int** resize2DIntArray(int row, int column, int initialValue);
 
 	/*Function computes coordinates of Gauss point on all edges*/
 	void mappingEdges();
@@ -91,7 +117,10 @@ namespace auxUlti
 	std::vector<std::vector<double>> getVectorGaussSurfCoor(int edge, int elem);
 
 	//Function returns location of input edge on BC values array
-	int getAdressOfBCEdgesOnBCValsArray(int edge);
+    int getAdressOfBCEdgesOnBCValsArray(int edge);
+
+    //Function gets globle edge id from local BC edge id
+    int getGlobalEdgeIdFromLocalBCEdgeId(int localBCEdgeId);
 
 	//Function gets centroid coordinates of inputted cell
 	std::tuple<double, double> getCellCentroid(int element);
@@ -119,7 +148,12 @@ namespace auxUlti
     void addRowTo2DDoubleArray(std::vector<std::vector<double>> &Array, int numCol);
 
     //Function create folder at input location
-    void createFolder(std::string location);
+    void createFolder(std::string location, bool passExit);
+
+    std::string createTimeStepFolder(int iter, std::string option);
+
+    //Ham lay gia tri UMean (U order 0) cua 1 cell
+    void getVectorUMeanOfCell(int element, std::vector<double> &U);
 
     std::tuple<double, double> getUAtInterfaces(int edge, int element, int nG, int valType);
     double getUPlusAtBC(int edge, int nG, int valType);
@@ -133,6 +167,10 @@ namespace auxUlti
 
     std::vector<double> getElementAuxValuesOfOrder_BR2_sur(int edge, int element, int type, int dir);
 
+    void copyFolder(std::string source, std::string destination);
+
+    void copyFile(std::string source, std::string destination);
+
 	//Auxilary functions support for postProcessing
 	namespace postProcess
 	{
@@ -142,5 +180,19 @@ namespace auxUlti
 		//Function finds index of inputted integer in inputted array
 		std::tuple<double, double> findPointCoorInStandardSpace(int point, int element);
 	}
+
+    void checkInforBeforeRunning();
+
+    void getCommand();
+
+    void shrink2DIntVector(std::vector<std::vector<int>>&vector, int numRow);
+
+    void releaseMemory();
+
+    void resizeTemporaryArrays();
+
+    std::tuple<int, bool> lookForDataOfKeyword(std::string fileLoc, std::string inputKeyWord);
+
+    void resizeRequiredArrays();
 }
 #endif // DGAUXULTILITIESLIB_H_INCLUDED

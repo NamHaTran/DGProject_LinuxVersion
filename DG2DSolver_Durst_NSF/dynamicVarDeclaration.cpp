@@ -68,6 +68,13 @@ namespace meshVar
     double **normProjectionOfCenterToBCEdge_realSysCoor = new double*[1];
     double **normProjectionOfCenterToBCEdge_standardSysCoor = new double*[1];
     double *distanceFromCentroidToBCEdge = new double[1];
+
+    double **GaussPtsOnBCEdge_x = new double*[1];
+    double **GaussPtsOnBCEdge_y = new double*[1];
+    double **distanceFromGaussPtsToCentroid = new double*[1];
+
+    double **GaussPtsOnBCEdge_unitVector_x = new double*[1];
+    double **GaussPtsOnBCEdge_unitVector_y = new double*[1];
 }
 
 namespace mathVar {
@@ -249,17 +256,18 @@ namespace SurfaceBCFields
 {
     //int **BCPointsInfor;
     std::vector<std::vector<int>> BCPointsInfor;
-    /*
-     * - 2 fields SurfaceBCFields::TBC, SurfaceBCFields::uBC va SurfaceBCFields::vBC dung de
-     * luu gia tri TJump, uSlip va vSlip khi dung dieu kien bien temperatureJump va slip.
-     * - gia tri tren cac field nay update theo thoi gian, khac gia tri o cac field bcValues::TBC, bcValues::uBC
-     * va bcValues::vBC (la gia tri fixed doc tu cac file T, U ban dau).
-     * - Cac gia tri nay deu la gia tri tai diem hinh chieu vuong goc cua cell center xuong BC edge
-    */
-    double *TBc = new double[1];
-    double *uBc = new double[1];
-    double *vBc = new double[1];
-    double *pBc = new double[1];
+
+    //double *TBc = new double[1];
+    //double *uBc = new double[1];
+    //double *vBc = new double[1];
+    //double *pBc = new double[1];
+
+    double **TBc = new double*[1];
+    double **uBc = new double*[1];
+    double **vBc = new double*[1];
+    double **pBc = new double*[1];
+    double **rhoBc = new double*[1];
+
     int *localGlobalBCEdgesMatching = new int[1];
 
     /*

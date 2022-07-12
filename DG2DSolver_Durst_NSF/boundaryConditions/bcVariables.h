@@ -28,6 +28,9 @@ namespace BCVars {
 
         //Custom BC reflectGradRho (add 23/09/2021)
         static constexpr int zeroRhoGrad = 15;
+
+        //Custom BC reflectGradRho (add 03/06/2022)
+        static constexpr int waveTransmissive = 16;
     }
 
     namespace temperatureBCId {
@@ -41,6 +44,9 @@ namespace BCVars {
 
         //Custom BC SmoluchowskyTJump (add 22/07/2021)
         static constexpr int SmoluchowskyTJump = 15;
+
+        //Custom BC reflectGradRho (add 03/06/2022)
+        static constexpr int waveTransmissive = 16;
     }
 
     namespace velocityBCId {
@@ -56,6 +62,9 @@ namespace BCVars {
 
         //Custom BC MaxwellSlip (add 19/07/2021)
         static constexpr int MaxwellSlip = 15;
+
+        //Custom BC reflectGradRho (add 03/06/2022)
+        static constexpr int waveTransmissive = 16;
     }
 }
 #endif // BCVARIABLES_H

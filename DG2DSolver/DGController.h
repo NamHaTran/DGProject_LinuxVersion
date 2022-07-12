@@ -3,7 +3,9 @@
 #include <string>
 
 /*Main controller function*/
-void Executer(std::string cmd);
+void Executer();
+
+void checkCommandLine(std::string cmd);
 
 /*Processing*/
 void Processing();

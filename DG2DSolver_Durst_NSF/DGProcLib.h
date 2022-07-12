@@ -4,18 +4,29 @@
 
 namespace meshParam
 {
+    /**
+     * @brief Function generates base vector of coordinates of Gauss points
+     */
     void genBasedGaussPtsVectors();
 
-	/*Function calculate Gaussian constants*/
+    /**
+     * @brief Function calculates coordinates and weights of Gauss Points
+     */
 	void GaussParam();
 
-	/*Function calculate Jacobian*/
+    /**
+     * @brief Function calculates Jacobian of 2D element at all volume Gauss points
+     */
 	void JacobianParam();
 
-	/*Function calculate basis function*/
+    /**
+     * @brief Function calculate basis function at all volume Gauss points
+     */
 	void basisFcParam();
 
-	/*Function saves coordinates derivatives to array*/
+    /**
+     * @brief Function saves coordinates derivatives at all volume Gauss points to array
+     */
 	void derivCoordinates();
 
 	/*Function calculates centroid and cell size of elements*/
@@ -50,16 +61,23 @@ namespace process
 	/*Function computes RHS of initial condition equation*/
 	std::vector<double> calcIniValuesRHS(int element, double iniVal);
 
-    /*Function computes values of conservative varables at interfaces*/
+    /**
+     * @brief Function calculates value of conservative variables on cell's surfaces
+     */
     void calcValuesAtInterface();
 
+    /**
+     * @brief Function calculates conservative variables at all volume Gauss points
+     */
 	void calcVolumeGaussValues();
 
     void calcVolumeGaussRho();
 
     void calcRhoAtInterface();
 
-    /*Function computes T at all Gauss points of element (surface and volume)*/
+    /**
+     * @brief Function calculates temperature at all Gauss points
+     */
     void calcTGauss();
 
 	namespace auxEq
@@ -153,6 +171,9 @@ namespace process
 	{
         void solveTimeEq();
 
+        /**
+         * @brief Function solves 1 time steps of DG workflow by using Euler time discretization
+         */
         void Euler();
 
 		void calcGlobalTimeStep();
@@ -194,7 +215,13 @@ namespace process
 	/*Function calculates Auxilary Stiff matrix*/
 	std::vector<std::vector<double>> calculateStiffMatrix(int element);
 
-	/*Function calculates value of element of Auxilary Stiff matrix*/
+    /**
+     * @brief Function calculates an element of stiff matrix (volume integral)
+     * @param element: element ID
+     * @param order1: order 1
+     * @param order2: order 2
+     * @return value of the element of stiff matrix
+     */
 	double calculateStiffMatrixElement(int element, int order1, int order2);
 
 	/*Function return false if running contion is wrong*/

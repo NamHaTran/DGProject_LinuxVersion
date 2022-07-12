@@ -16,5 +16,6 @@ DGoptions
 	CourantNumber				0.5
 	totalTime(s)				10
 	writeInterval				100
-	writeLog				true
+	writeLog					true
+	ddtScheme					Euler
 }

@@ -118,6 +118,7 @@ double tempdTx(0.0), tempdTy(0.0);
         dTx = math::calcTDeriv(dEx, dux, dvx, uVal, vVal);
         dTy = math::calcTDeriv(dEy, duy, dvy, uVal, vVal);
 
+        //Remove Sorret Term at Wall
         if (extNSF_Durst::dropNormSelfDiffTerm)
         {
             dTx=0;
@@ -175,6 +176,7 @@ double tempdTx(0.0), tempdTy(0.0);
         /*Sel-diffusion molecular transport of heat*/
         OutputMatrix[0][3] = mDx*eVal;
         OutputMatrix[1][3] = mDy*eVal;
+
         return OutputMatrix;
     }
 

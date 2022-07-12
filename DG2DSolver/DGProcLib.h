@@ -4,16 +4,29 @@
 
 namespace meshParam
 {
-	/*Function calculate Gaussian constants*/
+    /**
+     * @brief Function generates base vector of coordinates of Gauss points
+     */
+    void genBasedGaussPtsVectors();
+
+    /**
+     * @brief Function calculates coordinates and weights of Gauss Points
+     */
 	void GaussParam();
 
-	/*Function calculate Jacobian*/
+    /**
+     * @brief Function calculates Jacobian of 2D element at all volume Gauss points
+     */
 	void JacobianParam();
 
-	/*Function calculate basis function*/
+    /**
+     * @brief Function calculate basis function at all volume Gauss points
+     */
 	void basisFcParam();
 
-	/*Function saves coordinates derivatives to array*/
+    /**
+     * @brief Function saves coordinates derivatives at all volume Gauss points to array
+     */
 	void derivCoordinates();
 
 	/*Function calculates centroid and cell size of elements*/
@@ -22,12 +35,25 @@ namespace meshParam
     void calcEdgeLength();
 
 	void calcStiffMatrixCoeffs();
+
+    void calcDistanceFromCenterToBCEdge();
+
+    void findNormProjectionOfCenterToBCEdge();
 }
 
 namespace process
 {
+    /*Ham chuan bi case truoc khi chay*/
+    void prepareCaseForRunning();
+
+    /*Ham lam cac thu tuc truoc khi ket thuc 1 iteration*/
+    void finalizeIteration();
+
 	/*Function sets initial value to all elements*/
-	void setIniValues();
+    void setIniVolumeValues();
+
+    /*Function sets initial value to all Gauss points at BC*/
+    void setIniSurfaceBCValues();
 
 	/*Function distributes initial value to each order of accuracy of element*/
 	std::vector<double> calcIniValues(double iniVal, int element);
@@ -35,18 +61,35 @@ namespace process
 	/*Function computes RHS of initial condition equation*/
 	std::vector<double> calcIniValuesRHS(int element, double iniVal);
 
-    /*Function computes values of conservative varables at interfaces*/
+    /**
+     * @brief Function calculates value of conservative variables on cell's surfaces
+     */
     void calcValuesAtInterface();
 
+    /**
+     * @brief Function calculates conservative variables at all volume Gauss points
+     */
 	void calcVolumeGaussValues();
 
-    /*Function computes T at all Gauss points of element (surface and volume)*/
+    void calcVolumeGaussRho();
+
+    void calcRhoAtInterface();
+
+    /**
+     * @brief Function calculates temperature at all Gauss points
+     */
     void calcTGauss();
 
 	namespace auxEq
 	{
+        /*Function solve div(rho) in case of mass diffusion*/
+        void solveDivRho();
+
         /*Function solves auxilary equation at all elements for auxilary variables*/
         void solveAuxEquation();
+
+        /*Ham nay su dung khi flow inviscid, de tinh toan cac gia tri U tai surfaceFields*/
+        void updateSurfaceFieldsAtBC();
 
         namespace BR1 {
         void calcValuesAtInterface();
@@ -64,7 +107,7 @@ namespace process
 
         /*Function returns matrix content Gauss values of <valType> conservative variable at all Gauss points in element volume,
         use only for auxilary equation*/
-        std::vector<std::vector<double>> getGaussMatrixOfConserVar(int element, int valType);
+        void getGaussMatrixOfConserVar(std::vector<std::vector<double>> &UGauss, int element, int valType);
 
         /*Function returns vector of flux of all conservative variables at all faces of element*/
         void getGaussVectorOfConserVar(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhouFluxX, std::vector<std::vector<double>> &rhovFluxX, std::vector<std::vector<double>> &rhoEFluxX, std::vector<std::vector<double>> &rhoFluxY, std::vector<std::vector<double>> &rhouFluxY, std::vector<std::vector<double>> &rhovFluxY, std::vector<std::vector<double>> &rhoEFluxY);
@@ -72,27 +115,6 @@ namespace process
         /*Function returns vector content Gauss values of all conservative variable at all Gauss points on the edge,
         use only for auxilary equation*/
         std::vector<std::vector<double>> getVectorOfConserVarFluxesAtInternal(int edge, int element, int nG, double nx, double ny);
-        }
-        namespace massDiffusion
-        {
-        namespace BR1 {
-            void solveDivRho();
-
-            void CalcRHSTerm(int element, std::vector<double> &rhoRHSOx, std::vector<double> &rhoRHSOy);
-
-            void calcVolumeIntegralTerms(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhoVolIntY);
-
-            void calcSurfaceIntegralTerms(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhoSurfIntY);
-
-            void getGaussVectorOfRho(int element, std::vector<std::vector<double>> &rhoFluxX, std::vector<std::vector<double>> &rhoFluxY);
-        }
-        namespace BR2 {
-            void calcVolDivRho(int element);
-
-            void calcSurDivRho(int element);
-
-            void solveDivRho();
-        }
         }
 
         namespace BR2 {
@@ -104,12 +126,12 @@ namespace process
 
 	namespace NSFEq
 	{
-        void calcFinvFvisAtInterface();
+        std::tuple<double, double> getInterfacesFluxes(int edge, int element, int nG, int mod, int valType);
 
-        std::tuple<double, double> getFinvFvisAtInterfaces(int edge, int element, int nG, int mod, int direction, int valType);
+        void solveNSFEquation_Euler();
 
 		/*Function solves NSEF equation at all elements for conservative variables*/
-		void solveNSFEquation(int RKOrder);
+        void solveNSFEquation_TVDRK(int RKOrder);
 
 		/*Function calculates right hand side terms of all conservative variables at ONLY one order*/
 		void CalcRHSTerm(int element, std::vector<double> &term1RHS, std::vector<double> &term2RHS, std::vector<double> &term3RHS, std::vector<double> &term4RHS);
@@ -133,14 +155,27 @@ namespace process
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4);
 
 		/*Function calculates flux at nGauss point of all conservative variables at internal egde*/
-		std::vector<std::vector<double>> getGaussVectorOfConserVarFluxesAtInternal(int edgeName, int element, int nGauss);
+        std::vector<double> getGaussVectorOfConserVarFluxesAtInternal(int edgeName, int element, int nGauss);
 
 		/*Function applies input ddtSchemme to solve time marching*/
 		std::vector<double> solveTimeMarching(int element, std::vector<double> &ddtArr, std::vector<double> &UnArr, int RKOrder, int varType);
+
+        void calcLocalInviscidFlux(std::vector<double> &UG, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &UL, std::vector<double> &n, double T);
+
+        void calcLocalViscousFlux(std::vector<double> &UG, std::vector<double> &dUX, std::vector<double> &dUY, std::vector<double> &FLocalX, std::vector<double> &FLocalY, std::vector<double> &n);
+
+        void calcSurfaceFlux();
 	}
 
 	namespace timeDiscretization
 	{
+        void solveTimeEq();
+
+        /**
+         * @brief Function solves 1 time steps of DG workflow by using Euler time discretization
+         */
+        void Euler();
+
 		void calcGlobalTimeStep();
 
 		/*Function computes local time step*/
@@ -155,6 +190,10 @@ namespace process
 		void TVDRK_1step(int RKOrder);
 
 		void TVDRK3();
+
+        namespace parallel {
+        void minTimeStep();
+        }
 	}
 
 	/*Function calculates volume integral terms of auxilary equations of ONLY one order
@@ -176,7 +215,13 @@ namespace process
 	/*Function calculates Auxilary Stiff matrix*/
 	std::vector<std::vector<double>> calculateStiffMatrix(int element);
 
-	/*Function calculates value of element of Auxilary Stiff matrix*/
+    /**
+     * @brief Function calculates an element of stiff matrix (volume integral)
+     * @param element: element ID
+     * @param order1: order 1
+     * @param order2: order 2
+     * @return value of the element of stiff matrix
+     */
 	double calculateStiffMatrixElement(int element, int order1, int order2);
 
 	/*Function return false if running contion is wrong*/

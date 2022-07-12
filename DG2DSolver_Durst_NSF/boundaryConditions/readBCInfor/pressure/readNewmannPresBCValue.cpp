@@ -11,4 +11,6 @@ void readZeroGradP(std::ifstream &FileFlux, int bcGrp)
 {
     //readUAppMeth(FileFlux,bcGrp,BCVars::DirichletAppMethUStrong);
     readGradUAppMeth(FileFlux,bcGrp,BCVars::NewmannAppMethGradPStrong,"p");
+    //Set gia tri tam cho dk bien
+    bcValues::pBCFixed[bcGrp - 1]=iniValues::pIni;
 }

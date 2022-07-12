@@ -21,6 +21,12 @@ namespace extNSF_Durst {
     blending,
     realDm;
 
+    //mass diffusion velocity at wall
+    extern double *uMassWall;
+    extern double *vMassWall;
+
+    void resizeArrays();
+
     void applyBlendingFactorToDm();
 
     void correctViscousTerms(std::vector<std::vector<double>> &diffTerms, std::vector<double> &U, std::vector<double> &dUx, std::vector<double> &dUy);

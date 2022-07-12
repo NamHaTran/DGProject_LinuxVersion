@@ -86,7 +86,7 @@ void symmetryBC_auxEqs(std::vector <std::vector<double>> &Fluxes, int element, i
     muP=math::CalcVisCoef(surfaceFields::T[edge][nG]);
 
     //Luu TMinus (TMinus = TPlus)
-    surfaceFields::T[edge][nG+mathVar::nGauss+1]=surfaceFields::T[edge][nG];
+    surfaceFields::T[edge][nG+mathVar::nGauss1D+1]=surfaceFields::T[edge][nG];
 
     for (int i = 0; i < 4; i++)
     {

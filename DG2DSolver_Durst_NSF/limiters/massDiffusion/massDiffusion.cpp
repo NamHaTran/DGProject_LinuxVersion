@@ -257,11 +257,11 @@ namespace limiter
                     {
                         if (limitVal::troubleCellsMarker[nelem])
                         {
-                            for (int na = 0; na <= mathVar::nGauss; na++)
+                            for (int na = 0; na <= mathVar::nGauss2D; na++)
                             {
-                                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                                 {
-                                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                                     std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                                     volumeFields::rhoVolGauss[nelem][nanb] = math::pointValue(nelem,a,b,1,2);
@@ -277,11 +277,11 @@ namespace limiter
                     {
                         if (limitVal::troubleCellsMarker[nelem])
                         {
-                            for (int na = 0; na <= mathVar::nGauss; na++)
+                            for (int na = 0; na <= mathVar::nGauss2D; na++)
                             {
-                                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                                 {
-                                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                                     volumeFields::rhoVolGauss[nelem][nanb] = rho[nelem][0];
                                 }
                             }
@@ -304,9 +304,9 @@ namespace limiter
                             std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
                             if (limitVal::troubleCellsMarker[masterCell] || limitVal::troubleCellsMarker[slaveCell])
                             {
-                                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                                 {
-                                    std::tie(surfaceFields::rho[iedge][nG], surfaceFields::rho[iedge][nG + mathVar::nGauss + 1])
+                                    std::tie(surfaceFields::rho[iedge][nG], surfaceFields::rho[iedge][nG + mathVar::nGauss1D + 1])
                                             = math::internalSurfaceValue(iedge, masterCell, nG, 1, 2);
                                 }
                             }
@@ -316,7 +316,7 @@ namespace limiter
                             std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
                             if (limitVal::troubleCellsMarker[masterCell])
                             {
-                                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                                 {
                                     surfaceFields::rho[iedge][nG] = math::plusSideSurfaceValue(iedge, masterCell, nG, 1, 2);
                                 }
@@ -337,11 +337,11 @@ namespace limiter
                             if (limitVal::troubleCellsMarker[masterCell] || limitVal::troubleCellsMarker[slaveCell])
                             {
                                 std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                                 {
                                     //rho
                                     surfaceFields::rho[iedge][nG] = rho[masterCell][0];
-                                    surfaceFields::rho[iedge][nG + mathVar::nGauss + 1] = rho[slaveCell][0];
+                                    surfaceFields::rho[iedge][nG + mathVar::nGauss1D + 1] = rho[slaveCell][0];
                                 }
                             }
                         }
@@ -350,7 +350,7 @@ namespace limiter
                             std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
                             if (limitVal::troubleCellsMarker[masterCell])
                             {
-                                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                                 {
                                     //rho
                                     surfaceFields::rho[iedge][nG] = rho[masterCell][0];
@@ -441,15 +441,15 @@ namespace limiter
              */
             void calcVolumeIntegralTermsOfDivRhoEqn(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhoVolIntY)
             {
-                std::vector<std::vector<double>> rhoGsVol(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+                std::vector<std::vector<double>> rhoGsVol(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 
                 //Calculates Gauss matrix
                 //rho -------------------------------------------------------------------------------------------
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
-                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                         rhoGsVol[na][nb]=volumeFields::rhoVolGauss[element][nanb];
                     }
                 }
@@ -476,11 +476,11 @@ namespace limiter
             void calcSurfaceIntegralTermsOfDivRhoEqn(int element, std::vector<double> &rhoSurfIntX, std::vector<double> &rhoSurfIntY)
             {
                 int elemType(auxUlti::checkType(element)), edgeName(0);
-                std::vector<std::vector<double>> rhoFluxX(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-                    rhoFluxY(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0));
+                std::vector<std::vector<double>> rhoFluxX(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+                    rhoFluxY(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0));
 
-                std::vector<double> rhoFluxXTemp(mathVar::nGauss + 1, 0.0),
-                    rhoFluxYTemp(mathVar::nGauss + 1, 0.0);
+                std::vector<double> rhoFluxXTemp(mathVar::nGauss1D + 1, 0.0),
+                    rhoFluxYTemp(mathVar::nGauss1D + 1, 0.0);
 
                 /*1. Calculate flux of rho at all Gauss points on all faces of element*/
                 limiter::massDiffusion::mathFuncs::getGaussVectorOfRho(element, rhoFluxX, rhoFluxY);
@@ -489,7 +489,7 @@ namespace limiter
                 for (int nface = 0; nface < elemType; nface++)
                 {
                     edgeName = meshVar::inedel[element][nface];
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         rhoFluxXTemp[nG] = rhoFluxX[nG][nface];
                         rhoFluxYTemp[nG] = rhoFluxY[nG][nface];
@@ -527,7 +527,7 @@ namespace limiter
                     double nx(auxUlti::getNormVectorComp(element, edgeId, 1)), ny(auxUlti::getNormVectorComp(element, edgeId, 2)), rhoP(0.0), rhoM(0.0);
                     if (faceBcType == 0)  //internal edge
                     {
-                        for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                        for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                         {
                             std::tie(rhoP, rhoM) = auxUlti::getUAtInterfaces(edgeId, element, nGauss, 1);
                             rhoFluxX[nGauss][nface] = math::numericalFluxes::auxFlux(rhoM, rhoP, nx);
@@ -536,7 +536,7 @@ namespace limiter
                     }
                     else  //boundary edge
                     {
-                        for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                        for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                         {
                             std::tie(rhoP, rhoM)=rhoBCsImplement(edgeId, nGauss);
                             rhoFluxX[nGauss][nface]=math::numericalFluxes::auxFlux(rhoP, rhoM, nx);
@@ -584,7 +584,7 @@ namespace limiter
                             //Luon dung LxF flux cho mass diffusion limiter -> Tinh he so C cua LxF flux
                             math::numericalFluxes::findMaxLxFConstantOnEdge(iedge,masterCell);
 
-                            for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                            for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                             {
                                 std::tie(TMaster,TSlave)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
 
@@ -600,9 +600,9 @@ namespace limiter
 
                                     //Save derivaties to surfaceFields
                                     surfaceFields::dRhoX[iedge][nG]=drhoXMaster;
-                                    surfaceFields::dRhoX[iedge][mathVar::nGauss+nG+1]=drhoXSlave;
+                                    surfaceFields::dRhoX[iedge][mathVar::nGauss1D+nG+1]=drhoXSlave;
                                     surfaceFields::dRhoY[iedge][nG]=drhoYMaster;
-                                    surfaceFields::dRhoY[iedge][mathVar::nGauss+nG+1]=drhoYSlave;
+                                    surfaceFields::dRhoY[iedge][mathVar::nGauss1D+nG+1]=drhoYSlave;
                                 }
 
                                 //Trong limiter, dung LxF flux de do stability cao nhat
@@ -630,14 +630,14 @@ namespace limiter
                                                                          + ny*(convectiveFluxYMaster+convectiveFluxYSlave)
                                                                          - //chu y dau -
                                                                          LxFConst[iedge]*(USlave[0]-UMaster[0]));
-                                surfaceFields::invis_rho[iedge][nG + mathVar::nGauss + 1]=-surfaceFields::invis_rho[iedge][nG];
+                                surfaceFields::invis_rho[iedge][nG + mathVar::nGauss1D + 1]=-surfaceFields::invis_rho[iedge][nG];
 
                                 //Viscous flux tinh bang central flux
                                 if (flowProperties::viscous)
                                 {
                                     surfaceFields::Vis_rho[iedge][nG]=0.5*(nx*(diffusiveFluxXMaster+diffusiveFluxXSlave)
                                                                                + ny*(diffusiveFluxYMaster+diffusiveFluxYSlave));
-                                    surfaceFields::Vis_rho[iedge][nG + mathVar::nGauss + 1]=-surfaceFields::Vis_rho[iedge][nG];
+                                    surfaceFields::Vis_rho[iedge][nG + mathVar::nGauss1D + 1]=-surfaceFields::Vis_rho[iedge][nG];
                                 }
                             }
                         }
@@ -650,7 +650,7 @@ namespace limiter
                             std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
                             if (limitVal::troubleCellsMarker[masterCell] || limitVal::troubleCellsMarker[slaveCell])
                             {
-                                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                                 {
                                     std::tie(TMaster,std::ignore)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
                                     muMaster=math::CalcVisCoef(TMaster);
@@ -676,7 +676,7 @@ namespace limiter
             {
                 double convTermX,diffTermX,convTermY,diffTermY;
 
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                 std::vector<std::vector<double>> InviscidTerm(4, std::vector<double>(2, 0.0));
                 double
                     rhoVal(volumeFields::rhoVolGauss[element][nanb]),
@@ -701,13 +701,13 @@ namespace limiter
             void calcVolumeIntegralConvDiffTerms(int element, std::vector<double>&VolIntTerm1)
             {
                 std::vector<std::vector<double>>
-                    GsVolX1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                    GsVolY1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+                    GsVolX1(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                    GsVolY1(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
                 double invTermX(0.0), visTermX(0.0), invTermY(0.0), visTermY(0.0);
 
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
                         std::tie(invTermX,visTermX,invTermY,visTermY)=limiter::massDiffusion::mathFuncs::calcGaussConvDiffTerms(element,na,nb);
 
@@ -739,8 +739,8 @@ namespace limiter
             {
                 int elemType(auxUlti::checkType(element)), edgeName(0);
                 int faceBcType(0);
-                std::vector<std::vector<double>>massFlux(mathVar::nGauss + 1, std::vector<double>(4, 0.0));
-                std::vector<double> massFluxBC(4, 0.0), massFluxTemp(mathVar::nGauss + 1, 0.0);
+                std::vector<std::vector<double>>massFlux(mathVar::nGauss1D + 1, std::vector<double>(4, 0.0));
+                std::vector<double> massFluxBC(4, 0.0), massFluxTemp(mathVar::nGauss1D + 1, 0.0);
 
                 double convTerm(0.0), diffTerm(0.0);
 
@@ -753,7 +753,7 @@ namespace limiter
 
                     if (faceBcType == 0)  //internal edge
                     {
-                        for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                        for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                         {
                             /*INVISCID TERM*/
                             //Get value
@@ -772,7 +772,7 @@ namespace limiter
                     }
                     else  //boundary edge
                     {
-                        for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                        for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                         {
                             massFluxBC = NSFEqBCsImplement(element, edgeName, nGauss);
                             massFlux[nGauss][nface] = massFluxBC[0];
@@ -785,7 +785,7 @@ namespace limiter
                     for (int nface = 0; nface < elemType; nface++)
                     {
                         edgeName = meshVar::inedel[element][nface];  //A BIG BUG!!!!!!
-                        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                        for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                         {
                             massFluxTemp[nG] = massFlux[nG][nface];
                         }
@@ -852,16 +852,16 @@ namespace limiter
                 //std::vector<double> VolInt(4, 0.0);
 
                 std::vector<std::vector<double>>
-                    GsVolX1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                    GsVolY1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+                    GsVolX1(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                    GsVolY1(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 
                 double rhoVal,rhouVal,rhovVal,uVal(0.0),vVal(0.0),a(0.0),b(0.0),muVal(0.0),dRhoX(0.0),dRhoY(0.0);
 
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
-                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                         //std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                         /*A INVISCID TERMS*/
@@ -901,16 +901,19 @@ namespace limiter
 
             double calcMinRhoResidual(int element)
             {
-                std::vector<double> vectorRho((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0),
-                        vectorRho0((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0);
+                //std::vector<double> vectorRho((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0),
+                        //vectorRho0((mathVar::nGauss+1)*(mathVar::nGauss+5), 1.0);
+                std::vector<double> vectorRho((mathVar::nGauss2D+1)*(mathVar::nGauss2D+1)+(mathVar::nGauss1D+1)*4, 1.0),
+                        vectorRho0((mathVar::nGauss2D+1)*(mathVar::nGauss2D+1)+(mathVar::nGauss1D+1)*4, 1.0);
+
                 double aG(0.0), bG(0.0), minRho(0.0), minRho0(0.0);
                 int counter(0);
 
                 //Compute rho at all internal Gauss point
 
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
                         std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
                         vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -921,7 +924,7 @@ namespace limiter
 
                 //Compute rho at edge DA
                 aG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -930,7 +933,7 @@ namespace limiter
                 }
                 //Compute rho at edge BC
                 aG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -939,7 +942,7 @@ namespace limiter
                 }
                 //Compute rho at edge AB
                 bG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -948,7 +951,7 @@ namespace limiter
                 }
                 //Compute rho at edge CD
                 bG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     vectorRho[counter]=(math::pointValueNoLimiter(element, aG, bG, 1));
@@ -985,9 +988,9 @@ namespace limiter
 
                 //Compute rho at all internal Gauss point
 
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
                         std::tie(aG,bG)=auxUlti::getGaussCoor(na,nb);
                         val=(math::pointValueNoLimiter(element, aG, bG, type));
@@ -999,7 +1002,7 @@ namespace limiter
 
                 //Compute rho at edge DA
                 aG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     val=(math::pointValueNoLimiter(element, aG, bG, type));
@@ -1009,7 +1012,7 @@ namespace limiter
                 }
                 //Compute rho at edge BC
                 aG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     val=(math::pointValueNoLimiter(element, aG, bG, type));
@@ -1019,7 +1022,7 @@ namespace limiter
                 }
                 //Compute rho at edge AB
                 bG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     val=(math::pointValueNoLimiter(element, aG, bG, type));
@@ -1029,7 +1032,7 @@ namespace limiter
                 }
                 //Compute rho at edge CD
                 bG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     val=(math::pointValueNoLimiter(element, aG, bG, type));
@@ -1046,7 +1049,7 @@ namespace limiter
 
                 //Compute rho at edge DA
                 aG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
 
@@ -1057,7 +1060,7 @@ namespace limiter
                 }
                 //Compute rho at edge BC
                 aG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     bG = mathVar::xGaussSur[nG];
                     val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);
@@ -1066,7 +1069,7 @@ namespace limiter
                 }
                 //Compute rho at edge AB
                 bG = -1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);
@@ -1075,7 +1078,7 @@ namespace limiter
                 }
                 //Compute rho at edge CD
                 bG = 1;
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     aG = mathVar::xGaussSur[nG];
                     val=pow(pow(math::pointAuxValue(element, aG, bG, 1, 1),2) + pow(math::pointAuxValue(element, aG, bG, 1, 2),2),0.5);

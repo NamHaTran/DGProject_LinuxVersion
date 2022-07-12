@@ -76,7 +76,7 @@ namespace mathVar
     int orderElem(0), orderOfAccuracy(0);
     bool solveTFailed(false);
 
-    int nGauss(0);
+    int nGauss1D(0), nGauss2D(0);
 }
 
 namespace material
@@ -132,11 +132,14 @@ namespace bcValues
     /*Variables of slip & temperature jump boundary conditions*/
     double sigmaU(1.0), sigmaT(1.0);
 
-    /*Flags of time varying BCs*/
+    /*Flags of time varying non equilibrium BCs*/
     //U
     bool slipBCFlag(false);
     //T
     bool temperatureJump(false);
+
+    /*Flag of time varying BCs*/
+    bool timeVaryingBCAvailable(false);
 }
 
 namespace flowProperties

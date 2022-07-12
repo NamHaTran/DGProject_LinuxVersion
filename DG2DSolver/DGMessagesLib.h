@@ -42,7 +42,9 @@ namespace message
 	void BCsHelp();
 
     /*Function prints out case's informations and asks user whether to continue or not*/
-    void checkCaseInformations();
+    void showCaseInformations();
+
+    void showWarning();
 }
 
 /*Function displays error message and exit program*/

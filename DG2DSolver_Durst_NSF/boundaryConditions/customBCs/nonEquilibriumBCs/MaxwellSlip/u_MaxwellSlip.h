@@ -67,6 +67,8 @@ namespace MaxwellSlip {
      * @param nG: ID of Gauss point.
      */
     void calcUSlip_FDMTypeImplicit(int edge, int edgeGrp, int nG);
+
+    double calcGradientUsingFDM(double phiC, double phiBC, double delta, double idotn);
 }
 
 #endif // U_MAXWELLSLIP_H

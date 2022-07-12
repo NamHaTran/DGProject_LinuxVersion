@@ -8,6 +8,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "DGIOLib.h"
+
+//Extended Navier-Stokes-Fourier model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
 
 namespace debugTool
 {
@@ -110,34 +114,143 @@ namespace debugTool
 			<< "- T: " << TVal << std::endl << std::endl;
 			//<< "- mu: " << muVal << std::endl << std::endl;
 	}
+}
 
-	/*
-	void writeMinRho_MinRhoe()
-	{
-		//forDebugging
-		std::string iter_str = std::to_string(systemVar::iterCount);
-		std::string fileName_rho("rho_" + iter_str + ".txt"), fileName_rhoe("rhoe_" + iter_str + ".txt"),
-            Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/forDebugging"), code;
+void reconstructLatestTime()
+{
+    /* Chu y!!!:
+     * - Chi reconstruct duoc cac fields rho, rhou, rhov, rhoE.
+     * - Chua reconstruct duoc surfaceBCFields
+     * - Khi chay lenh reconstructcase, phai setup cac dieu kien trong file DGOption
+     * ve time dang muon reconstruct, bao gom:
+     *  + totalProcess
+     *  + orderOfAccuracy
+     * - Set time trong file time ve time muon reconstruct
+     * - Chua su dung duoc cho truong hop mass diffusion -> khi mass diffusion on, can save
+     * data div(U) xuong file.
+    */
 
-        std::string fileLoc_rho(Loc + "/" + fileName_rho), fileLoc_rhoe(Loc + "/" + fileName_rhoe);
-		std::ofstream fileFlux_rho(fileLoc_rho.c_str()), fileFlux_rhoe(fileLoc_rhoe.c_str());
+    //Resize array
+    rho = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    rhou = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    rhov = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    rhoE = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-		if (fileFlux_rho && fileFlux_rhoe)
-		{
-			for (int i = 0; i < meshVar::nelem2D; i++)
-			{
-				fileFlux_rho << debug::minRhoArr[i] << std::endl;
-				fileFlux_rhoe << debug::minRhoeArr[i] << std::endl;
-			}
-		}
-		else
-		{
-			std::cout << "Cannot open neither rho_.txt nor rhoe_.txt in folder <forDebugging>\n" << "DGSolver will exit after you hit return.\n";
-			system("pause");
-			exit(EXIT_FAILURE);
-		}
-	}
-	*/
+    SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, 0.0);
+    SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, 0.0);
+    SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, iniValues::TIni);
+    SurfaceBCFields::pBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, iniValues::pIni);
+
+    auxUlti::initialize1DArray(theta1Arr, meshVar::nelem2D, 1.0);
+    theta2Arr=new double[meshVar::nelem2D];
+    auxUlti::initialize1DArray(theta2Arr, meshVar::nelem2D, 1.0);
+    BR1Vars::rhoX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhouX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhovX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhoEX = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+
+    BR1Vars::rhoY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhouY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhovY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    BR1Vars::rhoEY = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
+    //-------------------------------------------
+
+    int *rankOf2DElem;
+    int *Elem2DlocalIdWithRank;
+    int startId, endId, a, temp;
+
+    std::vector<std::vector<double>> rhoTemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0)),
+            rhouTemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0)),
+            rhovTemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0)),
+            rhoETemp(meshVar::nelem2D,std::vector<double>(mathVar::orderElem+1,0.0));
+
+    std::string rankOf2DElemLoc = systemVar::pwd + "/Constant/Mesh/rankOf2DElem.txt",
+            Elem2DlocalIdWithRankLoc = systemVar::pwd + "/Constant/Mesh/Elem2DlocalIdWithRank.txt";
+    std::tie(std::ignore,rankOf2DElem,temp)=IO::read1DIntArray(rankOf2DElemLoc,"rankOf2DElem.txt",true);
+    std::tie(std::ignore,Elem2DlocalIdWithRank,temp)=IO::read1DIntArray(Elem2DlocalIdWithRankLoc,"Elem2DlocalIdWithRank.txt",true);
+
+    std::vector<int> endIdList(systemVar::totalProc,0);
+    std::string rhoLoc, rhouLoc, rhovLoc, rhoELoc;
+
+    //Doc ket qua tu tat ca cac processor va luu vao cac array *temp
+    for (int iproc=0; iproc<systemVar::totalProc; iproc++)
+    {
+        //Doc cac file ket qua tu cac processor
+        double **rhoProc = new double *[1];
+        double **rhouProc = new double *[1];
+        double **rhovProc = new double *[1];
+        double **rhoEProc = new double *[1];
+
+        rhoLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rho.txt";
+        rhouLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhou.txt";
+        rhovLoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhov.txt";
+        rhoELoc = systemVar::pwd + "/Processor" + std::to_string(iproc) + "/" + std::to_string(systemVar::iterCount) + "/rhoE.txt";
+
+        std::tie(std::ignore,rhoProc,a) = IO::read2DArray(mathVar::orderElem+1,rhoLoc,"rho.txt",true);
+        if (iproc==0)
+        {
+            endIdList[iproc]=a;
+        }
+        else
+        {
+            endIdList[iproc]=endIdList[iproc-1]+a;
+        }
+        std::tie(std::ignore,rhouProc,a)=IO::read2DArray(mathVar::orderElem+1,rhouLoc,"rhou.txt",true);
+        std::tie(std::ignore,rhovProc,a)=IO::read2DArray(mathVar::orderElem+1,rhovLoc,"rhov.txt",true);
+        std::tie(std::ignore,rhoEProc,a)=IO::read2DArray(mathVar::orderElem+1,rhoELoc,"rhoE.txt",true);
+
+        if (iproc==0)
+        {
+            startId=0;
+            endId=endIdList[0]-1;
+        }
+        else
+        {
+            startId=endIdList[iproc-1];
+            endId=endIdList[iproc]-1;
+        }
+        for (int i=startId; i<=endId; i++)
+        {
+            for (int iorder=0; iorder<mathVar::orderElem+1; iorder++)
+            {
+                rhoTemp[i][iorder]=rhoProc[i-startId][iorder];
+                rhouTemp[i][iorder]=rhouProc[i-startId][iorder];
+                rhovTemp[i][iorder]=rhovProc[i-startId][iorder];
+                rhoETemp[i][iorder]=rhoEProc[i-startId][iorder];
+            }
+        }
+    }
+
+    //Reconstruct cac field
+    std::cout<<"Reconstructing fields...\n" << std::endl;
+    int localId, IdOnTempArr, proc;
+    for (int ielem=0; ielem<meshVar::nelem2D; ielem++)
+    {
+        proc=rankOf2DElem[ielem];
+        if (proc==0)
+        {
+            startId=0;
+        }
+        else
+        {
+            startId=endIdList[proc-1];
+        }
+        localId=Elem2DlocalIdWithRank[ielem];
+        IdOnTempArr=startId+localId;
+        for (int iorder=0; iorder<mathVar::orderElem+1; iorder++)
+        {
+            rho[ielem][iorder]=rhoTemp[IdOnTempArr][iorder];
+            rhou[ielem][iorder]=rhouTemp[IdOnTempArr][iorder];
+            rhov[ielem][iorder]=rhovTemp[IdOnTempArr][iorder];
+            rhoE[ielem][iorder]=rhoETemp[IdOnTempArr][iorder];
+        }
+    }
+
+    systemVar::parallelMode=false;
+    std::cout << "Saving case...\n" << std::endl;
+    IO::saveCase_reconstruct();
+    std::cout << "Exporting data to Tecplot...\n" << std::endl;
+    DG2Tecplot::exportCellCenteredData(systemVar::iterCount);
 }
 
 namespace DG2Tecplot
@@ -156,7 +269,7 @@ namespace DG2Tecplot
 			{
 				localValue = 0.0;
 				elemSurPt = auxUlti::postProcess::getElementsSurroundingPoint(ipoint);
-				numElemSurPt = elemSurPt.size();
+                numElemSurPt = static_cast<int>(elemSurPt.size());
 				for (int nelem = 0; nelem < numElemSurPt; nelem++)
 				{
 					elemId = elemSurPt[nelem];
@@ -256,53 +369,147 @@ namespace DG2Tecplot
 		return U;
 	}
 
-    void calcCellCenteredValues(std::vector<double>&node_rho,std::vector<double>&node_p,std::vector<double>&node_T,std::vector<double>&node_u,std::vector<double>&node_v)
+	std::vector<double> calcCellCenteredValues(int valType)
 	{
-		double xC(0.0), yC(0.0), aC(0.0), bC(0.0);
-
-        if (flowProperties::massDiffusion)
-        {
-            double dRhoX(0.0),dRhoY(0.0),rhoVal(0.0),rhouVal(0.0),rhovVal(0.0),rhoEmVal(0.0);
-            for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
-            {
-                std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
-                std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
-                if (systemVar::auxVariables==1)
-                {
-                    dRhoX=math::pointAuxValue(ielem,aC,bC,1,1);
-                    dRhoY=math::pointAuxValue(ielem,aC,bC,1,2);
-                }
-                else if (systemVar::auxVariables==2)
-                {
-                    dRhoX=math::BR2Fncs::pointAuxValue_vol(ielem,aC,bC,1,1);
-                    dRhoY=math::BR2Fncs::pointAuxValue_vol(ielem,aC,bC,1,2);
-                }
-                rhoVal=math::pointValue(ielem,aC,bC,1,2);
-                rhouVal=math::pointValue(ielem,aC,bC,2,2);
-                rhovVal=math::pointValue(ielem,aC,bC,3,2);
-                rhoEmVal=math::pointValue(ielem,aC,bC,4,2);
-
-                node_T[ielem] = math::CalcTFromConsvVar_massDiff(rhoVal,rhouVal,rhovVal,rhoEmVal,dRhoX,dRhoY);
-                node_rho[ielem] = rhoVal;
-                node_u[ielem] = rhouVal/rhoVal;
-                node_v[ielem] = rhovVal/rhoVal;
-                node_p[ielem] = math::CalcP(node_T[ielem],rhoVal);
-            }
-        }
-        else
-        {
-            for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
-            {
-                std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
-                std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
-                node_rho[ielem] = math::pointValue(ielem, aC, bC, 1, 1);
-                node_u[ielem] = math::pointValue(ielem, aC, bC, 2, 1);
-                node_v[ielem] = math::pointValue(ielem, aC, bC, 3, 1);
-                node_p[ielem] = math::pointValue(ielem, aC, bC, 5, 1);
-                node_T[ielem] = math::pointValue(ielem, aC, bC, 6, 1);
-            }
-        }
+		std::vector<double>cellCenteredValues(meshVar::nelem2D, 0.0);
+        //double xC(0.0), yC(0.0), aC(0.0), bC(0.0);
+		for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
+		{
+            //std::tie(xC, yC) = auxUlti::getCellCentroid(ielem);
+            //std::tie(aC, bC) = math::inverseMapping(ielem, xC, yC);
+            cellCenteredValues[ielem] = DG2Tecplot::pointMeanValue(ielem, valType);
+		}
+		return cellCenteredValues;
 	}
+
+    double pointMeanValue(int element, int valType)
+    {
+        //Compute primary variables from conservative variables
+        double out(0.0);
+        if (valType == 1)  //rho
+        {
+            out= rho[element][0];
+        }
+        else if (valType == 2)  //u
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]);
+
+            out=(rhouVal / rhoVal); //convective velocity
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Velocity if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                double vD(0.0);
+                std::vector<double> U(4, 0.0), dU(4, 0.0);
+                U[0]=rho[element][0];
+                U[1]=rhou[element][0];
+                U[2]=rhov[element][0];
+                U[3]=rhoE[element][0];
+
+                dU[0]=BR1Vars::rhoX[element][0];
+                dU[1]=BR1Vars::rhouX[element][0];
+                dU[2]=BR1Vars::rhovX[element][0];
+                dU[3]=BR1Vars::rhoEX[element][0];
+
+                vD=extNSF_Durst::calcDiffVelocity(U,dU);
+
+                //Corect velocity
+                out = out + vD;
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
+        }
+        else if (valType == 3)  //v
+        {
+            double rhoVal(rho[element][0]),
+                rhovVal(rhov[element][0]);
+
+            out = (rhovVal / rhoVal); //convective velocity
+
+            //DURST MODEL ------------------------------------------------------------------------------
+            //Correct Velocity if Durst model is enabled
+            if (extNSF_Durst::enable)
+            {
+                double vD(0.0);
+                std::vector<double> U(4, 0.0), dU(4, 0.0);
+                U[0]=rho[element][0];
+                U[1]=rhou[element][0];
+                U[2]=rhov[element][0];
+                U[3]=rhoE[element][0];
+
+                dU[0]=BR1Vars::rhoY[element][0];
+                dU[1]=BR1Vars::rhouY[element][0];
+                dU[2]=BR1Vars::rhovY[element][0];
+                dU[3]=BR1Vars::rhoEY[element][0];
+
+                vD=extNSF_Durst::calcDiffVelocity(U,dU);
+
+                //Corect velocity
+                out = out + vD;
+            }
+            //DURST MODEL ------------------------------------------------------------------------------
+        }
+        else if (valType == 4)  //e
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            out = material::Cv*math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+        }
+        else if (valType == 5)  //p
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            out = math::CalcP(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal), rhoVal);
+        }
+        else if (valType == 6)  //T
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            out = math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal);
+        }
+        else if (valType == 7)  //mu
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+            out = math::CalcVisCoef(TVal);
+            if (out < 0 || out != out)
+            {
+                std::cout << "unphysical mu at cell " << element + meshVar::nelem1D + 1 << std::endl;
+                exit(1);
+            }
+        }
+        else if (valType == 10)  //rho
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
+            out= BR1Vars::rhoX[element][0]/math::CalcVisCoef(TVal);
+        }
+        else if (valType == 11)  //rho
+        {
+            double rhoVal(rho[element][0]),
+                rhouVal(rhou[element][0]),
+                rhovVal(rhov[element][0]),
+                rhoEVal(rhoE[element][0]);
+            double TVal(math::CalcTFromConsvVar(rhoVal, rhouVal, rhovVal, rhoEVal));
+
+            out= BR1Vars::rhoY[element][0]/math::CalcVisCoef(TVal);
+        }
+        return out;
+    }
 
 	void exportNodeData(int iter)
 	{
@@ -319,7 +526,7 @@ namespace DG2Tecplot
 
 		std::string iter_str = std::to_string(iter);
         std::string fileName(systemVar::caseName + "_node.dat"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/TecplotFile/" + iter_str), code;
-        auxUlti::createFolder(Loc);
+        auxUlti::createFolder(Loc, true);
 		
         std::string fileLoc(Loc + "/" + fileName);
 		std::ofstream fileFlux(fileLoc.c_str());
@@ -477,10 +684,22 @@ DATAPACKING=BLOCK)";
 		}
 	}
 
-	void exportCellCenteredData(int iter)
+    void exportCellCenteredData(int iter)
 	{
-		std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0);
-        DG2Tecplot::calcCellCenteredValues(nodeRho,node_p,node_T,node_u,node_v);
+        std::vector<double>nodeRho(meshVar::nelem2D, 0.0), node_u(meshVar::nelem2D, 0.0), node_v(meshVar::nelem2D, 0.0), node_p(meshVar::nelem2D, 0.0), node_T(meshVar::nelem2D, 0.0), node_uMag(meshVar::nelem2D, 0.0),
+                nodeRhoX(meshVar::nelem2D, 0.0), nodeRhoY(meshVar::nelem2D, 0.0);
+
+		nodeRho = DG2Tecplot::calcCellCenteredValues(1);
+		node_u = DG2Tecplot::calcCellCenteredValues(2);
+		node_v = DG2Tecplot::calcCellCenteredValues(3);
+		node_p = DG2Tecplot::calcCellCenteredValues(5);
+		node_T = DG2Tecplot::calcCellCenteredValues(6);
+
+        if (flowProperties::viscous)
+        {
+            nodeRhoX = DG2Tecplot::calcCellCenteredValues(10);
+            nodeRhoY = DG2Tecplot::calcCellCenteredValues(11);
+        }
 
 		for (int i = 0; i < meshVar::nelem2D; i++)
 		{
@@ -488,8 +707,8 @@ DATAPACKING=BLOCK)";
 		}
 
 		std::string iter_str = std::to_string(iter);
-        std::string fileName(systemVar::caseName + "cellCentered.dat"), Loc(systemVar::wD + "/CASES/" + systemVar::caseName + "/TecplotFile/" + iter_str), code;
-        auxUlti::createFolder(Loc);
+        std::string fileName(systemVar::caseName + "cellCentered.dat"), Loc, code;
+        Loc = auxUlti::createTimeStepFolder(iter,"tecplot");
 
         std::string fileLoc(Loc + "/" + fileName);
 		std::ofstream fileFlux(fileLoc.c_str());
@@ -498,20 +717,22 @@ DATAPACKING=BLOCK)";
 TITLE     = "DG2D to Tecplot"
 VARIABLES = "X"
 "Y"
-"RHO"
-"U"
-"V"
-"VELOCITY_MAG"
+"Rho"
+"u"
+"v"
+"Velocity_mag"
 "P"
 "T"
-"THETA1"
-"THETA2"
+"dRhoX"
+"dRhoY"
+"Theta1"
+"Theta2"
 ZONE T="ZONE 1"
 STRANDID=0
 ZONETYPE=FEQuadrilateral
 DATAPACKING=BLOCK
-VARLOCATION=([3-10]=CELLCENTERED)
-DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
+VARLOCATION=([3-12]=CELLCENTERED)
+DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 )";
 
 		if (fileFlux)
@@ -639,7 +860,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 					fileFlux << std::endl;
 					counter = 0;
 				}
-				fileFlux << theta1Arr[i] << " ";
+                fileFlux << nodeRhoX[i] << " ";
 			}
 			fileFlux << std::endl;
 
@@ -653,9 +874,37 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 					fileFlux << std::endl;
 					counter = 0;
 				}
-				fileFlux << theta2Arr[i] << " ";
+                fileFlux << nodeRhoY[i] << " ";
 			}
 			fileFlux << std::endl;
+
+            //Theta1
+            counter = 0;
+            for (int i = 0; i < meshVar::nelem2D; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << theta1Arr[i] << " ";
+            }
+            fileFlux << std::endl;
+
+            //Theta2
+            counter = 0;
+            for (int i = 0; i < meshVar::nelem2D; i++)
+            {
+                counter++;
+                if (counter == 5)
+                {
+                    fileFlux << std::endl;
+                    counter = 0;
+                }
+                fileFlux << theta2Arr[i] << " ";
+            }
+            fileFlux << std::endl;
 
 			//CONNECTIVITY
 			for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
@@ -684,7 +933,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 		}
 		else
 		{
-			message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(systemVar::caseName + ".dat", fileLoc));
+            message::writeLog(systemVar::pwd, systemVar::caseName, message::opFError(fileName, fileLoc));
 		}
 	}
 
@@ -692,7 +941,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 	{
 		namespace patch
 		{
-			std::vector<double> inFlow(int element, int edgeGrp, int a, int b)
+            std::vector<double> inFlow(int element, int edgeGrp, double a, double b)
 			{
 				std::vector<double> U(4, 0.0), UPlus(4, 0.0), UMinus(4, 0.0);
 
@@ -702,10 +951,10 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				}
 
 				//Apply weak Riemann infinite value
-				UMinus[0] = (bcValues::pBC[edgeGrp - 1] / (material::R*bcValues::TBC[edgeGrp - 1]));
-				UMinus[1] = UMinus[0] * bcValues::uBC[edgeGrp - 1];
-				UMinus[2] = UMinus[0] * bcValues::vBC[edgeGrp - 1];
-				UMinus[3] = UMinus[0] * (bcValues::TBC[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBC[edgeGrp - 1], 2) + pow(bcValues::vBC[edgeGrp - 1], 2)));
+                UMinus[0] = (bcValues::pBCFixed[edgeGrp - 1] / (material::R*bcValues::TBCFixed[edgeGrp - 1]));
+                UMinus[1] = UMinus[0] * bcValues::uBCFixed[edgeGrp - 1];
+                UMinus[2] = UMinus[0] * bcValues::vBCFixed[edgeGrp - 1];
+                UMinus[3] = UMinus[0] * (bcValues::TBCFixed[edgeGrp - 1] * material::Cv + 0.5*(pow(bcValues::uBCFixed[edgeGrp - 1], 2) + pow(bcValues::vBCFixed[edgeGrp - 1], 2)));
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -714,7 +963,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				return U;
 			}
 
-			std::vector<double> outFlow(int element, int edgeGrp, int a, int b)
+            std::vector<double> outFlow(int element, int edgeGrp, double a, double b)
 			{
 				std::vector<double> U(4, 0.0), UPlus(4, 0.0), UMinus(4, 0.0);
 
@@ -731,12 +980,12 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				{
 				case 1: //R
 				{
-					if (refValues::subsonic)
+                    if (flowProperties::subsonic)
 					{
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
-						UMinus[3] = bcValues::pBC[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+                        UMinus[3] = bcValues::pBCFixed[edgeGrp - 1] / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
 					}
 					else
 					{
@@ -752,12 +1001,12 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 					double TInternal(math::CalcTFromConsvVar(UPlus[0], UPlus[1], UPlus[2], UPlus[3]));
 					double pInternal(0);
 					pInternal = UPlus[0] * material::R*TInternal;
-					if (refValues::subsonic)
+                    if (flowProperties::subsonic)
 					{
 						UMinus[0] = UPlus[0];
 						UMinus[1] = UPlus[1];
 						UMinus[2] = UPlus[2];
-						UMinus[3] = (2 * bcValues::pBC[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
+                        UMinus[3] = (2 * bcValues::pBCFixed[edgeGrp - 1] - pInternal) / (material::gamma - 1) + 0.5*UPlus[0] * (pow(uPlus, 2) + pow(vPlus, 2));
 					}
 					else
 					{
@@ -782,7 +1031,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 
 		namespace wall
 		{
-			std::vector <double> noSlipIsoThermal(int element, int edgeGrp, int a, int b)
+            std::vector <double> noSlipIsoThermal(int element, int edgeGrp, double a, double b)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> U(4, 0.0), UMinus(4, 0.0), UPlus(4, 0.0);
@@ -796,7 +1045,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				UMinus[0] = UPlus[0];
 				UMinus[1] = 0.0;
 				UMinus[2] = 0.0;
-				UMinus[3] = UPlus[0] * material::Cv*bcValues::TBC[edgeGrp - 1];
+                UMinus[3] = UPlus[0] * material::Cv*bcValues::TBCFixed[edgeGrp - 1];
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -805,7 +1054,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 				return U;
 			}
 
-			std::vector <double> noSlipAdiabatic(int element, int a, int b)
+            std::vector <double> noSlipAdiabatic(int element, double a, double b)
 			{
 				std::vector<std::vector<double>> Fluxes(4, std::vector<double>(2, 0.0));
 				std::vector<double> U(4, 0.0), UMinus(4, 0.0), UPlus(4, 0.0);
@@ -829,7 +1078,7 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 			}
 		}
 
-		std::vector <double> Symmetry(int element, int edge, int a, int b)
+        std::vector <double> Symmetry(int element, int edge, double a, double b)
 		{
 			std::vector<double> U(4, 0.0), UPlus(4, 0.0), UMinus(4, 0.0);
 			double nx(auxUlti::getNormVectorComp(element, edge, 1)), ny(auxUlti::getNormVectorComp(element, edge, 2));
@@ -848,4 +1097,71 @@ DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)
 			return U;
 		}
 	}
+}
+
+namespace postProcessing_Surface {
+    void writeVarsAtWall(std::string Loc)
+    {
+        int globleEdge(-1), element;
+        double a, b, rhoBC;
+        std::string fileName("surfaceVariables_proc");
+        fileName=fileName+std::to_string(systemVar::currentProc)+".txt";
+        std::ofstream FileFlux((Loc+"/"+fileName).c_str());
+
+        if (FileFlux)
+        {
+            FileFlux<<message::headerFile()<<"\n"
+                   <<"xCoor yCoor p T u v\n";
+
+            for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
+            {
+                globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
+                int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+                if (bcType==meshVar::BCTypeID::wall) //type wall
+                {
+                    for (int nG=0; nG<mathVar::nGauss1D+1; nG++)
+                    {
+                        //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
+                        std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
+                        //Get Gauss point's coordinates
+                        std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
+                        rhoBC=math::pointValue(element,a,b,1,2);
+
+                        FileFlux
+                                  <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                  <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                  <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge][nG],rhoBC)<<" "
+                                  <<SurfaceBCFields::TBc[ilocalEdge][nG]<<" "
+                                  <<SurfaceBCFields::uBc[ilocalEdge][nG]<<" "
+                                  <<SurfaceBCFields::vBc[ilocalEdge][nG]<<" "
+                                  <<"\n";
+                        /*
+                        if (auxUlti::checkTimeVaryingBCAvailable())
+                            FileFlux
+                                      <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                      <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                      <<math::CalcP(nonEqmSurfaceField::TBc[ilocalEdge][nG],rhoBC)<<" "
+                                      <<nonEqmSurfaceField::TBc[ilocalEdge][nG]<<" "
+                                      <<nonEqmSurfaceField::uBc[ilocalEdge][nG]<<" "
+                                      <<nonEqmSurfaceField::vBc[ilocalEdge][nG]<<" "
+                                      <<"\n";
+                        else
+                            FileFlux
+                                      <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                      <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                      <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge],rhoBC)<<" "
+                                      <<SurfaceBCFields::TBc[ilocalEdge]<<" "
+                                      <<SurfaceBCFields::uBc[ilocalEdge]<<" "
+                                      <<SurfaceBCFields::vBc[ilocalEdge]<<" "
+                                      <<"\n";
+                                      */
+                    }
+                }
+            }
+        }
+        else
+        {
+            std::cout<<"Cannot open file at location "<<(Loc+"/"+fileName)<<" to write.\n";
+        }
+    }
 }

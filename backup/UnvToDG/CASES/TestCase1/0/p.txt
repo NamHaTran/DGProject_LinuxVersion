@@ -13,24 +13,18 @@ initialValue				0
 Inlet
 {
 	Group 1
-	Type				zeroNormalGrad
+	Type				zeroGradient
 }
  
 Outlet
 {
 	Group 2
-	Type				zeroNormalGrad
+	Type				zeroGradient
 }
  
 Wall
 {
 	Group 3
-	Type				zeroNormalGrad
-}
- 
-zeroGrad
-{
-	Group 4
-	Type				zeroNormalGrad
+	Type				zeroGradient
 }
  

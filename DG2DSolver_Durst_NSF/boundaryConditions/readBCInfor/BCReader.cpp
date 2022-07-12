@@ -41,6 +41,9 @@
 //Dieu kien bien Maxwell
 #include "./boundaryConditions/customBCs/nonEquilibriumBCs/MaxwellSlip/u_MaxwellSlip.h"
 #include "./boundaryConditions/customBCs/nonEquilibriumBCs/SmoluchowskyTJump/T_SmoluchowskyTJump.h"
+
+//Dieu kien bien waveTransmissive
+#include "./boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/supportFuncs_waveTransmissive.h"
 //Custom Boundary Conditions -------------------------------------------------
 
 namespace readVectorBC {
@@ -231,6 +234,19 @@ namespace readVectorBC {
                                             bcIndex++;
                                             goto label;
                                         }
+
+
+                                        //03/06/2022 waveTransmissive
+                                        else if ((str0.compare("waveTransmissive") == 0))
+                                        {
+                                            bcValues::timeVaryingBCAvailable=true;
+                                            waveTransmissive::readCondition(bcGrp,FileFlux,"U");
+
+                                            //Luon co 3 dong code nay
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
 //------------------------------------------//------------------------------------------------------------------
 
                                         else
@@ -381,7 +397,7 @@ namespace readScalarBC {
                                 {
                                     std::string str0(ptr[1]);
 
-                                    if (meshVar::BoundaryType[bcGrp - 1][1] == 1 || meshVar::BoundaryType[bcGrp - 1][1] == 2)  //WALL
+                                    if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
                                     {
                                         if ((str0.compare("zeroGradient") == 0))
                                         {
@@ -409,7 +425,6 @@ namespace readScalarBC {
                                             bcIndex++;
                                             goto label;
                                         }
-
                                         else if ((str0.compare("interpFrmDensity") == 0))
                                         {
                                             bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::interpFrmDensity;
@@ -431,11 +446,58 @@ namespace readScalarBC {
                                             bcIndex++;
                                             goto label;
                                         }
+//------------------------------------------//------------------------------------------------------------------
 
-                                        //01/07/2021 reflectGradRho
-                                        else if ((str0.compare("reflectGradRho") == 0))
+                                        else
                                         {
-                                            reflectRhoGrad::p_IO(bcGrp,FileFlux);
+                                            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "wall/patch"));
+                                        }
+                                        check_bc[i]=true;
+                                        bcIndex++;
+                                        goto label;
+                                    }
+                                    else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
+                                    {
+                                        if ((str0.compare("zeroGradient") == 0))
+                                        {
+                                            bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::zeroGrad;
+                                            readZeroGradP(FileFlux,bcGrp);
+
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if ((str0.compare("fixedValue") == 0))
+                                        {
+                                            bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::fixedValue;
+                                            readFixedValueP(FileFlux,bcGrp);
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if ((str0.compare("inletOutlet") == 0))
+                                        {
+                                            bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::inletOutlet;
+                                            readInletOutletP(FileFlux,bcGrp);
+
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if ((str0.compare("interpFrmDensity") == 0))
+                                        {
+                                            bcValues::pBcType[bcGrp - 1] = BCVars::pressureBCId::interpFrmDensity;
+                                            readZeroGradP(FileFlux,bcGrp);
+
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+//------------------------------------------//Custom_Boundary_Conditions----------------------------------------
+                                        //22/07/2021 interiorSide
+                                        else if ((str0.compare("interiorSide") == 0))
+                                        {
+                                            interiorSide::p_IO(bcGrp,FileFlux);
 
                                             //Luon co 3 dong code nay
                                             check_bc[i]=true;
@@ -443,10 +505,10 @@ namespace readScalarBC {
                                             goto label;
                                         }
 
-                                        //22/07/2021 interiorSide
-                                        else if ((str0.compare("interiorSide") == 0))
+                                        //01/07/2021 reflectGradRho
+                                        else if ((str0.compare("reflectGradRho") == 0))
                                         {
-                                            interiorSide::p_IO(bcGrp,FileFlux);
+                                            reflectRhoGrad::p_IO(bcGrp,FileFlux);
 
                                             //Luon co 3 dong code nay
                                             check_bc[i]=true;
@@ -464,15 +526,19 @@ namespace readScalarBC {
                                             bcIndex++;
                                             goto label;
                                         }
-//------------------------------------------//------------------------------------------------------------------
 
-                                        else
+                                        //03/06/2022 waveTransmissive (for patch)
+                                        else if ((str0.compare("waveTransmissive") == 0))
                                         {
-                                            message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "p", "wall/patch"));
+                                            bcValues::timeVaryingBCAvailable=true;
+                                            waveTransmissive::readCondition(bcGrp,FileFlux,"p");
+
+                                            //Luon co 3 dong code nay
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
                                         }
-                                        check_bc[i]=true;
-                                        bcIndex++;
-                                        goto label;
+//------------------------------------------//------------------------------------------------------------------
                                     }
                                     else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
                                     {
@@ -620,7 +686,7 @@ namespace readScalarBC {
                                 {
                                     std::string str0(ptr[1]);
 
-                                    if (meshVar::BoundaryType[bcGrp - 1][1] == 1 || meshVar::BoundaryType[bcGrp - 1][1] == 2)  //WALL or PATCH
+                                    if (meshVar::BoundaryType[bcGrp - 1][1] == 1)  //WALL
                                     {
                                         if ((str0.compare("zeroGradient") == 0))
                                         {
@@ -685,6 +751,49 @@ namespace readScalarBC {
                                         {
                                             message::writeLog((systemVar::wD + "/CASES/" + systemVar::caseName), systemVar::caseName, message::undfBcType(str0, "T", "wall/patch"));
                                         }
+                                    }
+                                    else if (meshVar::BoundaryType[bcGrp - 1][1] == 2)  //PATCH
+                                    {
+                                        if ((str0.compare("zeroGradient") == 0))
+                                        {
+                                            bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::zeroGrad;
+                                            readZeroGradT(FileFlux,bcGrp);
+
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if ((str0.compare("fixedValue") == 0))
+                                        {
+                                            bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::fixedValue;
+                                            readFixedValueT(FileFlux,bcGrp);
+
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+                                        else if ((str0.compare("inletOutlet") == 0))
+                                        {
+                                            bcValues::TBcType[bcGrp - 1] = BCVars::temperatureBCId::inletOutlet;
+                                            readInletOutletT(FileFlux,bcGrp);
+
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+//------------------------------------------//Custom_Boundary_Conditions----------------------------------------
+                                        //03/06/2022 waveTransmissive (for patch)
+                                        else if ((str0.compare("waveTransmissive") == 0))
+                                        {
+                                            bcValues::timeVaryingBCAvailable=true;
+                                            waveTransmissive::readCondition(bcGrp,FileFlux,"T");
+
+                                            //Luon co 3 dong code nay
+                                            check_bc[i]=true;
+                                            bcIndex++;
+                                            goto label;
+                                        }
+//------------------------------------------//------------------------------------------------------------------
                                     }
                                     else if (meshVar::BoundaryType[bcGrp - 1][1] == 3)
                                     {

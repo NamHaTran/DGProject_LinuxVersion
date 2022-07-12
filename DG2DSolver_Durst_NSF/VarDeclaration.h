@@ -152,7 +152,7 @@ namespace mathVar
     extern bool solveTFailed;
 
     //! Number of volume Gauss point in 1 direction. So total number of Gauss points is nVolGauss*nVolGauss
-    extern int nGauss;
+    extern int nGauss1D, nGauss2D;
 
     //! Number of Gauss points on 1 surface
     //nSurGauss;
@@ -228,11 +228,14 @@ namespace bcValues
     /*Variables of slip & temperature jump boundary conditions*/
     extern double sigmaU, sigmaT;
 
-    /*Flags of time varying BCs*/
+    /*Flags of time varying non equilibrium BCs*/
     //U
     extern bool slipBCFlag;
     //T
     extern bool temperatureJump;
+
+    /*Flags of time varying BCs*/
+    extern bool timeVaryingBCAvailable;
 }
 
 namespace flowProperties

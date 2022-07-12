@@ -2,6 +2,7 @@
 #include "DGIOLib.h"
 #include "DGMessagesLib.h"
 #include "DGMeshReaderLib.h"
+#include "DGMath.h"
 #include "DGPostProcessLib.h"
 #include "VarDeclaration.h"
 #include "CommandCheck.h"
@@ -16,7 +17,9 @@
 
 //Non Equilibrium BCs
 #include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h"
-#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Maths.h"
+
+//Extended Navier-Stokes-Fourier model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
 
 /**
  * @brief Function excutes command.
@@ -309,7 +312,7 @@ void PreProcessing()
 {
     /*LOAD CONSTANTS*/
     IO::loadSettingFiles::loadConstants();
-    limiter::IOLimiter::readSelectedLimiters();
+    //limiter::IOLimiter::readSelectedLimiters();
 
     std::string readWriteMode;
     if (systemVar::parallelMode)
@@ -335,6 +338,7 @@ void PreProcessing()
     /*RESIZE ARRAYS*/
     auxUlti::resizeRequiredArrays();
     nonEquilibriumBCs::resizeSurfaceFields();
+    extNSF_Durst::resizeArrays();
 
     //Synch mesh data
     for (int ivertex=0;ivertex<4;ivertex++)
@@ -364,7 +368,7 @@ void PreProcessing()
     meshParam::calcDistanceFromCenterToBCEdge();
 
     //Tinh khoang cach tu centroid cua cell tai BC den diem Gauss tren BC
-    geometricOp::findGaussPtsOnWallParameters();
+    math::geometricOp::findGaussPtsOnWallParameters();
 
 	systemVar::runPreProcess = true;
 }

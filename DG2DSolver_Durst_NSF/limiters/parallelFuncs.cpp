@@ -105,7 +105,7 @@ namespace limiter_parallelFuncs
                 {
                     //Receive
                     for (int iBCedge = 0; iBCedge < meshVar::numBCEdges; iBCedge++) {
-                        parallelFuncs_GaussPt::recvDataOneEdge(iBCedge,sendingProc,Buffer,mathVar::nGauss + nG + 1,request,requestCount);
+                        parallelFuncs_GaussPt::recvDataOneEdge(iBCedge,sendingProc,Buffer,mathVar::nGauss1D + nG + 1,request,requestCount);
                     }
                     //Wait for all request fullfilled
                     MPI_Waitall(requestCount,request,MPI_STATUSES_IGNORE);
@@ -123,7 +123,7 @@ namespace limiter_parallelFuncs
             {
                 sendingProc=systemVar::sendRecvOrder[i][0];
                 receivingProc=systemVar::sendRecvOrder[i][1];
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     limiter_parallelFuncs::massDiff::sendRecvGaussPtValues(sendingProc,receivingProc,Var,Buffer,nG);
                 }

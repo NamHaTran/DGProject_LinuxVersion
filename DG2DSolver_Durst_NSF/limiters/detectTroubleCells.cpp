@@ -38,13 +38,13 @@ namespace troubledCellDetector
         //Dung discontinuity dectector (Persson & Peraire)
         bool troubleCell(false);
         std::vector<std::vector<double>>
-            SnumGs(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-            SdenGs(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+            SnumGs(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+            SdenGs(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
         double a(0.0), b(0.0), S(0.0);
 
-        for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss2D; na++)
         {
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
             {
                 std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
                 math::basisFc(a, b, auxUlti::checkType(elem));  //mathVar::B is changed after this command line is excuted

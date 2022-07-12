@@ -24,7 +24,7 @@
 
 /**
  * @brief Function calculates id of element in 1D array from id1 and id2 of 2D array.\n
- * Function is used for converting 2D  array to 1D array.
+ * Function is used for converting 2D array to 1D array.
  * @param id1: id1 in 2D array (row).
  * @param id2: 1d2 in 2D array (column).
  * @param length: length of 1 row in 2D array.
@@ -182,8 +182,8 @@ namespace auxUlti
 		}
 		else
 		{
-			a = meshVar::edgeGaussPoints_a[edge][nG + mathVar::nGauss + 1];
-			b = meshVar::edgeGaussPoints_b[edge][nG + mathVar::nGauss + 1];
+            a = meshVar::edgeGaussPoints_a[edge][nG + mathVar::nGauss1D + 1];
+            b = meshVar::edgeGaussPoints_b[edge][nG + mathVar::nGauss1D + 1];
 		}
 
 		return std::make_tuple(a, b);
@@ -241,13 +241,13 @@ namespace auxUlti
 			}
 			else if (edgeOrder == 2)
 			{
-                a = mathVar::xGaussSur[mathVar::nGauss-nG];
+                a = mathVar::xGaussSur[mathVar::nGauss1D-nG];
 				b = 1.0;
 			}
 			else if (edgeOrder == 3)
 			{
 				a = -1.0;
-                b = mathVar::xGaussSur[mathVar::nGauss-nG];
+                b = mathVar::xGaussSur[mathVar::nGauss1D-nG];
 			}
 		}
 		else if (elemType == 3)  //tri element
@@ -265,7 +265,7 @@ namespace auxUlti
 			else if (edgeOrder == 2)
 			{
 				a = -1.0;
-                b = mathVar::xGaussSur[mathVar::nGauss-nG];
+                b = mathVar::xGaussSur[mathVar::nGauss1D-nG];
 			}
 		}
 		return std::make_tuple(a, b);
@@ -274,8 +274,8 @@ namespace auxUlti
 	//This function supports for inverse coodinates mapping
 	std::vector<std::vector<double>> getVectorGaussSurfCoor(int edge, int elem)
 	{
-		std::vector<std::vector<double>> vectorGaussPoints(mathVar::nGauss + 1, std::vector<double>(2, 0.0));
-        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+        std::vector<std::vector<double>> vectorGaussPoints(mathVar::nGauss1D + 1, std::vector<double>(2, 0.0));
+        for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
 		{
 			std::tie(vectorGaussPoints[nG][0], vectorGaussPoints[nG][1]) = auxUlti::getGaussSurfCoorMaster(edge, elem, nG);
 		}
@@ -704,10 +704,16 @@ namespace auxUlti
          return Out;
      }
 
+     /**
+     * @brief Function gets coordinates of volume Gauss points
+     * @param na: Id of point on a direction
+     * @param nb: Id of point on b direction
+     * @return coordinates a and b of input IDs
+     */
 	std::tuple<double, double> getGaussCoor(int na, int nb)
 	{
 		double a(0.0), b(0.0);
-        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
         a = mathVar::GaussPts[nanb][0];
         b= mathVar::GaussPts[nanb][1];
 		return std::make_tuple(a, b);
@@ -925,12 +931,14 @@ namespace auxUlti
 		double aMaster(0.0), bMaster(0.0), aServant(0.0), bServant(0.0),
 			xMaster(0.0), yMaster(0.0);
 
+        //Lap theo edge
         for (int iedge = 0; iedge < meshVar::inpoedCount; iedge++)
 		{
  			std::tie(masterElem, servantElem) = auxUlti::getMasterServantOfEdge(iedge);
             bcType = auxUlti::getBCType(iedge);
 
-            for (int nG = 0; nG <= mathVar::nGauss; nG++)
+            //Tren moi edge, lap theo nGauss1D
+            for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
 			{
 				std::tie(aMaster, bMaster) = auxUlti::getGaussSurfCoorMaster(iedge, masterElem, nG);
 				std::tie(xMaster, yMaster) = math::directMapping(masterElem, aMaster, bMaster);
@@ -951,8 +959,8 @@ namespace auxUlti
                 {
                     std::tie(aServant, bServant) = math::inverseMapping(servantElem, xMaster, yMaster);
                 }
-				meshVar::edgeGaussPoints_a[iedge][nG + mathVar::nGauss + 1] = aServant;
-				meshVar::edgeGaussPoints_b[iedge][nG + mathVar::nGauss + 1] = bServant;
+                meshVar::edgeGaussPoints_a[iedge][nG + mathVar::nGauss1D + 1] = aServant;
+                meshVar::edgeGaussPoints_b[iedge][nG + mathVar::nGauss1D + 1] = bServant;
 			}
 		}
 
@@ -970,20 +978,20 @@ namespace auxUlti
         meshVar::cellSize = new double [meshVar::nelem2D];
         meshVar::localCellSize = new double [meshVar::nelem2D];
 
-        meshVar::dxa = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        meshVar::dya = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        meshVar::dxb = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        meshVar::dyb = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
+        meshVar::dxa = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        meshVar::dya = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        meshVar::dxb = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        meshVar::dyb = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
 
-        meshVar::J2D = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
+        meshVar::J2D = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
 
         //meshVar::J1D = new double [meshVar::inpoedCount];
         meshVar::J1D = new double [meshVar::inpoedCount];
         auxUlti::initialize1DArray(meshVar::J1D, meshVar::inpoedCount, 0.0);
         //auxUlti::resize2DArray(meshVar::J1D, meshVar::inpoedCount, 2);
 
-        meshVar::edgeGaussPoints_a = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        meshVar::edgeGaussPoints_b = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        meshVar::edgeGaussPoints_a = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        meshVar::edgeGaussPoints_b = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
 
         rho = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
         rhou = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
@@ -1028,16 +1036,16 @@ namespace auxUlti
         /*Khong giai phuong trinh phu khi dong inviscid*/
         if (flowProperties::viscous)
         {
-            surfaceFields::aux_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::aux_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::aux_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::aux_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::aux_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::aux_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::aux_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::aux_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
         }
 
-        surfaceFields::rho= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::rhou= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::rhov= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::rhoE= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::rho= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        surfaceFields::rhou= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        surfaceFields::rhov= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        surfaceFields::rhoE= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
 
         if (flowProperties::viscous)
         {
@@ -1059,31 +1067,31 @@ namespace auxUlti
             }
 
             //Derivatives arrays
-            surfaceFields::dRhoX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::dRhouX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::dRhovX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::dRhoEX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::dRhoX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::dRhouX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::dRhovX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::dRhoEX= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
 
-            surfaceFields::dRhoY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::dRhouY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::dRhovY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::dRhoEY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::dRhoY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::dRhouY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::dRhovY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::dRhoEY= auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
         }
 
-        surfaceFields::invis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-        surfaceFields::invis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::invis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        surfaceFields::invis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        surfaceFields::invis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+        surfaceFields::invis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
 
         if (flowProperties::viscous)
         {
-            surfaceFields::Vis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::Vis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::Vis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
-            surfaceFields::Vis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+            surfaceFields::Vis_rho = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::Vis_rhou = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::Vis_rhov = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
+            surfaceFields::Vis_rhoE = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
         }
 
-        surfaceFields::T = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss + 1),0.0);
+        surfaceFields::T = auxUlti::resize2DArray(meshVar::inpoedCount, 2 * (mathVar::nGauss1D + 1),0.0);
 
         //theta1Arr=new double [meshVar::nelem2D];
         //theta2Arr=new double [meshVar::nelem2D];
@@ -1100,48 +1108,49 @@ namespace auxUlti
 
         stiffMatrixCoeffs = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-        volumeFields::rhoVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        volumeFields::rhouVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        volumeFields::rhovVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        volumeFields::rhoEVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        volumeFields::drhoXVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        volumeFields::drhoYVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        volumeFields::T = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
+        volumeFields::rhoVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        volumeFields::rhouVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        volumeFields::rhovVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        volumeFields::rhoEVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        volumeFields::drhoXVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        volumeFields::drhoYVolGauss = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        volumeFields::T = auxUlti::resize2DArray(meshVar::nelem2D, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
 
         //meshVar::adressOfBCVals.resize(meshVar::numBCEdges);
         meshVar::neighboringElements = auxUlti::resize2DIntArray(meshVar::nelem2D, 4,0.0);
 
         //Resize mathVar array
-        mathVar::wGaussVol=new double [mathVar::nGauss+1];
-        mathVar::xGaussVol=new double [mathVar::nGauss+1];
-        mathVar::wGaussLobattoVol=new double [mathVar::nGauss+1];
-        mathVar::xGaussLobattoVol=new double [mathVar::nGauss+1];
+        mathVar::wGaussVol=new double [mathVar::nGauss2D+1];
+        mathVar::xGaussVol=new double [mathVar::nGauss2D+1];
+        mathVar::wGaussLobattoVol=new double [mathVar::nGauss2D+1];
+        mathVar::xGaussLobattoVol=new double [mathVar::nGauss2D+1];
 
-        mathVar::wGaussSur=new double [mathVar::nGauss+1];
-        mathVar::xGaussSur=new double [mathVar::nGauss+1];
-        mathVar::wGaussLobattoSur=new double [mathVar::nGauss+1];
-        mathVar::xGaussLobattoSur=new double [mathVar::nGauss+1];
+        mathVar::wGaussSur=new double [mathVar::nGauss1D+1];
+        mathVar::xGaussSur=new double [mathVar::nGauss1D+1];
+        mathVar::wGaussLobattoSur=new double [mathVar::nGauss1D+1];
+        mathVar::xGaussLobattoSur=new double [mathVar::nGauss1D+1];
 
         mathVar::B=new double [mathVar::orderElem+1];
         mathVar::dBa=new double [mathVar::orderElem+1];
         mathVar::dBb=new double [mathVar::orderElem+1];
 
-        mathVar::BPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::dBaPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::dBbPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::BPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::dBaPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::dBbPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss + 1)*(mathVar::nGauss + 1),0.0);
-        mathVar::GaussPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
-        mathVar::wGaussPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
-        mathVar::GaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
-        mathVar::wGaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss + 1)*(mathVar::nGauss + 1),2,0.0);
+        mathVar::BPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        mathVar::dBaPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        mathVar::dBbPts_Quad = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        mathVar::BPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        mathVar::dBaPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        mathVar::dBbPts_Tri = auxUlti::resize2DArray(mathVar::orderElem+1, (mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),0.0);
+        mathVar::GaussPts = auxUlti::resize2DArray((mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),2,0.0);
+        mathVar::wGaussPts = auxUlti::resize2DArray((mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),2,0.0);
+        mathVar::GaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),2,0.0);
+        mathVar::wGaussLobattoPts = auxUlti::resize2DArray((mathVar::nGauss2D + 1)*(mathVar::nGauss2D + 1),2,0.0);
 
         //For Non Equilibrium BCs
         meshVar::normProjectionOfCenterToBCEdge_realSysCoor = auxUlti::resize2DArray(meshVar::numBCEdges, 2,0.0);
         meshVar::normProjectionOfCenterToBCEdge_standardSysCoor = auxUlti::resize2DArray(meshVar::numBCEdges, 2,0.0);
 
         //SurfaceBCFields
+        /*
         SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
         auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
         SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
@@ -1149,7 +1158,13 @@ namespace auxUlti
         SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
         auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, iniValues::TIni);
         SurfaceBCFields::pBc = new double [meshVar::numBCEdges];
-        auxUlti::initialize1DArray(SurfaceBCFields::pBc, meshVar::numBCEdges, iniValues::pIni);
+        auxUlti::initialize1DArray(SurfaceBCFields::pBc, meshVar::numBCEdges, iniValues::pIni);*/
+
+        SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D+1, 0.0);
+        SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D+1, 0.0);
+        SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D+1, iniValues::TIni);
+        SurfaceBCFields::pBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D+1, iniValues::pIni);
+        SurfaceBCFields::rhoBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D+1, iniValues::rhoIni);
 	}
 
     int getAdressOfBCEdgesOnBCValsArray(int globalEdgeId)
@@ -1404,11 +1419,11 @@ namespace auxUlti
         if (isMaster)
         {
             locationPlus = nG;
-            locationMinus = nG + mathVar::nGauss + 1;
+            locationMinus = nG + mathVar::nGauss1D + 1;
         }
         else
         {
-            locationPlus = nG + mathVar::nGauss + 1;
+            locationPlus = nG + mathVar::nGauss1D + 1;
             locationMinus = nG;
         }
 
@@ -1484,11 +1499,11 @@ namespace auxUlti
         if (isMaster)
         {
             locationPlus = nG;
-            locationMinus = nG + mathVar::nGauss + 1;
+            locationMinus = nG + mathVar::nGauss1D + 1;
         }
         else
         {
-            locationPlus = nG + mathVar::nGauss + 1;
+            locationPlus = nG + mathVar::nGauss1D + 1;
             locationMinus = nG;
         }
 
@@ -1508,10 +1523,10 @@ namespace auxUlti
         surfaceFields::rhou[edge][nG]=UPlus[1];
         surfaceFields::rhov[edge][nG]=UPlus[2];
         surfaceFields::rhoE[edge][nG]=UPlus[3];
-        surfaceFields::rho[edge][nG+mathVar::nGauss+1]=UMinus[0];
-        surfaceFields::rhou[edge][nG+mathVar::nGauss+1]=UMinus[1];
-        surfaceFields::rhov[edge][nG+mathVar::nGauss+1]=UMinus[2];
-        surfaceFields::rhoE[edge][nG+mathVar::nGauss+1]=UMinus[3];
+        surfaceFields::rho[edge][nG+mathVar::nGauss1D+1]=UMinus[0];
+        surfaceFields::rhou[edge][nG+mathVar::nGauss1D+1]=UMinus[1];
+        surfaceFields::rhov[edge][nG+mathVar::nGauss1D+1]=UMinus[2];
+        surfaceFields::rhoE[edge][nG+mathVar::nGauss1D+1]=UMinus[3];
     }
 
     void checkInforBeforeRunning()
@@ -1539,9 +1554,21 @@ namespace auxUlti
         }
     }
 
-    bool checkTimeVaryingBCAvailable()
+    bool checkNonEqmBCAvailable()
     {
         if (bcValues::slipBCFlag || bcValues::temperatureJump)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool checkTimeVaryingBCAvailable()
+    {
+        if (bcValues::timeVaryingBCAvailable)
         {
             return true;
         }

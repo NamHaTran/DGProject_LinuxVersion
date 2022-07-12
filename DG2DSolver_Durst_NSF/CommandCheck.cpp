@@ -195,7 +195,7 @@ namespace preProcessKey
      * checkPartitionedMesh loops over all mesh cells to find isolated cells, then changes the master core to the lowest index master core of neighbour cell.\n
      * Explainations:
      * - Isolated cell is the cell which has ALL neighbour cells belong to different master cores in comparison with itself.
-     * - Master core of cell is the core contains the cell after decomposing mesh.
+     * - Master core of cell is the core containing the cell after decomposing mesh.
      *
      * @param cmd
      * @return trigger

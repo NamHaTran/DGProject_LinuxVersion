@@ -12,7 +12,9 @@
 #include <iostream>
 
 #include ".././nonEqmBCs_GenFuncs.h"
-#include ".././nonEqmBCs_Vars.h"
+
+//Extended Navier-Stokes-Fourier model
+#include "./extNSFEqns/FranzDurst/DurstModel.h"
 
 namespace MaxwellSlip {
     void u_IO(int bcGrp, std::ifstream &FileFlux)
@@ -56,8 +58,8 @@ namespace MaxwellSlip {
         //Apply boundary condition
         bool isStrong(BCVars::DirichletAppMethUStrong[edgeGrp -1]);
         std::vector<double> UBC{
-                    nonEqmSurfaceField::uBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG],    //uSlip
-                    nonEqmSurfaceField::vBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG]};   //vSlip
+                    SurfaceBCFields::uBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG],    //uSlip
+                    SurfaceBCFields::vBc[auxUlti::getAdressOfBCEdgesOnBCValsArray(edge)][nG]};   //vSlip
         fixedValue_vector(varM,varP,UBC,isStrong);
     }
 
@@ -77,7 +79,7 @@ namespace MaxwellSlip {
         double dux(0.0), duy(0.0), dvx(0.0), dvy(0.0), lambda(0.0), dEx, dEy,
                 muVal(0.0), nx, ny, dTx, dTy;
 
-        double TJump(nonEqmSurfaceField::TBc[localEdgeId][nG]),
+        double TJump(SurfaceBCFields::TBc[localEdgeId][nG]),
         uWall(bcValues::uBCFixed[edgeGrp - 1]), vWall(bcValues::vBCFixed[edgeGrp - 1]);
         nx = auxUlti::getNormVectorComp(element, edge, 1);
         ny = auxUlti::getNormVectorComp(element, edge, 2);
@@ -152,9 +154,33 @@ namespace MaxwellSlip {
                 uSlip=uWall-c*lambda*SdotndotPImc[0]/muVal-(3/4)*SdotDivT[0]*muVal/(rhoBC*TJump)-c*lambda*div_n_Sdotu[0],
                 vSlip=vWall-c*lambda*SdotndotPImc[1]/muVal-(3/4)*SdotDivT[1]*muVal/(rhoBC*TJump)-c*lambda*div_n_Sdotu[1];
 
-        //Update arrays        
-        nonEqmSurfaceField::uBc[localEdgeId][nG] = uSlip;
-        nonEqmSurfaceField::vBc[localEdgeId][nG] = vSlip;
+        //Calculate diffusive velocity
+        double uD(0.0), vD(0.0);
+        if (flowProperties::massDiffusion)
+        {
+            std::vector<double> U {
+                math::pointValue(element,a,b,1,2),
+                math::pointValue(element,a,b,2,2),
+                math::pointValue(element,a,b,3,2),
+                math::pointValue(element,a,b,4,2)},
+            dUx {
+                math::pointAuxValue(element,a,b,1,1),
+                math::pointAuxValue(element,a,b,2,1),
+                math::pointAuxValue(element,a,b,3,1),
+                math::pointAuxValue(element,a,b,4,1)},
+            dUy {
+                math::pointAuxValue(element,a,b,1,2),
+                math::pointAuxValue(element,a,b,2,2),
+                math::pointAuxValue(element,a,b,3,2),
+                math::pointAuxValue(element,a,b,4,2)};
+
+            uD=extNSF_Durst::calcDiffVelocity(U,dUx);
+            vD=extNSF_Durst::calcDiffVelocity(U,dUy);
+        }
+
+        //Update arrays
+        SurfaceBCFields::uBc[localEdgeId][nG] = uSlip + uD;
+        SurfaceBCFields::vBc[localEdgeId][nG] = vSlip + vD;
     }
 
     void calcUSlip_FDMTypeImplicit(int edge, int edgeGrp, int nG)
@@ -196,7 +222,7 @@ namespace MaxwellSlip {
         vC=rhovC/rhoC;
 
         //Lay gia tri TJump trong array
-        TJump=nonEqmSurfaceField::TBc[localEdgeId][nG];
+        TJump=SurfaceBCFields::TBc[localEdgeId][nG];
 
         //Gia tri normal gradient (by following Finite Difference Method)
         dTn=(TJump-TC)*iDotn/delta;
@@ -278,8 +304,26 @@ namespace MaxwellSlip {
         vSlip=(F6-F4*F3/F1)/((F5-F4*F2/F1));
         uSlip=(F3-F2*vSlip)/(F1);
 
+        //Calculate diffusive velocity
+        double uD(0.0), vD(0.0);
+        if (flowProperties::massDiffusion)
+        {
+            //uD=extNSF_Durst::uMassWall[localEdgeId];
+            //vD=extNSF_Durst::vMassWall[localEdgeId];
+        }
+
         //Update
-        nonEqmSurfaceField::uBc[localEdgeId][nG] = uSlip;
-        nonEqmSurfaceField::vBc[localEdgeId][nG] = vSlip;
+        /* Day 21/04/2022:
+         * Khong tinh them thanh phan van toc diffusive vao trong van toc truot vi:
+         * - Bien U trong code la U_convective, nen U_slip, se duoc dung de lam dk bien, cung phai la
+         * U_convective.
+        */
+        SurfaceBCFields::uBc[localEdgeId][nG] = uSlip + uD;
+        SurfaceBCFields::vBc[localEdgeId][nG] = vSlip + vD;
+    }
+
+    double calcGradientUsingFDM(double phiC, double phiBC, double delta, double iComponent)
+    {
+        return (((phiBC - phiC)/delta)*iComponent);
     }
 }

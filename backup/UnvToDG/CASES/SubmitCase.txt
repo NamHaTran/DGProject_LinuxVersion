@@ -11,5 +11,5 @@
 
 SubmitCase
 {
-caseName FlatPlateRefine
+caseName TestCase1
 }

@@ -67,6 +67,13 @@ namespace meshVar
     extern double **normProjectionOfCenterToBCEdge_realSysCoor;
     extern double **normProjectionOfCenterToBCEdge_standardSysCoor;
     extern double *distanceFromCentroidToBCEdge;
+
+    extern double **GaussPtsOnBCEdge_x;
+    extern double **GaussPtsOnBCEdge_y;
+    extern double **distanceFromGaussPtsToCentroid;
+
+    extern double **GaussPtsOnBCEdge_unitVector_x;
+    extern double **GaussPtsOnBCEdge_unitVector_y;
 }
 
 namespace mathVar {
@@ -261,10 +268,16 @@ namespace SurfaceBCFields
     //extern int **BCPointsInfor;
     extern std::vector<std::vector<int>> BCPointsInfor;
 
-    extern double *TBc;
-    extern double *uBc;
-    extern double *vBc;
-    extern double *pBc;
+    //extern double *TBc;
+    //extern double *uBc;
+    //extern double *vBc;
+    //extern double *pBc;
+
+    extern double **TBc;
+    extern double **uBc;
+    extern double **vBc;
+    extern double **pBc;
+    extern double **rhoBc;
 
     extern int *localGlobalBCEdgesMatching;
 

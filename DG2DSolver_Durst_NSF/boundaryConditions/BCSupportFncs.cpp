@@ -48,8 +48,85 @@
 #include "./customBCs/zeroRhoGrad/p_zeroRhoGrad.h"
 #include "./customBCs/zeroRhoGrad/rho_zeroRhoGrad.h"
 
+//7. Time varying BCs
+#include "./boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h"
+//7.1 waveTransmissive
+#include "./boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/scalar_waveTransmissive.h"
+#include "./boundaryConditions/customBCs/timeVaryingBCs/waveTransmissive/vector_waveTransmissive.h"
+
 namespace BCSupportFncs
 {
+    void calcBCValuesAtUnfixedValueBCs()
+    {
+        int globleEdge(0);
+        for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
+        {
+            globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
+            int edgeGrp(auxUlti::getGrpOfEdge(globleEdge));
+            int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]), pType(bcValues::pBcType[edgeGrp - 1]);
+
+            int element(0);
+            std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
+
+            //Field U
+            if (
+                    //Cac dieu kien bien can tinh gia tri SurfaceBCFields tu conservative variables
+                    UType==BCVars::velocityBCId::waveTransmissive //wave transmissive
+                    )
+            {
+                for (int nG=0; nG<=mathVar::nGauss1D; nG++)
+                {
+                    double a,b;
+                    std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
+                    double rhoBC(math::pointValue(element,a,b,1,2)),
+                            rhouBC(math::pointValue(element,a,b,2,2)),
+                            rhovBC(math::pointValue(element,a,b,3,2));
+
+                    SurfaceBCFields::uBc[ilocalEdge][nG]=rhouBC/rhoBC;
+                    SurfaceBCFields::vBc[ilocalEdge][nG]=rhovBC/rhoBC;
+                }
+            }
+
+            //Field T
+            if (
+                    //Cac dieu kien bien can tinh gia tri SurfaceBCFields tu conservative variables
+                    TType==BCVars::temperatureBCId::waveTransmissive //wave transmissive
+                    )
+            {
+                for (int nG=0; nG<=mathVar::nGauss1D; nG++)
+                {
+                    double a,b;
+                    std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
+                    double rhoBC(math::pointValue(element,a,b,1,2)),
+                            rhouBC(math::pointValue(element,a,b,2,2)),
+                            rhovBC(math::pointValue(element,a,b,3,2)),
+                            rhoEBC(math::pointValue(element,a,b,4,2));
+
+                    SurfaceBCFields::TBc[ilocalEdge][nG]=math::CalcTFromConsvVar(rhoBC,rhouBC,rhovBC,rhoEBC);
+                }
+            }
+
+            //Field P
+            if (
+                    //Cac dieu kien bien can tinh gia tri SurfaceBCFields tu conservative variables
+                    pType==BCVars::pressureBCId::waveTransmissive //wave transmissive
+                    )
+            {
+                for (int nG=0; nG<=mathVar::nGauss1D; nG++)
+                {
+                    double a,b;
+                    std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
+                    double rhoBC(math::pointValue(element,a,b,1,2)),
+                            rhouBC(math::pointValue(element,a,b,2,2)),
+                            rhovBC(math::pointValue(element,a,b,3,2)),
+                            rhoEBC(math::pointValue(element,a,b,4,2));
+
+                    SurfaceBCFields::pBc[ilocalEdge][nG]=math::CalcP(math::CalcTFromConsvVar(rhoBC,rhouBC,rhovBC,rhoEBC),rhoBC);
+                }
+            }
+        }
+    }
+
     bool checkInflow(double u, double v, double nx, double ny)
     {
         bool inflow(true);
@@ -177,7 +254,7 @@ namespace BCSupportFncs
 
         //Correct u, v, T, p
         //NOTE (22/08/2021): correct T truoc u de phu hop voi khi chay dieu kien bien nonequilibrium
-        pM = correctPressure(edge,edgeGrp,pP,pMean,inflow);
+        pM = correctPressure(edge,edgeGrp,nG,pP,pMean,inflow);
         TM = correctTemperature(edge,edgeGrp,nG,TP,TMean,inflow);
         std::tie(uM, vM) = correctVelocity(edge,edgeGrp,nG,uP,uMean,vP,vMean,n,inflow);
 
@@ -325,7 +402,7 @@ namespace BCSupportFncs
             loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
         std::vector<double> UP{uP,vP},UMean{uMean,vMean},
         UM(2, 0.0),
-        UBC{SurfaceBCFields::uBc[loc],SurfaceBCFields::vBc[loc]},
+        UBC{SurfaceBCFields::uBc[loc][nG],SurfaceBCFields::vBc[loc][nG]},
         UZero{0.0,0.0};
 
         bool isStrong(BCVars::DirichletAppMethUStrong[edgeGrp -1]);
@@ -388,6 +465,13 @@ namespace BCSupportFncs
         case BCVars::velocityBCId::MaxwellSlip:
             {
                 MaxwellSlip::correctU(edge,edgeGrp,nG,UM,UP);
+            }
+            break;
+        //Wave transmissive - 07/06/2022
+        case BCVars::velocityBCId::waveTransmissive:
+            {
+                //Tuong tu fixed value
+                fixedValue_vector(UM,UP,UBC,isStrong);
             }
             break;
 //------//Custom_Boundary_Conditions----------------------------------------
@@ -514,6 +598,13 @@ namespace BCSupportFncs
                 duM=duP;
             }
             break;
+        //Wave transmissive - 07/06/2022
+        case BCVars::velocityBCId::waveTransmissive:
+            {
+                //Tuong tu fixed value
+                duM=duP;
+            }
+            break;
 //------//Custom_Boundary_Conditions----------------------------------------
 
         case BCVars::generalBCId::matched:
@@ -570,7 +661,7 @@ namespace BCSupportFncs
 
         int TType(bcValues::TBcType[edgeGrp - 1]), //Lay UType de xac dinh kieu dk bien
             loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
-        double TBC(SurfaceBCFields::TBc[loc]), TM(0);
+        double TBC(SurfaceBCFields::TBc[loc][nG]), TM(0);
 
         bool isStrong(BCVars::DirichletAppMethTStrong[edgeGrp-1]);
 
@@ -619,6 +710,13 @@ namespace BCSupportFncs
         case BCVars::temperatureBCId::SmoluchowskyTJump:
             {
                 SmoluchowskyTJump::correctT(edge,edgeGrp,nG,TM,TP);
+            }
+            break;
+        //Wave transmissive - 07/06/2022
+        case BCVars::temperatureBCId::waveTransmissive:
+            {
+                //Tuong tu fixed value
+                TM = fixedValue_scalar(TP,TBC,isStrong);
             }
             break;
 //------//Custom_Boundary_Conditions----------------------------------------
@@ -728,6 +826,13 @@ namespace BCSupportFncs
                 dTM=dTP;
             }
             break;
+        //Wave transmissive - 07/06/2022
+        case BCVars::temperatureBCId::waveTransmissive:
+            {
+                //Tuong tu fixed value
+                dTM=dTP;
+            }
+            break;
 //------//Custom_Boundary_Conditions----------------------------------------
 
         case BCVars::generalBCId::matched:
@@ -745,7 +850,7 @@ namespace BCSupportFncs
         return std::make_tuple(dTM[0],dTM[1]);
     }
 
-    double correctPressure(int edge, int edgeGrp, double pP, double pMean, bool inflow)
+    double correctPressure(int edge, int edgeGrp, int nG, double pP, double pMean, bool inflow)
     {
         //Ham correct gia tri bien P tai BC theo dieu kien bien
         /* Pressure boundary conditions:
@@ -778,7 +883,7 @@ namespace BCSupportFncs
 
         int pType(bcValues::pBcType[edgeGrp - 1]), //Lay UType de xac dinh kieu dk bien
             loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
-        double pBC(SurfaceBCFields::pBc[loc]), pM(0);
+        double pBC(SurfaceBCFields::pBc[loc][nG]), pM(0);
 
         bool isStrong(BCVars::DirichletAppMethPStrong[edgeGrp-1]);
 
@@ -845,6 +950,14 @@ namespace BCSupportFncs
         case BCVars::pressureBCId::zeroRhoGrad:
             {
                 zeroRhoGrad::correctP(pM,pP);
+            }
+            break;
+
+        //Wave transmissive - 07/06/2022
+        case BCVars::pressureBCId::waveTransmissive:
+            {
+                //Tuong tu fixed value
+                pM = fixedValue_scalar(pP,pBC,isStrong);
             }
             break;
 //------//Custom_Boundary_Conditions----------------------------------------
@@ -967,6 +1080,13 @@ namespace BCSupportFncs
         case BCVars::pressureBCId::zeroRhoGrad:
             {
                 zeroRhoGrad::correctGradP(dpM,dpP);
+            }
+            break;
+        //Wave transmissive - 07/06/2022
+        case BCVars::pressureBCId::waveTransmissive:
+            {
+                //Tuong tu fixed value
+                dpM=dpP;
             }
             break;
 //------//Custom_Boundary_Conditions----------------------------------------
@@ -1096,11 +1216,11 @@ namespace BCSupportFncs
 
         double TM, TP;
         std::vector<double> UM(4), UP(4);
-        std::vector<double> CArray(mathVar::nGauss+1);
-        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+        std::vector<double> CArray(mathVar::nGauss1D+1);
+        for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
         {
             TP=surfaceFields::T[edge][nG];
-            TM=surfaceFields::T[edge][nG+mathVar::nGauss+1];
+            TM=surfaceFields::T[edge][nG+mathVar::nGauss1D+1];
 
             for (int i = 0; i < 4; i++)
             {
@@ -1226,6 +1346,13 @@ namespace BCSupportFncs
         {
             Fluxes[i]=invisFluxGlobal[i]+visFluxGlobal[i];
         }
+
+        /* Save mass diffusion velocity at wall
+         * Use central flux
+        */
+        int localEdgeId(auxUlti::getAdressOfBCEdgesOnBCValsArray(edgeId));
+        extNSF_Durst::uMassWall[localEdgeId]=0.5*(visFluxLocalXPlus[0] + visFluxLocalXMinus[0])/(0.5*(ULPlus[0]+ULMinus[0]));
+        extNSF_Durst::vMassWall[localEdgeId]=0.5*(visFluxLocalYPlus[0] + visFluxLocalYMinus[0])/(0.5*(ULPlus[0]+ULMinus[0]));
     }
     }
 
@@ -1235,10 +1362,10 @@ namespace BCSupportFncs
     {
         //int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(edge));
 
-        UMinus[0] = surfaceFields::rho[edge][mathVar::nGauss+nG+1];
-        UMinus[1] = surfaceFields::rhou[edge][mathVar::nGauss+nG+1];
-        UMinus[2] = surfaceFields::rhov[edge][mathVar::nGauss+nG+1];
-        UMinus[3] = surfaceFields::rhoE[edge][mathVar::nGauss+nG+1];
+        UMinus[0] = surfaceFields::rho[edge][mathVar::nGauss1D+nG+1];
+        UMinus[1] = surfaceFields::rhou[edge][mathVar::nGauss1D+nG+1];
+        UMinus[2] = surfaceFields::rhov[edge][mathVar::nGauss1D+nG+1];
+        UMinus[3] = surfaceFields::rhoE[edge][mathVar::nGauss1D+nG+1];
     }
 
     void getdUMinus(int edge, int nG, std::vector<double> &dUMinus, int dir)
@@ -1247,17 +1374,17 @@ namespace BCSupportFncs
 
         if (dir==1)
         {
-            dUMinus[0] = surfaceFields::dRhoX[edge][mathVar::nGauss+nG+1];
-            dUMinus[1] = surfaceFields::dRhouX[edge][mathVar::nGauss+nG+1];
-            dUMinus[2] = surfaceFields::dRhovX[edge][mathVar::nGauss+nG+1];
-            dUMinus[3] = surfaceFields::dRhoEX[edge][mathVar::nGauss+nG+1];
+            dUMinus[0] = surfaceFields::dRhoX[edge][mathVar::nGauss1D+nG+1];
+            dUMinus[1] = surfaceFields::dRhouX[edge][mathVar::nGauss1D+nG+1];
+            dUMinus[2] = surfaceFields::dRhovX[edge][mathVar::nGauss1D+nG+1];
+            dUMinus[3] = surfaceFields::dRhoEX[edge][mathVar::nGauss1D+nG+1];
         }
         else
         {
-            dUMinus[0] = surfaceFields::dRhoY[edge][mathVar::nGauss+nG+1];
-            dUMinus[1] = surfaceFields::dRhouY[edge][mathVar::nGauss+nG+1];
-            dUMinus[2] = surfaceFields::dRhovY[edge][mathVar::nGauss+nG+1];
-            dUMinus[3] = surfaceFields::dRhoEY[edge][mathVar::nGauss+nG+1];
+            dUMinus[0] = surfaceFields::dRhoY[edge][mathVar::nGauss1D+nG+1];
+            dUMinus[1] = surfaceFields::dRhouY[edge][mathVar::nGauss1D+nG+1];
+            dUMinus[2] = surfaceFields::dRhovY[edge][mathVar::nGauss1D+nG+1];
+            dUMinus[3] = surfaceFields::dRhoEY[edge][mathVar::nGauss1D+nG+1];
         }
     }
     }

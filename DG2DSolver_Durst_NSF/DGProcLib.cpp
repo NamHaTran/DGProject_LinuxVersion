@@ -31,27 +31,34 @@
 //Non equilibrium BCs
 #include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_GenFuncs.h"
 
+//Time varying BCs
+#include "./boundaryConditions/BCSupportFncs.h"
+#include "./boundaryConditions/customBCs/timeVaryingBCs/timeVaryingBCs_GenFuncs.h"
+
 namespace meshParam
 {
+    /**
+     * @brief Function generates base Gauss points vectors, which is used to generate Gauss parameters Array for volume Gauss and surface Gauss.
+     */
     void genBasedGaussPtsVectors()
     {
-        math::volumeGauss(mathVar::nGauss);
-        math::volumeGaussLobatto(mathVar::nGauss);  //run GaussLobatto for applying limiter
+        math::getGaussCoeffs(mathVar::xGaussVol,mathVar::wGaussVol,mathVar::nGauss2D);
+        math::getGaussLobattoCoeffs(mathVar::xGaussLobattoVol,mathVar::wGaussLobattoVol,mathVar::nGauss2D);  //run GaussLobatto for applying limiter
 
-        math::surfaceGauss(mathVar::nGauss);
-        math::surfaceGaussLobatto(mathVar::nGauss);  //run GaussLobatto for applying limiter
+        math::getGaussCoeffs(mathVar::xGaussSur,mathVar::wGaussSur,mathVar::nGauss1D);
+        math::getGaussLobattoCoeffs(mathVar::xGaussLobattoSur,mathVar::wGaussLobattoSur,mathVar::nGauss1D); //run GaussLobatto for applying limiter
     }
 
     /**
-     * @brief Function calculates coordinates and weights of Gauss Points
+     * @brief Function generates Gauss parameters arrays of all volume Gauss points
      */
 	void GaussParam()
 	{
-        for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
+        for (int na = 0; na <= mathVar::nGauss2D; na++)  //nGauss is started from 0
 		{
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 			{
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                 mathVar::GaussPts[nanb][0] = mathVar::xGaussVol[na];
                 mathVar::GaussPts[nanb][1] = mathVar::xGaussVol[nb];
                 mathVar::GaussLobattoPts[nanb][0] = mathVar::xGaussLobattoVol[na];
@@ -66,7 +73,7 @@ namespace meshParam
 	}
 
     /**
-     * @brief Function calculates Jacobian of 2D element at all volume Gauss points
+     * @brief Function calculates Jacobi of all volume Gauss points
      */
 	void JacobianParam()
 	{
@@ -74,31 +81,31 @@ namespace meshParam
 		double a(0.0), b(0.0);
         for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-            for (int na = 0; na <= mathVar::nGauss; na++)  //nGauss is started from 0
+            for (int na = 0; na <= mathVar::nGauss2D; na++)  //nGauss is started from 0
 			{
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 				{
                     //a = mathVar::GaussPts[na][nb][0];
                     //b = mathVar::GaussPts[na][nb][1];
                     std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
                     //meshVar::J2D[ielem][na][nb] = math::J2DCal(ielem, a, b);
-                    meshVar::J2D[ielem][calcArrId(na,nb,mathVar::nGauss+1)] = math::J2DCal(ielem, a, b);
+                    meshVar::J2D[ielem][calcArrId(na,nb,mathVar::nGauss2D+1)] = math::J2DCal(ielem, a, b);
 				}
 			}
 		}
 	}
 
     /**
-     * @brief Function calculate basis function at all volume Gauss points
+     * @brief Function generates array of basis function value at all volume Gauss points at all order (shape mode)
      */
 	void basisFcParam()
 	{
 		double a(0.0), b(0.0);
-        for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss2D; na++)
 		{
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
             {
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                 //Triangle
                 std::tie(a,b)=auxUlti::getGaussCoor(na,nb);
@@ -126,20 +133,17 @@ namespace meshParam
 		}
 	}
 
-    /**
-     * @brief Function saves coordinates derivatives at all Gauss points to array
-     */
 	void derivCoordinates()
 	{
 		double dxa(0.0), dxb(0.0), dya(0.0), dyb(0.0);
 		double a(0.0), b(0.0);
         for (int ielem = 0; ielem < meshVar::nelem2D; ielem++)
 		{
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
 			{
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 				{
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                     /*
 					a = mathVar::GaussPts[na][nb][0];
@@ -257,12 +261,12 @@ namespace meshParam
         for (int ilocalEdge=0; ilocalEdge<meshVar::numBCEdges; ilocalEdge++)
         {
             globleEdge=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
-            int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
-            if (bcType==meshVar::BCTypeID::wall) //type wall
-            {
+            //int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
+            //if (bcType==meshVar::BCTypeID::wall) //type wall
+            //{
                 std::tie(element,tempE)=auxUlti::getMasterServantOfEdge(globleEdge);
                 meshVar::distanceFromCentroidToBCEdge[ilocalEdge]=math::geometricOp::calcDistanceFromCenterToEdge(element,globleEdge);
-            }
+            //}
         }
     }
 
@@ -347,6 +351,8 @@ namespace process
             }
         }
 
+        BCSupportFncs::calcBCValuesAtUnfixedValueBCs();
+
         if (systemVar::currentProc==0)
         {
             std::cout << " \n" << "Simulation is started\n";
@@ -429,10 +435,14 @@ namespace process
         {
             globleEdgeId=auxUlti::getGlobalEdgeIdFromLocalBCEdgeId(ilocalEdge);
             BCGrp=auxUlti::getGrpOfEdge(globleEdgeId);
-            SurfaceBCFields::TBc[ilocalEdge]=bcValues::TBCFixed[BCGrp-1];
-            SurfaceBCFields::uBc[ilocalEdge]=bcValues::uBCFixed[BCGrp-1];
-            SurfaceBCFields::vBc[ilocalEdge]=bcValues::vBCFixed[BCGrp-1];
-            SurfaceBCFields::pBc[ilocalEdge]=bcValues::pBCFixed[BCGrp-1];
+
+            for (int nG=0; nG<=mathVar::nGauss1D; nG++)
+            {
+                SurfaceBCFields::TBc[ilocalEdge][nG]=bcValues::TBCFixed[BCGrp-1];
+                SurfaceBCFields::uBc[ilocalEdge][nG]=bcValues::uBCFixed[BCGrp-1];
+                SurfaceBCFields::vBc[ilocalEdge][nG]=bcValues::vBCFixed[BCGrp-1];
+                SurfaceBCFields::pBc[ilocalEdge][nG]=bcValues::pBCFixed[BCGrp-1];
+            }
         }
     }
 
@@ -452,13 +462,13 @@ namespace process
 	std::vector<double> calcIniValuesRHS(int element, double iniVal)
 	{
 		std::vector<double> Out(mathVar::orderElem + 1, 0.0);
-		std::vector<std::vector<double>> matrix(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+        std::vector<std::vector<double>> matrix(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 		double a(0.0), b(0.0);
         for (int order = 0; order <= mathVar::orderElem; order++)
 		{
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
 			{
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 				{
 					std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 					math::basisFc(a, b, auxUlti::checkType(element));
@@ -470,13 +480,13 @@ namespace process
 		return Out;
     }
 
+    /**
+     * @brief Function calculates conservative variables at all volume Gauss points
+     */
 	void calcVolumeGaussValues()
 	{
         /* Ham tinh gia tri U tai cac diem Gauss ben trong cell
          * Ket qua duoc luu vao volumeFields
-         *
-         * Khi mass diffusion ON, rhoVolGauss duoc tinh tu ham calcVolumeGaussRho
-         * nen khong can tinh lai o ham nay
         */
 		double a(0.0), b(0.0);
         std::vector<double>UVol(4,0.0);
@@ -485,11 +495,11 @@ namespace process
         {
             for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
             {
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
-                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                         std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                         UVol=math::pointUVars(nelem,a,b);
@@ -507,11 +517,11 @@ namespace process
         {
             for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
             {
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
-                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                         volumeFields::rhoVolGauss[nelem][nanb] = rho[nelem][0];
                         volumeFields::rhouVolGauss[nelem][nanb] = rhou[nelem][0];
@@ -539,11 +549,11 @@ namespace process
         {
             for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
             {
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
-                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                         std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                         volumeFields::rhoVolGauss[nelem][nanb] = math::pointValue(nelem,a,b,1,2);
@@ -556,11 +566,11 @@ namespace process
         {
             for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
             {
-                for (int na = 0; na <= mathVar::nGauss; na++)
+                for (int na = 0; na <= mathVar::nGauss2D; na++)
                 {
-                    for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                    for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                     {
-                        int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                        int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                         volumeFields::rhoVolGauss[nelem][nanb] = rho[nelem][0];
                     }
                 }
@@ -574,11 +584,11 @@ namespace process
         double a(0.0), b(0.0);
         for (int nelem = 0; nelem < meshVar::nelem2D; nelem++)
         {
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
             {
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                 {
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
                     std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
                     volumeFields::T[nelem][nanb] = math::pointValue(nelem, a, b, 6, 1);
@@ -596,20 +606,20 @@ namespace process
             if (bcGrp == 0)
             {
                 std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     std::tie(rhoMaster,rhoSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,1);
                     std::tie(rhouMaster,rhouSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,2);
                     std::tie(rhovMaster,rhovSlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,3);
                     std::tie(rhoEMaster,rhoESlave)=auxUlti::getUAtInterfaces(iedge,masterCell,nG,4);
                     surfaceFields::T[iedge][nG]=math::CalcTFromConsvVar(rhoMaster,rhouMaster,rhovMaster,rhoEMaster);
-                    surfaceFields::T[iedge][nG + mathVar::nGauss + 1]=math::CalcTFromConsvVar(rhoSlave,rhouSlave,rhovSlave,rhoESlave);
+                    surfaceFields::T[iedge][nG + mathVar::nGauss1D + 1]=math::CalcTFromConsvVar(rhoSlave,rhouSlave,rhovSlave,rhoESlave);
                 }
             }
             else
             {
                 std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     rhoMaster = surfaceFields::rho[iedge][nG];
                     rhouMaster = surfaceFields::rhou[iedge][nG];
@@ -640,27 +650,27 @@ namespace process
                 if (bcGrp == 0)
                 {
                     std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         //rho
                         std::tie(tempMaster, tempSlave) = math::internalSurfaceValue(iedge, masterCell, nG, 1, 2);
                         surfaceFields::rho[iedge][nG] = tempMaster;
-                        surfaceFields::rho[iedge][nG + mathVar::nGauss + 1] = tempSlave;
+                        surfaceFields::rho[iedge][nG + mathVar::nGauss1D + 1] = tempSlave;
 
                         //rhou
                         std::tie(tempMaster, tempSlave) = math::internalSurfaceValue(iedge, masterCell, nG, 2, 2);
                         surfaceFields::rhou[iedge][nG] = tempMaster;
-                        surfaceFields::rhou[iedge][nG + mathVar::nGauss + 1] = tempSlave;
+                        surfaceFields::rhou[iedge][nG + mathVar::nGauss1D + 1] = tempSlave;
 
                         //rhov
                         std::tie(tempMaster, tempSlave) = math::internalSurfaceValue(iedge, masterCell, nG, 3, 2);
                         surfaceFields::rhov[iedge][nG] = tempMaster;
-                        surfaceFields::rhov[iedge][nG + mathVar::nGauss + 1] = tempSlave;
+                        surfaceFields::rhov[iedge][nG + mathVar::nGauss1D + 1] = tempSlave;
 
                         //rhoE
                         std::tie(tempMaster, tempSlave) = math::internalSurfaceValue(iedge, masterCell, nG, 4, 2);
                         surfaceFields::rhoE[iedge][nG] = tempMaster;
-                        surfaceFields::rhoE[iedge][nG + mathVar::nGauss + 1] = tempSlave;
+                        surfaceFields::rhoE[iedge][nG + mathVar::nGauss1D + 1] = tempSlave;
                     }
                 }
                 /*
@@ -685,7 +695,7 @@ namespace process
                 else
                 {
                     std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         //rho
                         surfaceFields::rho[iedge][nG] = math::plusSideSurfaceValue(iedge, masterCell, nG, 1, 2);
@@ -711,29 +721,29 @@ namespace process
                 if (bcGrp == 0)
                 {
                     std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         //rho
                         surfaceFields::rho[iedge][nG] = rho[masterCell][0];
-                        surfaceFields::rho[iedge][nG + mathVar::nGauss + 1] = rho[slaveCell][0];
+                        surfaceFields::rho[iedge][nG + mathVar::nGauss1D + 1] = rho[slaveCell][0];
 
                         //rhou
                         surfaceFields::rhou[iedge][nG] = rhou[masterCell][0];
-                        surfaceFields::rhou[iedge][nG + mathVar::nGauss + 1] = rhou[slaveCell][0];
+                        surfaceFields::rhou[iedge][nG + mathVar::nGauss1D + 1] = rhou[slaveCell][0];
 
                         //rhov
                         surfaceFields::rhov[iedge][nG] = rhov[masterCell][0];
-                        surfaceFields::rhov[iedge][nG + mathVar::nGauss + 1] = rhov[slaveCell][0];
+                        surfaceFields::rhov[iedge][nG + mathVar::nGauss1D + 1] = rhov[slaveCell][0];
 
                         //rhoE
                         surfaceFields::rhoE[iedge][nG] = rhoE[masterCell][0];
-                        surfaceFields::rhoE[iedge][nG + mathVar::nGauss + 1] = rhoE[slaveCell][0];
+                        surfaceFields::rhoE[iedge][nG + mathVar::nGauss1D + 1] = rhoE[slaveCell][0];
                     }
                 }
                 else
                 {
                     std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         //rho
                         surfaceFields::rho[iedge][nG] = rho[masterCell][0];
@@ -776,9 +786,9 @@ namespace process
                 if (bcGrp == 0)
                 {
                     std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
-                        std::tie(surfaceFields::rho[iedge][nG], surfaceFields::rho[iedge][nG + mathVar::nGauss + 1])
+                        std::tie(surfaceFields::rho[iedge][nG], surfaceFields::rho[iedge][nG + mathVar::nGauss1D + 1])
                                 = math::internalSurfaceValue(iedge, masterCell, nG, 1, 2);
                     }
                 }
@@ -794,7 +804,7 @@ namespace process
                 else
                 {
                     std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         surfaceFields::rho[iedge][nG] = math::plusSideSurfaceValue(iedge, masterCell, nG, 1, 2);
                     }
@@ -810,17 +820,17 @@ namespace process
                 if (bcGrp == 0)
                 {
                     std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         //rho
                         surfaceFields::rho[iedge][nG] = rho[masterCell][0];
-                        surfaceFields::rho[iedge][nG + mathVar::nGauss + 1] = rho[slaveCell][0];
+                        surfaceFields::rho[iedge][nG + mathVar::nGauss1D + 1] = rho[slaveCell][0];
                     }
                 }
                 else
                 {
                     std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         //rho
                         surfaceFields::rho[iedge][nG] = rho[masterCell][0];
@@ -852,7 +862,7 @@ namespace process
                 faceBcType = auxUlti::getBCType(edgeName);
                 if (faceBcType != 0)  //boundary edge
                 {
-                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                     {
                         //Chi chay ham auxEqBCsImplement de tinh toan va cap nhat U trong surfaceFields tai BC
                         auxEqBCsImplement(nelement, edgeName, nGauss);
@@ -913,8 +923,8 @@ namespace process
     namespace BR2 {
     void calcVolDivU(int element)
     {
-        std::vector<std::vector<double>> gaussMX(mathVar::nGauss+1,std::vector<double>(mathVar::nGauss+1,0.0)),
-                gaussMY(mathVar::nGauss+1,std::vector<double>(mathVar::nGauss+1,0.0));
+        std::vector<std::vector<double>> gaussMX(mathVar::nGauss2D+1,std::vector<double>(mathVar::nGauss2D+1,0.0)),
+                gaussMY(mathVar::nGauss2D+1,std::vector<double>(mathVar::nGauss2D+1,0.0));
         std::vector<double>rhoC(mathVar::orderElem+1,0.0),
                 rhouC(mathVar::orderElem+1,0.0),
                 rhovC(mathVar::orderElem+1,0.0),
@@ -950,9 +960,9 @@ namespace process
 
                 if (elemType==4)
                 {
-                    for (int na=0;na<=mathVar::nGauss;na++) {
-                        for (int nb=0;nb<=mathVar::nGauss;nb++) {
-                            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    for (int na=0;na<=mathVar::nGauss2D;na++) {
+                        for (int nb=0;nb<=mathVar::nGauss2D;nb++) {
+                            int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                             Bn=mathVar::BPts_Quad[n][nanb];
                             dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
                             dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
@@ -963,9 +973,9 @@ namespace process
                 }
                 else if (elemType==3)
                 {
-                    for (int na=0;na<=mathVar::nGauss;na++) {
-                        for (int nb=0;nb<=mathVar::nGauss;nb++) {
-                            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    for (int na=0;na<=mathVar::nGauss2D;na++) {
+                        for (int nb=0;nb<=mathVar::nGauss2D;nb++) {
+                            int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                             Bn=mathVar::BPts_Tri[n][nanb];
                             dBmX=math::Calc_dBxdBy(element, m, na, nb, 1);
                             dBmY=math::Calc_dBxdBy(element, m, na, nb, 2);
@@ -1015,14 +1025,14 @@ namespace process
                 dRhoEXVar(0.0), dRhoEYVar(0.0);
         bool isMaster;
         std::vector<std::vector<double>> gaussVector(4, std::vector<double>(2, 0.0));
-        std::vector<double> vectorRhoX(mathVar::nGauss+1,0.0),
-                vectorRhoY(mathVar::nGauss+1,0.0),
-                vectorRhouX(mathVar::nGauss+1,0.0),
-                vectorRhouY(mathVar::nGauss+1,0.0),
-                vectorRhovX(mathVar::nGauss+1,0.0),
-                vectorRhovY(mathVar::nGauss+1,0.0),
-                vectorRhoEX(mathVar::nGauss+1,0.0),
-                vectorRhoEY(mathVar::nGauss+1,0.0),
+        std::vector<double> vectorRhoX(mathVar::nGauss1D+1,0.0),
+                vectorRhoY(mathVar::nGauss1D+1,0.0),
+                vectorRhouX(mathVar::nGauss1D+1,0.0),
+                vectorRhouY(mathVar::nGauss1D+1,0.0),
+                vectorRhovX(mathVar::nGauss1D+1,0.0),
+                vectorRhovY(mathVar::nGauss1D+1,0.0),
+                vectorRhoEX(mathVar::nGauss1D+1,0.0),
+                vectorRhoEY(mathVar::nGauss1D+1,0.0),
 
                 vectordRhoXVol_org(mathVar::orderElem+1,0.0),
                 vectordRhoYVol_org(mathVar::orderElem+1,0.0),
@@ -1053,7 +1063,7 @@ namespace process
 
             if (BCType!=0)
             {
-                for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                for (int nG=0;nG<=mathVar::nGauss1D;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
                     gaussVector = auxEqBCsImplement(element, edgeId, nG);
 
@@ -1063,7 +1073,7 @@ namespace process
                 }
             }
             else {
-                for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                for (int nG=0;nG<=mathVar::nGauss1D;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
 
                     //Rho
@@ -1075,7 +1085,7 @@ namespace process
 
             if (BCType!=0)
             {
-                for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                for (int nG=0;nG<=mathVar::nGauss1D;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
                     gaussVector = auxEqBCsImplement(element, edgeId, nG);
 
@@ -1093,7 +1103,7 @@ namespace process
                 }
             }
             else {
-                for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                for (int nG=0;nG<=mathVar::nGauss1D;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
 
                     //Rhou
@@ -1115,7 +1125,7 @@ namespace process
 
             for (int iorder=0;iorder<=mathVar::orderElem;iorder++) {
                 double stiffCoeff(stiffMatrixCoeffs[element][iorder]);
-                for (int nG=0;nG<=mathVar::nGauss;nG++) {
+                for (int nG=0;nG<=mathVar::nGauss1D;nG++) {
                     std::tie(a,b)=auxUlti::getGaussSurfCoor(edgeId,element,nG);
                     math::basisFc(a,b,elemType);
                     BVar=mathVar::B[iorder];
@@ -1205,33 +1215,33 @@ namespace process
             if (bcGrp == 0)
             {
                 std::tie(masterCell, slaveCell) = auxUlti::getMasterServantOfEdge(iedge);
-                for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                 {
                     std::tie(TMaster, TSlave) = math::internalSurfaceValue(iedge, masterCell, nG, 6, 1);
                     muMaster=math::CalcVisCoef(TMaster);
                     muSlave=math::CalcVisCoef(TSlave);
                     surfaceFields::T[iedge][nG]=TMaster;
-                    surfaceFields::T[iedge][nG+ mathVar::nGauss + 1]=TSlave;
+                    surfaceFields::T[iedge][nG+ mathVar::nGauss1D + 1]=TSlave;
 
                     //rho*mu
                     std::tie(tempMaster, tempSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 1);
                     surfaceFields::aux_rho[iedge][nG] = tempMaster * muMaster;
-                    surfaceFields::aux_rho[iedge][nG + mathVar::nGauss + 1] = tempSlave * muSlave;
+                    surfaceFields::aux_rho[iedge][nG + mathVar::nGauss1D + 1] = tempSlave * muSlave;
 
                     //rhou*mu
                     std::tie(tempMaster, tempSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 2);
                     surfaceFields::aux_rhou[iedge][nG] = tempMaster * muMaster;
-                    surfaceFields::aux_rhou[iedge][nG + mathVar::nGauss + 1] = tempSlave * muSlave;
+                    surfaceFields::aux_rhou[iedge][nG + mathVar::nGauss1D + 1] = tempSlave * muSlave;
 
                     //rhov*mu
                     std::tie(tempMaster, tempSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 3);
                     surfaceFields::aux_rhov[iedge][nG] = tempMaster * muMaster;
-                    surfaceFields::aux_rhov[iedge][nG + mathVar::nGauss + 1] = tempSlave * muSlave;
+                    surfaceFields::aux_rhov[iedge][nG + mathVar::nGauss1D + 1] = tempSlave * muSlave;
 
                     //rhoE*mu
                     std::tie(tempMaster, tempSlave) = auxUlti::getUAtInterfaces(iedge, masterCell, nG, 4);
                     surfaceFields::aux_rhoE[iedge][nG] = tempMaster * muMaster;
-                    surfaceFields::aux_rhoE[iedge][nG + mathVar::nGauss + 1] = tempSlave * muSlave;
+                    surfaceFields::aux_rhoE[iedge][nG + mathVar::nGauss1D + 1] = tempSlave * muSlave;
                 }
             }
         }
@@ -1246,11 +1256,11 @@ namespace process
         if (isMaster)
         {
             locationPlus = nG;
-            locationMinus = nG + mathVar::nGauss + 1;
+            locationMinus = nG + mathVar::nGauss1D + 1;
         }
         else
         {
-            locationPlus = nG + mathVar::nGauss + 1;
+            locationPlus = nG + mathVar::nGauss1D + 1;
             locationMinus = nG;
         }
 
@@ -1339,10 +1349,10 @@ namespace process
 
     void calcVolumeIntegralTerms(int element, std::vector<double> &rhoVolIntX, std::vector<double> &rhouVolIntX, std::vector<double> &rhovVolIntX, std::vector<double> &rhoEVolIntX, std::vector<double> &rhoVolIntY, std::vector<double> &rhouVolIntY, std::vector<double> &rhovVolIntY, std::vector<double> &rhoEVolIntY)
     {
-        std::vector<std::vector<double>> rhoGsVol(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-            rhouGsVol(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-            rhovGsVol(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-            rhoEGsVol(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+        std::vector<std::vector<double>> rhoGsVol(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+            rhouGsVol(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+            rhovGsVol(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+            rhoEGsVol(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 
         //rho -------------------------------------------------------------------------------------------
         process::auxEq::BR1::getGaussMatrixOfConserVar(rhoGsVol, element, 1);
@@ -1355,11 +1365,11 @@ namespace process
 
         //Bien phu la mu*divU nen can nhan mu truoc khi tinh tich phan
         double mu(0.0);
-        for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss2D; na++)
         {
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
             {
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                 mu=math::CalcVisCoef(volumeFields::T[element][nanb]);
                 rhoGsVol[na][nb]=rhoGsVol[na][nb]*mu;
                 rhouGsVol[na][nb]=rhouGsVol[na][nb]*mu;
@@ -1400,23 +1410,23 @@ namespace process
         Input array rhoRHSTerm, rhouRHSTerm, rhovRHSTerm, rhoERHSTerm have following form:
         - number of row: orderElem + 1*/
         int elemType(auxUlti::checkType(element)), edgeName(0);
-        std::vector<std::vector<double>> rhoFluxX(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhouFluxX(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhovFluxX(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhoEFluxX(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhoFluxY(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhouFluxY(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhovFluxY(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0)),
-            rhoEFluxY(mathVar::nGauss + 1, std::vector<double>(elemType, 0.0));
+        std::vector<std::vector<double>> rhoFluxX(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhouFluxX(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhovFluxX(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhoEFluxX(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhoFluxY(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhouFluxY(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhovFluxY(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0)),
+            rhoEFluxY(mathVar::nGauss1D + 1, std::vector<double>(elemType, 0.0));
 
-        std::vector<double> rhoFluxXTemp(mathVar::nGauss + 1, 0.0),
-            rhouFluxXTemp(mathVar::nGauss + 1, 0.0),
-            rhovFluxXTemp(mathVar::nGauss + 1, 0.0),
-            rhoEFluxXTemp(mathVar::nGauss + 1, 0.0),
-            rhoFluxYTemp(mathVar::nGauss + 1, 0.0),
-            rhouFluxYTemp(mathVar::nGauss + 1, 0.0),
-            rhovFluxYTemp(mathVar::nGauss + 1, 0.0),
-            rhoEFluxYTemp(mathVar::nGauss + 1, 0.0);
+        std::vector<double> rhoFluxXTemp(mathVar::nGauss1D + 1, 0.0),
+            rhouFluxXTemp(mathVar::nGauss1D + 1, 0.0),
+            rhovFluxXTemp(mathVar::nGauss1D + 1, 0.0),
+            rhoEFluxXTemp(mathVar::nGauss1D + 1, 0.0),
+            rhoFluxYTemp(mathVar::nGauss1D + 1, 0.0),
+            rhouFluxYTemp(mathVar::nGauss1D + 1, 0.0),
+            rhovFluxYTemp(mathVar::nGauss1D + 1, 0.0),
+            rhoEFluxYTemp(mathVar::nGauss1D + 1, 0.0);
 
         /*1. Calculate flux of conservative variables at all Gauss points on all faces of element*/
         process::auxEq::BR1::getGaussVectorOfConserVar(element, rhoFluxX, rhouFluxX, rhovFluxX, rhoEFluxX, rhoFluxY, rhouFluxY, rhovFluxY, rhoEFluxY);
@@ -1425,7 +1435,7 @@ namespace process
         for (int nface = 0; nface < elemType; nface++)
         {
             edgeName = meshVar::inedel[element][nface];
-            for (int nG = 0; nG <= mathVar::nGauss; nG++)
+            for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
             {
                 rhoFluxXTemp[nG] = rhoFluxX[nG][nface];
                 rhoFluxYTemp[nG] = rhoFluxY[nG][nface];
@@ -1459,11 +1469,11 @@ namespace process
     {
         //rhoE used for solving auxilary equation is advective rhoE!!
         //std::vector<std::vector<double>> GaussMatrix(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
-        for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss2D; na++)
         {
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
             {
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                 switch (valType)
                 {
                 case 1:
@@ -1538,7 +1548,7 @@ namespace process
             double nx(auxUlti::getNormVectorComp(element, edgeName, 1)), ny(auxUlti::getNormVectorComp(element, edgeName, 2));
             if (faceBcType == 0)  //internal edge
             {
-                for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                 {
                     gaussVector = process::auxEq::BR1::getVectorOfConserVarFluxesAtInternal(edgeName, element, nGauss, nx, ny);
                     rhoFluxX[nGauss][nface] = gaussVector[0][0];
@@ -1554,7 +1564,7 @@ namespace process
             }
             else  //boundary edge
             {
-                for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
                 {
                     gaussVector = auxEqBCsImplement(element, edgeName, nGauss);
                     rhoFluxX[nGauss][nface] = math::numericalFluxes::auxFlux(gaussVector[0][0],gaussVector[0][1],nx);
@@ -1763,7 +1773,7 @@ namespace process
                         math::numericalFluxes::findMaxLxFConstantOnEdge(iedge,masterCell);
                     }
 
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                     {
                         std::tie(TMaster,TSlave)=auxUlti::getTAtInterfaces(iedge,masterCell,nG);
                         for (int i = 0; i < 4; i++)
@@ -1786,20 +1796,20 @@ namespace process
                             surfaceFields::dRhovX[iedge][nG]=dUXMaster[2];
                             surfaceFields::dRhoEX[iedge][nG]=dUXMaster[3];
 
-                            surfaceFields::dRhoX[iedge][mathVar::nGauss+nG+1]=dUXSlave[0];
-                            surfaceFields::dRhouX[iedge][mathVar::nGauss+nG+1]=dUXSlave[1];
-                            surfaceFields::dRhovX[iedge][mathVar::nGauss+nG+1]=dUXSlave[2];
-                            surfaceFields::dRhoEX[iedge][mathVar::nGauss+nG+1]=dUXSlave[3];
+                            surfaceFields::dRhoX[iedge][mathVar::nGauss1D+nG+1]=dUXSlave[0];
+                            surfaceFields::dRhouX[iedge][mathVar::nGauss1D+nG+1]=dUXSlave[1];
+                            surfaceFields::dRhovX[iedge][mathVar::nGauss1D+nG+1]=dUXSlave[2];
+                            surfaceFields::dRhoEX[iedge][mathVar::nGauss1D+nG+1]=dUXSlave[3];
 
                             surfaceFields::dRhoY[iedge][nG]=dUYMaster[0];
                             surfaceFields::dRhouY[iedge][nG]=dUYMaster[1];
                             surfaceFields::dRhovY[iedge][nG]=dUYMaster[2];
                             surfaceFields::dRhoEY[iedge][nG]=dUYMaster[3];
 
-                            surfaceFields::dRhoY[iedge][mathVar::nGauss+nG+1]=dUYSlave[0];
-                            surfaceFields::dRhouY[iedge][mathVar::nGauss+nG+1]=dUYSlave[1];
-                            surfaceFields::dRhovY[iedge][mathVar::nGauss+nG+1]=dUYSlave[2];
-                            surfaceFields::dRhoEY[iedge][mathVar::nGauss+nG+1]=dUYSlave[3];
+                            surfaceFields::dRhoY[iedge][mathVar::nGauss1D+nG+1]=dUYSlave[0];
+                            surfaceFields::dRhouY[iedge][mathVar::nGauss1D+nG+1]=dUYSlave[1];
+                            surfaceFields::dRhovY[iedge][mathVar::nGauss1D+nG+1]=dUYSlave[2];
+                            surfaceFields::dRhoEY[iedge][mathVar::nGauss1D+nG+1]=dUYSlave[3];
                         }
 
                         /* Voi ham calcLocalInviscidFlux, neu flux type la LxF hoac central, cac bien
@@ -1844,10 +1854,10 @@ namespace process
                         surfaceFields::invis_rhov[iedge][nG]=invisFluxGlobal[2];
                         surfaceFields::invis_rhoE[iedge][nG]=invisFluxGlobal[3];
 
-                        surfaceFields::invis_rho[iedge][nG + mathVar::nGauss + 1]=-invisFluxGlobal[0];
-                        surfaceFields::invis_rhou[iedge][nG + mathVar::nGauss + 1]=-invisFluxGlobal[1];
-                        surfaceFields::invis_rhov[iedge][nG + mathVar::nGauss + 1]=-invisFluxGlobal[2];
-                        surfaceFields::invis_rhoE[iedge][nG + mathVar::nGauss + 1]=-invisFluxGlobal[3];
+                        surfaceFields::invis_rho[iedge][nG + mathVar::nGauss1D + 1]=-invisFluxGlobal[0];
+                        surfaceFields::invis_rhou[iedge][nG + mathVar::nGauss1D + 1]=-invisFluxGlobal[1];
+                        surfaceFields::invis_rhov[iedge][nG + mathVar::nGauss1D + 1]=-invisFluxGlobal[2];
+                        surfaceFields::invis_rhoE[iedge][nG + mathVar::nGauss1D + 1]=-invisFluxGlobal[3];
 
                         if (flowProperties::viscous)
                         {
@@ -1856,10 +1866,10 @@ namespace process
                             surfaceFields::Vis_rhov[iedge][nG]=visFluxGlobal[2];
                             surfaceFields::Vis_rhoE[iedge][nG]=visFluxGlobal[3];
 
-                            surfaceFields::Vis_rho[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[0];
-                            surfaceFields::Vis_rhou[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[1];
-                            surfaceFields::Vis_rhov[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[2];
-                            surfaceFields::Vis_rhoE[iedge][nG + mathVar::nGauss + 1]=-visFluxGlobal[3];
+                            surfaceFields::Vis_rho[iedge][nG + mathVar::nGauss1D + 1]=-visFluxGlobal[0];
+                            surfaceFields::Vis_rhou[iedge][nG + mathVar::nGauss1D + 1]=-visFluxGlobal[1];
+                            surfaceFields::Vis_rhov[iedge][nG + mathVar::nGauss1D + 1]=-visFluxGlobal[2];
+                            surfaceFields::Vis_rhoE[iedge][nG + mathVar::nGauss1D + 1]=-visFluxGlobal[3];
                         }
                     }
                 }
@@ -1892,7 +1902,7 @@ namespace process
                         //int loc(auxUlti::getAdressOfBCEdgesOnBCValsArray(iedge));
                         std::tie(masterCell, std::ignore) = auxUlti::getMasterServantOfEdge(iedge);
 
-                        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                        for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
                         {
                             surfaceFields::dRhoX[iedge][nG] = math::plusSideSurfaceDerivativeValue(iedge,masterCell,nG,1,1);
                             surfaceFields::dRhouX[iedge][nG] = math::plusSideSurfaceDerivativeValue(iedge,masterCell,nG,2,1);
@@ -2156,7 +2166,7 @@ namespace process
 			/*InviscidTerm 2D array has 4 row 2 column:
 			- column 1: Ox direction
 			- column 2: Oy direction*/
-            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+            int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 			std::vector<std::vector<double>> InviscidTerm(4, std::vector<double>(2, 0.0));
 			double
                 rhoVal(volumeFields::rhoVolGauss[element][nanb]),
@@ -2193,7 +2203,7 @@ namespace process
 		/*Function calculates Viscous terms at Gauss point (a, b)*/
 		std::vector<std::vector<double>> calcGaussViscousTerm(int element, int na, int nb)
 		{
-            int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+            int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
 
             double uVal(0.0), vVal(0.0), a(0.0), b(0.0);
 			/*ViscousTerm 2D array has 4 row 2 column:
@@ -2261,11 +2271,11 @@ namespace process
             if (isMaster)
             {
                 locationPlus = nG;
-                locationMinus = nG + mathVar::nGauss + 1;
+                locationMinus = nG + mathVar::nGauss1D + 1;
             }
             else
             {
-                locationPlus = nG + mathVar::nGauss + 1;
+                locationPlus = nG + mathVar::nGauss1D + 1;
                 locationMinus = nG;
             }
 
@@ -2358,21 +2368,21 @@ namespace process
 			//std::vector<double> VolInt(4, 0.0);
 
 			std::vector<std::vector<double>>
-                GsVolX1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                GsVolY1(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolX1(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                GsVolY1(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
 
-                GsVolX2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                GsVolY2(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolX2(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                GsVolY2(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
 
-                GsVolX3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                GsVolY3(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
+                GsVolX3(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                GsVolY3(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
 
-                GsVolX4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                GsVolY4(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+                GsVolX4(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                GsVolY4(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D+ 1, 0.0));
 
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
 			{
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 				{
 					//std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 					/*A INVISCID TERMS*/
@@ -2438,24 +2448,24 @@ namespace process
 		void calcSurfaceIntegralTerms(int element, std::vector<double> &SurfIntTerm1, std::vector<double> &SurfIntTerm2, std::vector<double> &SurfIntTerm3, std::vector<double> &SurfIntTerm4)
 		{
 			/*User's guide:
-			All input array have form:
+            All input arrays have to have the form:
 			- number of rows: orderElem*/
 
 			int elemType(auxUlti::checkType(element)), edgeName(0);
 			int faceBcType(0);
 
-            std::vector<double> Flux1Temp(mathVar::nGauss + 1, 0.0),
-                Flux2Temp(mathVar::nGauss + 1, 0.0),
-                Flux3Temp(mathVar::nGauss + 1, 0.0),
-                Flux4Temp(mathVar::nGauss + 1, 0.0);
+            std::vector<double> Flux1Temp(mathVar::nGauss1D + 1, 0.0),
+                Flux2Temp(mathVar::nGauss1D + 1, 0.0),
+                Flux3Temp(mathVar::nGauss1D + 1, 0.0),
+                Flux4Temp(mathVar::nGauss1D + 1, 0.0);
 
             std::vector<double> Fluxes(4, 0.0);
 
 			std::vector<std::vector<double>>
-                Flux1(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-                Flux2(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-                Flux3(mathVar::nGauss + 1, std::vector<double>(4, 0.0)),
-                Flux4(mathVar::nGauss + 1, std::vector<double>(4, 0.0));
+                Flux1(mathVar::nGauss1D + 1, std::vector<double>(4, 0.0)),
+                Flux2(mathVar::nGauss1D + 1, std::vector<double>(4, 0.0)),
+                Flux3(mathVar::nGauss1D + 1, std::vector<double>(4, 0.0)),
+                Flux4(mathVar::nGauss1D + 1, std::vector<double>(4, 0.0));
 
 			//std::vector<double> SurInt(4, 0.0);
 
@@ -2466,7 +2476,7 @@ namespace process
 
                 if (faceBcType == 0)  //internal edge
                 {
-                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
 					{
 						Fluxes = process::NSFEq::getGaussVectorOfConserVarFluxesAtInternal(edgeName, element, nGauss);
                         Flux1[nGauss][nface] = Fluxes[0];
@@ -2487,7 +2497,7 @@ namespace process
                         BCSupportFncs::NSFEqBCs::findMaxLxFConstantOnEdge(element,edgeName);
                     }
 
-                    for (int nGauss = 0; nGauss <= mathVar::nGauss; nGauss++)
+                    for (int nGauss = 0; nGauss <= mathVar::nGauss1D; nGauss++)
 					{
 						Fluxes = NSFEqBCsImplement(element, edgeName, nGauss);
                         Flux1[nGauss][nface] = Fluxes[0];
@@ -2503,7 +2513,7 @@ namespace process
                 for (int nface = 0; nface < elemType; nface++)
 				{
                     edgeName = meshVar::inedel[element][nface];  //A BIG BUG!!!!!!
-                    for (int nG = 0; nG <= mathVar::nGauss; nG++)
+                    for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
 					{
                         Flux1Temp[nG] = Flux1[nG][nface];
                         Flux2Temp[nG] = Flux2[nG][nface];
@@ -2684,7 +2694,7 @@ namespace process
 		{
             if (systemVar::firstIter)
             {
-                dt = 0.0;
+                dt = 0;
             }
             else
             {
@@ -2876,7 +2886,7 @@ namespace process
          * @brief Function solves 1 time steps of DG workflow TVDRK (otal Variation Diminishing Runge-Kutta) time discretization
          */
 		void TVDRK3()
-		{
+        {
             rho0 = rho;
             rhou0 = rhou;
             rhov0 = rhov;
@@ -2892,23 +2902,20 @@ namespace process
 			}
 
             //UPDATE TIME VARYING BC
+            timeVaryingBCs::updateBCs();
+            //UPDATE NONEQUILIBRIUM BC
             nonEquilibriumBCs::updateBCs();
 
             limiter::limiter_1OutterStep();
 		}
 
-        /**
-         * @brief Function solves 1 time steps of DG workflow by using Euler time discretization
-         */
         void Euler()
         {
             rho0 = rho;
             rhou0 = rhou;
             rhov0 = rhov;
             rhoE0 = rhoE;
-
             //---------CALCULATION OF EACH EULER ITERATION---------//
-
             limiter::limiter_1InnerStep();
 
             //COMPUTE GAUSS VALUES AND INTERFACES VALUES
@@ -2943,6 +2950,8 @@ namespace process
             rhoE = rhoEN;
 
             //UPDATE TIME VARYING BC
+            timeVaryingBCs::updateBCs();
+            //UPDATE NONEQUILIBRIUM BC
             nonEquilibriumBCs::updateBCs();
 
             limiter::limiter_1OutterStep();
@@ -2992,11 +3001,11 @@ namespace process
 		if (isMaster)
 		{
 			locationPlus = nG;
-			locationMinus = nG + mathVar::nGauss + 1;
+            locationMinus = nG + mathVar::nGauss1D + 1;
 		}
 		else
 		{
-			locationPlus = nG + mathVar::nGauss + 1;
+            locationPlus = nG + mathVar::nGauss1D + 1;
 			locationMinus = nG;
 		}
 
@@ -3035,12 +3044,12 @@ namespace process
 	double volumeInte(int elem, std::vector< std::vector<double> > &Ui, int order, int direction)
 	{
 		double Int(0.0);
-		std::vector<std::vector<double>> A(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+        std::vector<std::vector<double>> A(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 		double dBi(0.0);
 
-        for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss2D; na++)
 		{
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 			{
 				dBi = math::Calc_dBxdBy(elem, order, na, nb, direction);
                 A[na][nb] = dBi * Ui[na][nb];
@@ -3054,10 +3063,10 @@ namespace process
 	double surfaceInte(int elem, int edge, std::vector<double> &FluxVector, int order)
 	{
 		double Bi(0.0), a(0.0), b(0.0), inte(0.0);
-		std::vector<double> F(mathVar::nGauss + 1, 0.0);
+        std::vector<double> F(mathVar::nGauss1D + 1, 0.0);
 
 		//inte = 0.0;  //value of integral is reset for each order
-        for (int nG = 0; nG <= mathVar::nGauss; nG++)
+        for (int nG = 0; nG <= mathVar::nGauss1D; nG++)
 		{
 			std::tie(a, b) = auxUlti::getGaussSurfCoor(edge, elem, nG);
 			math::basisFc(a, b, auxUlti::checkType(elem));  //mathVar::B is changed after this command line is excuted
@@ -3086,18 +3095,18 @@ namespace process
 	double calculateStiffMatrixElement(int element, int order1, int order2)
 	{
 		double B1(0.0), B2(0.0), Inte(0.0);
-		std::vector<std::vector<double>> FMatrix(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+        std::vector<std::vector<double>> FMatrix(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 		int elemType(auxUlti::checkType(element));
 
 		switch (elemType)
 		{
 		case 3:
 		{
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
 			{
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 				{
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                     B1 = mathVar::BPts_Tri[order1][nanb];
                     B2 = mathVar::BPts_Tri[order2][nanb];
 					FMatrix[na][nb] = B1 * B2;
@@ -3107,11 +3116,11 @@ namespace process
 		break;
 		case 4:
 		{
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
 			{
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
 				{
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                     B1 = mathVar::BPts_Quad[order1][nanb];
                     B2 = mathVar::BPts_Quad[order2][nanb];
 					FMatrix[na][nb] = B1 * B2;

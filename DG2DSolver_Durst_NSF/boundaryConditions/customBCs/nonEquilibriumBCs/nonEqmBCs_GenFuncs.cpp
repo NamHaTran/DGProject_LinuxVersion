@@ -1,5 +1,4 @@
 #include "nonEqmBCs_GenFuncs.h"
-#include "nonEqmBCs_Vars.h"
 #include "DGAuxUltilitiesLib.h"
 #include "VarDeclaration.h"
 #include "DGIOLib.h"
@@ -20,11 +19,11 @@ namespace nonEquilibriumBCs {
          * Ham update gia tri tren cac field cua surfaceBCFields, chi dung cho cac BC bien thien theo thoi gian.
          * Hien tai, ham su dung cho temperatureJump va slip conditions
         */
-        if (auxUlti::checkTimeVaryingBCAvailable() && flowProperties::viscous)
+        if (auxUlti::checkNonEqmBCAvailable() && flowProperties::viscous)
         {
             if (systemVar::currentProc==0)
             {
-                std::cout<<"Updating time varying nonequilibrium BCs.\n";
+                std::cout<<"Updating nonequilibrium BCs.\n";
             }
 
             int globleEdge(0);
@@ -34,13 +33,14 @@ namespace nonEquilibriumBCs {
                 int edgeGrp(auxUlti::getGrpOfEdge(globleEdge));
                 int UType(bcValues::UBcType[edgeGrp - 1]), TType(bcValues::TBcType[edgeGrp - 1]);
 
-                for (int nG=0; nG<=mathVar::nGauss; nG++)
+                for (int nG=0; nG<=mathVar::nGauss1D; nG++)
                 {
                     //Update Temperature
                     if (TType == BCVars::temperatureBCId::SmoluchowskyTJump)
                     {
                         //SmoluchowskyTJump::calcTJump_DGTypeExplicit(globleEdge,edgeGrp,nG);
                         SmoluchowskyTJump::calcTJump_FDMTypeSemiImplicit(globleEdge,edgeGrp,nG);
+                        //SmoluchowskyTJump::calcTJump_FDMTypeImplicit(globleEdge,edgeGrp,nG);
                     }
 
                     //Update Velocity
@@ -56,65 +56,66 @@ namespace nonEquilibriumBCs {
 
     void resizeSurfaceFields()
     {
-        meshVar::GaussPtsOnBCEdge_x = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,0.0);
-        meshVar::GaussPtsOnBCEdge_y = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,0.0);
-        meshVar::GaussPtsOnBCEdge_unitVector_x = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,0.0);
-        meshVar::GaussPtsOnBCEdge_unitVector_y = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,0.0);
-        meshVar::distanceFromGaussPtsToCentroid = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,0.0);
+        meshVar::GaussPtsOnBCEdge_x = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,0.0);
+        meshVar::GaussPtsOnBCEdge_y = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,0.0);
+        meshVar::GaussPtsOnBCEdge_unitVector_x = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,0.0);
+        meshVar::GaussPtsOnBCEdge_unitVector_y = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,0.0);
+        meshVar::distanceFromGaussPtsToCentroid = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,0.0);
 
-        if (auxUlti::checkTimeVaryingBCAvailable())
+        /*
+        if (auxUlti::checkNonEqmBCAvailable())
         {
-            nonEqmSurfaceField::TBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,iniValues::TIni);
-            nonEqmSurfaceField::uBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,iniValues::uIni);
-            nonEqmSurfaceField::vBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,iniValues::vIni);
-            nonEqmSurfaceField::pBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss+1,iniValues::pIni);
-        }
+            SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,iniValues::TIni);
+            SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,iniValues::uIni);
+            SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,iniValues::vIni);
+            SurfaceBCFields::pBc = auxUlti::resize2DArray(meshVar::numBCEdges,mathVar::nGauss1D+1,iniValues::pIni);
+        }*/
     }
 }
 
 namespace nonEquilibriumBCs_IO {
     void readSurfaceValues(std::string Loc)
     {
-        if (auxUlti::checkTimeVaryingBCAvailable())
+        if (auxUlti::checkNonEqmBCAvailable())
         {
             std::string fileLoc(""), fileName("");
 
             //Read file TSurface & USurface
             fileName = "TSurface.txt";
             fileLoc = (Loc + "/" + fileName);
-            nonEquilibriumBCs_IO::readFromFile(fileLoc,fileName,false,nonEqmSurfaceField::TBc);
+            nonEquilibriumBCs_IO::readFromFile(fileLoc,fileName,false,SurfaceBCFields::TBc);
             fileName = "uSurface.txt";
             fileLoc = (Loc + "/" + fileName);
-            nonEquilibriumBCs_IO::readFromFile(fileLoc,fileName,false,nonEqmSurfaceField::uBc);
+            nonEquilibriumBCs_IO::readFromFile(fileLoc,fileName,false,SurfaceBCFields::uBc);
             fileName = "vSurface.txt";
             fileLoc = (Loc + "/" + fileName);
-            nonEquilibriumBCs_IO::readFromFile(fileLoc,fileName,false,nonEqmSurfaceField::vBc);
+            nonEquilibriumBCs_IO::readFromFile(fileLoc,fileName,false,SurfaceBCFields::vBc);
         }
     }
 
     void writeSurfaceValues(std::string Loc)
     {
-        if (auxUlti::checkTimeVaryingBCAvailable())
+        if (auxUlti::checkNonEqmBCAvailable())
         {
             std::string fileLoc(""), fileName("");
 
             //Write file TSurface & USurface
             fileName = "TSurface.txt";
             fileLoc = (Loc + "/" + fileName);
-            nonEquilibriumBCs_IO::writeToFile(fileLoc,fileName,nonEqmSurfaceField::TBc);
+            nonEquilibriumBCs_IO::writeToFile(fileLoc,fileName,SurfaceBCFields::TBc);
             fileName = "uSurface.txt";
             fileLoc = (Loc + "/" + fileName);
-            nonEquilibriumBCs_IO::writeToFile(fileLoc,fileName,nonEqmSurfaceField::uBc);
+            nonEquilibriumBCs_IO::writeToFile(fileLoc,fileName,SurfaceBCFields::uBc);
             fileName = "vSurface.txt";
             fileLoc = (Loc + "/" + fileName);
-            nonEquilibriumBCs_IO::writeToFile(fileLoc,fileName,nonEqmSurfaceField::vBc);
+            nonEquilibriumBCs_IO::writeToFile(fileLoc,fileName,SurfaceBCFields::vBc);
         }
     }
 
     void writeToFile(std::string loc, std::string name, double **array)
     {
         std::ofstream Flux(loc.c_str());
-        int numRow(meshVar::numBCEdges), numCol(mathVar::nGauss+1);
+        int numRow(meshVar::numBCEdges), numCol(mathVar::nGauss1D+1);
         if (Flux)
         {
             Flux<<message::headerFile()<<name<<"\n"<<"NumberOfRow "<<numRow<<"\n"<<"NumberOfCol "<<numCol<<"\n"<<"{\n";
@@ -138,7 +139,7 @@ namespace nonEquilibriumBCs_IO {
 
     void readFromFile(std::string loc, std::string fileName, bool exitWhenFileNotFound, double **array)
     {
-        int row(meshVar::numBCEdges), col(1), expectNumCol(mathVar::nGauss+1);
+        int row(meshVar::numBCEdges), col(1), expectNumCol(mathVar::nGauss1D+1);
         bool isColAvail(true);
         std::ifstream Flux(loc.c_str());
         if (Flux)

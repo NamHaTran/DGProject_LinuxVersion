@@ -13,9 +13,6 @@
 //Extended Navier-Stokes-Fourier model
 #include "./extNSFEqns/FranzDurst/DurstModel.h"
 
-//Nonequilibrium BCs
-#include "./boundaryConditions/customBCs/nonEquilibriumBCs/nonEqmBCs_Vars.h"
-
 namespace debugTool
 {
 	void checkElemSurPt(int ipoin)
@@ -139,12 +136,10 @@ void reconstructLatestTime()
     rhov = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
     rhoE = auxUlti::resize2DArray(meshVar::nelem2D, mathVar::orderElem + 1,0.0);
 
-    SurfaceBCFields::uBc = new double [meshVar::numBCEdges];
-    auxUlti::initialize1DArray(SurfaceBCFields::uBc, meshVar::numBCEdges, 0.0);
-    SurfaceBCFields::vBc = new double [meshVar::numBCEdges];
-    auxUlti::initialize1DArray(SurfaceBCFields::vBc, meshVar::numBCEdges, 0.0);
-    SurfaceBCFields::TBc = new double [meshVar::numBCEdges];
-    auxUlti::initialize1DArray(SurfaceBCFields::TBc, meshVar::numBCEdges, 0.0);
+    SurfaceBCFields::uBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, 0.0);
+    SurfaceBCFields::vBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, 0.0);
+    SurfaceBCFields::TBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, iniValues::TIni);
+    SurfaceBCFields::pBc = auxUlti::resize2DArray(meshVar::numBCEdges, mathVar::nGauss1D, iniValues::pIni);
 
     auxUlti::initialize1DArray(theta1Arr, meshVar::nelem2D, 1.0);
     theta2Arr=new double[meshVar::nelem2D];
@@ -700,8 +695,12 @@ DATAPACKING=BLOCK)";
 		node_p = DG2Tecplot::calcCellCenteredValues(5);
 		node_T = DG2Tecplot::calcCellCenteredValues(6);
 
-        nodeRhoX = DG2Tecplot::calcCellCenteredValues(10);
-        nodeRhoY = DG2Tecplot::calcCellCenteredValues(11);
+        if (flowProperties::viscous)
+        {
+            nodeRhoX = DG2Tecplot::calcCellCenteredValues(10);
+            nodeRhoY = DG2Tecplot::calcCellCenteredValues(11);
+        }
+
 		for (int i = 0; i < meshVar::nelem2D; i++)
 		{
 			node_uMag[i] = sqrt(pow(node_u[i], 2) + pow(node_v[i], 2));
@@ -1120,7 +1119,7 @@ namespace postProcessing_Surface {
                 int bcType(auxUlti::checkBCTypeOfEdge(globleEdge));
                 if (bcType==meshVar::BCTypeID::wall) //type wall
                 {
-                    for (int nG=0; nG<mathVar::nGauss+1; nG++)
+                    for (int nG=0; nG<mathVar::nGauss1D+1; nG++)
                     {
                         //Tinh p tai hinh chieu vuong goc cua center xuong BCEdge
                         std::tie(element,std::ignore)=auxUlti::getMasterServantOfEdge(globleEdge);
@@ -1128,6 +1127,15 @@ namespace postProcessing_Surface {
                         std::tie(a, b) = auxUlti::getGaussSurfCoor(globleEdge, element, nG);
                         rhoBC=math::pointValue(element,a,b,1,2);
 
+                        FileFlux
+                                  <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
+                                  <<meshVar::GaussPtsOnBCEdge_y[ilocalEdge][nG]<<" "
+                                  <<math::CalcP(SurfaceBCFields::TBc[ilocalEdge][nG],rhoBC)<<" "
+                                  <<SurfaceBCFields::TBc[ilocalEdge][nG]<<" "
+                                  <<SurfaceBCFields::uBc[ilocalEdge][nG]<<" "
+                                  <<SurfaceBCFields::vBc[ilocalEdge][nG]<<" "
+                                  <<"\n";
+                        /*
                         if (auxUlti::checkTimeVaryingBCAvailable())
                             FileFlux
                                       <<meshVar::GaussPtsOnBCEdge_x[ilocalEdge][nG]<<" "
@@ -1146,6 +1154,7 @@ namespace postProcessing_Surface {
                                       <<SurfaceBCFields::uBc[ilocalEdge]<<" "
                                       <<SurfaceBCFields::vBc[ilocalEdge]<<" "
                                       <<"\n";
+                                      */
                     }
                 }
             }

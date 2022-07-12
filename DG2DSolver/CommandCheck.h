@@ -24,6 +24,16 @@ namespace preProcessKey
 
 	bool mappResults(std::string cmd);
 
+    bool exportMeshToMetis(std::string cmd);
+
+    bool testMeshPartitionResult(std::string cmd);
+
+    bool decomposeCase(std::string cmd);
+
+    bool reconstructLatestTime(std::string cmd);
+
+    bool checkPartitionedMesh(std::string cmd);
+
 	namespace debug
 	{
 		bool checkElement(std::string cmd);

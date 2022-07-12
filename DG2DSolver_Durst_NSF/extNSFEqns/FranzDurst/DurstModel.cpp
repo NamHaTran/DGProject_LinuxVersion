@@ -38,6 +38,18 @@ namespace extNSF_Durst {
         blending(0.5),
         realDm(1.32);
 
+    double *uMassWall = new double[1];
+    double *vMassWall = new double[1];
+
+    void resizeArrays()
+    {
+        extNSF_Durst::uMassWall = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(extNSF_Durst::uMassWall, meshVar::numBCEdges, 0.0);
+
+        extNSF_Durst::vMassWall = new double [meshVar::numBCEdges];
+        auxUlti::initialize1DArray(extNSF_Durst::vMassWall, meshVar::numBCEdges, 0.0);
+    }
+
     void applyBlendingFactorToDm()
     {
         extNSF_Durst::realDm=(extNSF_Durst::Dm - 1.0)*extNSF_Durst::blending + 1.0;
@@ -239,15 +251,15 @@ namespace extNSF_Durst {
                         dUy(4, 0.0);
 
         std::vector<std::vector<double>>
-                mDx(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0)),
-                mDy(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+                mDx(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0)),
+                mDy(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 
         //Calculate Self-Diffusion Flux at all Gauss Points
-        for (int na = 0; na <= mathVar::nGauss; na++)
+        for (int na = 0; na <= mathVar::nGauss2D; na++)
         {
-            for (int nb = 0; nb <= mathVar::nGauss; nb++)
+            for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
             {
-                int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                 std::tie(a, b) = auxUlti::getGaussCoor(na, nb);
 
                 rhoVal=volumeFields::rhoVolGauss[element][nanb];
@@ -299,7 +311,7 @@ namespace extNSF_Durst {
         for (int order1 = 1; order1 <= mathVar::orderElem; order1++)
         {
             double sumB(0.0), rhoOrder(rho[element][order1]);
-            std::vector<std::vector<double>> A(mathVar::nGauss + 1, std::vector<double>(mathVar::nGauss + 1, 0.0));
+            std::vector<std::vector<double>> A(mathVar::nGauss2D + 1, std::vector<double>(mathVar::nGauss2D + 1, 0.0));
 
             //Avoid dividing by zero
             if (fabs(rhoOrder)<systemVar::epsilon)
@@ -313,14 +325,14 @@ namespace extNSF_Durst {
             //EcOrder phai nhan voi theta2 de tranh tich phan co gia tri unphysical o vi tri co strong discontinuity
             EcOrder=(-0.5*(rhou[element][order1]*rhou[element][order1] + rhov[element][order1]*rhov[element][order1])/rhoOrder)*theta2Arr[element];
 
-            for (int na = 0; na <= mathVar::nGauss; na++)
+            for (int na = 0; na <= mathVar::nGauss2D; na++)
             {
-                for (int nb = 0; nb <= mathVar::nGauss; nb++)
+                for (int nb = 0; nb <= mathVar::nGauss2D; nb++)
                 {
                     //Reset sumB
                     sumB=0.0;
 
-                    int nanb(calcArrId(na,nb,mathVar::nGauss+1));
+                    int nanb(calcArrId(na,nb,mathVar::nGauss2D+1));
                     for (int order2 = 0; order2 <= mathVar::orderElem; order2++)
                     {
                         if (elemType==3)
